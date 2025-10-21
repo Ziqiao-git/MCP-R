@@ -1,0 +1,98 @@
+{
+  "qualifiedName": "@sunggyeong/cohobby-datalookup",
+  "displayName": "Rental Data Lookup",
+  "description": "Aggregate and normalize datasets from your cloud storage for faster discovery and analysis. Summarize rental prices to compare markets, spot trends, and share concise takeaways. Accelerate workflows by fetching core datasets and delivering clean, ready-to-use outputs.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/flowerlike-finely-brigette.ngrok-free.dev.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@sunggyeong/cohobby-datalookup",
+  "security": null,
+  "tools": [
+    {
+      "name": "fetch_core_from_s3",
+      "description": "Read normalized core fields from S3 (bucket+key).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bucket",
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "bucket": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "fetch_and_normalize_from_s3",
+      "description": "Read and normalize rental listings from S3 (bucket+key).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bucket",
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "bucket": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "summarize_rental_prices",
+      "description": "IQR-filtered summary statistics of rental_price.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "records"
+        ],
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@sunggyeong/cohobby-datalookup/mcp",
+      "configSchema": {
+        "name": "data-lookup",
+        "title": "Data Lookup MCP Server",
+        "tools": [
+          {
+            "name": "fetch_core_from_s3"
+          },
+          {
+            "name": "fetch_and_normalize_from_s3"
+          },
+          {
+            "name": "summarize_rental_prices"
+          }
+        ],
+        "version": "1.0.0",
+        "endpoint": "/",
+        "transport": "http",
+        "protocolVersion": "2025-06-18"
+      }
+    }
+  ]
+}

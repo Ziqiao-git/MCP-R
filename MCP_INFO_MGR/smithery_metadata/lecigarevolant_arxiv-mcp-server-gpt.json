@@ -1,0 +1,339 @@
+{
+  "qualifiedName": "@lecigarevolant/arxiv-mcp-server-gpt",
+  "displayName": "arXiv Papers",
+  "description": "Search arXiv by title, author, or keywords to quickly find relevant papers. Retrieve metadata and direct PDF links, and download full articles or load selected pages for focused reading. Accelerate literature reviews by bringing key sections into your workspace.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@lecigarevolant/arxiv-mcp-server-gpt",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_article_url",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieve the direct PDF URL of an article on arXiv.org by title or arXiv ID.\n\nArgs:\n    title: Article title.\n    arxiv_id: arXiv ID (e.g., 1706.03762 or arXiv:1706.03762v7).\n\nReturns:\n    URL that can be used to retrieve the article, or structured error JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "arxiv_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "download_article",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Download the article as a PDF file. Resolve by arXiv ID or title.\n\nArgs:\n    title: Article title.\n    arxiv_id: arXiv ID.\n\nReturns:\n    Success message or structured error JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "arxiv_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "load_article_to_context",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Load the article text into context. Supports title or arXiv ID resolution and partial extraction.\n\nArgs:\n    title: Article title.\n    arxiv_id: arXiv ID.\n    start_page: 1-based start page (inclusive).\n    end_page: 1-based end page (inclusive).\n    max_pages: hard cap on number of pages to extract.\n    max_chars: hard cap on number of characters to extract.\n    preview: if True, only validate availability and return minimal info.\n\nReturns:\n    Article text or structured error JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "preview": {
+            "type": "boolean",
+            "default": false
+          },
+          "arxiv_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "end_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "max_chars": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "max_pages": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_details",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieve metadata of an article by title or arXiv ID.\n\nArgs:\n    title: Article title.\n    arxiv_id: arXiv ID.\n\nReturns:\n    JSON string containing article details or structured error JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "arxiv_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "search_arxiv",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Performs a search query on the arXiv API based on specified parameters and returns matching article metadata.\nThis function allows for flexible querying of the arXiv database. Only parameters that are explicitly provided\nwill be included in the final search query. Results are returned in a JSON-formatted string with article titles\nas keys and their corresponding arXiv IDs as values.\n\nArgs:\n    all_fields: General keyword search across all metadata fields including title, abstract, authors, comments, and categories.\n    title: Keyword(s) to search for within the titles of articles.\n    author: Author name(s) to filter results by.\n    abstract: Keyword(s) to search for within article abstracts.\n    start: Index of the first result to return; used for paginating through search results. Defaults to 0.\n    max_results: Maximum number of results to return (1-50).\n\nReturns:\n    A JSON-formatted string containing article titles and their associated arXiv IDs;\n    otherwise, a structured error JSON string.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "integer",
+            "default": 0
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "abstract": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "all_fields": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "max_results": {
+            "type": "integer",
+            "default": 10
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@lecigarevolant/arxiv-mcp-server-gpt/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "ArXiv MCP Session Configuration",
+        "required": [],
+        "properties": {
+          "downloadPath": {
+            "type": "string",
+            "title": "Download path",
+            "default": "/data",
+            "description": "Override the download directory for saved PDFs."
+          }
+        },
+        "description": "Optional session configuration for the arXiv MCP server.",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

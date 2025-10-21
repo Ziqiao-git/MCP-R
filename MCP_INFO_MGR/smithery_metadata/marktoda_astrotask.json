@@ -1,0 +1,290 @@
+{
+  "qualifiedName": "@marktoda/astrotask",
+  "displayName": "Astrotask",
+  "description": "Manage and organize tasks efficiently with AI agent integration. Create, update, query, and track tasks with hierarchical support and real-time feedback. Enhance productivity by leveraging structured task management tools designed for seamless AI interaction.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/26db263b-4d8c-4bbb-a86e-36cc1d3abfff.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@marktoda/astrotask",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "getNextTask",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "status": {
+            "enum": [
+              "pending",
+              "in-progress",
+              "done",
+              "cancelled",
+              "archived"
+            ],
+            "type": "string",
+            "default": "pending",
+            "description": "Filter by task status. Options: 'pending' (not started), 'in-progress' (currently active), 'done' (completed), 'cancelled' (abandoned), 'archived' (stored). Most commonly used with 'pending' to find unstarted work."
+          },
+          "priority": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "type": "string",
+            "default": "medium",
+            "description": "Filter by task priority level. Options: 'low', 'medium', 'high'. Higher priority tasks are automatically preferred when multiple options exist."
+          },
+          "parentTaskId": {
+            "type": "string",
+            "description": "Optional parent task ID to limit search to direct children of this task. Use this to focus on a specific project or feature area."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addTasks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tasks"
+        ],
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "description": "Brief, descriptive title for the task. Should clearly convey what needs to be accomplished."
+                },
+                "status": {
+                  "enum": [
+                    "pending",
+                    "in-progress",
+                    "done",
+                    "cancelled",
+                    "archived"
+                  ],
+                  "type": "string",
+                  "default": "pending",
+                  "description": "Initial task status. Options: 'pending' (default, not started), 'in-progress' (currently active), 'done' (completed). Usually left as default 'pending'."
+                },
+                "details": {
+                  "type": "string",
+                  "description": "Additional implementation details, technical notes, or specific instructions for completing this task."
+                },
+                "priority": {
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high"
+                  ],
+                  "type": "string",
+                  "default": "medium",
+                  "description": "Task priority level affecting execution order. Options: 'low', 'medium' (default), 'high'. Higher priority tasks are worked on first."
+                },
+                "dependsOn": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "description": "Array of zero-based indices of tasks within this batch that must be completed before this task can begin. Creates dependency relationships."
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 1000,
+                  "description": "Detailed description of the task, including context, requirements, or implementation notes. Optional but recommended for complex tasks."
+                },
+                "parentIndex": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Zero-based array index of the parent task within this same batch. Use this instead of parentTaskId when the parent is being created in the same operation."
+                },
+                "parentTaskId": {
+                  "type": "string",
+                  "description": "ID of an existing parent task to create this as a subtask. Use this to organize tasks hierarchically under projects or features."
+                }
+              },
+              "description": "Individual task specification with all properties needed for creation",
+              "additionalProperties": false
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "description": "Array of task specifications to create. Tasks are processed in order, allowing later tasks to reference earlier ones by index."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "listTasks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "parentId": {
+            "type": "string",
+            "description": "Filter to show only direct children of this parent task ID. Use this to explore a specific project or feature branch. Leave empty to include tasks at all levels."
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "pending",
+                "in-progress",
+                "done",
+                "cancelled",
+                "archived"
+              ],
+              "type": "string",
+              "default": "pending"
+            },
+            "description": "Filter tasks by status array. Common values: 'pending' (unstarted), 'in-progress' (active), 'done' (completed), 'cancelled' (abandoned), 'archived' (stored). Leave empty to show pending and in-progress tasks only."
+          },
+          "includeProjectRoot": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to include project root tasks in the results. Set to true when you want to see top-level project containers."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addTaskContext",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId",
+          "title",
+          "description"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Brief title for this context slice that summarizes the type of information being added (e.g., 'Implementation Approach', 'Research Findings')."
+          },
+          "taskId": {
+            "type": "string",
+            "description": "ID of the existing task to add context information to. The task must already exist in the system."
+          },
+          "contextType": {
+            "type": "string",
+            "default": "general",
+            "description": "Category of context being added. Common types: 'implementation' (technical details), 'research' (findings/links), 'complexity' (assessment/risks), 'requirements' (clarifications), 'testing' (strategies), 'general' (miscellaneous notes)."
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "description": "Detailed content of the context slice. Can include research findings, implementation notes, complexity assessments, links, or any relevant information."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addDependency",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dependentTaskId",
+          "dependencyTaskId"
+        ],
+        "properties": {
+          "dependentTaskId": {
+            "type": "string",
+            "description": "ID of the task that depends on another task. This task will be blocked until its dependency is completed."
+          },
+          "dependencyTaskId": {
+            "type": "string",
+            "description": "ID of the task that must be completed first. This task must finish before the dependent task can begin."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateStatus",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "pending",
+              "in-progress",
+              "done",
+              "cancelled",
+              "archived"
+            ],
+            "type": "string",
+            "default": "pending",
+            "description": "New status for the task. Options: 'pending' (not started), 'in-progress' (currently active), 'done' (completed), 'cancelled' (abandoned), 'archived' (stored)."
+          },
+          "taskId": {
+            "type": "string",
+            "description": "ID of the existing task to update. The task must already exist in the system."
+          },
+          "cascade": {
+            "type": "boolean",
+            "description": "Whether to cascade the status update to all descendant tasks. Only applies to final statuses like 'done', 'cancelled', or 'archived'."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@marktoda/astrotask/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "databaseUrl"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable verbose database logging"
+          },
+          "logLevel": {
+            "type": "string",
+            "default": "info",
+            "description": "Logging level for the MCP server"
+          },
+          "databaseUrl": {
+            "type": "string",
+            "default": "./data/astrotask.db",
+            "description": "SQLite database path or connection URL for Astrotask"
+          },
+          "openaiApiKey": {
+            "type": "string",
+            "description": "Optional OpenAI API key for enhanced functionality"
+          }
+        }
+      }
+    }
+  ]
+}

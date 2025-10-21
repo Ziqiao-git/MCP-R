@@ -1,0 +1,516 @@
+{
+  "qualifiedName": "@brianellin/bsky-mcp-server",
+  "displayName": "Bluesky MCP Server",
+  "description": "Connect to Bluesky and interact with the ATProtocol using natural language. Fetch, analyze, and post content seamlessly within your LLM applications. Enhance your experience by leveraging Bluesky's features directly in your context window.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/bsky.app.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-my-handle-and-did",
+      "description": "Return the handle and did of the currently authenticated user for this blusesky session. Useful for when someone asks information about themselves using \"me\" or \"my\" on bluesky.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-timeline-posts",
+      "description": "Fetch your home timeline from Bluesky, which includes posts from all of the people you follow in reverse chronological order",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "count",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "posts",
+              "hours"
+            ],
+            "type": "string",
+            "description": "Whether count represents number of posts or hours to look back"
+          },
+          "count": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of posts to fetch or hours to look back"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-post",
+      "description": "Create a new post on Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "The content of your post"
+          },
+          "replyTo": {
+            "type": "string",
+            "description": "Optional URI of post to reply to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-profile",
+      "description": "Get a user's profile from Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "handle"
+        ],
+        "properties": {
+          "handle": {
+            "type": "string",
+            "description": "The handle of the user (e.g., alice.bsky.social)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-posts",
+      "description": "Search for posts on Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "top",
+              "latest"
+            ],
+            "type": "string",
+            "default": "top",
+            "description": "Sort order for search results - 'top' for most relevant or 'latest' for most recent"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to fetch (1-100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-post-thread",
+      "description": "Get a full conversation thread for a specific post, showing replies and context",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uri"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "URI of the post to fetch the thread for (e.g., at://did:plc:abcdef/app.bsky.feed.post/123)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "convert-url-to-uri",
+      "description": "Convert a Bluesky web URL to an AT URI format that can be used with other tools",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Bluesky post URL to convert (e.g., https://bsky.app/profile/username.bsky.social/post/postid)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-people",
+      "description": "Search for users/actors on Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to fetch (1-100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query for finding users"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-feeds",
+      "description": "Search for custom feeds on Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to fetch (1-100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query for finding feeds"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-liked-posts",
+      "description": "Get a list of posts that the authenticated user has liked",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of liked posts to fetch (1-100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-trends",
+      "description": "Get current trending topics on Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of trending topics to fetch (1-50)"
+          },
+          "includeSuggested": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to include suggested topics in addition to trending topics"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "like-post",
+      "description": "Like a post on Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uri"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "The URI of the post to like"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "follow-user",
+      "description": "Follow a user on Bluesky",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "handle"
+        ],
+        "properties": {
+          "handle": {
+            "type": "string",
+            "description": "The handle of the user to follow"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-pinned-feeds",
+      "description": "Get the authenticated user's pinned feeds and lists.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-feed-posts",
+      "description": "Fetch posts from a specified feed",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "feed",
+          "count",
+          "type"
+        ],
+        "properties": {
+          "feed": {
+            "type": "string",
+            "description": "The URI of the feed to fetch posts from (e.g., at://did:plc:abcdef/app.bsky.feed.generator/whats-hot)"
+          },
+          "type": {
+            "enum": [
+              "posts",
+              "hours"
+            ],
+            "type": "string",
+            "description": "Whether count represents number of posts or hours to look back"
+          },
+          "count": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of posts to fetch or hours to look back"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-list-posts",
+      "description": "Fetch posts from users in a specified list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list",
+          "count",
+          "type"
+        ],
+        "properties": {
+          "list": {
+            "type": "string",
+            "description": "The URI of the list (e.g., at://did:plc:abcdef/app.bsky.graph.list/listname)"
+          },
+          "type": {
+            "enum": [
+              "posts",
+              "hours"
+            ],
+            "type": "string",
+            "description": "Whether count represents number of posts or hours to look back"
+          },
+          "count": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of posts to fetch or hours to look back"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-user-posts",
+      "description": "Fetch posts from a specific user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user",
+          "count",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "posts",
+              "hours"
+            ],
+            "type": "string",
+            "description": "Whether count represents number of posts or hours to look back"
+          },
+          "user": {
+            "type": "string",
+            "description": "The handle or DID of the user (e.g., alice.bsky.social)"
+          },
+          "count": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of posts to fetch or hours to look back"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-follows",
+      "description": "Get a list of users that a person follows",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The handle or DID of the user (e.g., alice.bsky.social)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 500,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Maximum number of follows to fetch (1-500)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-followers",
+      "description": "Get a list of users that follow a person",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The handle or DID of the user (e.g., alice.bsky.social)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 500,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Maximum number of followers to fetch (1-500)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-post-likes",
+      "description": "Get information about users who have liked a specific post",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uri"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "The URI of the post to get likes for (e.g., at://did:plc:abcdef/app.bsky.feed.post/123)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of likes to fetch (1-100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-resources",
+      "description": "List all available MCP resources with their descriptions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@brianellin/bsky-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "blueskyIdentifier",
+          "blueskyAppPassword",
+          "blueskyServiceUrl"
+        ],
+        "properties": {
+          "blueskyIdentifier": {
+            "type": "string",
+            "description": "Your Bluesky handle/identifier"
+          },
+          "blueskyServiceUrl": {
+            "type": "string",
+            "description": "The URL of the Bluesky service (e.g., https://bsky.social)"
+          },
+          "blueskyAppPassword": {
+            "type": "string",
+            "description": "Your Bluesky app password"
+          }
+        }
+      }
+    }
+  ]
+}

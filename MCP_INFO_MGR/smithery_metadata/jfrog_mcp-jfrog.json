@@ -1,0 +1,1945 @@
+{
+  "qualifiedName": "@jfrog/mcp-jfrog",
+  "displayName": "JFrog MCP Server",
+  "description": "Manage your repositories, track builds, and oversee the release lifecycle seamlessly. Leverage powerful AQL queries to search for artifacts and monitor runtime clusters effectively. Enhance your JFrog platform experience with this integrated MCP server.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "jfrog_check_availability",
+      "description": "Check if JFrog platform is ready and functioning or not",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_create_local_repository",
+      "description": "Create a new local repository in artifactroy",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "key",
+          "rclass",
+          "packageType"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "the key of the repository"
+          },
+          "rclass": {
+            "type": "string",
+            "const": "local",
+            "description": "The repository type"
+          },
+          "projectKey": {
+            "type": "string",
+            "description": "Project key to assign the repository to"
+          },
+          "description": {
+            "type": "string",
+            "description": "Repository description"
+          },
+          "packageType": {
+            "enum": [
+              "bower",
+              "cargo",
+              "chef",
+              "cocoapods",
+              "composer",
+              "conan",
+              "cran",
+              "debian",
+              "docker",
+              "Npm",
+              "gems",
+              "gitlfs",
+              "go",
+              "gradle",
+              "helm",
+              "ivy",
+              "maven",
+              "nuget",
+              "opkg",
+              "p2",
+              "pub",
+              "puppet",
+              "pypi",
+              "rpm",
+              "sbt",
+              "swift",
+              "terraform",
+              "vagrant",
+              "yum",
+              "generic"
+            ],
+            "type": "string",
+            "description": "Package type of the repository"
+          },
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Environments to assign the repository to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_create_remote_repository",
+      "description": "Create a new remote repository in Artifactory to proxy external package registries",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "key",
+          "rclass",
+          "packageType",
+          "url"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "the key of the repository"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL to the remote repository"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Internal notes"
+          },
+          "proxy": {
+            "type": "string",
+            "description": "Proxy key from Artifactory"
+          },
+          "rclass": {
+            "type": "string",
+            "const": "remote",
+            "description": "The repository type"
+          },
+          "offline": {
+            "type": "boolean",
+            "default": false
+          },
+          "vcsType": {
+            "enum": [
+              "GIT"
+            ],
+            "type": "string",
+            "default": "GIT"
+          },
+          "hardFail": {
+            "type": "boolean",
+            "default": false
+          },
+          "password": {
+            "type": "string",
+            "description": "Remote repository password"
+          },
+          "username": {
+            "type": "string",
+            "description": "Remote repository username"
+          },
+          "v3FeedUrl": {
+            "type": "string"
+          },
+          "xrayIndex": {
+            "type": "boolean",
+            "default": false
+          },
+          "blackedOut": {
+            "type": "boolean",
+            "default": false
+          },
+          "projectKey": {
+            "type": "string",
+            "description": "Project key to assign the repository to"
+          },
+          "cdnRedirect": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": {
+            "type": "string",
+            "description": "Repository description"
+          },
+          "packageType": {
+            "enum": [
+              "bower",
+              "cargo",
+              "chef",
+              "cocoapods",
+              "composer",
+              "conan",
+              "cran",
+              "debian",
+              "docker",
+              "Npm",
+              "gems",
+              "gitlfs",
+              "go",
+              "gradle",
+              "helm",
+              "ivy",
+              "maven",
+              "nuget",
+              "opkg",
+              "p2",
+              "pub",
+              "puppet",
+              "pypi",
+              "rpm",
+              "sbt",
+              "swift",
+              "terraform",
+              "vagrant",
+              "yum",
+              "generic"
+            ],
+            "type": "string",
+            "description": "Package type of the repository"
+          },
+          "disableProxy": {
+            "type": "boolean",
+            "default": false
+          },
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Environments to assign the repository to"
+          },
+          "localAddress": {
+            "type": "string"
+          },
+          "propertySets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repoLayoutRef": {
+            "type": "string"
+          },
+          "gitRegistryUrl": {
+            "type": "string",
+            "default": "https://github.com/rust-lang/crates.io-index"
+          },
+          "handleReleases": {
+            "type": "boolean",
+            "default": true
+          },
+          "vcsGitProvider": {
+            "enum": [
+              "GITHUB",
+              "GITHUBENTERPRISE",
+              "BITBUCKET",
+              "OLDSTASH",
+              "STASH",
+              "ARTIFACTORY",
+              "CUSTOM"
+            ],
+            "type": "string",
+            "default": "GITHUB"
+          },
+          "excludesPattern": {
+            "type": "string",
+            "default": ""
+          },
+          "feedContextPath": {
+            "type": "string"
+          },
+          "handleSnapshots": {
+            "type": "boolean",
+            "default": true
+          },
+          "includesPattern": {
+            "type": "string",
+            "default": "**/*"
+          },
+          "pyPIRegistryUrl": {
+            "type": "string",
+            "default": "https://pypi.org"
+          },
+          "allowAnyHostAuth": {
+            "type": "boolean",
+            "default": false
+          },
+          "downloadRedirect": {
+            "type": "boolean",
+            "default": false
+          },
+          "fetchJarsEagerly": {
+            "type": "boolean",
+            "default": false
+          },
+          "vcsGitDownloadUrl": {
+            "type": "string",
+            "default": ""
+          },
+          "bypassHeadRequests": {
+            "type": "boolean",
+            "default": false
+          },
+          "maxUniqueSnapshots": {
+            "type": "number",
+            "default": 0
+          },
+          "priorityResolution": {
+            "type": "boolean",
+            "default": false
+          },
+          "shareConfiguration": {
+            "type": "boolean",
+            "default": false
+          },
+          "blockPushingSchema1": {
+            "type": "boolean",
+            "default": false
+          },
+          "composerRegistryUrl": {
+            "type": "string",
+            "default": "https://packagist.org"
+          },
+          "downloadContextPath": {
+            "type": "string"
+          },
+          "fetchSourcesEagerly": {
+            "type": "boolean",
+            "default": false
+          },
+          "remoteRepoLayoutRef": {
+            "type": "string",
+            "default": ""
+          },
+          "socketTimeoutMillis": {
+            "type": "number",
+            "default": 15000
+          },
+          "clientTlsCertificate": {
+            "type": "string",
+            "default": ""
+          },
+          "forceP2Authentication": {
+            "type": "boolean",
+            "default": false
+          },
+          "listRemoteFolderItems": {
+            "type": "boolean",
+            "default": false
+          },
+          "storeArtifactsLocally": {
+            "type": "boolean",
+            "default": true
+          },
+          "synchronizeProperties": {
+            "type": "boolean",
+            "default": false
+          },
+          "contentSynchronisation": {
+            "type": "object",
+            "required": [
+              "statistics",
+              "properties",
+              "source"
+            ],
+            "properties": {
+              "source": {
+                "type": "object",
+                "properties": {
+                  "originAbsenceDetection": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": false
+              },
+              "properties": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "statistics": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "enableCookieManagement": {
+            "type": "boolean",
+            "default": false
+          },
+          "disableUrlNormalization": {
+            "type": "boolean",
+            "default": false
+          },
+          "assumedOfflinePeriodSecs": {
+            "type": "number",
+            "default": 300
+          },
+          "forceConanAuthentication": {
+            "type": "boolean",
+            "default": false
+          },
+          "forceNugetAuthentication": {
+            "type": "boolean",
+            "default": false
+          },
+          "retrievalCachePeriodSecs": {
+            "type": "number",
+            "default": 7200
+          },
+          "blockMismatchingMimeTypes": {
+            "type": "boolean",
+            "default": true
+          },
+          "enableTokenAuthentication": {
+            "type": "boolean",
+            "default": false
+          },
+          "externalDependenciesEnabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "externalDependenciesPatterns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadataRetrievalTimeoutSecs": {
+            "type": "number",
+            "default": 60
+          },
+          "remoteRepoChecksumPolicyType": {
+            "enum": [
+              "generate-if-absent",
+              "fail",
+              "ignore-and-generate",
+              "pass-thru"
+            ],
+            "type": "string",
+            "default": "generate-if-absent"
+          },
+          "suppressPomConsistencyChecks": {
+            "type": "boolean",
+            "default": false
+          },
+          "missedRetrievalCachePeriodSecs": {
+            "type": "number",
+            "default": 1800
+          },
+          "unusedArtifactsCleanupPeriodHours": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_create_virtual_repository",
+      "description": "Create a new virtual repository in Artifactory that aggregates multiple repositories",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "key",
+          "rclass",
+          "packageType",
+          "repositories"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "the key of the repository"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Some internal notes"
+          },
+          "rclass": {
+            "type": "string",
+            "const": "virtual",
+            "description": "The repository type"
+          },
+          "keyPair": {
+            "type": "string",
+            "description": "Key pair used for signing"
+          },
+          "projectKey": {
+            "type": "string",
+            "description": "Project key to assign the repository to"
+          },
+          "description": {
+            "type": "string",
+            "description": "The virtual repository public description"
+          },
+          "packageType": {
+            "enum": [
+              "bower",
+              "cargo",
+              "chef",
+              "cocoapods",
+              "composer",
+              "conan",
+              "cran",
+              "debian",
+              "docker",
+              "Npm",
+              "gems",
+              "gitlfs",
+              "go",
+              "gradle",
+              "helm",
+              "ivy",
+              "maven",
+              "nuget",
+              "opkg",
+              "p2",
+              "pub",
+              "puppet",
+              "pypi",
+              "rpm",
+              "sbt",
+              "swift",
+              "terraform",
+              "vagrant",
+              "yum",
+              "generic"
+            ],
+            "type": "string",
+            "description": "Package type of the repository"
+          },
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Environments to assign the repository to"
+          },
+          "repositories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of repository keys to include in the virtual repository"
+          },
+          "repoLayoutRef": {
+            "type": "string",
+            "description": "Repository layout reference"
+          },
+          "excludesPattern": {
+            "type": "string",
+            "default": "",
+            "description": "Pattern to define artifacts to exclude"
+          },
+          "includesPattern": {
+            "type": "string",
+            "default": "**/*",
+            "description": "Pattern to define artifacts to include"
+          },
+          "primaryKeyPairRef": {
+            "type": "string",
+            "description": "Primary GPG key pair reference"
+          },
+          "debianTrivialLayout": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to use trivial layout for Debian repositories"
+          },
+          "secondaryKeyPairRef": {
+            "type": "string",
+            "description": "Secondary GPG key pair reference"
+          },
+          "defaultDeploymentRepo": {
+            "type": "string",
+            "description": "Default deployment repository"
+          },
+          "forceMavenAuthentication": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force authentication for Maven repositories"
+          },
+          "debianDefaultArchitectures": {
+            "type": "string",
+            "description": "Default architectures for Debian repositories"
+          },
+          "externalDependenciesEnabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable external dependencies (Bower, npm, Go)"
+          },
+          "externalDependenciesPatterns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Patterns for external dependencies"
+          },
+          "externalDependenciesRemoteRepo": {
+            "type": "string",
+            "description": "Remote repository for external dependencies"
+          },
+          "optionalIndexCompressionFormats": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "bz2",
+                "lzma",
+                "xz"
+              ],
+              "type": "string"
+            }
+          },
+          "pomRepositoryReferencesCleanupPolicy": {
+            "enum": [
+              "discard_active_reference",
+              "discard_any_reference",
+              "nothing"
+            ],
+            "type": "string",
+            "default": "discard_active_reference"
+          },
+          "artifactoryRequestsCanRetrieveRemoteArtifacts": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_set_folder_property",
+      "description": "Set properties on a folder in Artifactory, with optional recursive application",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "folderPath",
+          "properties"
+        ],
+        "properties": {
+          "recursive": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to apply properties recursively to sub-folders"
+          },
+          "folderPath": {
+            "type": "string",
+            "description": "Path to the folder where properties should be set"
+          },
+          "properties": {
+            "type": "object",
+            "description": "Key-value pairs of properties to set",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_list_repositories",
+      "description": "List all repositories in Artifactory with optional filtering by type, package type, and project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "type": {
+            "enum": [
+              "local",
+              "remote",
+              "virtual",
+              "federated",
+              "distribution"
+            ],
+            "type": "string",
+            "description": "Filter repositories by type"
+          },
+          "project": {
+            "type": "string",
+            "description": "Filter repositories by project key"
+          },
+          "packageType": {
+            "enum": [
+              "bower",
+              "cargo",
+              "chef",
+              "cocoapods",
+              "composer",
+              "conan",
+              "cran",
+              "debian",
+              "docker",
+              "Npm",
+              "gems",
+              "gitlfs",
+              "go",
+              "gradle",
+              "helm",
+              "ivy",
+              "maven",
+              "nuget",
+              "opkg",
+              "p2",
+              "pub",
+              "puppet",
+              "pypi",
+              "rpm",
+              "sbt",
+              "swift",
+              "terraform",
+              "vagrant",
+              "yum",
+              "generic"
+            ],
+            "type": "string",
+            "description": "Filter repositories by package type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_list_builds",
+      "description": "return a list of all my build in the jfrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_specific_build",
+      "description": "Get details for a specific build by name, optionally scoped to a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "buildName"
+        ],
+        "properties": {
+          "project": {
+            "type": "string",
+            "description": "Optional project key to scope the build search"
+          },
+          "buildName": {
+            "type": "string",
+            "description": "Name of the build to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_list_runtime_clusters",
+      "description": "return a list of all my runtime clusters in the jfrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "description": "The maximum number of clusters to return"
+          },
+          "next_key": {
+            "type": "string",
+            "description": "The next key to use for pagination"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_runtime_specific_cluster",
+      "description": "return a runtime cluster by id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "clusterId"
+        ],
+        "properties": {
+          "clusterId": {
+            "type": "integer",
+            "description": "The ID of the cluster to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_list_running_images",
+      "description": "List all running container images across runtime clusters with their security and operational status",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "filters": {
+            "type": "string",
+            "default": "",
+            "description": "Filters to apply"
+          },
+          "page_num": {
+            "type": "integer",
+            "default": 1,
+            "description": "Page number"
+          },
+          "statistics": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include statistics"
+          },
+          "timePeriod": {
+            "type": "string",
+            "default": "now",
+            "description": "Time period to query"
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "default": 100,
+            "description": "Number of rows to return"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_list_environments",
+      "description": "Get a list of all environments types (e.g. dev, prod, etc.) in the JFrog platform with their details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_list_projects",
+      "description": "Get a list of all projects in the JFrog platform with their details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_create_project",
+      "description": "Create a new project in the JFrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "display_name",
+          "description",
+          "admin_privileges",
+          "storage_quota_bytes",
+          "project_key"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of the project"
+          },
+          "project_key": {
+            "type": "string",
+            "description": "Unique identifier for the project, Project key must start with a lowercase letter and only contain lowercase letters"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Display name of the project"
+          },
+          "admin_privileges": {
+            "type": "object",
+            "required": [
+              "manage_members",
+              "manage_resources",
+              "index_resources"
+            ],
+            "properties": {
+              "manage_members": {
+                "type": "boolean",
+                "description": "Whether project admins can manage members"
+              },
+              "index_resources": {
+                "type": "boolean",
+                "description": "Whether project admins can index resources"
+              },
+              "manage_resources": {
+                "type": "boolean",
+                "description": "Whether project admins can manage resources"
+              }
+            },
+            "description": "Administrative privileges for the project",
+            "additionalProperties": false
+          },
+          "storage_quota_bytes": {
+            "type": "number",
+            "description": "Storage quota in bytes (-1 for unlimited)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_specific_project",
+      "description": "Get detailed information about a specific project in the JFrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_key"
+        ],
+        "properties": {
+          "project_key": {
+            "type": "string",
+            "description": "The unique key of the project to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_execute_aql_query",
+      "description": "Execute an Artifactory Query Language (AQL) query to search for artifacts, builds, or other entities in JFrog Artifactory. AQL is a powerful query language for searching and filtering artifacts in Artifactory repositories. It supports complex criteria, sorting, pagination, and more.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum number of results to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "The AQL query to execute. Must follow AQL syntax (e.g., items.find({\"repo\":\"my-repo\"}).include(\"name\",\"path\"))"
+          },
+          "domain": {
+            "enum": [
+              "items",
+              "builds",
+              "archive.entries",
+              "build.promotions",
+              "releases"
+            ],
+            "type": "string",
+            "description": "The primary domain to search in. If not specified, it will be extracted from the query."
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of results to skip"
+          },
+          "sort_by": {
+            "type": "string",
+            "description": "Field to sort results by"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "asc",
+            "description": "Sort order"
+          },
+          "transitive": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to search in remote repositories"
+          },
+          "include_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields to include in the results"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_package_info",
+      "description": "Useful for when you need to get publicly available information about a software package. it will provide you with the following information on it, if available in public sources: a short description of the package, its latest published version, the software license this software is distributed under, along with urls of its version control system, its homepage and whether it is known to be a malicious package (in any version).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the package, as it appears in the package repository."
+          },
+          "type": {
+            "enum": [
+              "pypi",
+              "npm",
+              "maven",
+              "golang",
+              "nuget",
+              "huggingface",
+              "rubygems"
+            ],
+            "type": "string",
+            "description": "The type of package."
+          },
+          "version": {
+            "type": "string",
+            "default": "latest",
+            "description": "The version of the package, as it appears in the package repository. Default value is 'latest'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_package_versions",
+      "description": "Useful for when you need to get a list of versions of a publicly available package. it can tell you each version's publication date. Can also filter based on version vulnerability status.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the package, as it appears in the package repository."
+          },
+          "type": {
+            "enum": [
+              "pypi",
+              "npm",
+              "maven",
+              "golang",
+              "nuget",
+              "huggingface",
+              "rubygems"
+            ],
+            "type": "string",
+            "description": "The type of package."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_package_version_vulnerabilities",
+      "description": "Useful for when you need the list of known vulnerabilities affecting a specific version of an open source package.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the package, as it appears in the package repository."
+          },
+          "type": {
+            "enum": [
+              "pypi",
+              "npm",
+              "maven",
+              "golang",
+              "nuget",
+              "huggingface",
+              "rubygems"
+            ],
+            "type": "string",
+            "description": "The type of package."
+          },
+          "version": {
+            "type": "string",
+            "default": "latest",
+            "description": "The version of the package, as it appears in the package repository. Default value is 'latest'."
+          },
+          "pageSize": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of vulnerabilities to return per page."
+          },
+          "pageCount": {
+            "type": "number",
+            "default": 1,
+            "description": "Number of pages to return."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_vulnerability_info",
+      "description": "Useful for when you need to get a specific vulnerability information, including its affected packages and versions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cve_id"
+        ],
+        "properties": {
+          "cve_id": {
+            "type": "string",
+            "description": "The CVE ID or vulnerability identifier to look up."
+          },
+          "pageSize": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of vulnerabilities to return per page."
+          },
+          "pageCount": {
+            "type": "number",
+            "default": 1,
+            "description": "Number of pages to return."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_package_curation_status",
+      "description": "Useful for checking the curation status of a specific package version. Returns one of the following statuses: approved, blocked, inconclusive.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "packageType",
+          "packageName",
+          "packageVersion"
+        ],
+        "properties": {
+          "packageName": {
+            "type": "string",
+            "description": "The name of the package, as it appears in the package repository."
+          },
+          "packageType": {
+            "enum": [
+              "pypi",
+              "npm",
+              "maven",
+              "golang",
+              "nuget",
+              "huggingface",
+              "rubygems"
+            ],
+            "type": "string",
+            "description": "The type of package."
+          },
+          "packageVersion": {
+            "type": "string",
+            "description": "The version of the package, as it appears in the package repository."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_list_permission_targets",
+      "description": "Get a list of all permission targets in the JFrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Limit the number of results"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_permission_target",
+      "description": "Get detailed information about a specific permission target",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission target to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_create_permission_target",
+      "description": "Create a new permission target in the JFrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "resources"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "resources": {
+            "type": "object",
+            "properties": {
+              "build": {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "$ref": "#/properties/resources/properties/artifact/properties/actions"
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/resources/properties/artifact/properties/targets/additionalProperties"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "artifact": {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "type": "object",
+                    "required": [
+                      "users"
+                    ],
+                    "properties": {
+                      "users": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "READ",
+                              "WRITE",
+                              "ANNOTATE",
+                              "DELETE",
+                              "DISTRIBUTE",
+                              "MANAGE"
+                            ],
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "default": {},
+                        "description": "The actions that the group can perform on the resource",
+                        "additionalProperties": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "READ",
+                              "WRITE",
+                              "ANNOTATE",
+                              "DELETE",
+                              "DISTRIBUTE",
+                              "MANAGE"
+                            ],
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "required": [
+                        "include_patterns",
+                        "exclude_patterns"
+                      ],
+                      "properties": {
+                        "exclude_patterns": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "include_patterns": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "release_bundle": {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "$ref": "#/properties/resources/properties/artifact/properties/actions"
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/resources/properties/artifact/properties/targets/additionalProperties"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "modified_by": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_update_permission_target",
+      "description": "Update an existing permission target in the JFrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "target"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission target to update"
+          },
+          "target": {
+            "type": "object",
+            "required": [
+              "resources"
+            ],
+            "properties": {
+              "resources": {
+                "type": "object",
+                "properties": {
+                  "build": {
+                    "type": "object",
+                    "required": [
+                      "actions",
+                      "targets"
+                    ],
+                    "properties": {
+                      "actions": {
+                        "$ref": "#/properties/target/properties/resources/properties/artifact/properties/actions"
+                      },
+                      "targets": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "$ref": "#/properties/target/properties/resources/properties/artifact/properties/targets/additionalProperties"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "artifact": {
+                    "type": "object",
+                    "required": [
+                      "actions",
+                      "targets"
+                    ],
+                    "properties": {
+                      "actions": {
+                        "type": "object",
+                        "required": [
+                          "users"
+                        ],
+                        "properties": {
+                          "users": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "array",
+                              "items": {
+                                "enum": [
+                                  "READ",
+                                  "WRITE",
+                                  "ANNOTATE",
+                                  "DELETE",
+                                  "DISTRIBUTE",
+                                  "MANAGE"
+                                ],
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "groups": {
+                            "type": "object",
+                            "default": {},
+                            "description": "The actions that the group can perform on the resource",
+                            "additionalProperties": {
+                              "type": "array",
+                              "items": {
+                                "enum": [
+                                  "READ",
+                                  "WRITE",
+                                  "ANNOTATE",
+                                  "DELETE",
+                                  "DISTRIBUTE",
+                                  "MANAGE"
+                                ],
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "targets": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "object",
+                          "required": [
+                            "include_patterns",
+                            "exclude_patterns"
+                          ],
+                          "properties": {
+                            "exclude_patterns": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "include_patterns": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "release_bundle": {
+                    "type": "object",
+                    "required": [
+                      "actions",
+                      "targets"
+                    ],
+                    "properties": {
+                      "actions": {
+                        "$ref": "#/properties/target/properties/resources/properties/artifact/properties/actions"
+                      },
+                      "targets": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "$ref": "#/properties/target/properties/resources/properties/artifact/properties/targets/additionalProperties"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "modified_by": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_delete_permission_target",
+      "description": "Delete a permission target from the JFrog platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission target to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_permission_resource",
+      "description": "Get details of a specific resource type within a permission target",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "resourceType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission target"
+          },
+          "resourceType": {
+            "enum": [
+              "artifact",
+              "release_bundle",
+              "build"
+            ],
+            "type": "string",
+            "description": "The type of resource to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_update_permission_resource",
+      "description": "Update a specific resource type within a permission target",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "resourceType",
+          "resource"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission target"
+          },
+          "resource": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "type": "object",
+                    "required": [
+                      "users"
+                    ],
+                    "properties": {
+                      "users": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "READ",
+                              "WRITE",
+                              "ANNOTATE",
+                              "DELETE",
+                              "DISTRIBUTE",
+                              "MANAGE"
+                            ],
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "default": {},
+                        "description": "The actions that the group can perform on the resource",
+                        "additionalProperties": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "READ",
+                              "WRITE",
+                              "ANNOTATE",
+                              "DELETE",
+                              "DISTRIBUTE",
+                              "MANAGE"
+                            ],
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "required": [
+                        "include_patterns",
+                        "exclude_patterns"
+                      ],
+                      "properties": {
+                        "exclude_patterns": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "include_patterns": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "$ref": "#/properties/resource/anyOf/0/properties/actions"
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/resource/anyOf/0/properties/targets/additionalProperties"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "$ref": "#/properties/resource/anyOf/0/properties/actions"
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/resource/anyOf/0/properties/targets/additionalProperties"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "resourceType": {
+            "enum": [
+              "artifact",
+              "release_bundle",
+              "build"
+            ],
+            "type": "string",
+            "description": "The type of resource to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_replace_permission_resource",
+      "description": "Replace a specific resource type within a permission target",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "resourceType",
+          "resource"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission target"
+          },
+          "resource": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "type": "object",
+                    "required": [
+                      "users"
+                    ],
+                    "properties": {
+                      "users": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "READ",
+                              "WRITE",
+                              "ANNOTATE",
+                              "DELETE",
+                              "DISTRIBUTE",
+                              "MANAGE"
+                            ],
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "default": {},
+                        "description": "The actions that the group can perform on the resource",
+                        "additionalProperties": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "READ",
+                              "WRITE",
+                              "ANNOTATE",
+                              "DELETE",
+                              "DISTRIBUTE",
+                              "MANAGE"
+                            ],
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "required": [
+                        "include_patterns",
+                        "exclude_patterns"
+                      ],
+                      "properties": {
+                        "exclude_patterns": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "include_patterns": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "$ref": "#/properties/resource/anyOf/0/properties/actions"
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/resource/anyOf/0/properties/targets/additionalProperties"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "targets"
+                ],
+                "properties": {
+                  "actions": {
+                    "$ref": "#/properties/resource/anyOf/0/properties/actions"
+                  },
+                  "targets": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/resource/anyOf/0/properties/targets/additionalProperties"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "resourceType": {
+            "enum": [
+              "artifact",
+              "release_bundle",
+              "build"
+            ],
+            "type": "string",
+            "description": "The type of resource to replace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_delete_permission_resource",
+      "description": "Delete a specific resource type from a permission target",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "resourceType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission target"
+          },
+          "resourceType": {
+            "enum": [
+              "artifact",
+              "release_bundle",
+              "build"
+            ],
+            "type": "string",
+            "description": "The type of resource to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jfrog_get_artifacts_summary",
+      "description": "Get the summary of artifacts, one or many",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "paths"
+        ],
+        "properties": {
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of full paths of the artifacts, the full path should include the repositotiry name"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@jfrog/mcp-jfrog/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "jfrogAccessToken",
+          "jfrogUrl"
+        ],
+        "properties": {
+          "jfrogUrl": {
+            "type": "string",
+            "description": "Base URL for your JFrog platform instance"
+          },
+          "jfrogAccessToken": {
+            "type": "string",
+            "description": "Your JFrog access token"
+          }
+        }
+      }
+    }
+  ]
+}

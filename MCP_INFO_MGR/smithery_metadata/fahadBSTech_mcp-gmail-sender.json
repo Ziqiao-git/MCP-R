@@ -1,0 +1,77 @@
+{
+  "qualifiedName": "@fahadBSTech/mcp-gmail-sender",
+  "displayName": "Email Sender Server",
+  "description": "Send emails via SMTP using a simple MCP tool. Easily integrate email sending capabilities into your applications or agents with a single tool call. Configure SMTP settings via environment variables for flexible deployment.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@fahadBSTech/mcp-gmail-sender",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Send an email to a recipient",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ],
+        "properties": {
+          "to": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of recipient email addresses"
+          },
+          "body": {
+            "type": "string",
+            "description": "Email body content (used for text/plain or when htmlBody not provided)"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@fahadBSTech/mcp-gmail-sender/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "SMTP_HOST",
+          "SMTP_PORT",
+          "SMTP_USER",
+          "SMTP_PASS"
+        ],
+        "properties": {
+          "SMTP_HOST": {
+            "type": "string",
+            "description": "SMTP host"
+          },
+          "SMTP_PASS": {
+            "type": "string",
+            "description": "SMTP password"
+          },
+          "SMTP_PORT": {
+            "type": "number",
+            "description": "SMTP port"
+          },
+          "SMTP_USER": {
+            "type": "string",
+            "description": "SMTP user"
+          }
+        }
+      }
+    }
+  ]
+}

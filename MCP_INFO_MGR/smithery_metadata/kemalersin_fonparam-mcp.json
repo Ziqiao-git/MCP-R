@@ -1,0 +1,484 @@
+{
+  "qualifiedName": "@kemalersin/fonparam-mcp",
+  "displayName": "FonParam Investment Funds Data Server",
+  "description": "Provide real-time and historical data on Turkish investment funds, including fund listings, performance analysis, company details, and inflation statistics. Enable detailed fund comparisons and investment analysis to support informed financial decisions. Access daily market statistics and inflation rates to stay updated with the latest economic indicators.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/5f893631-2d45-4573-a8ab-a143488864ba.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "list_funds",
+      "description": "Yatırım fonlarını listeler ve filtreleme imkanı sunar",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Fon kodu veya kodları (virgülle ayrılmış)"
+          },
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Sayfa numarası (varsayılan: 1)"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sıralama alanı (code, title, yield_1y, vb.)"
+          },
+          "type": {
+            "enum": [
+              "altin",
+              "borclanma_araclari",
+              "degisken",
+              "fon_sepeti",
+              "gumus",
+              "hisse_senedi",
+              "hisse_senedi_yogun",
+              "karma",
+              "katilim",
+              "kiymetli_madenler",
+              "para_piyasasi",
+              "serbest",
+              "yabanci",
+              "diger"
+            ],
+            "type": "string",
+            "description": "Fon tipi"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Sayfa başına kayıt sayısı (varsayılan: 20, maksimum: 100)"
+          },
+          "order": {
+            "enum": [
+              "ASC",
+              "DESC"
+            ],
+            "type": "string",
+            "description": "Sıralama yönü"
+          },
+          "tefas": {
+            "type": "boolean",
+            "description": "TEFAS'ta işlem görme durumu"
+          },
+          "search": {
+            "type": "string",
+            "description": "Fon adı, kodu, şirket adı ile arama"
+          },
+          "max_risk_value": {
+            "type": "number",
+            "maximum": 7,
+            "minimum": 1,
+            "description": "Maksimum risk seviyesi (1-7)"
+          },
+          "min_risk_value": {
+            "type": "number",
+            "maximum": 7,
+            "minimum": 1,
+            "description": "Minimum risk seviyesi (1-7)"
+          },
+          "management_company": {
+            "type": "string",
+            "description": "Portföy yönetim şirketi kodu"
+          }
+        }
+      }
+    },
+    {
+      "name": "top_performing_funds",
+      "description": "En iyi performans gösteren fonları getirir",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reference_funds": {
+            "type": "string",
+            "description": "Referans fon kodları (virgülle ayrılmış, opsiyonel)"
+          }
+        }
+      }
+    },
+    {
+      "name": "compare_funds",
+      "description": "Fonları karşılaştırır (2-5 fon)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "codes"
+        ],
+        "properties": {
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 2,
+            "description": "Karşılaştırılacak fon kodları"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_fund",
+      "description": "Fon için yatırım analizi yapar",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code",
+          "startDate",
+          "initialInvestment"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Fon kodu"
+          },
+          "startDate": {
+            "enum": [
+              "last_1_day",
+              "last_1_week",
+              "last_1_month",
+              "last_3_months",
+              "last_6_months",
+              "year_start",
+              "last_1_year",
+              "last_3_years",
+              "last_5_years"
+            ],
+            "type": "string",
+            "description": "Başlangıç tarihi"
+          },
+          "initialInvestment": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Başlangıç yatırımı (TL)"
+          },
+          "monthlyInvestment": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Aylık yatırım tutarı (TL, opsiyonel)"
+          },
+          "yearlyIncreaseType": {
+            "enum": [
+              "percentage",
+              "amount"
+            ],
+            "type": "string",
+            "description": "Yıllık artış tipi (opsiyonel)"
+          },
+          "yearlyIncreaseValue": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Yıllık artış değeri (opsiyonel)"
+          },
+          "includeMonthlyDetails": {
+            "type": "boolean",
+            "description": "Aylık detayları getir (varsayılan: true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "fund_historical_data",
+      "description": "Fonun geçmiş değerlerini getirir",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Fon kodu"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sıralama alanı"
+          },
+          "order": {
+            "enum": [
+              "ASC",
+              "DESC"
+            ],
+            "type": "string",
+            "description": "Sıralama yönü"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Bitiş tarihi (YYYY-MM-DD)"
+          },
+          "interval": {
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ],
+            "type": "string",
+            "description": "Veri aralığı"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Başlangıç tarihi (YYYY-MM-DD)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_companies",
+      "description": "Portföy yönetim şirketlerini listeler",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Sayfa numarası"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sıralama alanı"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Sayfa başına kayıt sayısı"
+          },
+          "order": {
+            "enum": [
+              "ASC",
+              "DESC"
+            ],
+            "type": "string",
+            "description": "Sıralama yönü"
+          },
+          "search": {
+            "type": "string",
+            "description": "Şirket adı veya kodu ile arama"
+          },
+          "max_total_funds": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maksimum fon sayısı"
+          },
+          "min_total_funds": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Minimum fon sayısı"
+          }
+        }
+      }
+    },
+    {
+      "name": "company_details",
+      "description": "Portföy yönetim şirketi detaylarını getirir",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Şirket kodu"
+          },
+          "include_funds": {
+            "type": "boolean",
+            "description": "Şirketin fonlarını da getir (varsayılan: true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "statistics",
+      "description": "Günlük istatistikleri listeler",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Sayfa numarası"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sıralama alanı"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Sayfa başına kayıt sayısı"
+          },
+          "order": {
+            "enum": [
+              "ASC",
+              "DESC"
+            ],
+            "type": "string",
+            "description": "Sıralama yönü"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Bitiş tarihi (YYYY-MM-DD)"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Başlangıç tarihi (YYYY-MM-DD)"
+          }
+        }
+      }
+    },
+    {
+      "name": "latest_statistics",
+      "description": "Son istatistikleri getirir",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "statistics_by_date",
+      "description": "Belirli bir günün istatistiklerini getirir",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "date"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "İstatistik tarihi (YYYY-MM-DD)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_fund_types",
+      "description": "Fon tiplerini listeler",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sort": {
+            "type": "string",
+            "description": "Sıralama alanı"
+          },
+          "order": {
+            "enum": [
+              "ASC",
+              "DESC"
+            ],
+            "type": "string",
+            "description": "Sıralama yönü"
+          },
+          "max_total_funds": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maksimum fon sayısı"
+          },
+          "min_total_funds": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Minimum fon sayısı"
+          }
+        }
+      }
+    },
+    {
+      "name": "fund_type_details",
+      "description": "Belirli bir fon tipinin detaylarını getirir",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "altin",
+              "borclanma_araclari",
+              "degisken",
+              "fon_sepeti",
+              "gumus",
+              "hisse_senedi",
+              "hisse_senedi_yogun",
+              "karma",
+              "katilim",
+              "kiymetli_madenler",
+              "para_piyasasi",
+              "serbest",
+              "yabanci",
+              "diger"
+            ],
+            "type": "string",
+            "description": "Fon tipi kodu"
+          }
+        }
+      }
+    },
+    {
+      "name": "inflation_rates",
+      "description": "Enflasyon verilerini listeler",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "end_date": {
+            "type": "string",
+            "description": "Bitiş tarihi (YYYY-MM-DD)"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Başlangıç tarihi (YYYY-MM-DD)"
+          }
+        }
+      }
+    },
+    {
+      "name": "latest_inflation_rate",
+      "description": "Son enflasyon verisini getirir",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "monthly_inflation_rate",
+      "description": "Belirli bir ay ve yıldaki enflasyon verisini getirir",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "year",
+          "month"
+        ],
+        "properties": {
+          "year": {
+            "type": "number",
+            "minimum": 2000,
+            "description": "Yıl"
+          },
+          "month": {
+            "type": "number",
+            "maximum": 12,
+            "minimum": 1,
+            "description": "Ay (1-12)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kemalersin/fonparam-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

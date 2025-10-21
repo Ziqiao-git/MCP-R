@@ -1,0 +1,248 @@
+{
+  "qualifiedName": "@manolaz/emergency-medicare-planner-mcp-server",
+  "displayName": "Emergency Medicare Management",
+  "description": "Find nearby hospitals and clinics that match specific patient needs. Access real-time information about medical facilities and calculate the fastest routes to them. Ensure timely medical assistance with this efficient planning tool.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/amoca.xyz.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "find_nearby_medical_facilities",
+      "description": "Finds hospitals and clinics nearby user location that match specific requirements",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userLocation"
+        ],
+        "properties": {
+          "radius": {
+            "type": "number",
+            "default": 10000,
+            "description": "Search radius in meters (default: 10000m = 10km)"
+          },
+          "facilities": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "hospital",
+                "clinic",
+                "emergency",
+                "pharmacy",
+                "specialist"
+              ],
+              "type": "string"
+            },
+            "description": "Types of medical facilities to search for"
+          },
+          "priceRange": {
+            "enum": [
+              "low",
+              "moderate",
+              "high",
+              "any"
+            ],
+            "type": "string",
+            "description": "Price range preference"
+          },
+          "careQuality": {
+            "enum": [
+              "high",
+              "medium",
+              "any"
+            ],
+            "type": "string",
+            "description": "Expected quality of medical care"
+          },
+          "userLocation": {
+            "type": "string",
+            "description": "User's current location (address or coordinates)"
+          },
+          "infrastructure": {
+            "enum": [
+              "excellent",
+              "good",
+              "any"
+            ],
+            "type": "string",
+            "description": "Quality of infrastructure and cleanliness"
+          },
+          "treatmentNeeds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific medical treatments or services needed"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_medicare_coverage",
+      "description": "Checks what treatments and procedures are covered by Medicare",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "treatmentCode",
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "US State code (e.g., CA, NY)"
+          },
+          "insuranceType": {
+            "type": "string",
+            "description": "Type of Medicare insurance (e.g., Part A, Part B)"
+          },
+          "treatmentCode": {
+            "type": "string",
+            "description": "Medicare treatment or procedure code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_emergency_contacts",
+      "description": "Retrieves emergency contact information for a specific location",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "location"
+        ],
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "Location to get emergency contacts for"
+          },
+          "serviceType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Types of emergency services needed"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "schedule_emergency_transport",
+      "description": "Arranges emergency medical transportation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "patientLocation",
+          "medicalCondition",
+          "urgency"
+        ],
+        "properties": {
+          "urgency": {
+            "enum": [
+              "critical",
+              "urgent",
+              "standard"
+            ],
+            "type": "string",
+            "description": "Level of urgency"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Destination hospital or clinic"
+          },
+          "patientLocation": {
+            "type": "string",
+            "description": "Patient's current location"
+          },
+          "medicalCondition": {
+            "type": "string",
+            "description": "Brief description of medical condition"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sequentialthinking",
+      "description": "A detailed tool for dynamic and reflective medical problem-solving through thoughts.\nThis tool helps analyze medical problems through a flexible thinking process that can adapt and evolve.\nEach thought can build on, question, or revise previous insights as understanding of the medical situation deepens.\n\nWhen to use this tool:\n- Breaking down complex medical problems into steps\n- Planning and designing treatment approaches with room for revision\n- Clinical analysis that might need course correction\n- Medical problems where the full scope might not be clear initially\n- Healthcare decisions that require a multi-step solution\n- Medical evaluations that need to maintain context over multiple steps\n- Situations where irrelevant medical information needs to be filtered out\n\nKey features:\n- You can adjust total_thoughts up or down as the diagnosis progresses\n- You can question or revise previous medical assessments\n- You can add more diagnostic thoughts as new information emerges\n- You can express clinical uncertainty and explore alternative approaches\n- Not every medical assessment needs to build linearly - you can branch or backtrack\n- Generates a clinical hypothesis\n- Verifies the hypothesis based on the Chain of Thought steps\n- Repeats the process until a satisfactory diagnosis or treatment plan is reached\n- Provides a correct medical assessment or recommendation",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "thought",
+          "nextThoughtNeeded",
+          "thoughtNumber",
+          "totalThoughts"
+        ],
+        "properties": {
+          "thought": {
+            "type": "string",
+            "description": "Your current clinical thinking step"
+          },
+          "branchId": {
+            "type": "string",
+            "description": "Branch identifier for the diagnostic path"
+          },
+          "isRevision": {
+            "type": "boolean",
+            "description": "Whether this revises previous medical thinking"
+          },
+          "thoughtNumber": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Current thought number"
+          },
+          "totalThoughts": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Estimated total thoughts needed for complete evaluation"
+          },
+          "revisesThought": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which medical assessment is being reconsidered"
+          },
+          "branchFromThought": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Branching point thought number for alternative diagnosis"
+          },
+          "needsMoreThoughts": {
+            "type": "boolean",
+            "description": "If more clinical evaluation is needed"
+          },
+          "nextThoughtNeeded": {
+            "type": "boolean",
+            "description": "Whether another medical assessment step is needed"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@manolaz/emergency-medicare-planner-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "googleMapsApiKey"
+        ],
+        "properties": {
+          "googleMapsApiKey": {
+            "type": "string",
+            "description": "The API key for accessing Google Maps services."
+          }
+        }
+      }
+    }
+  ]
+}

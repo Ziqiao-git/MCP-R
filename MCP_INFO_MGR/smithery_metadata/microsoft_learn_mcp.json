@@ -1,0 +1,95 @@
+{
+  "qualifiedName": "@microsoft/learn_mcp",
+  "displayName": "Microsoft Learn MCP",
+  "description": "The Microsoft Learn MCP Server is a remote MCP Server that enables clients like GitHub Copilot and other AI agents to bring trusted and up-to-date information directly from Microsoft's official documentation. It supports streamable http transport, which is lightweight for clients to use.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/e2632b25-9f72-4a3c-80ac-7d9049452406.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@microsoft/learn_mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "microsoft_docs_search",
+      "title": "Microsoft Docs Search",
+      "annotations": {
+        "title": "Microsoft Docs Search",
+        "readOnlyHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search official Microsoft/Azure documentation to find the most relevant and trustworthy content for a user's query. This tool returns up to 10 high-quality content chunks (each max 500 tokens), extracted from Microsoft Learn and other official sources. Each result includes the article title, URL, and a self-contained content excerpt optimized for fast retrieval and reasoning. Always use this tool to quickly ground your answers in accurate, first-party Microsoft/Azure knowledge.\n\nThe `question` parameter is no longer used, use `query` instead.\n\n## Follow-up Pattern\nTo ensure completeness, use microsoft_docs_fetch when high-value pages are identified by search. The fetch tool complements search by providing the full detail. This is a required step for comprehensive results.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "default": null,
+            "description": "a query or topic about Microsoft/Azure products, services, platforms, developer tools, frameworks, or APIs"
+          },
+          "question": {
+            "type": "string",
+            "default": null,
+            "description": "this parameter is no longer used, use query instead."
+          }
+        }
+      }
+    },
+    {
+      "name": "microsoft_code_sample_search",
+      "title": "Microsoft Code Sample Search",
+      "annotations": {
+        "title": "Microsoft Code Sample Search",
+        "readOnlyHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search for code snippets and examples in official Microsoft Learn documentation. This tool retrieves relevant code samples from Microsoft documentation pages providing developers with practical implementation examples and best practices for Microsoft/Azure products and services related coding tasks. This tool will help you use the **LATEST OFFICIAL** code snippets to empower coding capabilities.\n\n## When to Use This Tool\n- When you are going to provide sample Microsoft/Azure related code snippets in your answers.\n- When you are **generating any Microsoft/Azure related code**.\n\n## Usage Pattern\nInput a descriptive query, or SDK/class/method name to retrieve related code samples. The optional parameter `language` can help to filter results.\n\nEligible values for `language` parameter include: csharp javascript typescript python powershell azurecli al sql java kusto cpp go rust ruby php",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "a descriptive query, SDK name, method name or code snippet related to Microsoft/Azure products, services, platforms, developer tools, frameworks, APIs or SDKs"
+          },
+          "language": {
+            "type": "string",
+            "default": null,
+            "description": "Optional parameter specifying the programming language of code snippets to retrieve. Can significantly improve search quality if provided. Eligible values: csharp javascript typescript python powershell azurecli al sql java kusto cpp go rust ruby php"
+          }
+        }
+      }
+    },
+    {
+      "name": "microsoft_docs_fetch",
+      "title": "Microsoft Docs Fetch",
+      "annotations": {
+        "title": "Microsoft Docs Fetch",
+        "readOnlyHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Fetch and convert a Microsoft Learn documentation page to markdown format. This tool retrieves the latest complete content of Microsoft documentation pages including Azure, .NET, Microsoft 365, and other Microsoft technologies.\n\n## When to Use This Tool\n- When search results provide incomplete information or truncated content\n- When you need complete step-by-step procedures or tutorials\n- When you need troubleshooting sections, prerequisites, or detailed explanations\n- When search results reference a specific page that seems highly relevant\n- For comprehensive guides that require full context\n\n## Usage Pattern\nUse this tool AFTER microsoft_docs_search when you identify specific high-value pages that need complete content. The search tool gives you an overview; this tool gives you the complete picture.\n\n## URL Requirements\n- The URL must be a valid link from the microsoft.com domain.\n\n## Output Format\nmarkdown with headings, code blocks, tables, and links preserved.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the Microsoft documentation page to read"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@microsoft/learn_mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

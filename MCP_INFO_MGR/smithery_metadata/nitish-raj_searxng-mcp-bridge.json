@@ -1,0 +1,72 @@
+{
+  "qualifiedName": "@nitish-raj/searxng-mcp-bridge",
+  "displayName": "SearXNG Bridge Server",
+  "description": "An MCP server that acts as a bridge to a SearxNG instance. Allows compatible clients to perform searches using a configured SearxNG instance.\n\nRequires the `searxngInstanceUrl` configuration to be set.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/63ab66c9-d3b4-443b-b92f-841e9997e8bd.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@nitish-raj/searxng-mcp-bridge",
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Perform a search using the configured SearxNG instance",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query string"
+          },
+          "format": {
+            "type": "string",
+            "description": "Result format (default: \"json\", options: \"json\", \"html\")"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code for search results (e.g., \"en-US\", \"fr\", \"de\")"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Categories to search in (e.g., [\"general\", \"images\", \"news\"])"
+          },
+          "safesearch": {
+            "type": "number",
+            "description": "Safe search level (0: off, 1: moderate, 2: strict)"
+          },
+          "time_range": {
+            "type": "string",
+            "description": "Time range for results (e.g., \"day\", \"week\", \"month\", \"year\")"
+          },
+          "max_results": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@nitish-raj/searxng-mcp-bridge/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "searxngInstanceUrl"
+        ],
+        "properties": {
+          "searxngInstanceUrl": {
+            "type": "string",
+            "description": "Required: The full URL of the SearxNG instance the bridge should connect to.\n"
+          }
+        }
+      }
+    }
+  ]
+}

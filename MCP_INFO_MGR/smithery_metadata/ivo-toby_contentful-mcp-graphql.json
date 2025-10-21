@@ -1,0 +1,208 @@
+{
+  "qualifiedName": "@ivo-toby/contentful-mcp-graphql",
+  "displayName": "Contentful GraphQL Server",
+  "description": "Enable efficient and flexible content retrieval from Contentful using GraphQL queries. Explore your content model schema, generate example queries, and execute custom queries with smart pagination and secure read-only access. Simplify content delivery and schema exploration for your applications.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.contentful.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "graphql_query",
+      "description": "IMPORTANT: Before using this tool, you MUST first use graphql_list_content_types and graphql_get_content_type_schema to understand the available content types and their structure. Execute a GraphQL query against the Contentful GraphQL API. This tool allows you to use Contentful's powerful GraphQL interface to retrieve content in a more flexible and efficient way than REST API calls. The space ID and CDA token are automatically retrieved from environment variables.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The GraphQL query string to execute (must be a valid GraphQL query)"
+          },
+          "spaceId": {
+            "type": "string",
+            "description": "Optional override for the space ID (defaults to SPACE_ID environment variable)"
+          },
+          "variables": {
+            "type": "object",
+            "description": "Optional variables for the GraphQL query",
+            "additionalProperties": true
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "Optional override for the environment ID (defaults to ENVIRONMENT_ID environment variable or 'master')"
+          }
+        }
+      }
+    },
+    {
+      "name": "graphql_list_content_types",
+      "description": "IMPORTANT: Use this tool FIRST before attempting to write any GraphQL queries. This tool lists all available content types in the Contentful space's GraphQL schema. You should always use this tool to understand what content types are available before formulating GraphQL queries. The space ID and CDA token are automatically retrieved from environment variables.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "description": "Optional override for the space ID (defaults to SPACE_ID environment variable)"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "Optional override for the environment ID (defaults to ENVIRONMENT_ID environment variable or 'master')"
+          }
+        }
+      }
+    },
+    {
+      "name": "graphql_get_content_type_schema",
+      "description": "IMPORTANT: Use this tool AFTER using graphql_list_content_types to get a detailed schema for a specific content type. This tool provides all fields, their types, and relationships for a content type. You should ALWAYS use this tool to understand the structure of a content type before creating a query for it. The space ID and CDA token are automatically retrieved from environment variables.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "contentType"
+        ],
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "description": "Optional override for the space ID (defaults to SPACE_ID environment variable)"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The name of the content type to fetch schema for (e.g., 'BlogPost')"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "Optional override for the environment ID (defaults to ENVIRONMENT_ID environment variable or 'master')"
+          }
+        }
+      }
+    },
+    {
+      "name": "graphql_get_example",
+      "description": "IMPORTANT: Use this tool AFTER using graphql_get_content_type_schema to see example GraphQL queries for a specific content type. Learning from these examples will help you construct valid queries. The space ID and CDA token are automatically retrieved from environment variables.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "contentType"
+        ],
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "description": "Optional override for the space ID (defaults to SPACE_ID environment variable)"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The name of the content type for the example query"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "Optional override for the environment ID (defaults to ENVIRONMENT_ID environment variable or 'master')"
+          },
+          "includeRelations": {
+            "type": "boolean",
+            "description": "Whether to include related content types in the example (defaults to false)"
+          }
+        }
+      }
+    },
+    {
+      "name": "smart_search",
+      "description": "Perform intelligent search across multiple content types using cached metadata. This tool automatically searches all text fields in your content types for the given query term. Much faster and easier than manually chaining multiple GraphQL calls.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum number of results per content type (default: 5)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The search term to look for across content types"
+          },
+          "spaceId": {
+            "type": "string",
+            "description": "Optional override for the space ID (defaults to SPACE_ID environment variable)"
+          },
+          "contentTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: Limit search to specific content types (default: search all)"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "Optional override for the environment ID (defaults to ENVIRONMENT_ID environment variable or 'master')"
+          }
+        }
+      }
+    },
+    {
+      "name": "build_search_query",
+      "description": "Generate a GraphQL search query for a specific content type based on cached schema information. Returns the query string and variables needed to search text fields in the content type.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "contentType",
+          "searchTerm"
+        ],
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: Specific fields to search (default: all searchable text fields)"
+          },
+          "spaceId": {
+            "type": "string",
+            "description": "Optional override for the space ID (defaults to SPACE_ID environment variable)"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "The term to search for"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The content type to build a search query for"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "Optional override for the environment ID (defaults to ENVIRONMENT_ID environment variable or 'master')"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@ivo-toby/contentful-mcp-graphql/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "contentfulDeliveryAccessToken",
+          "spaceId"
+        ],
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "description": "Your Contentful Space ID"
+          },
+          "contentfulDeliveryAccessToken": {
+            "type": "string",
+            "description": "Your Delivery API token from Contentful"
+          }
+        }
+      }
+    }
+  ]
+}

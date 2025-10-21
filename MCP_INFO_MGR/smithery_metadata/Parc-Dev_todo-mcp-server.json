@@ -1,0 +1,555 @@
+{
+  "qualifiedName": "@Parc-Dev/todo-mcp-server",
+  "displayName": "todo-mcp",
+  "description": "Organize tasks and subtasks with fast create, update, complete, and reopen actions. Filter views by today, upcoming, overdue, or all to stay focused. Recover mistakes with soft delete and restore.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Parc-Dev/todo-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_tasks",
+      "title": "List Tasks",
+      "description": "List tasks with optional filters (today, upcoming, overdue, all)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "filter": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "enum": [
+                      "today",
+                      "upcoming",
+                      "overdue",
+                      "all"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter tasks by due date"
+          },
+          "isDeleted": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Include deleted tasks"
+          },
+          "isCompleted": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by completion status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_task",
+      "title": "Create Task",
+      "description": "Create a new task with title, description, due date, etc. If dueDate is not provided, defaults to today.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "place": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Location"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Task title"
+          },
+          "dueDate": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Due date (defaults to today if not provided)"
+          },
+          "dueTime": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Due time (HH:MM)"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Task description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_task",
+      "title": "Update Task",
+      "description": "Update an existing task",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "place": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "New location"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "New title"
+          },
+          "taskId": {
+            "type": "integer",
+            "description": "Task ID",
+            "exclusiveMinimum": 0
+          },
+          "dueDate": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "New due date"
+          },
+          "dueTime": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "New due time"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "New description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "complete_task",
+      "title": "Complete Task",
+      "description": "Mark a task as completed (automatically completes all subtasks)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Task ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reopen_task",
+      "title": "Reopen Task",
+      "description": "Reopen a completed task",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Task ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_task",
+      "title": "Delete Task",
+      "description": "Soft delete a task (recoverable)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Task ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "undelete_task",
+      "title": "Restore Task",
+      "description": "Restore a deleted task",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Task ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_subtask",
+      "title": "Create SubTask",
+      "description": "Add a subtask to an existing task",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId",
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Subtask title"
+          },
+          "taskId": {
+            "type": "integer",
+            "description": "Parent task ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_subtask",
+      "title": "Update SubTask",
+      "description": "Update a subtask's title",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId",
+          "subTaskId",
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "New subtask title"
+          },
+          "taskId": {
+            "type": "integer",
+            "description": "Parent task ID",
+            "exclusiveMinimum": 0
+          },
+          "subTaskId": {
+            "type": "integer",
+            "description": "Subtask ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "complete_subtask",
+      "title": "Complete SubTask",
+      "description": "Mark a subtask as completed",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId",
+          "subTaskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Parent task ID",
+            "exclusiveMinimum": 0
+          },
+          "subTaskId": {
+            "type": "integer",
+            "description": "Subtask ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reopen_subtask",
+      "title": "Reopen SubTask",
+      "description": "Reopen a completed subtask",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId",
+          "subTaskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Parent task ID",
+            "exclusiveMinimum": 0
+          },
+          "subTaskId": {
+            "type": "integer",
+            "description": "Subtask ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_subtask",
+      "title": "Delete SubTask",
+      "description": "Soft delete a subtask (recoverable)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId",
+          "subTaskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Parent task ID",
+            "exclusiveMinimum": 0
+          },
+          "subTaskId": {
+            "type": "integer",
+            "description": "Subtask ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "undelete_subtask",
+      "title": "Restore SubTask",
+      "description": "Restore a deleted subtask",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId",
+          "subTaskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "description": "Parent task ID",
+            "exclusiveMinimum": 0
+          },
+          "subTaskId": {
+            "type": "integer",
+            "description": "Subtask ID",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Parc-Dev/todo-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "todoApiBaseUrl",
+          "todoApiAccessToken"
+        ],
+        "properties": {
+          "todoApiBaseUrl": {
+            "type": "string",
+            "description": "Base URL of your Todo API server"
+          },
+          "todoApiAccessToken": {
+            "type": "string",
+            "description": "Access token for Todo API authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

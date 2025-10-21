@@ -1,0 +1,202 @@
+{
+  "qualifiedName": "@mackenly/mcp-fathom-analytics",
+  "displayName": "Fathom Analytics",
+  "description": "Access your Fathom Analytics data effortlessly through an AI assistant. Retrieve account details, manage sites, and generate insightful reports with real-time visitor tracking. Enhance your analytics experience with flexible tools designed for seamless integration.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/usefathom.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-account",
+      "description": "Get Fathom Analytics account information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-sites",
+      "description": "List all Fathom Analytics sites on the account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Optional limit on the number of sites to return",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-events",
+      "description": "List all events for a Fathom Analytics site (automatically handles pagination)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "site_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Optional limit on the number of events to return",
+            "exclusiveMinimum": 0
+          },
+          "site_id": {
+            "type": "string",
+            "description": "ID of the site to retrieve events for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-aggregation",
+      "description": "Get aggregated analytics data from Fathom",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entity",
+          "entity_id",
+          "aggregates",
+          "date_from",
+          "date_to"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Limit on number of results",
+            "exclusiveMinimum": 0
+          },
+          "entity": {
+            "enum": [
+              "pageview",
+              "event"
+            ],
+            "type": "string",
+            "description": "The entity to aggregate (pageview or event)"
+          },
+          "date_to": {
+            "type": "string",
+            "description": "End date (e.g., 2025-12-31 23:59:59 or 2025-12-31)"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "property",
+                "operator",
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "operator": {
+                  "enum": [
+                    "is",
+                    "is not",
+                    "is like",
+                    "is not like"
+                  ],
+                  "type": "string"
+                },
+                "property": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of filter objects"
+          },
+          "sort_by": {
+            "type": "string",
+            "description": "Field to sort by (e.g., pageviews:desc)"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone for date calculations (default: UTC)"
+          },
+          "date_from": {
+            "type": "string",
+            "description": "Start date (e.g., 2025-01-01 00:00:00 or 2025-01-01)"
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "ID of the entity (site ID or event ID)"
+          },
+          "aggregates": {
+            "type": "string",
+            "description": "Comma-separated list of aggregates to include (visits,uniques,pageviews,avg_duration,bounce_rate,conversions,unique_conversions,value)"
+          },
+          "date_grouping": {
+            "enum": [
+              "hour",
+              "day",
+              "month",
+              "year"
+            ],
+            "type": "string",
+            "description": "Optional date grouping"
+          },
+          "field_grouping": {
+            "type": "string",
+            "description": "Comma-separated fields to group by (e.g., hostname,pathname)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-current-visitors",
+      "description": "Get current visitors for a Fathom Analytics site",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "site_id"
+        ],
+        "properties": {
+          "site_id": {
+            "type": "string",
+            "description": "ID of the site to retrieve current visitors for"
+          },
+          "detailed": {
+            "type": "boolean",
+            "description": "Whether to include detailed content and referrer information"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@mackenly/mcp-fathom-analytics/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "fathomApiKey"
+        ],
+        "properties": {
+          "fathomApiKey": {
+            "type": "string",
+            "description": "Your Fathom Analytics API key to authenticate requests"
+          }
+        }
+      }
+    }
+  ]
+}

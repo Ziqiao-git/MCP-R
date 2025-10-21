@@ -1,0 +1,436 @@
+{
+  "qualifiedName": "@sylweriusz/mcp-neo4j-memory-server",
+  "displayName": "Neo4j Knowledge Graph Memory",
+  "description": "Store and retrieve user-specific memories across sessions using Neo4j graph database. This MCP memory infrastructure enables AI assistants to maintain context, recall past interactions, and manage memories with semantic search capabilities. Transform your agent's conversations into a searchable memory bank with entities and relationships.\n\n### Key capabilities:\n- **Store memories** persistently across multiple sessions\n- **Retrieve context** with hybrid semantic and exact search  \n- **Manage memory banks** with multi-database project isolation\n- **Recall information** through vector embeddings and graph traversal\n- **Memory extension** for AI agents with temporal tracking\n- **Knowledge graph** format with intelligent relationships\n\nPerfect for building AI assistants with long-term memory, maintaining user context, and creating memory systems that remember preferences and past interactions. Self-hosted memory infrastructure built on Neo4j for reliability and performance.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/91f58d99-34d2-4470-a6d2-b860b845103f.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@sylweriusz/mcp-neo4j-memory-server",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "memory_store",
+      "description": "Create memories with observations and relationships. **Pattern**: Search→Create→Connect. **Observations**: Self-contained context units (what/when/where/why/impact). **LocalIds**: Cross-references within THIS request only. **Limits**: 50 memories, 200 relations. **Quality**: Each observation = complete detective notes answering setting/action/actors/evidence/impact/significance.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "memories"
+        ],
+        "properties": {
+          "options": {
+            "type": "object",
+            "properties": {
+              "maxMemories": {
+                "type": "number",
+                "description": "Batch size limit per request (default: 50)"
+              },
+              "maxRelations": {
+                "type": "number",
+                "description": "Relations limit per request (default: 200)"
+              },
+              "transactional": {
+                "type": "boolean",
+                "description": "All-or-nothing behavior (default: true)"
+              },
+              "validateReferences": {
+                "type": "boolean",
+                "description": "Check all target IDs exist (default: true)"
+              },
+              "allowDuplicateRelations": {
+                "type": "boolean",
+                "description": "Skip/error on duplicates (default: false)"
+              }
+            },
+            "description": "Store options",
+            "additionalProperties": false
+          },
+          "memories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "memoryType",
+                "observations"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Human-readable identifier. Be specific: 'OAuth2 Implementation' not 'Auth'. Include searchable keywords."
+                },
+                "localId": {
+                  "type": "string",
+                  "description": "Temporary ID for relations within THIS request. Not reusable across operations. Format: short descriptive names."
+                },
+                "metadata": {
+                  "type": "object",
+                  "description": "Static properties (JSON). Use for: project, language, status, tags, dates, version. **Narrative content goes in observations**.",
+                  "additionalProperties": {}
+                },
+                "memoryType": {
+                  "type": "string",
+                  "description": "Category: knowledge (facts), decision (choices), issue (problems), implementation (code), architecture (structure), pattern (recurring solutions), insight (discoveries)."
+                },
+                "observations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Context-rich narratives. Each = complete story with setting/action/actors/evidence/impact/significance. **One insight per session** - don't fragment thoughts."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of memories to create. **Always search first** to avoid duplicates. Each memory = one focused concept."
+          },
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to",
+                "type"
+              ],
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "Target localId or existing memoryId"
+                },
+                "from": {
+                  "type": "string",
+                  "description": "Source localId or existing memoryId"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Relationship type: INFLUENCES, DEPENDS_ON, EXTENDS, IMPLEMENTS, CONTAINS, etc."
+                },
+                "source": {
+                  "enum": [
+                    "agent",
+                    "user",
+                    "system"
+                  ],
+                  "type": "string",
+                  "description": "defaults to 'agent'"
+                },
+                "strength": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0.1,
+                  "description": "0.1-1.0, defaults to 0.5"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Connect memories: from/to (localId or memoryId), type (semantic meaning), strength (0.1-1.0 importance)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory_find",
+      "description": "Unified search/retrieval. **Query**: text, IDs array, or \"*\". **Context**: minimal (lists), full (everything), relations-only (graph). **Temporal**: createdAfter \"7d\"/\"2024-01-15\". **Graph**: traverseFrom + relations + depth. **Always search before creating**. Updates access timestamps for analytics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Max results (default: 10). **Increase for comprehensive searches** - use 50+ for full exploration."
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Search text, array of memory IDs, or '*' for all. **Semantic search**: finds meaning, not just keywords."
+          },
+          "orderBy": {
+            "enum": [
+              "relevance",
+              "created",
+              "modified",
+              "accessed"
+            ],
+            "type": "string",
+            "description": "Sort order (default: 'relevance')"
+          },
+          "maxDepth": {
+            "type": "number",
+            "maximum": 5,
+            "minimum": 1,
+            "description": "Graph traversal depth (1-5, default: 2). **Higher = broader discovery**, but slower performance."
+          },
+          "threshold": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0.01,
+            "description": "Semantic match minimum (0.1-1.0). **Lower = more results**. 0.1 = permissive, 0.8 = strict matching."
+          },
+          "memoryTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by type array. **Leave empty for all types**. Common: ['knowledge', 'decision', 'implementation']."
+          },
+          "createdAfter": {
+            "type": "string",
+            "description": "Date filter. **ISO** ('2024-01-15') or **relative** ('7d', '30d', '3m', '1y'). Finds recent additions."
+          },
+          "traverseFrom": {
+            "type": "string",
+            "description": "Memory ID to start graph exploration. **Discovers connected knowledge** through relationships."
+          },
+          "accessedSince": {
+            "type": "string",
+            "description": "ISO date or relative"
+          },
+          "createdBefore": {
+            "type": "string",
+            "description": "ISO date or relative"
+          },
+          "modifiedSince": {
+            "type": "string",
+            "description": "ISO date or relative"
+          },
+          "includeContext": {
+            "enum": [
+              "minimal",
+              "full",
+              "relations-only"
+            ],
+            "type": "string",
+            "description": "Detail level: **minimal** (id/name/type only - for lists), **full** (everything - default work mode), **relations-only** (graph analysis only)."
+          },
+          "traverseDirection": {
+            "enum": [
+              "outbound",
+              "inbound",
+              "both"
+            ],
+            "type": "string",
+            "description": "Traversal direction (default: 'both')"
+          },
+          "traverseRelations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Relation types to follow. **Empty = all types**. Common: ['INFLUENCES', 'DEPENDS_ON', 'IMPLEMENTS']."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory_modify",
+      "description": "Update/delete memories, manage observations/relations. **Operations**: update (properties), delete (cascade), add-observations (append insights), create-relations (link existing). **Atomic**: All succeed or all fail. **Quality**: One substantial observation per session - complete context stories, not fragments.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Single memory ID to modify. **Use 'targets' for batch operations** to maintain atomicity."
+          },
+          "changes": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "New memory name"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "New metadata (replaces existing)",
+                "additionalProperties": {}
+              },
+              "memoryType": {
+                "type": "string",
+                "description": "New memory type"
+              }
+            },
+            "description": "For update: new name/type/metadata. **Preserves existing observations** - use add-observations to append.",
+            "additionalProperties": false
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "cascadeDelete": {
+                "type": "boolean",
+                "description": "Delete related observations/relations (default: true)"
+              },
+              "createIfNotExists": {
+                "type": "boolean",
+                "description": "For database operations"
+              },
+              "validateObservationIds": {
+                "type": "boolean",
+                "description": "Validate observation IDs for delete (default: true)"
+              }
+            },
+            "description": "Modify options",
+            "additionalProperties": false
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Multiple IDs for batch operations"
+          },
+          "operation": {
+            "enum": [
+              "update",
+              "delete",
+              "batch-delete",
+              "add-observations",
+              "delete-observations",
+              "create-relations",
+              "update-relations",
+              "delete-relations"
+            ],
+            "type": "string",
+            "description": "Action type: **update** (properties), **delete** (cascade), **add-observations** (append), **create-relations** (connect existing)."
+          },
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to",
+                "type"
+              ],
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "Target memory ID"
+                },
+                "from": {
+                  "type": "string",
+                  "description": "Source memory ID"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Relationship type: INFLUENCES, DEPENDS_ON, EXTENDS, IMPLEMENTS, CONTAINS, etc."
+                },
+                "source": {
+                  "enum": [
+                    "agent",
+                    "user",
+                    "system"
+                  ],
+                  "type": "string",
+                  "description": "For create operations"
+                },
+                "strength": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0.1,
+                  "description": "For create/update operations (0.1-1.0)"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Relationships to create/update/delete between existing memories."
+          },
+          "observations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "memoryId",
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "For add: new observation text(s) - **typically one per session**. For delete: observation IDs to remove."
+                },
+                "memoryId": {
+                  "type": "string",
+                  "description": "Target memory ID"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "For add-observations: new insights to append. **One substantial observation per session** - complete context stories."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "database_switch",
+      "description": "Switch active database context (creates if missing). ALL subsequent operations use this DB. Call once per session/project. Like 'cd' for memories. **Session-scoped**: Establishes context for entire workflow, not per-operation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName"
+        ],
+        "properties": {
+          "databaseName": {
+            "type": "string",
+            "description": "Target database name. **Will be created if doesn't exist**. Use project names for isolation."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@sylweriusz/mcp-neo4j-memory-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "neo4jUri": {
+            "type": "string",
+            "default": "",
+            "description": "Neo4j connection URI (optional - tools can be listed without database)"
+          },
+          "neo4jDatabase": {
+            "type": "string",
+            "default": "neo4j",
+            "description": "Neo4j database name (optional)"
+          },
+          "neo4jPassword": {
+            "type": "string",
+            "default": "",
+            "description": "Password for Neo4j authentication (optional)"
+          },
+          "neo4jUsername": {
+            "type": "string",
+            "default": "",
+            "description": "Username for Neo4j authentication (optional)"
+          }
+        }
+      }
+    }
+  ]
+}

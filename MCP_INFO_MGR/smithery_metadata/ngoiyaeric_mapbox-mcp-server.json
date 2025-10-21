@@ -1,0 +1,361 @@
+{
+  "qualifiedName": "@ngoiyaeric/mapbox-mcp-server",
+  "displayName": "Mapbox MCP Server",
+  "description": "Integrate Mapbox's powerful navigation and search capabilities into your applications. Access directions, travel matrices, and geocoding services seamlessly. Enhance your projects with real-time mapping functionalities using this server.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/console.mapbox.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "mapbox_directions",
+      "description": "Get navigation route between two points",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coordinates"
+        ],
+        "properties": {
+          "profile": {
+            "enum": [
+              "driving-traffic",
+              "driving",
+              "walking",
+              "cycling"
+            ],
+            "type": "string",
+            "default": "driving-traffic",
+            "description": "Navigation mode"
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "longitude",
+                "latitude"
+              ],
+              "properties": {
+                "latitude": {
+                  "type": "number",
+                  "maximum": 90,
+                  "minimum": -90,
+                  "description": "Latitude"
+                },
+                "longitude": {
+                  "type": "number",
+                  "maximum": 180,
+                  "minimum": -180,
+                  "description": "Longitude"
+                }
+              }
+            },
+            "description": "Array of coordinates"
+          }
+        }
+      }
+    },
+    {
+      "name": "mapbox_directions_by_places",
+      "description": "Get navigation route between multiple places using their names",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "places"
+        ],
+        "properties": {
+          "places": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2,
+            "description": "Array of place names to route between"
+          },
+          "profile": {
+            "enum": [
+              "driving-traffic",
+              "driving",
+              "walking",
+              "cycling"
+            ],
+            "type": "string",
+            "default": "driving",
+            "description": "Navigation mode"
+          },
+          "language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$",
+            "description": "Language for geocoding results"
+          }
+        }
+      }
+    },
+    {
+      "name": "mapbox_matrix",
+      "description": "Calculate travel time and distance matrices between coordinates",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coordinates"
+        ],
+        "properties": {
+          "profile": {
+            "enum": [
+              "driving",
+              "walking",
+              "cycling"
+            ],
+            "type": "string",
+            "default": "driving",
+            "description": "Navigation mode"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "description": "Indices of source coordinates"
+          },
+          "bearings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "angle",
+                "deviation"
+              ],
+              "properties": {
+                "angle": {
+                  "type": "number",
+                  "maximum": 360,
+                  "minimum": 0,
+                  "description": "Angle in degrees from true north"
+                },
+                "deviation": {
+                  "type": "number",
+                  "maximum": 180,
+                  "minimum": 0,
+                  "description": "Allowed deviation in degrees"
+                }
+              }
+            },
+            "description": "Bearings for coordinates"
+          },
+          "depart_at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+            "description": "Departure time in ISO 8601 format"
+          },
+          "approaches": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "unrestricted",
+                "curb"
+              ],
+              "type": "string"
+            },
+            "description": "Approaches to coordinates"
+          },
+          "annotations": {
+            "enum": [
+              "duration",
+              "distance",
+              "duration,distance"
+            ],
+            "type": "string",
+            "default": "duration,distance",
+            "description": "Type of matrix to return"
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "longitude",
+                "latitude"
+              ],
+              "properties": {
+                "latitude": {
+                  "type": "number",
+                  "maximum": 90,
+                  "minimum": -90,
+                  "description": "Latitude"
+                },
+                "longitude": {
+                  "type": "number",
+                  "maximum": 180,
+                  "minimum": -180,
+                  "description": "Longitude"
+                }
+              }
+            },
+            "maxItems": 25,
+            "minItems": 2,
+            "description": "Array of coordinates"
+          },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "description": "Indices of destination coordinates"
+          },
+          "fallback_speed": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Speed for direct path calculation when no route exists"
+          }
+        }
+      }
+    },
+    {
+      "name": "mapbox_matrix_by_places",
+      "description": "Calculate travel time and distance matrices between places using their names",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "places"
+        ],
+        "properties": {
+          "places": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 25,
+            "minItems": 2,
+            "description": "Array of place names"
+          },
+          "profile": {
+            "enum": [
+              "driving",
+              "walking",
+              "cycling"
+            ],
+            "type": "string",
+            "default": "driving",
+            "description": "Navigation mode"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "description": "Indices of source places"
+          },
+          "language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$",
+            "description": "Language for geocoding results"
+          },
+          "depart_at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+            "description": "Departure time in ISO 8601 format"
+          },
+          "annotations": {
+            "enum": [
+              "duration",
+              "distance",
+              "duration,distance"
+            ],
+            "type": "string",
+            "default": "duration,distance",
+            "description": "Type of matrix to return"
+          },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "description": "Indices of destination places"
+          },
+          "fallback_speed": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Speed for direct path calculation when no route exists"
+          }
+        }
+      }
+    },
+    {
+      "name": "mapbox_geocoding",
+      "description": "Search for places and convert addresses into coordinates",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "searchText"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "maximum": 10,
+            "minimum": 1,
+            "description": "Limit the number of results"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "country",
+                "region",
+                "postcode",
+                "district",
+                "place",
+                "locality",
+                "neighborhood",
+                "address",
+                "poi"
+              ],
+              "type": "string"
+            },
+            "description": "Filter results by feature types"
+          },
+          "language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$",
+            "description": "Language of the search results"
+          },
+          "fuzzyMatch": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable fuzzy matching"
+          },
+          "searchText": {
+            "type": "string",
+            "description": "The search text to geocode"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@ngoiyaeric/mapbox-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "mapboxAccessToken"
+        ],
+        "properties": {
+          "mapboxAccessToken": {
+            "type": "string",
+            "default": "your_api_key",
+            "description": "Mapbox API access token"
+          }
+        }
+      }
+    }
+  ]
+}

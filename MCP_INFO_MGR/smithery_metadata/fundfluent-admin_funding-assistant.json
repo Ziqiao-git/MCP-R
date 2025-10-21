@@ -1,0 +1,64 @@
+{
+  "qualifiedName": "@fundfluent-admin/funding-assistant",
+  "displayName": "FluentLab Funding Assistant",
+  "description": "Access a comprehensive suite of tools and resources to help startups and small businesses secure funding. Find matching opportunities, manage required documents, and streamline your application process with our easy-to-use API.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/fundfluent.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-funding-options",
+      "title": "Get Funding Options",
+      "annotations": {
+        "title": "Funding Opportunities Search Engine",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Retrieve available funding opportunities with detailed information including name and description. Use this tool when users need to explore available grants, funds, or financing opportunities. The results include program names, descriptions, eligibility criteria, and application details.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "limit",
+          "page"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "exclusiveMinimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@fundfluent-admin/funding-assistant/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "FLUENTLAB_MCP_API_URL": {
+            "type": "string",
+            "description": "Optional URL for the FluentLab MCP API"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,446 @@
+{
+  "qualifiedName": "@huangmy157/ddd",
+  "displayName": "SFR Store",
+  "description": "Search SFR’s catalog using natural language and refine results with filters. View product and variant details, then build and update carts with shipping, discounts, and checkout. Get quick answers to store policies and verify the store domain for peace of mind.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@huangmy157/ddd",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_shop_catalog",
+      "description": "Search for products from the online store, hosted on Shopify.\n\nThis tool can be used to search for products using natural language queries, specific filter criteria, or both.\n\nBest practices:\n- Searches return available_filters which can be used for refined follow-up searches\n- When filtering, use ONLY the filters from available_filters in follow-up searches\n- For specific filter searches (category, variant option, product type, etc.), use simple terms without the filter name (e.g., \"red\" not \"red color\")\n- For filter-specific searches (e.g., \"find burton in snowboards\" or \"show me all available products in gray / green color\"), use a two-step approach:\n  1. Perform a normal search to discover available filters\n  2. If relevant filters are returned, do a second search using the proper filter (productType, category, variantOption, etc.) with just the specific search term\n- Results are paginated, with initial results limited to improve experience\n- Use the after parameter with endCursor to fetch additional pages when users request more results\n\nThe response includes product details, available variants, filter options, and pagination info.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query",
+          "context",
+          "storeDomain"
+        ],
+        "properties": {
+          "after": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "query": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tag": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "object",
+                  "properties": {
+                    "max": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "category": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "available": {
+                  "type": "boolean"
+                },
+                "productType": {
+                  "type": "string"
+                },
+                "productVendor": {
+                  "type": "string"
+                },
+                "variantOption": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "productMetafield": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "variantMetafield": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "taxonomyMetafield": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "storeDomain": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_cart",
+      "description": "Get the cart including items, shipping options, discount info, and checkout url for a given cart id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cart_id",
+          "storeDomain"
+        ],
+        "properties": {
+          "cart_id": {
+            "type": "string"
+          },
+          "storeDomain": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_cart",
+      "description": "Perform updates to a cart, including adding/removing/updating line items, buyer information, shipping details, discount codes, gift cards and notes in one consolidated call. Shipping options become available after adding items and delivery address. When creating a new cart, only addItems is required.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "storeDomain"
+        ],
+        "properties": {
+          "note": {
+            "type": "string"
+          },
+          "cart_id": {
+            "type": "string"
+          },
+          "add_items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "product_variant_id",
+                "quantity"
+              ],
+              "properties": {
+                "quantity": {
+                  "type": "number"
+                },
+                "product_variant_id": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "storeDomain": {
+            "type": "string"
+          },
+          "update_items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "quantity"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "buyer_identity": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "country_code": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "discount_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "gift_card_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remove_line_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "delivery_addresses_to_add": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "selected": {
+                  "type": "boolean"
+                },
+                "delivery_address": {
+                  "type": "object",
+                  "properties": {
+                    "zip": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    },
+                    "province_code": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "selected_delivery_options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "group_id",
+                "option_handle"
+              ],
+              "properties": {
+                "group_id": {
+                  "type": "string"
+                },
+                "option_handle": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "delivery_addresses_to_replace": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "selected": {
+                  "type": "boolean"
+                },
+                "delivery_address": {
+                  "type": "object",
+                  "properties": {
+                    "zip": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    },
+                    "province_code": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_shop_policies_and_faqs",
+      "description": "Used to get facts about the stores policies, products, or services.\nSome examples of questions you can ask are:\n  - What is your return policy?\n  - What is your shipping policy?\n  - What is your phone number?\n  - What are your hours of operation?\"\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query",
+          "storeDomain"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string"
+          },
+          "storeDomain": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_product_details",
+      "description": "Look up a product by ID and optionally specify variant options to select a specific variant.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "product_id",
+          "storeDomain"
+        ],
+        "properties": {
+          "options": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "product_id": {
+            "type": "string"
+          },
+          "storeDomain": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_store_domain",
+      "description": "Verify the store domain. You can call this tool to verify that a store domain is valid.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "storeDomain"
+        ],
+        "properties": {
+          "storeDomain": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@huangmy157/ddd/mcp",
+      "configSchema": {}
+    }
+  ]
+}

@@ -1,0 +1,354 @@
+{
+  "qualifiedName": "@tembo-io/mcp-server-tembo",
+  "displayName": "Tembo Cloud API",
+  "description": "Provide a standardized interface for integrating with the Tembo Cloud platform.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/tembo.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_all_apps",
+      "description": "Get attributes for all apps",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_app",
+      "description": "Get the attributes of a single App",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The app type to get details for"
+          }
+        }
+      }
+    },
+    {
+      "name": "ask_tembo",
+      "description": "Ask a question to Tembo Docs",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The ask query. For example, \"how to create a Tembo instance\""
+          }
+        }
+      }
+    },
+    {
+      "name": "get_instance_schema",
+      "description": "Get the json-schema for an instance",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_all_instances",
+      "description": "Get all Tembo instances in an organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "org_id"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string",
+            "description": "Organization id for the request"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_instance",
+      "description": "Create a new Tembo instance",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "instance_name",
+          "stack_type",
+          "cpu",
+          "memory",
+          "storage",
+          "environment"
+        ],
+        "properties": {
+          "cpu": {
+            "enum": [
+              "0.25",
+              "0.5",
+              "1",
+              "2",
+              "4",
+              "6",
+              "8",
+              "12",
+              "16",
+              "32"
+            ],
+            "type": "string"
+          },
+          "spot": {
+            "type": "boolean"
+          },
+          "memory": {
+            "enum": [
+              "512Mi",
+              "1Gi",
+              "2Gi",
+              "4Gi",
+              "8Gi",
+              "12Gi",
+              "16Gi",
+              "24Gi",
+              "32Gi",
+              "64Gi"
+            ],
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string",
+            "description": "Organization ID that owns the Tembo instance"
+          },
+          "storage": {
+            "enum": [
+              "10Gi",
+              "50Gi",
+              "100Gi",
+              "200Gi",
+              "300Gi",
+              "400Gi",
+              "500Gi",
+              "1Ti",
+              "1.5Ti",
+              "2Ti"
+            ],
+            "type": "string"
+          },
+          "replicas": {
+            "type": "integer"
+          },
+          "stack_type": {
+            "enum": [
+              "Analytics",
+              "Geospatial",
+              "MachineLearning",
+              "MessageQueue",
+              "MongoAlternative",
+              "OLTP",
+              "ParadeDB",
+              "Standard",
+              "Timeseries",
+              "VectorDB"
+            ],
+            "type": "string"
+          },
+          "environment": {
+            "enum": [
+              "dev",
+              "test",
+              "prod"
+            ],
+            "type": "string"
+          },
+          "instance_name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_instance",
+      "description": "Get an existing Tembo instance",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "instance_id"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string",
+            "description": "Organization ID that owns the instance"
+          },
+          "instance_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_instance",
+      "description": "Delete an existing Tembo instance",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "instance_id"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string",
+            "description": "Organization id of the instance to delete"
+          },
+          "instance_id": {
+            "type": "string",
+            "description": "Delete this instance id"
+          }
+        }
+      }
+    },
+    {
+      "name": "patch_instance",
+      "description": "Update attributes on an existing Tembo instance",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "instance_id"
+        ],
+        "properties": {
+          "cpu": {
+            "enum": [
+              "0.25",
+              "0.5",
+              "1",
+              "2",
+              "4",
+              "6",
+              "8",
+              "12",
+              "16",
+              "32"
+            ],
+            "type": "string"
+          },
+          "spot": {
+            "type": "boolean"
+          },
+          "memory": {
+            "enum": [
+              "512Mi",
+              "1Gi",
+              "2Gi",
+              "4Gi",
+              "8Gi",
+              "12Gi",
+              "16Gi",
+              "24Gi",
+              "32Gi",
+              "64Gi"
+            ],
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string",
+            "description": "Organization ID that owns the instance"
+          },
+          "storage": {
+            "enum": [
+              "10Gi",
+              "50Gi",
+              "100Gi",
+              "200Gi",
+              "300Gi",
+              "400Gi",
+              "500Gi",
+              "1Ti",
+              "1.5Ti",
+              "2Ti"
+            ],
+            "type": "string"
+          },
+          "replicas": {
+            "type": "integer"
+          },
+          "environment": {
+            "enum": [
+              "dev",
+              "test",
+              "prod"
+            ],
+            "type": "string"
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "instance_name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "restore_instance",
+      "description": "Restore a Tembo instance",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "instance_name",
+          "restore"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string",
+            "description": "Organization ID that owns the Tembo instance"
+          },
+          "restore": {
+            "type": "object",
+            "required": [
+              "instance_id"
+            ],
+            "properties": {
+              "instance_id": {
+                "type": "string"
+              },
+              "recovery_target_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "instance_name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@tembo-io/mcp-server-tembo/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "temboApiKey"
+        ],
+        "properties": {
+          "temboApiKey": {
+            "type": "string",
+            "description": "The API key for the Tembo Cloud platform."
+          }
+        }
+      }
+    }
+  ]
+}

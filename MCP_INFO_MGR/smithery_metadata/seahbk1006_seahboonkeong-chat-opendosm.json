@@ -1,0 +1,357 @@
+{
+  "qualifiedName": "@seahbk1006/seahboonkeong-chat-opendosm",
+  "displayName": "Seah Boon Keong - Chat with OpenDOSM Datasets",
+  "description": "MCP for public datasets OpenDOSM (Developed by Seah Boon Keong)\n\nWhat it delivers:\n- 163 curated datasets (Department of Statistics Malaysia + sources)\n- Programmatic tools: discover, query, get latest, correlation, ARIMA forecasts (with fallback)\n\nBenefits: rapid analyst onboarding, reproducible workflows, quick diagnostics and forecast prototypes, and easy visual outputs for stakeholder reporting.\n\nSample Queries\n1. What are the monthly CPI trends overall and by division (food, transport, housing)?\n2. Which items are driving food inflation vs core inflation?\n3. How sensitive is GDP growth to changes in key subcomponents (investment, consumption)?\n",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@seahbk1006/seahboonkeong-chat-opendosm",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_datasets",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_dataset_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dataset_code"
+        ],
+        "properties": {
+          "dataset_code": {
+            "type": "string",
+            "title": "Dataset Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "query_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dataset_code"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 20
+          },
+          "filters": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filters",
+            "default": null
+          },
+          "dataset_code": {
+            "type": "string",
+            "title": "Dataset Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_latest_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dataset_code"
+        ],
+        "properties": {
+          "filters": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filters",
+            "default": null
+          },
+          "dataset_code": {
+            "type": "string",
+            "title": "Dataset Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "correlation",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dataset_code_x",
+          "dataset_code_y"
+        ],
+        "properties": {
+          "on": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On",
+            "default": null
+          },
+          "dataset_code_x": {
+            "type": "string",
+            "title": "Dataset Code X"
+          },
+          "dataset_code_y": {
+            "type": "string",
+            "title": "Dataset Code Y"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "forecast",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dataset_code",
+          "target_column"
+        ],
+        "properties": {
+          "periods": {
+            "type": "integer",
+            "title": "Periods",
+            "default": 12
+          },
+          "dataset_code": {
+            "type": "string",
+            "title": "Dataset Code"
+          },
+          "target_column": {
+            "type": "string",
+            "title": "Target Column"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "visualize",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dataset_code"
+        ],
+        "properties": {
+          "x": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "X",
+            "default": null
+          },
+          "y": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Y",
+            "default": null
+          },
+          "options": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options",
+            "default": null
+          },
+          "chart_type": {
+            "type": "string",
+            "title": "Chart Type",
+            "default": "line"
+          },
+          "dataset_code": {
+            "type": "string",
+            "title": "Dataset Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@seahbk1006/seahboonkeong-chat-opendosm/mcp",
+      "configSchema": {}
+    }
+  ]
+}

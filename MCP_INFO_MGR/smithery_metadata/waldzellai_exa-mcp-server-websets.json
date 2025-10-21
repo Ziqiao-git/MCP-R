@@ -1,0 +1,557 @@
+{
+  "qualifiedName": "@waldzellai/exa-mcp-server-websets",
+  "displayName": "Exa Websets Server",
+  "description": "Manage Websets with Claude, hosted on Smithery.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/4a9d5353-0b38-48db-8bfa-eca65ae6c4bb.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@waldzellai/exa-mcp-server-websets",
+  "security": null,
+  "tools": [
+    {
+      "name": "web_search_exa",
+      "description": "Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs. Supports configurable result counts and returns the content from the most relevant websites.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of search results to return (default: 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "websets_manager",
+      "description": "Manage content websets, searches, and data enhancements using Exa's platform. This single tool handles creating websets of web content, searching within them, enhancing data with AI, and setting up notifications. Much simpler than using separate tools for each operation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "default": 25,
+                "maximum": 100,
+                "minimum": 1,
+                "description": "Maximum number of items to return"
+              },
+              "offset": {
+                "type": "number",
+                "default": 0,
+                "minimum": 0,
+                "description": "Number of items to skip"
+              },
+              "status": {
+                "enum": [
+                  "pending",
+                  "processing",
+                  "completed",
+                  "failed",
+                  "cancelled"
+                ],
+                "type": "string",
+                "description": "Filter by status"
+              }
+            },
+            "additionalProperties": false
+          },
+          "search": {
+            "type": "object",
+            "required": [
+              "query"
+            ],
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "What to search for within the webset"
+              },
+              "advanced": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "object",
+                    "description": "Custom labels for this search",
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 1000
+                    }
+                  },
+                  "focusArea": {
+                    "type": "object",
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "company",
+                        "description": "Currently supports companies only"
+                      }
+                    },
+                    "description": "What type of entities to focus search on",
+                    "additionalProperties": false
+                  },
+                  "requirements": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "description"
+                      ],
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "description": "Specific requirement for search results"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "description": "Additional search requirements"
+                  },
+                  "waitForResults": {
+                    "type": "boolean",
+                    "description": "Automatically poll until search completes (max 1 minute)"
+                  }
+                },
+                "description": "Advanced search settings",
+                "additionalProperties": false
+              },
+              "maxResults": {
+                "type": "number",
+                "default": 10,
+                "maximum": 100,
+                "minimum": 1,
+                "description": "Maximum number of results to return"
+              }
+            },
+            "additionalProperties": false
+          },
+          "update": {
+            "type": "object",
+            "properties": {
+              "tags": {
+                "type": "object",
+                "description": "Updated custom labels",
+                "additionalProperties": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "description": {
+                "type": "string",
+                "description": "New description for the webset"
+              }
+            },
+            "additionalProperties": false
+          },
+          "webset": {
+            "type": "object",
+            "required": [
+              "searchQuery"
+            ],
+            "properties": {
+              "advanced": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "object",
+                    "description": "Custom labels for organization",
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 1000
+                    }
+                  },
+                  "criteria": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "description"
+                      ],
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "description": "Specific requirement or filter"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "description": "Additional requirements for filtering results"
+                  },
+                  "focusArea": {
+                    "enum": [
+                      "company"
+                    ],
+                    "type": "string",
+                    "description": "What type of entities to focus on"
+                  },
+                  "resultCount": {
+                    "type": "number",
+                    "default": 10,
+                    "maximum": 1000,
+                    "minimum": 1,
+                    "description": "How many items to find"
+                  },
+                  "externalReference": {
+                    "type": "string",
+                    "description": "Your own reference ID for tracking"
+                  }
+                },
+                "description": "Advanced webset settings",
+                "additionalProperties": false
+              },
+              "description": {
+                "type": "string",
+                "description": "Human-readable description of this webset"
+              },
+              "searchQuery": {
+                "type": "string",
+                "description": "What you want to find (required for new websets)"
+              }
+            },
+            "additionalProperties": false
+          },
+          "operation": {
+            "enum": [
+              "create_webset",
+              "list_websets",
+              "get_webset_status",
+              "update_webset",
+              "delete_webset",
+              "cancel_webset",
+              "search_webset",
+              "get_search_results",
+              "cancel_search",
+              "enhance_content",
+              "get_enhancement_results",
+              "delete_enhancement",
+              "cancel_enhancement",
+              "setup_notifications",
+              "list_notifications",
+              "get_notification_details",
+              "remove_notifications",
+              "list_activities",
+              "get_activity_details",
+              "list_content_items"
+            ],
+            "type": "string",
+            "description": "What you want to do"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "ID of the webset, search, or enhancement to work with"
+          },
+          "enhancement": {
+            "type": "object",
+            "required": [
+              "task"
+            ],
+            "properties": {
+              "task": {
+                "type": "string",
+                "description": "What kind of additional data you want to extract or analyze"
+              },
+              "advanced": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "object",
+                    "description": "Custom labels for this enhancement",
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 1000
+                    }
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "label"
+                      ],
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Possible answer option"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "description": "Predefined answer choices (only for 'options' format)"
+                  },
+                  "outputFormat": {
+                    "enum": [
+                      "text",
+                      "date",
+                      "number",
+                      "options",
+                      "email",
+                      "phone"
+                    ],
+                    "type": "string",
+                    "default": "text",
+                    "description": "Expected format of the results"
+                  },
+                  "waitForResults": {
+                    "type": "boolean",
+                    "description": "Automatically poll until enhancement completes (max 2 minutes)"
+                  }
+                },
+                "description": "Advanced enhancement settings",
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "notification": {
+            "type": "object",
+            "required": [
+              "webhookUrl",
+              "events"
+            ],
+            "properties": {
+              "events": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "webset.created",
+                    "webset.deleted",
+                    "webset.paused",
+                    "webset.idle",
+                    "webset.search.created",
+                    "webset.search.completed",
+                    "webset.search.updated",
+                    "webset.search.canceled",
+                    "webset.export.created",
+                    "webset.export.completed",
+                    "webset.item.created",
+                    "webset.item.enriched"
+                  ],
+                  "type": "string"
+                },
+                "description": "Which events you want to be notified about"
+              },
+              "advanced": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "object",
+                    "description": "Custom labels for this notification setup",
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 1000
+                    }
+                  }
+                },
+                "description": "Advanced notification settings",
+                "additionalProperties": false
+              },
+              "webhookUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL where notifications should be sent"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "websets_guide",
+      "description": "Get helpful guidance, examples, and workflows for using Exa's content websets effectively. Learn how to create websets, search content, enhance data, and set up notifications with practical examples.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "topic": {
+            "enum": [
+              "getting_started",
+              "creating_websets",
+              "searching_content",
+              "enhancing_data",
+              "setting_notifications",
+              "workflow_examples",
+              "troubleshooting",
+              "best_practices"
+            ],
+            "type": "string",
+            "description": "What you'd like guidance on"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "knowledge_graph",
+      "description": "Maintain an onboard knowledge graph of webset results.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "query": {
+            "type": "string"
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "entityType"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "entityType": {
+                  "type": "string"
+                },
+                "observations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": []
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "deletions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "entityName",
+                "observations"
+              ],
+              "properties": {
+                "entityName": {
+                  "type": "string"
+                },
+                "observations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "operation": {
+            "enum": [
+              "create_entities",
+              "create_relations",
+              "add_observations",
+              "delete_entities",
+              "delete_observations",
+              "delete_relations",
+              "read_graph",
+              "search_nodes",
+              "open_nodes"
+            ],
+            "type": "string"
+          },
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to",
+                "relationType"
+              ],
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "from": {
+                  "type": "string"
+                },
+                "relationType": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "observations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "entityName",
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "entityName": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@waldzellai/exa-mcp-server-websets/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "exaApiKey"
+        ],
+        "properties": {
+          "exaApiKey": {
+            "type": "string",
+            "description": "The API key for accessing the Exa AI Websets and Search API"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

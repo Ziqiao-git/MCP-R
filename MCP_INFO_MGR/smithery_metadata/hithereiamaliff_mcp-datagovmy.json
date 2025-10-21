@@ -1,0 +1,853 @@
+{
+  "qualifiedName": "@hithereiamaliff/mcp-datagovmy",
+  "displayName": "Malaysia Open Data MCP Server",
+  "description": "This MCP server provides seamless access to Malaysia's government open data, including datasets, weather forecasts, and public transportation information. Enable efficient querying and retrieval of real-time and historical data with built-in rate limiting and error handling. Empower applications to integrate comprehensive Malaysian public data effortlessly.\n\nNote: this is NOT an official MCP server by the Government of Malaysia or anyone from Malaysia's Open Data/Jabatan Digital Negara/Ministry of Digital team.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/data.gov.my.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/mcp-datagovmy",
+  "security": null,
+  "tools": [
+    {
+      "name": "datagovmy_list_datasets_catalogue",
+      "description": "Lists all datasets from the comprehensive catalogue with rich metadata",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to return (1-100)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of records to skip for pagination"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_search_datasets_catalogue",
+      "description": "⚠️ CONSIDER USING search_all INSTEAD: This only searches datasets. For comprehensive results across datasets and dashboards, use search_all tool. ⚠️",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to return (1-100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query to match against dataset metadata"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_filter_datasets_catalogue",
+      "description": "Filter datasets by various criteria such as frequency, geography, etc.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to return (1-100)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of records to skip for pagination"
+          },
+          "frequency": {
+            "type": "string",
+            "description": "Filter by data frequency (e.g., DAILY, MONTHLY, ANNUAL)"
+          },
+          "geography": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by geographic coverage"
+          },
+          "yearRange": {
+            "type": "array",
+            "items": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "description": "Filter by year range [start, end]"
+          },
+          "dataSource": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by data source organization"
+          },
+          "demography": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by demographic coverage"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_dataset_filters",
+      "description": "Get available filter options for datasets",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_dataset_details",
+      "description": "Get comprehensive metadata for a dataset by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the dataset to retrieve metadata for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_list_dosm_datasets",
+      "description": "Lists available datasets from the Department of Statistics Malaysia",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of datasets to return"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of datasets to skip"
+          },
+          "dataset_id": {
+            "type": "string",
+            "description": "Optional specific dataset ID to list (e.g., \"cpi_core\", \"cpi_strata\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_dosm_dataset",
+      "description": "Gets data from a specific DOSM dataset",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the dataset to retrieve (e.g., \"cpi_core\", \"cpi_strata\")"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of records to return"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of records to skip"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_weather_forecast",
+      "description": "Gets weather forecast for Malaysia",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "location"
+        ],
+        "properties": {
+          "days": {
+            "type": "number",
+            "maximum": 7,
+            "minimum": 1,
+            "description": "Number of days to forecast (1-7)"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location name (e.g., \"Kuala Lumpur\", \"Penang\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_weather_warnings",
+      "description": "Gets current weather warnings for Malaysia",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of warning (e.g., \"rain\", \"flood\", \"all\")"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location name to filter warnings"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_earthquake_warnings",
+      "description": "Gets earthquake warnings for Malaysia",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "days": {
+            "type": "number",
+            "maximum": 30,
+            "minimum": 1,
+            "description": "Number of days to look back (1-30)"
+          },
+          "magnitude": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Minimum magnitude to include"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_list_dashboards",
+      "description": "Lists all available dashboards from the Malaysia Open Data platform",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to return (1-100)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of records to skip for pagination"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_search_dashboards",
+      "description": "⚠️ CONSIDER USING search_all INSTEAD: This only searches dashboards. For comprehensive results across datasets and dashboards, use search_all tool. ⚠️",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to return (1-100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query to match against dashboard metadata"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_dashboard_details",
+      "description": "Get comprehensive metadata for a dashboard by name",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the dashboard to retrieve metadata for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_dashboard_charts",
+      "description": "Get chart configurations for a specific dashboard",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the dashboard to retrieve charts for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_search_all",
+      "description": "⭐⭐⭐ PRIMARY SEARCH TOOL: Always use this first for any data or visualization queries. Searches across both datasets and dashboards with intelligent fallback. ⭐⭐⭐",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Number of results to return (1-20)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query to match against all content"
+          },
+          "prioritize": {
+            "enum": [
+              "dataset",
+              "dashboard"
+            ],
+            "type": "string",
+            "description": "Type of content to prioritize in results"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_parse_parquet_file",
+      "description": "Parse and display data from a Parquet file URL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the Parquet file to parse"
+          },
+          "maxRows": {
+            "type": "number",
+            "maximum": 2000,
+            "minimum": 1,
+            "description": "Maximum number of rows to return (1-2000)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_parquet_info",
+      "description": "Get metadata and structure information about a Parquet file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the Parquet file to analyze"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_find_dashboard_for_parquet",
+      "description": "Find the corresponding dashboard for a Parquet file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the parquet file"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_parse_gtfs_static",
+      "description": "Parse GTFS Static data for a specific transport provider. IMPORTANT: For transit queries like \"Show me routes from Rapid Penang\", use get_transit_routes directly with the provider name. This is a low-level tool - prefer using get_transit_routes or get_transit_stops for most user queries.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"mybas-johor\", \"ktmb\", \"prasarana\")"
+          },
+          "force_refresh": {
+            "type": "boolean",
+            "description": "Force refresh the cache"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_parse_gtfs_realtime",
+      "description": "Parse GTFS Realtime data for a specific transport provider. IMPORTANT: For transit queries like \"Show me bus locations from Rapid Penang\", use this tool directly with the provider name. Common names like \"rapid penang\", \"rapid kuantan\", or \"mybas johor\" are automatically mapped to the correct provider-category pairs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"mybas-johor\", \"ktmb\", \"prasarana\")"
+          },
+          "force_refresh": {
+            "type": "boolean",
+            "description": "Force refresh the cache"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_transit_routes",
+      "description": "Get transit routes from GTFS data. IMPORTANT: For transit route queries like \"Show me bus routes for Rapid Penang\", use this tool directly with the provider name.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"mybas-johor\", \"ktmb\", \"prasarana\")"
+          },
+          "route_id": {
+            "type": "string",
+            "description": "Specific route ID to filter by"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_transit_stops",
+      "description": "Get transit stops from GTFS data. IMPORTANT: For transit stop queries like \"Show me bus stops for Rapid Penang\", use this tool directly with the provider name. The tool supports common names like \"rapid penang\", \"rapid kuantan\", \"ktmb\", or \"mybas johor\" which will be automatically mapped to the correct provider and category. No need to use list_transport_agencies first.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider"
+        ],
+        "properties": {
+          "stop_id": {
+            "type": "string",
+            "description": "Specific stop ID to retrieve (optional)"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"mybas-johor\", \"ktmb\", \"prasarana\")"
+          },
+          "route_id": {
+            "type": "string",
+            "description": "Filter stops by route ID (optional)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_transit_arrivals",
+      "description": "Get real-time transit arrivals at a specific stop. IMPORTANT: Use this tool directly for queries like \"When will the next bus arrive at my stop?\" or \"Show me arrival times for Rapid Penang buses at stop X\".",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider",
+          "stop_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of arrivals to return (default: 10)"
+          },
+          "stop_id": {
+            "type": "string",
+            "description": "ID of the stop to get arrivals for"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"mybas-johor\", \"ktmb\", \"prasarana\", or common names like \"rapid penang\")"
+          },
+          "route_id": {
+            "type": "string",
+            "description": "Optional: filter arrivals by route"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_search_transit_stops_by_location",
+      "description": "Search for transit stops near a named location. IMPORTANT: Use this tool for queries like \"Show me bus stops near KLCC\" or \"What buses stop at KL Sentral?\" This tool geocodes the location name to coordinates, then finds nearby stops. CRITICAL: For Rapid KL services, ALWAYS use specific terms in the provider parameter like \"rapid kl bus\", \"rapid rail\", \"mrt feeder\", \"lrt\", \"mrt\" instead of using \"prasarana\" with a separate category parameter. DO NOT use provider=\"prasarana\" with category=\"rapid-rail-kl\" as this causes 404 errors. Instead use provider=\"rapid rail\" or provider=\"lrt\" or provider=\"mrt\" or provider=\"mrt feeder\" or provider=\"rapid kl bus\" without a category parameter.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider",
+          "location"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of stops to return (default: 5)"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country code to limit geocoding results (default: \"my\" for Malaysia)"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location name to search for (e.g., \"KLCC\", \"KL Sentral\", \"Penang Airport\")"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"mybas-johor\", \"ktmb\", \"prasarana\", or common names like \"rapid penang\")"
+          },
+          "max_distance": {
+            "type": "number",
+            "description": "Maximum distance in kilometers (default: 5)"
+          },
+          "arrivals_limit": {
+            "type": "number",
+            "description": "Maximum number of arrivals to include per stop (default: 3)"
+          },
+          "include_arrivals": {
+            "type": "boolean",
+            "description": "Whether to include upcoming arrivals for each stop (default: true)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_find_nearest_transit_stops",
+      "description": "Find the nearest transit stops to a given location. IMPORTANT: Use this tool directly for queries like \"Where is the nearest bus stop to my location?\" or \"How do I get to the nearest Rapid Penang bus stop?\"",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider",
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of stops to return (default: 5)"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude of the user's location"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"mybas-johor\", \"ktmb\", \"prasarana\", or common names like \"rapid penang\")"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude of the user's location"
+          },
+          "max_distance": {
+            "type": "number",
+            "description": "Maximum distance in kilometers (default: 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_list_transport_agencies",
+      "description": "Lists available transport agencies with GTFS data",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of agencies to return"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of agencies to skip"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_transport_data",
+      "description": "Gets GTFS data for a specific transport agency",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataset_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of records to return"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of records to skip"
+          },
+          "dataset_id": {
+            "type": "string",
+            "description": "ID of the GTFS dataset (e.g., \"gtfs_rapidkl\", \"gtfs_prasarana\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_gtfs_static",
+      "description": "Gets GTFS static data for a specific transport provider",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of records to return"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of records to skip"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"rapidkl\", \"ktmb\", \"prasarana\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_gtfs_realtime_vehicle_position",
+      "description": "Gets GTFS realtime vehicle position data for a specific transport provider",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "provider"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of records to return"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of records to skip"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for Prasarana data (required only for prasarana provider)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Provider name (e.g., \"rapidkl\", \"ktmb\", \"prasarana\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_get_flood_warnings",
+      "description": "Gets current flood warnings for Malaysia",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "State name to filter warnings (e.g., \"Selangor\", \"Johor\")"
+          },
+          "district": {
+            "type": "string",
+            "description": "District name to filter warnings"
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity level to filter (e.g., \"warning\", \"alert\", \"danger\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datagovmy_hello",
+      "description": "A simple test tool to verify that the MCP server is working correctly",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/mcp-datagovmy/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "awsRegion": {
+            "type": "string",
+            "description": "AWS Region where your Place Index is created. Default: ap-southeast-5 (Malaysia)"
+          },
+          "awsAccessKeyId": {
+            "type": "string",
+            "description": "AWS Access Key ID with permissions to access AWS Location Service."
+          },
+          "grabMapsApiKey": {
+            "type": "string",
+            "description": "GrabMaps API key for improved geocoding in Southeast Asia."
+          },
+          "googleMapsApiKey": {
+            "type": "string",
+            "description": "Google Maps API key for improved location detection. If not provided, will use OpenStreetMap Nominatim API as fallback."
+          },
+          "awsSecretAccessKey": {
+            "type": "string",
+            "description": "AWS Secret Access Key with permissions to access AWS Location Service."
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

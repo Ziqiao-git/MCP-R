@@ -1,0 +1,135 @@
+{
+  "qualifiedName": "jina-ai-mcp-server",
+  "displayName": "Jina AI",
+  "description": "Provides access to Jina AI's web services through Claude, including web page reading, web search, and fact checking.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/jina.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "read_webpage",
+      "description": "Extract content from a webpage in a format optimized for LLMs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "format": {
+            "enum": [
+              "Default",
+              "Markdown",
+              "HTML",
+              "Text",
+              "Screenshot",
+              "Pageshot"
+            ],
+            "type": "string"
+          },
+          "no_cache": {
+            "type": "boolean"
+          },
+          "with_links": {
+            "type": "boolean"
+          },
+          "with_images": {
+            "type": "boolean"
+          },
+          "with_generated_alt": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_web",
+      "description": "Search the web using Jina AI's search API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "count": {
+            "type": "number",
+            "default": 5
+          },
+          "query": {
+            "type": "string"
+          },
+          "retain_images": {
+            "enum": [
+              "none",
+              "all"
+            ],
+            "type": "string",
+            "default": "none"
+          },
+          "return_format": {
+            "enum": [
+              "markdown",
+              "text",
+              "html"
+            ],
+            "type": "string",
+            "default": "markdown"
+          },
+          "with_generated_alt": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fact_check",
+      "description": "Fact-check a statement using Jina AI's grounding engine",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "statement"
+        ],
+        "properties": {
+          "deepdive": {
+            "type": "boolean",
+            "default": false
+          },
+          "statement": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/jina-ai-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "jinaApiKey"
+        ],
+        "properties": {
+          "jinaApiKey": {
+            "type": "string",
+            "description": "The API key for the Jina AI server."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "qualifiedName": "@antunesgabriel/logaflow-mcp-server",
+  "displayName": "Logaflow",
+  "description": "Enhance your applications with real-time logging and monitoring capabilities. Streamline your data flow and gain insights effortlessly with our powerful tools. Integrate seamlessly and elevate your development experience.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list_user_projects",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_project_feedbacks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "description": "The ID of the project to retrieve feedbacks from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reply_to_feedback",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "feedback_id",
+          "response"
+        ],
+        "properties": {
+          "response": {
+            "type": "string",
+            "description": "The text of the reply"
+          },
+          "feedback_id": {
+            "type": "string",
+            "description": "The ID of the feedback to reply to"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@antunesgabriel/logaflow-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Logaflow API key for authentication"
+          },
+          "apiUrl": {
+            "type": "string",
+            "default": "https://api.logaflow.com/v1",
+            "description": "Optional custom Logaflow API URL"
+          }
+        }
+      }
+    }
+  ]
+}

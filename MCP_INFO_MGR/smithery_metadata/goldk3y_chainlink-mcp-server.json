@@ -1,0 +1,1015 @@
+{
+  "qualifiedName": "@goldk3y/chainlink-mcp-server",
+  "displayName": "Chainlink",
+  "description": "Provide seamless access to Chainlink's decentralized oracle network services including real-time price feeds, verifiable randomness, cross-chain interoperability, automation, and proof of reserve. Enable AI developers to integrate reliable blockchain data and execute custom off-chain functions effortlessly. Simplify building decentralized finance, gaming, and cross-chain applications with comprehensive Chainlink ecosystem tools.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/d315e253-fa9a-4d87-9c80-3f9694016a45.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@goldk3y/chainlink-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_price_feed",
+      "description": "Get the latest price data for a specific trading pair from Chainlink Data Feeds. Returns current price, last update time, and round information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pair"
+        ],
+        "properties": {
+          "pair": {
+            "type": "string",
+            "description": "Trading pair (e.g., 'ETH/USD', 'BTC/USD')"
+          },
+          "format": {
+            "enum": [
+              "raw",
+              "formatted"
+            ],
+            "type": "string",
+            "default": "formatted",
+            "description": "Response format"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_price_feeds_batch",
+      "description": "Get price data for multiple trading pairs at once. More efficient than individual requests.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pairs"
+        ],
+        "properties": {
+          "pairs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of trading pairs (e.g., ['BTC/USD', 'ETH/USD'])"
+          },
+          "format": {
+            "enum": [
+              "formatted",
+              "raw"
+            ],
+            "type": "string",
+            "default": "formatted",
+            "description": "Price format"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_available_feeds",
+      "description": "List all available price feeds on a specific network. Shows supported trading pairs and their contract addresses.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum results"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          },
+          "category": {
+            "enum": [
+              "crypto",
+              "forex",
+              "commodities",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Feed category filter"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_feeds",
+      "description": "Search for price feeds by symbol, description, or category. Useful for discovering available data sources.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum results"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query for asset name or symbol"
+          },
+          "network": {
+            "type": "string",
+            "description": "Filter by network"
+          },
+          "category": {
+            "type": "string",
+            "description": "Filter by category (crypto, forex, commodities, etc.)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_feed_metadata",
+      "description": "Get detailed metadata about a specific price feed including update frequency, data sources, and reliability metrics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pair"
+        ],
+        "properties": {
+          "pair": {
+            "type": "string",
+            "description": "Trading pair (e.g., 'BTC/USD')"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_round_data",
+      "description": "Get historical price data for specific rounds. Useful for analyzing price movements and feed update patterns.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pair",
+          "startRound"
+        ],
+        "properties": {
+          "pair": {
+            "type": "string",
+            "description": "Trading pair (e.g., 'BTC/USD')"
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum results"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          },
+          "endRound": {
+            "type": "number",
+            "description": "Ending round ID"
+          },
+          "startRound": {
+            "type": "number",
+            "description": "Starting round ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deploy_function",
+      "description": "Deploy a new Chainlink Function with custom JavaScript code. Functions can fetch external data and perform custom computations off-chain.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "source",
+          "subscriptionId"
+        ],
+        "properties": {
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Default function arguments"
+          },
+          "name": {
+            "type": "string",
+            "description": "Function name"
+          },
+          "source": {
+            "type": "string",
+            "description": "JavaScript source code for the function"
+          },
+          "network": {
+            "type": "string",
+            "description": "Target network (default: ethereum)"
+          },
+          "secrets": {
+            "type": "object",
+            "description": "Encrypted secrets for the function",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "gasLimit": {
+            "type": "number",
+            "description": "Gas limit for execution"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "description": "Chainlink Functions subscription ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "call_function",
+      "description": "Execute a deployed Chainlink Function with specified arguments. Returns a request ID to track execution.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "functionId",
+          "subscriptionId"
+        ],
+        "properties": {
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Runtime arguments for the function"
+          },
+          "gasLimit": {
+            "type": "number",
+            "description": "Gas limit override"
+          },
+          "functionId": {
+            "type": "string",
+            "description": "Function ID to execute"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "description": "Subscription ID for payment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_function_result",
+      "description": "Get the result of a Chainlink Function execution. Returns the computed result or error if execution failed.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "requestId"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network where function was executed"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Function execution request ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_user_functions",
+      "description": "List all Chainlink Functions deployed by the user. Shows function details, status, and usage statistics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum results to return"
+          },
+          "network": {
+            "type": "string",
+            "description": "Filter by network"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "estimate_function_cost",
+      "description": "Estimate the cost of executing a Chainlink Function including compute costs and gas fees.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Function arguments for estimation"
+          },
+          "source": {
+            "type": "string",
+            "description": "Function source code to analyze"
+          },
+          "network": {
+            "type": "string",
+            "description": "Target network"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_automation",
+      "description": "Create a new Chainlink Automation job to automatically execute smart contract functions based on time or custom conditions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "targetContract",
+          "functionSelector",
+          "triggerType",
+          "triggerConfig"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Automation job name"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          },
+          "triggerType": {
+            "enum": [
+              "time",
+              "conditional",
+              "log"
+            ],
+            "type": "string",
+            "description": "Type of trigger for automation"
+          },
+          "triggerConfig": {
+            "type": "object",
+            "description": "Configuration for the trigger",
+            "additionalProperties": {}
+          },
+          "targetContract": {
+            "type": "string",
+            "description": "Contract address to automate"
+          },
+          "functionSelector": {
+            "type": "string",
+            "description": "Function selector or signature to call"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_automations",
+      "description": "List all active Chainlink Automation jobs. Shows status, execution history, and configuration details.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum results"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "paused",
+              "cancelled"
+            ],
+            "type": "string",
+            "description": "Filter by status"
+          },
+          "network": {
+            "type": "string",
+            "description": "Filter by network"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_automation_status",
+      "description": "Get detailed status and execution history for a specific automation job.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automationId"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "automationId": {
+            "type": "string",
+            "description": "Automation job ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "pause_automation",
+      "description": "Pause a running automation job. Can be resumed later without losing configuration.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automationId"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "automationId": {
+            "type": "string",
+            "description": "Automation job ID to pause"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "resume_automation",
+      "description": "Resume a paused automation job. Will continue executing based on original configuration.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automationId"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "automationId": {
+            "type": "string",
+            "description": "Automation job ID to resume"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cancel_automation",
+      "description": "Cancel an automation job permanently. This action cannot be undone.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automationId"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "automationId": {
+            "type": "string",
+            "description": "Automation job ID to cancel"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "request_random_words",
+      "description": "Request cryptographically secure random numbers from Chainlink VRF. Returns a request ID for tracking.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "numWords",
+          "subscriptionId",
+          "keyHash",
+          "callbackGasLimit"
+        ],
+        "properties": {
+          "keyHash": {
+            "type": "string",
+            "description": "VRF key hash identifying the gas lane"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          },
+          "numWords": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of random words to request"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "description": "VRF subscription ID"
+          },
+          "callbackGasLimit": {
+            "type": "number",
+            "maximum": 2500000,
+            "minimum": 20000,
+            "description": "Gas limit for callback"
+          },
+          "requestConfirmations": {
+            "type": "number",
+            "default": 3,
+            "maximum": 200,
+            "minimum": 3,
+            "description": "Number of block confirmations"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_random_result",
+      "description": "Get the random numbers for a completed VRF request. Returns the randomness along with fulfillment details.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "requestId"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "VRF request ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_randomness",
+      "description": "Verify the cryptographic proof of a VRF result. Ensures the randomness is genuine and tamper-proof.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "requestId",
+          "randomWords"
+        ],
+        "properties": {
+          "proof": {
+            "type": "string",
+            "description": "VRF proof (optional, will be fetched if not provided)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "VRF request ID to verify"
+          },
+          "randomWords": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Random words to verify"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_vrf_config",
+      "description": "Get VRF configuration details for a network including key hashes, gas lanes, and pricing.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "estimate_vrf_cost",
+      "description": "Estimate the total cost for a VRF request including LINK premium and gas fees.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "numWords",
+          "callbackGasLimit"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "gasPrice": {
+            "type": "number",
+            "description": "Gas price in gwei (optional)"
+          },
+          "numWords": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of random words"
+          },
+          "callbackGasLimit": {
+            "type": "number",
+            "maximum": 2500000,
+            "minimum": 20000,
+            "description": "Gas limit for callback"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_cross_chain_message",
+      "description": "Send a message from one blockchain to another using Chainlink CCIP. Supports arbitrary data transfer.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "destinationChain",
+          "receiver",
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message data to send"
+          },
+          "feeToken": {
+            "enum": [
+              "LINK",
+              "native"
+            ],
+            "type": "string",
+            "default": "LINK",
+            "description": "Token to pay fees with"
+          },
+          "gasLimit": {
+            "type": "number",
+            "description": "Gas limit for execution on destination"
+          },
+          "receiver": {
+            "type": "string",
+            "description": "Receiver address on destination chain"
+          },
+          "sourceChain": {
+            "type": "string",
+            "description": "Source blockchain (default: ethereum)"
+          },
+          "destinationChain": {
+            "type": "string",
+            "description": "Destination blockchain network"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_tokens_cross_chain",
+      "description": "Transfer tokens from one blockchain to another using Chainlink CCIP. Supports various token standards.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "destinationChain",
+          "receiver",
+          "tokenAddress",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount to transfer (in token's smallest unit)"
+          },
+          "feeToken": {
+            "enum": [
+              "LINK",
+              "native"
+            ],
+            "type": "string",
+            "default": "LINK",
+            "description": "Token to pay fees with"
+          },
+          "gasLimit": {
+            "type": "number",
+            "description": "Gas limit for execution"
+          },
+          "receiver": {
+            "type": "string",
+            "description": "Receiver address on destination chain"
+          },
+          "sourceChain": {
+            "type": "string",
+            "description": "Source blockchain (default: ethereum)"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "Token contract address on source chain"
+          },
+          "destinationChain": {
+            "type": "string",
+            "description": "Destination blockchain network"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_message_status",
+      "description": "Check the status of a cross-chain message or token transfer. Returns delivery confirmation and details.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messageId"
+        ],
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "CCIP message ID to check"
+          },
+          "sourceChain": {
+            "type": "string",
+            "description": "Source blockchain network"
+          },
+          "destinationChain": {
+            "type": "string",
+            "description": "Destination blockchain network"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_supported_networks",
+      "description": "List all blockchain networks supported by Chainlink CCIP with their configurations and capabilities.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "includeTestnets": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include testnet networks"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "estimate_ccip_fees",
+      "description": "Estimate the cost of sending messages or transferring tokens via CCIP between specific networks.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sourceChain",
+          "destinationChain"
+        ],
+        "properties": {
+          "feeToken": {
+            "enum": [
+              "LINK",
+              "native"
+            ],
+            "type": "string",
+            "default": "LINK",
+            "description": "Token to pay fees with"
+          },
+          "gasLimit": {
+            "type": "number",
+            "description": "Gas limit for destination execution"
+          },
+          "messageSize": {
+            "type": "number",
+            "description": "Message size in bytes (for messaging)"
+          },
+          "sourceChain": {
+            "type": "string",
+            "description": "Source blockchain network"
+          },
+          "tokenAmount": {
+            "type": "string",
+            "description": "Token amount (for transfers)"
+          },
+          "destinationChain": {
+            "type": "string",
+            "description": "Destination blockchain network"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_proof_of_reserve",
+      "description": "Get the latest proof of reserve data for a specific asset. Shows total supply, backing assets, and collateralization ratio.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "asset"
+        ],
+        "properties": {
+          "asset": {
+            "type": "string",
+            "description": "Asset symbol (e.g., 'WBTC', 'USDC', 'PAXG')"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network (default: ethereum)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_reserve_proof",
+      "description": "Verify the cryptographic proof for reserve attestations. Ensures data integrity and authenticity.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "asset"
+        ],
+        "properties": {
+          "asset": {
+            "type": "string",
+            "description": "Asset symbol to verify"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "proofData": {
+            "type": "string",
+            "description": "Proof data (if not provided, latest will be fetched)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_supported_assets",
+      "description": "List all assets with available Proof of Reserve feeds. Shows asset details and data availability.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Filter by network"
+          },
+          "category": {
+            "enum": [
+              "stablecoins",
+              "wrapped_tokens",
+              "precious_metals",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Asset category filter"
+          },
+          "includeTestnets": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include testnet assets"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_reserve_history",
+      "description": "Get historical reserve data for an asset. Shows reserve levels over time and collateralization trends.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "asset"
+        ],
+        "properties": {
+          "asset": {
+            "type": "string",
+            "description": "Asset symbol"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (ISO format, default: now)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Blockchain network"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (ISO format, default: 30 days ago)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@goldk3y/chainlink-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "networks": {
+            "type": "object",
+            "description": "Custom network configurations",
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "rpcUrl",
+                "chainId"
+              ],
+              "properties": {
+                "rpcUrl": {
+                  "type": "string"
+                },
+                "chainId": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "defaultNetwork": {
+            "type": "string",
+            "default": "ethereum",
+            "description": "Default network for operations"
+          },
+          "chainlinkApiKey": {
+            "type": "string",
+            "description": "Chainlink API key for premium features"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

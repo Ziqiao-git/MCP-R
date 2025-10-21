@@ -1,0 +1,182 @@
+{
+  "qualifiedName": "@supadata-ai/mcp",
+  "displayName": "Supadata: Web & Video data API for makers",
+  "description": "Turn YouTube, TikTok, Instagram, X videos and websites into structured data.\nSkip the hassle of video transcription and data scraping. Our APIs help you build better software and AI products faster.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/supadata.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@supadata-ai/mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "supadata_transcript",
+      "description": "Extract transcript from supported video platforms (YouTube, TikTok, Instagram, Twitter) or file URLs using Supadata's transcript API.\n\n**Purpose:** Get transcripts from video content across multiple platforms.\n**Best for:** Video content analysis, subtitle extraction, content indexing.\n\n**Usage Example:**\n```json\n{\n  \"name\": \"supadata_transcript\",\n  \"arguments\": {\n    \"url\": \"https://youtube.com/watch?v=example\",\n    \"lang\": \"en\",\n    \"text\": false,\n    \"mode\": \"auto\"\n  }\n}\n```\n\n**Returns:** \n- Either immediate transcript content\n- Or job ID for asynchronous processing (use supadata_check_transcript_status)\n\n**Supported Platforms:** YouTube, TikTok, Instagram, Twitter, and file URLs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Video or file URL to get transcript from (YouTube, TikTok, Instagram, Twitter, file)"
+          },
+          "lang": {
+            "type": "string",
+            "description": "Preferred language code (ISO 639-1)"
+          },
+          "mode": {
+            "enum": [
+              "native",
+              "auto",
+              "generate"
+            ],
+            "type": "string",
+            "description": "Transcript generation mode"
+          },
+          "text": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return plain text instead of formatted output"
+          },
+          "chunkSize": {
+            "type": "number",
+            "description": "Maximum characters per transcript chunk"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "supadata_check_transcript_status",
+      "description": "Check the status and retrieve results of a transcript job created with supadata_transcript.\n\n**Purpose:** Monitor transcript job progress and retrieve completed results.\n**Workflow:** Use the job ID returned from supadata_transcript to check status and get results.\n\n**Usage Example:**\n```json\n{\n  \"name\": \"supadata_check_transcript_status\",\n  \"arguments\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\"\n  }\n}\n```\n\n**Returns:** \n- Job status: 'queued', 'active', 'completed', 'failed'\n- For completed jobs: Full transcript content\n- Error details if job failed\n\n**Tip:** Poll this endpoint periodically until status is 'completed' or 'failed'.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Transcript job ID returned from supadata_transcript"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "supadata_scrape",
+      "description": "Extract content from any web page to Markdown format using Supadata's powerful scraping API.\n\n**Purpose:** Single page content extraction with automatic formatting to Markdown.\n**Best for:** When you know exactly which page contains the information you need.\n\n**Usage Example:**\n```json\n{\n  \"name\": \"supadata_scrape\",\n  \"arguments\": {\n    \"url\": \"https://example.com\",\n    \"noLinks\": false,\n    \"lang\": \"en\"\n  }\n}\n```\n\n**Returns:** \n- URL of the scraped page\n- Extracted content in Markdown format\n- Page name and description\n- Character count\n- List of URLs found on the page",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Web page URL to scrape"
+          },
+          "lang": {
+            "type": "string",
+            "default": "en",
+            "description": "Preferred language for the scraped content (ISO 639-1 code)"
+          },
+          "noLinks": {
+            "type": "boolean",
+            "default": false,
+            "description": "When true, removes markdown links from the content"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "supadata_map",
+      "description": "Crawl a whole website and get all URLs on it using Supadata's mapping API.\n\n**Purpose:** Extract all links found on a website for content discovery and sitemap creation.\n**Best for:** Website content discovery, SEO analysis, content aggregation, automated web scraping and indexing.\n**Use cases:** Creating a sitemap, running a crawler to fetch content from all pages of a website.\n\n**Usage Example:**\n```json\n{\n  \"name\": \"supadata_map\",\n  \"arguments\": {\n    \"url\": \"https://example.com\"\n  }\n}\n```\n\n**Returns:** Array of URLs found on the website.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the website to map"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "supadata_crawl",
+      "description": "Create a crawl job to extract content from all pages on a website using Supadata's crawling API.\n\n**Purpose:** Crawl a whole website and get content of all pages on it.\n**Best for:** Extracting content from multiple related pages when you need comprehensive coverage.\n**Workflow:** 1) Create crawl job → 2) Receive job ID → 3) Check job status and retrieve results\n\n**Crawling Behavior:**\n- Follows only child links within the specified domain\n- Example: For https://supadata.ai/blog, crawls https://supadata.ai/blog/article-1 but not https://supadata.ai/about\n- To crawl entire website, use top-level URL like https://supadata.ai\n\n**Usage Example:**\n```json\n{\n  \"name\": \"supadata_crawl\",\n  \"arguments\": {\n    \"url\": \"https://example.com\",\n    \"limit\": 100\n  }\n}\n```\n\n**Returns:** Job ID for status checking. Use supadata_check_crawl_status to check progress.\n**Job Status:** Possible statuses are 'scraping', 'completed', 'failed', or 'cancelled'\n\n**Important:** Respect robots.txt and website terms of service when crawling web content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the webpage to crawl"
+          },
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "maximum": 5000,
+            "minimum": 1,
+            "description": "Maximum number of pages to crawl (1-5000, default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "supadata_check_crawl_status",
+      "description": "Check the status and retrieve results of a crawl job created with supadata_crawl.\n\n**Purpose:** Monitor crawl job progress and retrieve completed results.\n**Workflow:** Use the job ID returned from supadata_crawl to check status and get results.\n\n**Usage Example:**\n```json\n{\n  \"name\": \"supadata_check_crawl_status\",\n  \"arguments\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\"\n  }\n}\n```\n\n**Returns:** \n- Job status: 'scraping', 'completed', 'failed', or 'cancelled'\n- For completed jobs: URL, Markdown content, page title, and description for each crawled page\n- Progress information and any error details if applicable\n\n**Tip:** Poll this endpoint periodically until status is 'completed' or 'failed'.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Crawl job ID returned from supadata_crawl"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@supadata-ai/mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "supadataApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "supadataApiKey": {
+            "type": "string",
+            "description": "Supadata API key for authentication"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

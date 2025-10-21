@@ -1,0 +1,369 @@
+{
+  "qualifiedName": "@markchiang/herb-mcp",
+  "displayName": "HERB Lookup",
+  "description": "Map genes, targets, diseases, herbs, and ingredients within the HERB database. Resolve gene symbols and disease names to HERB IDs, then surface the most significant herb and ingredient associations. Speed up pharmacology and TCM research with quick, curated lookups.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@markchiang/herb-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_gene_symbol",
+      "description": "Find HERB target IDs for a gene symbol or alias.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_gene_symbolArguments",
+        "required": [
+          "gene_symbol"
+        ],
+        "properties": {
+          "gene_symbol": {
+            "type": "string",
+            "title": "Gene Symbol"
+          },
+          "max_records": {
+            "type": "integer",
+            "title": "Max Records",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_gene_symbolOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "target_to_herbs",
+      "description": "Retrieve herbs associated with a HERB target ID.",
+      "inputSchema": {
+        "type": "object",
+        "title": "target_to_herbsArguments",
+        "required": [
+          "target_id"
+        ],
+        "properties": {
+          "target_id": {
+            "type": "string",
+            "title": "Target Id"
+          },
+          "max_records": {
+            "type": "integer",
+            "title": "Max Records",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "target_to_herbsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "target_to_ingredients",
+      "description": "Retrieve ingredients associated with a HERB target ID.",
+      "inputSchema": {
+        "type": "object",
+        "title": "target_to_ingredientsArguments",
+        "required": [
+          "target_id"
+        ],
+        "properties": {
+          "target_id": {
+            "type": "string",
+            "title": "Target Id"
+          },
+          "max_records": {
+            "type": "integer",
+            "title": "Max Records",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "target_to_ingredientsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_disease",
+      "description": "Look up HERB disease IDs by name or identifier.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_diseaseArguments",
+        "required": [
+          "disease_query"
+        ],
+        "properties": {
+          "max_records": {
+            "type": "integer",
+            "title": "Max Records",
+            "default": 10
+          },
+          "disease_query": {
+            "type": "string",
+            "title": "Disease Query"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_diseaseOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "disease_to_herbs",
+      "description": "Retrieve herbs associated with a HERB disease ID.",
+      "inputSchema": {
+        "type": "object",
+        "title": "disease_to_herbsArguments",
+        "required": [
+          "disease_id"
+        ],
+        "properties": {
+          "disease_id": {
+            "type": "string",
+            "title": "Disease Id"
+          },
+          "max_records": {
+            "type": "integer",
+            "title": "Max Records",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "disease_to_herbsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "disease_detail",
+      "description": "Fetch normalized Herb API 2.0 association tables for a HERB disease ID.",
+      "inputSchema": {
+        "type": "object",
+        "title": "disease_detailArguments",
+        "required": [
+          "disease_id"
+        ],
+        "properties": {
+          "disease_id": {
+            "type": "string",
+            "title": "Disease Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "disease_detailDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "gene_to_herbs",
+      "description": "Shortcut that finds target IDs for a gene symbol and returns associated herbs.",
+      "inputSchema": {
+        "type": "object",
+        "title": "gene_to_herbsArguments",
+        "required": [
+          "gene_symbol"
+        ],
+        "properties": {
+          "gene_symbol": {
+            "type": "string",
+            "title": "Gene Symbol"
+          },
+          "max_targets": {
+            "type": "integer",
+            "title": "Max Targets",
+            "default": 3
+          },
+          "herbs_per_target": {
+            "type": "integer",
+            "title": "Herbs Per Target",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "gene_to_herbsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "gene_to_ingredients",
+      "description": "Shortcut that finds target IDs for a gene symbol and returns associated ingredients.",
+      "inputSchema": {
+        "type": "object",
+        "title": "gene_to_ingredientsArguments",
+        "required": [
+          "gene_symbol"
+        ],
+        "properties": {
+          "gene_symbol": {
+            "type": "string",
+            "title": "Gene Symbol"
+          },
+          "max_targets": {
+            "type": "integer",
+            "title": "Max Targets",
+            "default": 3
+          },
+          "ingredients_per_target": {
+            "type": "integer",
+            "title": "Ingredients Per Target",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "gene_to_ingredientsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "disease_name_to_herbs",
+      "description": "Shortcut that resolves disease names to HERB IDs and returns associated herbs.",
+      "inputSchema": {
+        "type": "object",
+        "title": "disease_name_to_herbsArguments",
+        "required": [
+          "disease_query"
+        ],
+        "properties": {
+          "max_diseases": {
+            "type": "integer",
+            "title": "Max Diseases",
+            "default": 3
+          },
+          "disease_query": {
+            "type": "string",
+            "title": "Disease Query"
+          },
+          "herbs_per_disease": {
+            "type": "integer",
+            "title": "Herbs Per Disease",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "disease_name_to_herbsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@markchiang/herb-mcp/mcp",
+      "configSchema": {
+        "message": "No configuration schema available"
+      }
+    }
+  ]
+}

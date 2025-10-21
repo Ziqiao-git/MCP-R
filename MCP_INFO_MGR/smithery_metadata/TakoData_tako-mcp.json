@@ -1,0 +1,265 @@
+{
+  "qualifiedName": "@TakoData/tako-mcp",
+  "displayName": "Tako",
+  "description": "Provide real-time data querying and visualization by integrating Tako with your agents. Generate optimized search queries and embed interactive reports seamlessly. Enhance your workflows with live data insights and visualizations from Tako.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/c37b48ec-9f95-4764-9576-f76340d31167.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@TakoData/tako-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_tako",
+      "description": "Search the Tako knowledge index for any knowledge you want and get data and visualizations.\n    Returns embed, webpage, and image url of the visualization with relevant metadata such as source, methodology, and description\n    as well as the data used to generate the visualization.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_takoArguments",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_takoDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "web_search_tako",
+      "description": "Search the general web using Parallel Web Search to get data and visualizations.\n    Returns embed, webpage, and image url of the visualization with relevant metadata such as source, methodology, and description\n    as well as the data used to generate the visualization.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "web_search_takoArguments",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "web_search_takoDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "deep_search_tako",
+      "description": "Perform a deep or analytical search of Tako for any knowledge you want and get data and visualizations.\n    Returns embed, webpage, and image url of the visualization with relevant metadata such as source, methodology, and description\n    as well as the data used to generate the visualization.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "deep_search_takoArguments",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "deep_search_takoDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "data_search_tako",
+      "description": "Search the Tako knowledge index for any knowledge you want and get data and visualizations.\n    Returns embed, webpage, and image url of the visualization with relevant metadata such as source, methodology, and description\n    as well as the data used to generate the visualization.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "data_search_takoArguments",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "data_search_takoDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "upload_file_to_visualize",
+      "description": "Upload a file in base64 format to Tako to visualize. Returns the file_id of the uploaded file that can call visualize_file with.\n\n    Supported file type extensions:\n    - .csv\n    - .xlsx\n    - .xls\n    - .parquet\n\n    Response:\n        file_id: <file_id>\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "upload_file_to_visualizeArguments",
+        "required": [
+          "filename",
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "encoding": {
+            "type": "string",
+            "title": "Encoding",
+            "default": "base64"
+          },
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "upload_file_to_visualizeDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "upload_file_from_local_path",
+      "description": "Upload a file from a local path to Tako to visualize. Returns the file_id of the uploaded file that can call visualize_file with.\n    \n    Response: \n        file_id: <file_id>\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "upload_file_from_local_pathArguments",
+        "required": [
+          "local_path"
+        ],
+        "properties": {
+          "local_path": {
+            "type": "string",
+            "title": "Local Path"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "upload_file_from_local_pathDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "upload_file_from_url",
+      "description": "Upload a file from an external url to Tako to visualize. Returns the file_id of the uploaded file that can call visualize_file with.\n    \n    Response: \n        file_id: <file_id>\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "upload_file_from_urlArguments",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "upload_file_from_urlDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "visualize_file",
+      "description": "\n    Visualize a file in Tako using the file_id returned from upload_file_to_visualize.\n    Optionally, provide a query that includes an analytical question and visualization types to visualize the file.\n\n    Query Examples:\n    - Show me a timeseries graph of X and Y over the last 10 years.\n    - Show me a bar chart comparing the top 10 companies by revenue in 2024.\n    - Show me a map of which state ordered the most pizza in 2024.\n    - Show me a box plot of the distribution of math scores by gender.\n    - Show me a heatmap of the correlation between revenue and profit for the divisions of a company.\n    - Compare the revenue of the top 10 companies by revenue in 2024.\n    - Show me a pie chart of the categories of products sold in 2023.\n    - Histogram of the distribution of salary in the marketing department.\n\n    Args:\n        file_id: The file_id of the file to visualize.\n        query: The query to visualize the file.\n\n    Returns:\n        Tako Card with Visualization Embed and Image Link.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "visualize_fileArguments",
+        "required": [
+          "file_id"
+        ],
+        "properties": {
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query",
+            "default": null
+          },
+          "file_id": {
+            "type": "string",
+            "title": "File Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "visualize_fileDictOutput",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "visualize_dataset",
+      "description": "\n    Visualize a dataset in Tako Data Format.\n    Optionally, provide a query that includes an analytical question and visualization types to visualize the dataset.\n\n    Query Examples:\n    - Show me a timeseries graph of X and Y over the last 10 years.\n    - Show me a bar chart comparing the top 10 companies by revenue in 2024.\n    - Show me a map of which state ordered the most pizza in 2024.\n    - Show me a box plot of the distribution of math scores by gender.\n    - Show me a heatmap of the correlation between revenue and profit for the divisions of a company.\n    - Compare the revenue of the top 10 companies by revenue in 2024.\n    - Show me a pie chart of the categories of products sold in 2023.\n    - Histogram of the distribution of salary in the marketing department.\n\n    Args:\n        dataset: The dataset to visualize in Tako Data Format (Tidy data).\n        query: The query to visualize the dataset.\n\n    Returns:\n        Tako Card with Visualization Embed and Image Link.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "visualize_datasetArguments",
+        "required": [
+          "dataset"
+        ],
+        "properties": {
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query",
+            "default": null
+          },
+          "dataset": {
+            "type": "object",
+            "title": "Dataset",
+            "additionalProperties": true
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "visualize_datasetDictOutput",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@TakoData/tako-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "ConfigSchema",
+        "required": [
+          "takoApiKey"
+        ],
+        "properties": {
+          "takoApiKey": {
+            "type": "string",
+            "title": "Takoapikey"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "qualifiedName": "@Gitmaxd/dubco-mcp-server-npm",
+  "displayName": "Dub.co (Unofficial) MCP Server",
+  "description": "Create, update, and delete short links effortlessly with this server. Integrate seamlessly with AI assistants to manage your Dub.co links through a standardized interface. Enhance your link management experience with powerful tools at your fingertips.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/c2e28c6b-0a68-42cf-855a-b39090a2a688.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "create_link",
+      "description": "Create a new short link on dub.co, asking the user which domain to use",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Optional custom slug for the short link. If not provided, a random slug will be generated."
+          },
+          "url": {
+            "type": "string",
+            "description": "The destination URL to shorten"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Optional domain slug to use. If not provided, the primary domain will be used."
+          },
+          "externalId": {
+            "type": "string",
+            "description": "Optional external ID for the link"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_link",
+      "description": "Update an existing short link on dub.co",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "linkId"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The new slug for the short link"
+          },
+          "url": {
+            "type": "string",
+            "description": "The new destination URL"
+          },
+          "domain": {
+            "type": "string",
+            "description": "The new domain for the short link"
+          },
+          "linkId": {
+            "type": "string",
+            "description": "The ID of the link to update"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_link",
+      "description": "Delete a short link on dub.co",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "linkId"
+        ],
+        "properties": {
+          "linkId": {
+            "type": "string",
+            "description": "The ID of the link to delete"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Gitmaxd/dubco-mcp-server-npm/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "dubcoApiKey"
+        ],
+        "properties": {
+          "dubcoApiKey": {
+            "type": "string",
+            "description": "Your Dub.co API key, obtainable from the Dub.co dashboard."
+          }
+        }
+      }
+    }
+  ]
+}

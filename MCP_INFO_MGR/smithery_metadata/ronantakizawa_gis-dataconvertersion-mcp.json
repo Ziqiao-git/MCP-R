@@ -1,0 +1,226 @@
+{
+  "qualifiedName": "@ronantakizawa/gis-dataconvertersion-mcp",
+  "displayName": "GIS Data Conversion Server",
+  "description": "The GIS Data Conversion MCP allows reverse geocoding, WKT/GeoJSON conversion, TopoJSON/ GeoJSON conversion, KML / GeoJSON conversion, and CSV conversion. The MCP allows LLMs to accurately convert GIS data using Geo Conversion APIs instead of relying on itself.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/dc8cb24f-c29c-4bda-8e83-70a8c5f7468c.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "wkt_to_geojson",
+      "description": "Convert Well-Known Text (WKT) to GeoJSON format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "wkt"
+        ],
+        "properties": {
+          "wkt": {
+            "type": "string",
+            "description": "Well-Known Text (WKT) string to convert"
+          }
+        }
+      }
+    },
+    {
+      "name": "geojson_to_wkt",
+      "description": "Convert GeoJSON to Well-Known Text (WKT) format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "geojson"
+        ],
+        "properties": {
+          "geojson": {
+            "type": "object",
+            "description": "GeoJSON object to convert"
+          }
+        }
+      }
+    },
+    {
+      "name": "csv_to_geojson",
+      "description": "Convert CSV with geographic data to GeoJSON",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "csv",
+          "latfield",
+          "lonfield"
+        ],
+        "properties": {
+          "csv": {
+            "type": "string",
+            "description": "CSV string to convert"
+          },
+          "latfield": {
+            "type": "string",
+            "description": "Field name for latitude"
+          },
+          "lonfield": {
+            "type": "string",
+            "description": "Field name for longitude"
+          },
+          "delimiter": {
+            "type": "string",
+            "default": ",",
+            "description": "CSV delimiter (default is comma)"
+          }
+        }
+      }
+    },
+    {
+      "name": "geojson_to_csv",
+      "description": "Convert GeoJSON to CSV format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "geojson"
+        ],
+        "properties": {
+          "geojson": {
+            "type": "object",
+            "description": "GeoJSON object to convert"
+          },
+          "includeAllProperties": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include all feature properties in the CSV"
+          }
+        }
+      }
+    },
+    {
+      "name": "geojson_to_topojson",
+      "description": "Convert GeoJSON to TopoJSON format (more compact with shared boundaries)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "geojson"
+        ],
+        "properties": {
+          "geojson": {
+            "type": "object",
+            "description": "GeoJSON object to convert"
+          },
+          "objectName": {
+            "type": "string",
+            "default": "data",
+            "description": "Name of the TopoJSON object to create"
+          },
+          "quantization": {
+            "type": "number",
+            "default": 10000,
+            "description": "Quantization parameter for simplification (0 to disable)"
+          }
+        }
+      }
+    },
+    {
+      "name": "topojson_to_geojson",
+      "description": "Convert TopoJSON to GeoJSON format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "topojson"
+        ],
+        "properties": {
+          "topojson": {
+            "type": "object",
+            "description": "TopoJSON object to convert"
+          },
+          "objectName": {
+            "type": "string",
+            "description": "Name of the TopoJSON object to convert (if not provided, first object is used)"
+          }
+        }
+      }
+    },
+    {
+      "name": "kml_to_geojson",
+      "description": "Convert KML to GeoJSON format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "kml"
+        ],
+        "properties": {
+          "kml": {
+            "type": "string",
+            "description": "KML content to convert"
+          }
+        }
+      }
+    },
+    {
+      "name": "geojson_to_kml",
+      "description": "Convert GeoJSON to KML format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "geojson"
+        ],
+        "properties": {
+          "geojson": {
+            "type": "object",
+            "description": "GeoJSON object to convert"
+          },
+          "documentName": {
+            "type": "string",
+            "default": "GeoJSON Conversion",
+            "description": "Name for the KML document"
+          },
+          "nameProperty": {
+            "type": "string",
+            "default": "name",
+            "description": "Property name in GeoJSON to use as KML name"
+          },
+          "descriptionProperty": {
+            "type": "string",
+            "default": "description",
+            "description": "Property name in GeoJSON to use as KML description"
+          },
+          "documentDescription": {
+            "type": "string",
+            "default": "Converted from GeoJSON by GIS Format Conversion MCP",
+            "description": "Description for the KML document"
+          }
+        }
+      }
+    },
+    {
+      "name": "coordinates_to_location",
+      "description": "Convert latitude/longitude coordinates to location name using reverse geocoding",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "Latitude coordinate"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude coordinate"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@ronantakizawa/gis-dataconvertersion-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

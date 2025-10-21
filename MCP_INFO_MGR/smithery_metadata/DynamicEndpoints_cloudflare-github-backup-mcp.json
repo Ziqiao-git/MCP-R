@@ -1,0 +1,100 @@
+{
+  "qualifiedName": "@DynamicEndpoints/cloudflare-github-backup-mcp",
+  "displayName": "Cloudflare to GitHub Backup",
+  "description": "Automate the backup of your Cloudflare projects to a GitHub repository. Ensure your projects are securely stored and easily retrievable with this seamless integration. Start safeguarding your Cloudflare data today with minimal setup required.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "backup_projects",
+      "description": "Backup Cloudflare projects to GitHub",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "projectIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional array of Cloudflare project IDs to backup. If not provided, all projects will be backed up."
+          }
+        }
+      }
+    },
+    {
+      "name": "restore_project",
+      "description": "Restore a Cloudflare project from a backup",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the Cloudflare project to restore"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Optional timestamp of the backup to restore. If not provided, the most recent backup will be used."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_backups",
+      "description": "List available backups for a Cloudflare project",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the Cloudflare project"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@DynamicEndpoints/cloudflare-github-backup-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "cloudflareApiToken",
+          "githubAccessToken",
+          "githubRepoName",
+          "githubUsername"
+        ],
+        "properties": {
+          "githubRepoName": {
+            "type": "string",
+            "description": "The name of your GitHub repository to store backups"
+          },
+          "githubUsername": {
+            "type": "string",
+            "description": "Your GitHub username"
+          },
+          "githubAccessToken": {
+            "type": "string",
+            "description": "Your GitHub personal access token with repo scope"
+          },
+          "cloudflareApiToken": {
+            "type": "string",
+            "description": "Your Cloudflare API token with read access"
+          }
+        }
+      }
+    }
+  ]
+}

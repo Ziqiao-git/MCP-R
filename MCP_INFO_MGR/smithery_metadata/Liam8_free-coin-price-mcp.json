@@ -1,0 +1,161 @@
+{
+  "qualifiedName": "@Liam8/free-coin-price-mcp",
+  "displayName": "Free Crypto Coin Data",
+  "description": "Free live and historical cryptocurrency prices\n\nProvide real-time cryptocurrency price data to your applications. Enable seamless access to up-to-date coin prices through a standardized protocol. Enhance your agents with reliable financial data integration effortlessly.\n\n\t•\tfree bitcoin price\n\t•\tbitcoin live price\n\t•\tethereum live price\n\t•\taltcoin live prices\n\t•\tdogecoin price today\n\t•\tsolana price live",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/4ff93c57-ca7a-4f81-be99-a6266d721e7d.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Liam8/free-coin-price-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "getSupportedCurrencies",
+      "description": "Get supported currencies from CoinGecko",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getCoinPrice",
+      "description": "Get coin prices",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ids": {
+            "type": "string",
+            "description": "Comma-separated list of coin IDs"
+          },
+          "names": {
+            "type": "string",
+            "description": "Comma-separated list of coin names"
+          },
+          "symbols": {
+            "type": "string",
+            "description": "Comma-separated list of coin symbols"
+          },
+          "vs_currencies": {
+            "type": "string",
+            "default": "usd",
+            "description": "Comma-separated list of target currencies"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getPublicCompaniesHoldings",
+      "description": "Get public companies Bitcoin or Ethereum holdings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "coin_id"
+        ],
+        "properties": {
+          "coin_id": {
+            "enum": [
+              "bitcoin",
+              "ethereum"
+            ],
+            "type": "string",
+            "description": "Coin ID - must be either 'bitcoin' or 'ethereum'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getCoinHistoricalChart",
+      "description": "Get historical chart data for a coin including price, market cap and volume",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id",
+          "days"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Coin ID (e.g., 'bitcoin', 'ethereum')"
+          },
+          "days": {
+            "type": "string",
+            "description": "Data up to number of days ago (e.g., '1', '7', '30', '365')"
+          },
+          "precision": {
+            "type": "string",
+            "description": "Decimal place for currency price value"
+          },
+          "vs_currency": {
+            "type": "string",
+            "default": "usd",
+            "description": "Target currency of market data (e.g., 'usd', 'eur')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getCoinOHLCChart",
+      "description": "Get coin OHLC chart (Open, High, Low, Close) data.\n    Data granularity (candle's body) is automatic:\n    1 - 2 days: 30 minutes\n    3 - 30 days: 4 hours\n    31 days and beyond: 4 days",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id",
+          "days"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Coin ID (e.g., 'bitcoin', 'ethereum')"
+          },
+          "days": {
+            "enum": [
+              "1",
+              "7",
+              "14",
+              "30",
+              "90",
+              "180",
+              "365"
+            ],
+            "type": "string",
+            "description": "Data up to number of days ago, only '1', '7', '14', '30', '90', '180', '365' are allowed"
+          },
+          "precision": {
+            "type": "string",
+            "description": "Decimal place for currency price value"
+          },
+          "vs_currency": {
+            "type": "string",
+            "default": "usd",
+            "description": "Target currency of price data (e.g., 'usd', 'eur')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "checkApiStatus",
+      "description": "Check API server status",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Liam8/free-coin-price-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

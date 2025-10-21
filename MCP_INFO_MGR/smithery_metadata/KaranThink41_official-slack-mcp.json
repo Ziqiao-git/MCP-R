@@ -1,0 +1,297 @@
+{
+  "qualifiedName": "@KaranThink41/official-slack-mcp",
+  "displayName": "Slack Workspace Automation Server",
+  "description": "Automate your Slack workspace interactions by posting messages, replying to threads, adding reactions, and fetching channel or user information. Streamline Slack communication and management with easy-to-use tools accessible via the Model Context Protocol. Enhance productivity by integrating Slack API capabilities directly into your workflows.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "channels_list_on_slack",
+      "description": "List public channels in the workspace with pagination",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum number of channels to return (default 100, max 200)"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for next page of results"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_message_on_slack",
+      "description": "Post a new message to a Slack channel. Provide either channel_id or channel_name.",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "channel_id"
+            ]
+          },
+          {
+            "required": [
+              "channel_name"
+            ]
+          }
+        ],
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The message text to post"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel to post to."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "The name of the channel to post to (will be resolved to channel_id if channel_id is not provided)."
+          }
+        }
+      }
+    },
+    {
+      "name": "reply_to_thread_on_slack",
+      "description": "Reply to a specific message thread in Slack. Provide either channel_id or channel_name.",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "channel_id"
+            ]
+          },
+          {
+            "required": [
+              "channel_name"
+            ]
+          }
+        ],
+        "required": [
+          "thread_ts",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The reply text"
+          },
+          "thread_ts": {
+            "type": "string",
+            "description": "The timestamp of the parent message in the format '1234567890.123456'. Timestamps in the format without the period can be converted by adding the period such that 6 numbers come after it."
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel containing the thread."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "The name of the channel containing the thread (will be resolved to channel_id if channel_id is not provided)."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_channel_history_on_slack",
+      "description": "Get recent messages from a channel. Provide either channel_id or channel_name.",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "channel_id"
+            ]
+          },
+          {
+            "required": [
+              "channel_name"
+            ]
+          }
+        ],
+        "required": [
+          "limit"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of messages to retrieve (default 10)"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "The name of the channel (will be resolved to channel_id if channel_id is not provided)."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_thread_replies_on_slack",
+      "description": "Get all replies in a message thread. Provide either channel_id or channel_name.",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "channel_id"
+            ]
+          },
+          {
+            "required": [
+              "channel_name"
+            ]
+          }
+        ],
+        "required": [
+          "thread_ts"
+        ],
+        "properties": {
+          "thread_ts": {
+            "type": "string",
+            "description": "The timestamp of the parent message in the format '1234567890.123456'. Timestamps in the format without the period can be converted by adding the period such that 6 numbers come after it."
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel containing the thread."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "The name of the channel containing the thread (will be resolved to channel_id if channel_id is not provided)."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_users_on_slack",
+      "description": "Get a list of all users in the workspace with their basic profile information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum number of users to return (default 100, max 200)"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for next page of results"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_profile_on_slack",
+      "description": "Get detailed profile information for a specific user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The ID of the user"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_channel_messages_on_slack",
+      "description": "Fetch the last N messages from a Slack channel (by channel_id or channel_name).",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "channel_id"
+            ]
+          },
+          {
+            "required": [
+              "channel_name"
+            ]
+          }
+        ],
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Number of messages to fetch (default 5)"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel to fetch messages from."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "The name of the channel to fetch messages from."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_mentions_on_slack",
+      "description": "Fetch recent messages where the bot/user is mentioned (optionally by channel).",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of mention messages to fetch (default 10)"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel to search mentions in (optional)."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "The name of the channel to search mentions in (optional)."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@KaranThink41/official-slack-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "SLACK_BOT_TOKEN",
+          "SLACK_TEAM_ID"
+        ],
+        "properties": {
+          "SLACK_TEAM_ID": {
+            "type": "string",
+            "description": "The Slack Team ID for the workspace"
+          },
+          "SLACK_BOT_TOKEN": {
+            "type": "string",
+            "description": "The Bot User OAuth Token for the Slack app"
+          }
+        }
+      }
+    }
+  ]
+}

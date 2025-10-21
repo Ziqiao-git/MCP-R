@@ -1,0 +1,145 @@
+{
+  "qualifiedName": "@afarhadi99/spaces-download-mcp",
+  "displayName": "Twitter Spaces Downloader and Transcriber",
+  "description": "Download and transcribe Twitter Spaces effortlessly using AI-powered transcription. Access multiple transcript formats and manage your downloaded spaces with ease. Streamline the complete workflow from availability check to transcription in one integrated solution.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@afarhadi99/spaces-download-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "check_space_availability",
+      "description": "Check if a Twitter Space is available for download",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_url"
+        ],
+        "properties": {
+          "space_url": {
+            "type": "string",
+            "description": "Full Twitter Space URL (e.g., https://x.com/i/spaces/1ZkKzYLnWOLxv)"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_twitter_space",
+      "description": "Download a Twitter Space and wait for completion",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_url"
+        ],
+        "properties": {
+          "space_url": {
+            "type": "string",
+            "description": "Full Twitter Space URL (e.g., https://x.com/i/spaces/1ZkKzYLnWOLxv)"
+          },
+          "wait_for_completion": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to wait for download completion before returning"
+          }
+        }
+      }
+    },
+    {
+      "name": "transcribe_space",
+      "description": "Transcribe a downloaded Twitter Space using AI",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_id"
+        ],
+        "properties": {
+          "space_id": {
+            "type": "string",
+            "description": "Space ID (e.g., 1ZkKzYLnWOLxv)"
+          },
+          "wait_for_completion": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to wait for transcription completion before returning"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_transcript",
+      "description": "Download transcript in various formats (json, txt, paragraphs, timecoded, summary)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_id"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "json",
+              "txt",
+              "paragraphs",
+              "timecoded",
+              "summary"
+            ],
+            "type": "string",
+            "default": "paragraphs",
+            "description": "Transcript format to download"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID (e.g., 1ZkKzYLnWOLxv)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_spaces",
+      "description": "List all downloaded Twitter Spaces",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "download_and_transcribe_space",
+      "description": "Download a Twitter Space and automatically transcribe it",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_url"
+        ],
+        "properties": {
+          "space_url": {
+            "type": "string",
+            "description": "Full Twitter Space URL (e.g., https://x.com/i/spaces/1ZkKzYLnWOLxv)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@afarhadi99/spaces-download-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiUrl"
+        ],
+        "properties": {
+          "apiUrl": {
+            "type": "string",
+            "default": "http://localhost:8000",
+            "description": "Base URL of the Twitter Spaces API backend"
+          },
+          "timeout": {
+            "type": "number",
+            "default": 30,
+            "description": "Timeout in seconds for API requests"
+          }
+        }
+      }
+    }
+  ]
+}

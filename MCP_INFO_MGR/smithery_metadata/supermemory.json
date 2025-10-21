@@ -1,0 +1,82 @@
+{
+  "qualifiedName": "supermemory",
+  "displayName": "supermemory",
+  "description": "Supermemory's universal Memory MCP will save and bring your context everywhere you go - from Claude, Cursor, chatgpt or any AI tool.  ",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/4c78e77c-66c0-48e5-9b3a-328a4b59fc9f.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/supermemory",
+  "security": null,
+  "tools": [
+    {
+      "name": "addMemory",
+      "title": "Add memory",
+      "description": "You are an AI assistant tasked with storing user information, preferences, and behaviors in a system called supermemory. Your goal is to capture and save as much relevant information as possible, either through explicit commands or by detecting significant user traits, preferences, or patterns.\n\nFirst, you must retrieve the list of available projects. Use the 'getProjects' tool to list all the project IDs. The containerTags, which look like 'sm_project_{name}', should be used as the projectId. Always list all the projects to get the projectIds. Never guess or assume project IDs.\n\nWhen processing user input, pay attention to the following:\n1. Explicit commands like \"remember this\" or \"save this information\"\n2. Significant user traits, preferences, or patterns\n3. Technical details and examples provided by the user\n4. Emotional responses or sentiments expressed\n\nWhen saving information to supermemory, follow these guidelines:\n1. Capture rich context, including technical details and examples\n2. Save emotional responses or sentiments when relevant\n3. If a project ID is applicable, use it; otherwise, save without a specific project\n4. Avoid redundancy - don't save the same information multiple times\n\nHere is the user input to process:\n<user_input>\n{{USER_INPUT}}\n</user_input>\n\nHere is the list of available projects:\n<projects_list>\n{{PROJECTS_LIST}}\n</projects_list>\n\nAfter processing the user input and determining what information to save, format your output as follows:\n\n<supermemory_save>\n<item>\n<content>[Insert the information to be saved]</content>\n<project_id>[Insert the relevant project ID if applicable, otherwise leave blank]</project_id>\n</item>\n[Repeat for each piece of information to be saved]\n</supermemory_save>\n\n<explanation>\n[Provide a brief explanation of what information was saved and why]\n</explanation>\n\nRemember to save as much relevant information as possible without repeating previously saved data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "thingToRemember"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "thingToRemember": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search",
+      "title": "Search Memories",
+      "description": "You are an AI assistant with access to a powerful tool called Supermemory, which allows you to search user memories and patterns. This tool uses semantic matching to find relevant details across related experiences.\n\nHere is the current context:\n<context>\n{{CONTEXT}}\n</context>\n\nThe user has asked or implied the following:\n<user_query>\n{{USER_QUERY}}\n</user_query>\n\nYour task is to use the search memories tool to enhance your response. Follow these guidelines:\n\n1. Always use the search memories tool when explicitly asked about past experiences or when context about the user's past choices would be helpful.\n2. Proactively use the tool to find relevant information that could enrich your response, even if not directly asked.\n3. When using the tool, focus on finding patterns, preferences, and recurring themes in the user's past experiences.\n4. Use the information retrieved to personalize your response and make it more relevant to the user's history and preferences.\n\nProvide your response in the following format:\n<memory_search>Brief description of what you're searching for</memory_search>\n<response>Your detailed response, incorporating the information from the memory search</response>",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "informationToGet"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "informationToGet": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getProjects",
+      "title": "Get Projects",
+      "description": "List user projects. Use the returned containerTag (e.g., sm_project_alpha) as the projectId in other tools. Bare IDs are accepted and normalized to sm_project_{id}.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "whoAmI",
+      "title": "whoAmI",
+      "description": "Get the current logged-in user's information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/supermemory/mcp",
+      "configSchema": {}
+    }
+  ]
+}

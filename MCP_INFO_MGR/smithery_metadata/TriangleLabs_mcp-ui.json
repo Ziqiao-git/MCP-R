@@ -1,0 +1,67 @@
+{
+  "qualifiedName": "@TriangleLabs/mcp-ui",
+  "displayName": "UI Inspiration Search Server",
+  "description": "Search for high-resolution UI design inspirations from Dribbble by simply entering keywords. Quickly get quality web app design references tailored to your needs. Enhance your design workflow with fast, filtered image results powered by Serper API.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@TriangleLabs/mcp-ui",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_ui_inspiration",
+      "description": "Search for UI design inspiration from Dribbble. Just enter simple keywords like 'stock', 'plant care', 'dashboard', etc. The tool will automatically search for '{your-keyword} web app dribbble' to find the best UI designs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 12,
+            "description": "Maximum number of results (default: 12, max: 50)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Simple keywords (e.g., 'stock', 'plant care', 'dashboard', 'calendar')"
+          },
+          "prefer_large": {
+            "type": "boolean",
+            "default": true,
+            "description": "Prefer larger images"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@TriangleLabs/mcp-ui/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "serperApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "serperApiKey": {
+            "type": "string",
+            "description": "Serper API key for image search"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

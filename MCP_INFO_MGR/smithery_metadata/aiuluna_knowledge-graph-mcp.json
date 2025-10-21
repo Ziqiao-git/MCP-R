@@ -1,0 +1,499 @@
+{
+  "qualifiedName": "@aiuluna/knowledge-graph-mcp",
+  "displayName": "Knowledge Graph Server",
+  "description": "Manage, analyze, and visualize knowledge graphs with support for multiple graph types including topologies, timelines, and ontologies. Seamlessly integrate with MCP-compatible AI assistants to query and manipulate knowledge graph data. Benefit from comprehensive resource management and version status tracking to enhance your knowledge workflows.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "create_graph",
+      "description": "Create a new knowledge graph. Supports multiple graph types such as topology, timeline, changelog, requirement documentation, etc. Design guidelines for each graph type:\n- topology: Used to represent dependencies between system components and modules. Recommended to first create main module nodes, then add component nodes, and finally represent relationships through edges like calls, dependencies, and containment\n- timeline: Used to record important project events and decisions. Recommended to add event nodes in chronological order and link related personnel and decisions\n- changelog: Used to track change history of features and components. Recommended to create nodes for each significant change, marking change types and impact scope\n- requirement: Used for requirement management and tracking. Recommended to first create high-level requirements, then break down into specific features, and finally link to responsible persons and iterations\n- knowledge_base: Used to build domain knowledge systems. Recommended to start from core concepts and gradually expand related concepts and relationships\n- ontology: Used for formal representation of domain concepts and relationships, suitable for building standardized knowledge models",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "topology",
+              "timeline",
+              "changelog",
+              "requirement",
+              "knowledge_base",
+              "ontology"
+            ],
+            "type": "string",
+            "description": "Graph type. topology:Component topology diagram, timeline:Timeline graph, changelog:Change log graph, requirement:Requirement documentation graph, knowledge_base:Knowledge base graph, ontology:Ontology graph"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_node",
+      "description": "Add a node to the knowledge graph. Nodes are the basic units of the graph, and different types of graphs support different types of nodes.\nUse cases:\n1. Create component or module nodes in topology graphs\n2. Add event or decision nodes in timeline graphs\n3. Create requirement or feature nodes in requirement documents\n4. Build concept hierarchies in knowledge bases\n\nUsage recommendations:\n1. First create the graph using create_graph\n2. Select the appropriate node type based on graph type\n3. Provide meaningful names and descriptions\n4. Link related files when applicable\n5. Add metadata for additional structured information\n\nReturn data:\n- data: Created node information\n  * id: Node ID\n  * type: Node type\n  * name: Node name\n  * description: Node description\n  * createdAt: Creation time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "type",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "component",
+              "module",
+              "service",
+              "data",
+              "api",
+              "concept",
+              "resource",
+              "event",
+              "change",
+              "requirement",
+              "feature",
+              "iteration",
+              "decision",
+              "person"
+            ],
+            "type": "string",
+            "description": "Node type. Topology graph:component/module/service/data/api/concept/resource, Timeline graph:event/decision/iteration/person, Changelog:change/feature/component/iteration/person, Requirement doc:requirement/feature/component/iteration/person/decision"
+          },
+          "graphId": {
+            "type": "string"
+          },
+          "filePath": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_edge",
+      "description": "Add edges in the knowledge graph, connecting two nodes to build a relationship network. Edges represent relationship types between nodes, such as dependencies, containment, associations, etc.\nPrerequisites:\n1. Must first create a graph (using create_graph)\n2. Source and target nodes must already exist\n3. Edge type must match the graph type\n\nUsage recommendations:\n1. First use list_graphs to get graph and node information\n2. Confirm both source and target nodes exist and their types match\n3. Choose appropriate edge type based on graph type\n4. Add meaningful labels to edges to help understand relationships\n5. If relationships have varying strengths, use the weight parameter\n\nReturn data:\n- data: Newly created edge information\n  * id: Edge ID\n  * type: Edge type\n  * sourceId: Source node ID\n  * targetId: Target node ID\n  * label: Edge label\n  * weight: Edge weight",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "type",
+          "sourceId",
+          "targetId"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "depends_on",
+              "imports",
+              "extends",
+              "implements",
+              "calls",
+              "references",
+              "contains",
+              "associated_with",
+              "precedes",
+              "transforms_to",
+              "leads_to",
+              "implements_req",
+              "created_by",
+              "modified_by",
+              "part_of"
+            ],
+            "type": "string",
+            "description": "Edge type. Topology diagram:depends_on/imports/extends/implements/calls/references/contains/associated_with, Timeline graph:precedes/leads_to/created_by/modified_by, Change log:precedes/transforms_to/created_by/modified_by/part_of, Requirements document:implements_req/depends_on/part_of/created_by/modified_by"
+          },
+          "label": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "graphId": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "publish_graph",
+      "description": "Publish a knowledge graph, changing its status from draft to published. Published graphs can still be modified, but it's recommended to track important changes through version management.\nPrerequisites:\n1. Graph must exist and be in draft status\n2. Recommended to ensure graph content is complete before publishing\n3. Ensure all necessary nodes and edges have been added\n\nUsage recommendations:\n1. First use list_graphs to check the current status of the graph\n2. Use get_node_details to check the completeness of key nodes\n3. Review the graph structure before publishing\n4. Record publication time for version management\n5. Notify relevant team members after publication\n\nReturn data:\n- data: Published graph information\n  * id: Graph ID\n  * name: Graph name\n  * type: Graph type\n  * status: Published\n  * publishedAt: Publication time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId"
+        ],
+        "properties": {
+          "graphId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_graphs",
+      "description": "List all knowledge graphs with support for filtering by status and type. This is the main tool for getting information about existing graphs and an important path for obtaining node IDs.\nUse cases:\n1. View all available graphs and their basic information\n2. Get the node list of a specific graph for subsequent edge addition or node detail queries\n3. Filter graphs by status, such as viewing all drafts or published graphs\n4. Filter graphs by type, such as viewing only topology or timeline graphs\n\nUsage recommendations:\n1. First call this tool to get the graph list and node information\n2. Get the required graph ID and node ID from the returned data\n3. Use these IDs to call other tools (like add_edge, get_node_details)\n4. Recommended to use this tool to confirm the target graph's status before performing any node or edge operations\n\nReturn data:\n- data: List of graphs, each graph contains:\n  * id: Graph ID (used for graphId parameter in other tools)\n  * name: Graph name\n  * description: Graph description\n  * type: Graph type\n  * status: Graph status\n  * nodesCount: Number of nodes\n  * edgesCount: Number of edges\n  * createdAt: Creation time\n  * updatedAt: Update time\n  * publishedAt: Publication time (if published)\n  * nodes: Node list, each node contains:\n    - id: Node ID (used for add_edge and get_node_details tools)\n    - name: Node name\n    - type: Node type",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "topology",
+              "timeline",
+              "changelog",
+              "requirement",
+              "knowledge_base",
+              "ontology"
+            ],
+            "type": "string",
+            "description": "Graph type filter:\n- topology: Component topology diagram\n- timeline: Timeline graph\n- changelog: Change log graph\n- requirement: Requirement documentation graph\n- knowledge_base: Knowledge base graph\n- ontology: Ontology graph"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "archived"
+            ],
+            "type": "string",
+            "description": "Graph status filter:\n- draft: Draft status, can be freely modified\n- published: Published status, recommended to track changes through version management\n- archived: Archived status, modifications not recommended"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_node_details",
+      "description": "Get detailed information about a specific node in the graph. This tool must be used in conjunction with the list_graphs tool, as the nodeId must be obtained from the list_graphs response.\nUse cases:\n1. View complete node attributes\n2. Check associated resources (SVG/Markdown)\n3. Analyze node relationships with others\n4. Check current state before modifying a node\n\nUsage recommendations:\n1. First call list_graphs to get the node list of the target graph\n2. Get the required nodeId from the returned nodes array\n3. Use the obtained graphId and nodeId to call this tool\n4. Check the returned relationship data to determine if further action is needed\n\nReturn data:\n- data: Node details\n  * id: Node ID\n  * name: Node name\n  * type: Node type\n  * description: Node description\n  * filePath: Associated file path\n  * metadata: Node metadata\n  * resources: Associated resource list\n    - id: Resource ID\n    - type: Resource type (svg/markdown)\n    - title: Resource title\n  * relationships: Relationship list\n    - id: Edge ID\n    - type: Edge type\n    - targetNode: Target node information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "nodeId"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Node ID, must be obtained from the nodes array in list_graphs response"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs response"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_creation_guidelines",
+      "description": "Get creation guidelines and standards for SVG graphics and Markdown documents. This tool is a prerequisite for the save_resource tool and must be called before creating and saving any resources.\nUse cases:\n1. Get drawing standards before creating SVG visualizations\n2. Get format requirements before creating Markdown documents\n3. Get complete guidelines before batch resource creation\n\nUsage recommendations:\n1. Call this tool before starting any resource creation\n2. Carefully read and follow the naming rules and directory structure\n3. Create resources according to guidelines, then use save_resource tool\n4. Recommended to save guidelines for team reference\n\nReturn data:\n- data: Guidelines content\n  * guidelines: Guidelines text content\n    - File naming rules\n    - Directory structure requirements\n    - Format specifications\n    - Style guide\n  * type: Guidelines type (svg/markdown/all)\n  * version: Guidelines version",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "svg",
+              "markdown",
+              "all"
+            ],
+            "type": "string",
+            "description": "Guidelines type:\n- svg: SVG graphics creation guidelines, including drawing style, naming rules, etc.\n- markdown: Markdown document guidelines, including format requirements, directory structure, etc.\n- all: Get all guidelines (recommended)"
+          }
+        }
+      }
+    },
+    {
+      "name": "save_resource",
+      "description": "Save AI-generated SVG graphics or Markdown documents to the knowledge graph. This tool must be used in conjunction with get_creation_guidelines and list_graphs tools.\nUse cases:\n1. Save SVG visualization representation of the graph\n2. Save Markdown documents related to nodes\n3. Batch save multiple resource files\n\nUsage recommendations:\n1. First call get_creation_guidelines to get resource creation standards\n2. Use list_graphs to get target graph ID and node ID (if needed)\n3. Create resource content according to standards\n4. Use this tool to save the resource\n5. After saving, use get_node_details to check resource association status\n\nReturn data:\n- data: Saved resource information\n  * id: Resource ID\n  * type: Resource type (svg/markdown)\n  * title: Resource title\n  * description: Resource description\n  * nodeId: Associated node ID (if any)\n  * createdAt: Creation time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "resourceType",
+          "title",
+          "content"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Resource title, must comply with naming rules in get_creation_guidelines"
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "Associated node ID (optional), if provided must be obtained from nodes array in list_graphs"
+          },
+          "content": {
+            "type": "string",
+            "description": "Resource content, must comply with format specifications in get_creation_guidelines"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "description": {
+            "type": "string",
+            "description": "Resource description (optional)"
+          },
+          "resourceType": {
+            "enum": [
+              "svg",
+              "markdown"
+            ],
+            "type": "string",
+            "description": "Resource type:\n- svg: SVG graphics file\n- markdown: Markdown document"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_node",
+      "description": "Modify nodes in the knowledge graph. This tool must be used in conjunction with list_graphs and get_node_details tools.\nUse cases:\n1. Update basic node information (name, description, etc.)\n2. Update file paths associated with nodes\n3. Update node metadata information\n\nUsage recommendations:\n1. First call list_graphs to get target graph and node ID\n2. Use get_node_details to check current node status\n3. Only update fields that need to be modified, keep others unchanged\n4. After updating, call get_node_details again to confirm changes\n\nReturn data:\n- data: Updated node information\n  * id: Node ID\n  * name: Node name\n  * type: Node type\n  * description: Node description\n  * filePath: Associated file path\n  * metadata: Node metadata\n  * updatedAt: Update time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "nodeId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New node name (optional)"
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "Node ID, must be obtained from nodes array in list_graphs"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "filePath": {
+            "type": "string",
+            "description": "New associated file path (optional)"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "New node metadata (optional)"
+          },
+          "description": {
+            "type": "string",
+            "description": "New node description (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_edge",
+      "description": "Modify edges in the knowledge graph. This tool must be used in conjunction with list_graphs and get_node_details tools.\nUse cases:\n1. Update edge label information\n2. Adjust edge weight values\n3. Update edge metadata information\n\nUsage recommendations:\n1. First call list_graphs to get target graph information\n2. Use get_node_details to view edge list of related nodes\n3. Only update fields that need to be modified, keep others unchanged\n4. After updating, call get_node_details again to confirm changes\n\nReturn data:\n- data: Updated edge information\n  * id: Edge ID\n  * type: Edge type\n  * sourceId: Source node ID\n  * targetId: Target node ID\n  * label: Edge label\n  * weight: Edge weight\n  * metadata: Edge metadata\n  * updatedAt: Update time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "edgeId"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "New edge label (optional)"
+          },
+          "edgeId": {
+            "type": "string",
+            "description": "Edge ID, must be obtained from relationships array in get_node_details"
+          },
+          "weight": {
+            "type": "number",
+            "description": "New edge weight (optional), used to represent relationship strength"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "New edge metadata (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_node",
+      "description": "Delete nodes from the knowledge graph. This tool must be used in conjunction with list_graphs tool, and the operation cannot be undone.\nUse cases:\n1. Delete incorrectly created nodes\n2. Delete nodes that are no longer needed\n3. Delete redundant nodes when restructuring the graph\n\nUsage recommendations:\n1. First call list_graphs to get target graph and node information\n2. Use get_node_details to check node's associated resources and relationships\n3. Confirm deletion won't affect other important nodes\n4. Set confirmDelete to true to confirm deletion\n5. Recommended to backup important data before deletion\n\nImportant notes:\n- Deleting a node will also delete all edges related to that node\n- If the node has associated resources, they won't be deleted but will be unlinked\n\nReturn data:\n- data: Deletion result\n  * id: Deleted node ID\n  * name: Node name\n  * type: Node type\n  * deletedAt: Deletion time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "nodeId",
+          "confirmDelete"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Node ID, must be obtained from nodes array in list_graphs"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "confirmDelete": {
+            "type": "boolean",
+            "description": "Confirm deletion, must be set to true, this is a safety measure to prevent accidental deletion"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_edge",
+      "description": "Delete edges from the knowledge graph. This tool must be used in conjunction with list_graphs and get_node_details tools, and the operation cannot be undone.\nUse cases:\n1. Delete incorrectly created relationships\n2. Update relationship structure between nodes\n3. Clean up redundant relationships when restructuring the graph\n\nUsage recommendations:\n1. First call list_graphs to get target graph information\n2. Use get_node_details to get edge details\n3. Confirm deletion won't break important relationship structures\n4. Set confirmDelete to true to confirm deletion\n\nImportant notes:\n- Deleting edges won't affect related nodes\n- Need to call get_node_details again to view updated relationships\n\nReturn data:\n- data: Deletion result\n  * id: Deleted edge ID\n  * deletedAt: Deletion time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "edgeId",
+          "confirmDelete"
+        ],
+        "properties": {
+          "edgeId": {
+            "type": "string",
+            "description": "Edge ID, must be obtained from relationships array in get_node_details"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "confirmDelete": {
+            "type": "boolean",
+            "description": "Confirm deletion, must be set to true, this is a safety measure to prevent accidental deletion"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_resource",
+      "description": "Update resource information in the knowledge graph. This tool must be used in conjunction with list_graphs and get_node_details tools.\nUse cases:\n1. Modify resource title or description\n2. Update resource metadata information\n3. Improve resource documentation\n\nUsage recommendations:\n1. First call list_graphs to get target graph information\n2. Use get_node_details to check current resource information\n3. Only update fields that need to be modified\n4. Maintain consistency in resource naming\n\nReturn data:\n- data: Updated resource information\n  * id: Resource ID\n  * name: Resource name\n  * title: Resource title\n  * description: Resource description\n  * updatedAt: Update time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "resourceId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New resource name (optional)"
+          },
+          "title": {
+            "type": "string",
+            "description": "New resource title (optional)"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "Resource ID, must be obtained from resources array in get_node_details"
+          },
+          "description": {
+            "type": "string",
+            "description": "New resource description (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_resource",
+      "description": "Delete resources from the knowledge graph. This tool must be used in conjunction with list_graphs and get_node_details tools, and the operation cannot be undone.\nUse cases:\n1. Delete outdated resource files\n2. Clean up unnecessary documents\n3. Remove incorrectly created resources\n\nUsage recommendations:\n1. First call list_graphs to get target graph information\n2. Use get_node_details to confirm resource associations\n3. Confirm deletion won't affect other nodes\n4. Set confirmDelete to true to confirm deletion\n5. Recommended to backup important resources before deletion\n\nImportant notes:\n- Deleting a resource will also delete the physical file\n- Will automatically unlink from all nodes\n- This operation cannot be recovered\n\nReturn data:\n- data: Deletion result\n  * id: Deleted resource ID\n  * type: Resource type\n  * deletedAt: Deletion time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "resourceId",
+          "confirmDelete"
+        ],
+        "properties": {
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "Resource ID, must be obtained from resources array in get_node_details"
+          },
+          "confirmDelete": {
+            "type": "boolean",
+            "description": "Confirm deletion, must be set to true, this is a safety measure to prevent accidental deletion"
+          }
+        }
+      }
+    },
+    {
+      "name": "unlink_resource",
+      "description": "Unlink resource associations from nodes. This tool must be used in conjunction with list_graphs and get_node_details tools.\nUse cases:\n1. Adjust resource associations\n2. Remove incorrect resource associations\n3. Reorganize node resource structure\n\nUsage recommendations:\n1. First call list_graphs to get target graph information\n2. Use get_node_details to view node's resource associations\n3. Confirm unlinking won't affect other functionality\n4. Record changes for potential re-association\n\nImportant notes:\n- Only removes association, does not delete resource\n- Resource can still be used by other nodes\n- Association can be re-established at any time\n\nReturn data:\n- data: Operation result\n  * resourceId: Resource ID\n  * nodeId: Node ID\n  * unlinkedAt: Time when association was removed",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "graphId",
+          "nodeId",
+          "resourceId"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Node ID, must be obtained from nodes array in list_graphs"
+          },
+          "graphId": {
+            "type": "string",
+            "description": "Graph ID, must be obtained from list_graphs return data"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "Resource ID to unlink, must be obtained from resources array in get_node_details"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@aiuluna/knowledge-graph-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "knowledgeGraphDir"
+        ],
+        "properties": {
+          "knowledgeGraphDir": {
+            "type": "string",
+            "description": "Path to the knowledge graph storage directory"
+          }
+        }
+      }
+    }
+  ]
+}

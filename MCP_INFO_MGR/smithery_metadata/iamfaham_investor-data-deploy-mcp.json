@@ -1,0 +1,369 @@
+{
+  "qualifiedName": "@iamfaham/investor-data-deploy-mcp",
+  "displayName": "Investor Data Server",
+  "description": "Provide seamless access to investor data through a dedicated MCP server. Enable clients to query and retrieve financial and investment-related information efficiently. Facilitate integration of investor data into applications with minimal setup.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@iamfaham/investor-data-deploy-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_investor_data",
+      "description": "\n    Fetches investor data from the OpenVC database.\n    Use this tool when a user asks for investor information, VC data, or startup funding data.\n\n    Args:\n        limit (Optional[int]): Maximum number of records to return. If None, fetches all records.\n\n    Returns:\n        str: Formatted string containing investor records with the following information:\n        - Investor name\n        - Website\n        - Global HQ\n        - Countries of investment\n        - Stage of investment\n        - Investment thesis\n        - Investor type\n        - First cheque minimum and maximum\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_investor_dataArguments",
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_investor_dataOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_investors_by_criteria",
+      "description": "\n    Search for investors based on specific criteria.\n    Use this tool when a user wants to find investors by type, investment stage, country, or HQ location.\n\n    Args:\n        investor_type (Optional[str]): Type of investor (e.g., \"Angel\", \"VC\", \"PE\")\n        stage (Optional[str]): Investment stage (e.g., \"Seed\", \"Series A\", \"Growth\")\n        country (Optional[str]): Country of investment (uses country codes like \"USA\")\n        hq_location (Optional[str]): Global HQ location (can be city, state, or country)\n        limit (Optional[int]): Maximum number of records to return\n\n    Returns:\n        str: Formatted string containing matching investor records\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_investors_by_criteriaArguments",
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit",
+            "default": null
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage",
+            "default": null
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country",
+            "default": null
+          },
+          "hq_location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hq Location",
+            "default": null
+          },
+          "investor_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Investor Type",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_investors_by_criteriaOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_available_investor_types",
+      "description": "\n    Get a list of all available investor types in the database.\n    Use this tool when a user wants to know what investor types are available for searching.\n\n    Returns:\n        str: List of all unique investor types in the database\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_available_investor_typesArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_available_investor_typesOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_available_countries",
+      "description": "\n    Get a list of all available countries in the database.\n    Use this tool when a user wants to know what countries are available for searching.\n\n    Returns:\n        str: List of all unique countries in the database\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_available_countriesArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_available_countriesOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_location_search_guide",
+      "description": "\n    Provides guidance on how to search for investors by location.\n    Use this tool when a user wants to understand the difference between country and HQ location searches.\n\n    Returns:\n        str: Explanation of location search options\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_location_search_guideArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_location_search_guideOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_investment_stages",
+      "description": "\n    Analyze the distribution of investment stages across all investors.\n    Use this tool when a user wants to understand what investment stages are most common or get insights about the investment landscape.\n\n    Returns:\n        str: Analysis of investment stages with statistics and insights\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "analyze_investment_stagesArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "analyze_investment_stagesOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_investors_by_cheque_size",
+      "description": "\n    Find investors based on their typical investment size (first cheque range).\n    Use this tool when a user wants to find investors that invest within a specific amount range.\n\n    Args:\n        min_amount (Optional[str]): Minimum investment amount (e.g., \"100k\", \"1M\", \"10M\")\n        max_amount (Optional[str]): Maximum investment amount (e.g., \"500k\", \"5M\", \"50M\")\n        limit (Optional[int]): Maximum number of records to return\n\n    Returns:\n        str: Formatted string containing matching investor records\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "find_investors_by_cheque_sizeArguments",
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit",
+            "default": null
+          },
+          "max_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Amount",
+            "default": null
+          },
+          "min_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Amount",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "find_investors_by_cheque_sizeOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_investment_thesis",
+      "description": "\n    Analyze investment thesis patterns across all investors.\n    Use this tool when a user wants to understand common investment themes, focus areas, or strategies.\n\n    Returns:\n        str: Analysis of investment thesis patterns and common themes\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "analyze_investment_thesisArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "analyze_investment_thesisOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_investor_statistics",
+      "description": "\n    Get comprehensive statistics about the investor database.\n    Use this tool when a user wants to understand the overall composition and distribution of investors.\n\n    Returns:\n        str: Comprehensive statistics about the investor database\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_investor_statisticsArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_investor_statisticsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_similar_investors",
+      "description": "\n    Find investors similar to a given investor based on type, stage, and location.\n    Use this tool when a user wants to find investors similar to a specific one.\n\n    Args:\n        investor_name (str): Name of the investor to find similar ones for\n        limit (Optional[int]): Maximum number of records to return\n\n    Returns:\n        str: Formatted string containing similar investor records\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "find_similar_investorsArguments",
+        "required": [
+          "investor_name"
+        ],
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit",
+            "default": null
+          },
+          "investor_name": {
+            "type": "string",
+            "title": "Investor Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "find_similar_investorsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@iamfaham/investor-data-deploy-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

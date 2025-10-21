@@ -1,0 +1,172 @@
+{
+  "qualifiedName": "@kbsooo/mcp_atom_of_thoughts",
+  "displayName": "Atom of Thoughts",
+  "description": "Enhance your applications with intelligent thought processing capabilities. Leverage advanced language models to generate, analyze, and manipulate ideas seamlessly. Transform your workflows with powerful context-aware interactions.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "AoT",
+      "description": "Atom of Thoughts (AoT) is a tool for solving complex problems by decomposing them into independent, reusable atomic units of thought.\nUnlike traditional sequential thinking, this tool enables more powerful problem solving by allowing atomic units of thought to form dependencies with each other.\n\nWhen to use:\n- Solving problems requiring complex reasoning\n- Generating hypotheses that need verification from multiple perspectives\n- Deriving high-confidence conclusions in scenarios where accuracy is crucial\n- Minimizing logical errors in critical tasks\n- Decision-making requiring multiple verification steps\n\nAtom types:\n- premise: Basic assumptions or given information for problem solving\n- reasoning: Logical reasoning process based on other atoms\n- hypothesis: Proposed solutions or intermediate conclusions\n- verification: Process to evaluate the validity of other atoms (especially hypotheses)\n- conclusion: Verified hypotheses or final problem solutions\n\nParameter descriptions:\n- atomId: Unique identifier for the atom (e.g., 'A1', 'H2')\n- content: Actual content of the atom\n- atomType: Type of atom (one of: premise, reasoning, hypothesis, verification, conclusion)\n- dependencies: List of IDs of other atoms this atom depends on\n- confidence: Confidence level of this atom (value between 0-1)\n- isVerified: Whether this atom has been verified\n- depth: Depth level of this atom (in the decomposition-contraction process)\n\nAdditional features:\n1. Decomposition-Contraction mechanism: \n   - Decompose atoms into smaller sub-atoms and contract back after verification\n   - startDecomposition(atomId): Start atom decomposition\n   - addToDecomposition(decompositionId, atomId): Add sub-atom to decomposition\n   - completeDecomposition(decompositionId): Complete decomposition process\n\n2. Automatic termination mechanism:\n   - Automatically terminate when reaching maximum depth or finding high-confidence conclusion\n   - getTerminationStatus(): Return termination status and reason\n   - getBestConclusion(): Return highest confidence conclusion\n\nUsage method:\n1. Understand the problem and define necessary premise atoms\n2. Create reasoning atoms based on premises\n3. Create hypothesis atoms based on reasoning\n4. Create verification atoms to verify hypotheses\n5. Derive conclusion atoms based on verified hypotheses\n6. Use atom decomposition to explore deeper when necessary\n7. Present the high-confidence conclusion atom as the final answer",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "atomId",
+          "content",
+          "atomType",
+          "dependencies",
+          "confidence"
+        ],
+        "properties": {
+          "depth": {
+            "type": "number",
+            "description": "Depth level of this atom in the decomposition-contraction mechanism"
+          },
+          "atomId": {
+            "type": "string",
+            "description": "Unique identifier for the atom"
+          },
+          "content": {
+            "type": "string",
+            "description": "Actual content of the atom"
+          },
+          "atomType": {
+            "enum": [
+              "premise",
+              "reasoning",
+              "hypothesis",
+              "verification",
+              "conclusion"
+            ],
+            "type": "string",
+            "description": "Type of atom"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Confidence level of this atom (value between 0-1)"
+          },
+          "isVerified": {
+            "type": "boolean",
+            "description": "Whether this atom has been verified"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of IDs of other atoms this atom depends on"
+          }
+        }
+      }
+    },
+    {
+      "name": "AoT-light",
+      "description": "A lightweight version of Atom of Thoughts (AoT) designed for faster processing and quicker results.\nThis streamlined version sacrifices some depth of analysis for speed, making it ideal for time-sensitive reasoning tasks.\n\nWhen to use:\n- Quick brainstorming sessions requiring atomic thought organization\n- Time-sensitive problem solving where speed is prioritized over exhaustive analysis\n- Simpler reasoning tasks that don't require deep decomposition\n- Initial exploration before using the full AoT for deeper analysis\n- Learning or demonstration purposes where response time is important\n\nKey differences from full AoT:\n- Lower maximum depth (3 instead of 5) for faster processing\n- Simplified verification process\n- Immediate conclusion suggestion for high-confidence hypotheses\n- Reduced computational overhead and response payload\n- Optimized for speed rather than exhaustive analysis\n\nAtom types and parameters are the same as the full AoT tool.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "atomId",
+          "content",
+          "atomType",
+          "dependencies",
+          "confidence"
+        ],
+        "properties": {
+          "depth": {
+            "type": "number",
+            "description": "Depth level of this atom (optional, defaults to 0)"
+          },
+          "atomId": {
+            "type": "string",
+            "description": "Unique identifier for the atom"
+          },
+          "content": {
+            "type": "string",
+            "description": "Actual content of the atom"
+          },
+          "atomType": {
+            "enum": [
+              "premise",
+              "reasoning",
+              "hypothesis",
+              "verification",
+              "conclusion"
+            ],
+            "type": "string",
+            "description": "Type of atom"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Confidence level of this atom (value between 0-1)"
+          },
+          "isVerified": {
+            "type": "boolean",
+            "description": "Whether this atom has been verified"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of IDs of other atoms this atom depends on"
+          }
+        }
+      }
+    },
+    {
+      "name": "atomcommands",
+      "description": "A command tool to control the decomposition-contraction mechanism and automatic termination of Atom of Thoughts.\n  \nUse this tool to access advanced features of AoT:\n\n1. Decomposition (decompose): Decompose a specified atom into smaller sub-atoms\n2. Complete decomposition (complete_decomposition): Complete an ongoing decomposition process\n3. Check termination status (termination_status): Check the termination status of the current AoT process\n4. Get best conclusion (best_conclusion): Get the verified conclusion with the highest confidence\n5. Change settings (set_max_depth): Change the maximum depth limit\n\nCommand descriptions:\n- command: Command to execute (decompose, complete_decomposition, termination_status, best_conclusion, set_max_depth)\n- atomId: Atom ID to use with the command (only required for decompose command)\n- decompositionId: ID of the decomposition process (only required for complete_decomposition command)\n- maxDepth: Maximum depth value to set (only required for set_max_depth command)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "atomId": {
+            "type": "string",
+            "description": "Atom ID to use with the command"
+          },
+          "command": {
+            "enum": [
+              "decompose",
+              "complete_decomposition",
+              "termination_status",
+              "best_conclusion",
+              "set_max_depth"
+            ],
+            "type": "string",
+            "description": "Command to execute"
+          },
+          "maxDepth": {
+            "type": "number",
+            "description": "Maximum depth value to set"
+          },
+          "decompositionId": {
+            "type": "string",
+            "description": "ID of the decomposition process to complete"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kbsooo/mcp_atom_of_thoughts/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

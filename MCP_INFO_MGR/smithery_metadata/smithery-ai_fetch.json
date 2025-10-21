@@ -1,0 +1,111 @@
+{
+  "qualifiedName": "@smithery-ai/fetch",
+  "displayName": "Fetch",
+  "description": "A simple tool that performs a fetch request to a webpage.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/ddc7b706-b403-4217-8df7-dd7a065eae4d.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@smithery-ai/fetch",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "fetch_url",
+      "description": "Fetch a URL and return basic information about the page.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract_elements",
+      "description": "Extract specific elements from a web page using CSS selectors.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url",
+          "selector"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL to fetch"
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of elements to return"
+          },
+          "selector": {
+            "type": "string",
+            "description": "CSS selector to find elements (e.g., 'img', '.class', '#id', 'link[rel*=\"icon\"]')"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "Optional attribute to extract from elements (e.g., 'href', 'src', 'alt')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_page_metadata",
+      "description": "Extract comprehensive metadata from a web page including title, description, Open Graph tags, Twitter cards, and other meta information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL to analyze"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@smithery-ai/fetch/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "timeout": {
+            "type": "number",
+            "default": 10000,
+            "description": "Request timeout in milliseconds"
+          },
+          "userAgent": {
+            "type": "string",
+            "default": "Fetch-MCP-Server/1.0 (https://smithery.ai)",
+            "description": "Custom User-Agent header for HTTP requests"
+          },
+          "followRedirects": {
+            "type": "boolean",
+            "default": true,
+            "description": "Follow HTTP redirects"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

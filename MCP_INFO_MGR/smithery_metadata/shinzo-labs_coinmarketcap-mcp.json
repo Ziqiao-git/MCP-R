@@ -1,0 +1,866 @@
+{
+  "qualifiedName": "@shinzo-labs/coinmarketcap-mcp",
+  "displayName": "CoinMarketCap MCP",
+  "description": "Access the complete CoinMarketCap API with 20+ basic endpoints and 50+ total, including cryptocurrency market data, exchange information, and other blockchain-related metrics.\n\nSign up here for a free API key: https://pro.coinmarketcap.com/signup/?plan=0",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/coinmarketcap.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@shinzo-labs/coinmarketcap-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "cryptoCategories",
+      "description": "Returns information about all coin categories available on CoinMarketCap.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "start": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cryptoCategory",
+      "description": "Returns information about a single coin category on CoinMarketCap.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "start": {
+            "type": "number"
+          },
+          "convert": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cryptoCurrencyMap",
+      "description": "Returns a mapping of all cryptocurrencies to unique CoinMarketCap IDs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "start": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "listing_status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getCryptoMetadata",
+      "description": "Returns all static metadata for one or more cryptocurrencies including logo, description, and website URLs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "aux": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "skip_invalid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "allCryptocurrencyListings",
+      "description": "Returns a paginated list of all active cryptocurrencies with latest market data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "sort": {
+            "enum": [
+              "market_cap",
+              "name",
+              "symbol",
+              "date_added",
+              "price",
+              "circulating_supply",
+              "total_supply",
+              "max_supply",
+              "num_market_pairs",
+              "volume_24h",
+              "percent_change_1h",
+              "percent_change_24h",
+              "percent_change_7d"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 5000,
+            "minimum": 1
+          },
+          "start": {
+            "type": "number"
+          },
+          "convert": {
+            "type": "string"
+          },
+          "sort_dir": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string"
+          },
+          "price_max": {
+            "type": "number"
+          },
+          "price_min": {
+            "type": "number"
+          },
+          "convert_id": {
+            "type": "string"
+          },
+          "market_cap_max": {
+            "type": "number"
+          },
+          "market_cap_min": {
+            "type": "number"
+          },
+          "volume_24h_max": {
+            "type": "number"
+          },
+          "volume_24h_min": {
+            "type": "number"
+          },
+          "cryptocurrency_type": {
+            "type": "string"
+          },
+          "circulating_supply_max": {
+            "type": "number"
+          },
+          "circulating_supply_min": {
+            "type": "number"
+          },
+          "percent_change_24h_max": {
+            "type": "number"
+          },
+          "percent_change_24h_min": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cryptoQuotesLatest",
+      "description": "Returns the latest market quote for one or more cryptocurrencies.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "aux": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "convert": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          },
+          "skip_invalid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexInfo",
+      "description": "Returns all static metadata for one or more decentralised exchanges.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "aux": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexListingsLatest",
+      "description": "Returns a paginated list of all decentralised cryptocurrency exchanges including the latest aggregate market data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "sort": {
+            "enum": [
+              "name",
+              "volume_24h",
+              "market_share",
+              "num_markets"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "all",
+              "orderbook",
+              "swap",
+              "aggregator"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string"
+          },
+          "sort_dir": {
+            "enum": [
+              "desc",
+              "asc"
+            ],
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexNetworksList",
+      "description": "Returns a list of all networks to unique CoinMarketCap ids.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "sort": {
+            "enum": [
+              "id",
+              "name"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string"
+          },
+          "sort_dir": {
+            "enum": [
+              "desc",
+              "asc"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexSpotPairsLatest",
+      "description": "Returns a paginated list of all active dex spot pairs with latest market data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "sort": {
+            "enum": [
+              "name",
+              "date_added",
+              "price",
+              "volume_24h",
+              "percent_change_1h",
+              "percent_change_24h",
+              "liquidity",
+              "fully_diluted_value",
+              "no_of_transactions_24h"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "type": "string"
+          },
+          "dex_id": {
+            "type": "string"
+          },
+          "dex_slug": {
+            "type": "string"
+          },
+          "sort_dir": {
+            "enum": [
+              "desc",
+              "asc"
+            ],
+            "type": "string"
+          },
+          "scroll_id": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          },
+          "network_id": {
+            "type": "string"
+          },
+          "network_slug": {
+            "type": "string"
+          },
+          "base_asset_id": {
+            "type": "string"
+          },
+          "liquidity_max": {
+            "type": "string"
+          },
+          "liquidity_min": {
+            "type": "string"
+          },
+          "reverse_order": {
+            "type": "string"
+          },
+          "quote_asset_id": {
+            "type": "string"
+          },
+          "volume_24h_max": {
+            "type": "string"
+          },
+          "volume_24h_min": {
+            "type": "string"
+          },
+          "base_asset_ucid": {
+            "type": "string"
+          },
+          "quote_asset_ucid": {
+            "type": "string"
+          },
+          "base_asset_symbol": {
+            "type": "string"
+          },
+          "quote_asset_symbol": {
+            "type": "string"
+          },
+          "percent_change_24h_max": {
+            "type": "string"
+          },
+          "percent_change_24h_min": {
+            "type": "string"
+          },
+          "no_of_transactions_24h_max": {
+            "type": "string"
+          },
+          "no_of_transactions_24h_min": {
+            "type": "string"
+          },
+          "base_asset_contract_address": {
+            "type": "string"
+          },
+          "quote_asset_contract_address": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexPairsQuotesLatest",
+      "description": "Returns the latest market quote for 1 or more spot pairs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          },
+          "network_id": {
+            "type": "string"
+          },
+          "network_slug": {
+            "type": "string"
+          },
+          "skip_invalid": {
+            "type": "string"
+          },
+          "reverse_order": {
+            "type": "string"
+          },
+          "contract_address": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexPairsOhlcvLatest",
+      "description": "Returns the latest OHLCV market values for one or more spot pairs for the current UTC day.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          },
+          "network_id": {
+            "type": "string"
+          },
+          "network_slug": {
+            "type": "string"
+          },
+          "skip_invalid": {
+            "type": "string"
+          },
+          "reverse_order": {
+            "type": "string"
+          },
+          "contract_address": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexPairsOhlcvHistorical",
+      "description": "Returns historical OHLCV data along with market cap for any spot pairs using time interval parameters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "count": {
+            "type": "string"
+          },
+          "interval": {
+            "enum": [
+              "1m",
+              "5m",
+              "15m",
+              "30m",
+              "1h",
+              "4h",
+              "8h",
+              "12h",
+              "daily",
+              "weekly",
+              "monthly"
+            ],
+            "type": "string"
+          },
+          "time_end": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          },
+          "network_id": {
+            "type": "string"
+          },
+          "time_start": {
+            "type": "string"
+          },
+          "time_period": {
+            "enum": [
+              "daily",
+              "hourly",
+              "1m",
+              "5m",
+              "15m",
+              "30m",
+              "4h",
+              "8h",
+              "12h",
+              "weekly",
+              "monthly"
+            ],
+            "type": "string"
+          },
+          "network_slug": {
+            "type": "string"
+          },
+          "skip_invalid": {
+            "type": "string"
+          },
+          "reverse_order": {
+            "type": "string"
+          },
+          "contract_address": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dexPairsTradeLatest",
+      "description": "Returns up to the latest 100 trades for 1 spot pair.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "aux": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          },
+          "network_id": {
+            "type": "string"
+          },
+          "network_slug": {
+            "type": "string"
+          },
+          "skip_invalid": {
+            "type": "string"
+          },
+          "reverse_order": {
+            "type": "string"
+          },
+          "contract_address": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "exchangeAssets",
+      "description": "Returns the assets/token holdings of an exchange.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "exchangeInfo",
+      "description": "Returns metadata for one or more exchanges.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "aux": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "exchangeMap",
+      "description": "Returns a mapping of all exchanges to unique CoinMarketCap IDs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "start": {
+            "type": "number"
+          },
+          "listing_status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "globalMetricsLatest",
+      "description": "Returns the latest global cryptocurrency market metrics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "convert": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cmc100IndexHistorical",
+      "description": "Returns an interval of historic CoinMarketCap 100 Index values based on the interval parameter.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "count": {
+            "type": "string"
+          },
+          "interval": {
+            "enum": [
+              "5m",
+              "15m",
+              "daily"
+            ],
+            "type": "string"
+          },
+          "time_end": {
+            "type": "string"
+          },
+          "time_start": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cmc100IndexLatest",
+      "description": "Returns the lastest CoinMarketCap 100 Index value, constituents, and constituent weights.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fearAndGreedLatest",
+      "description": "Returns the latest CMC Crypto Fear and Greed Index value.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fearAndGreedHistorical",
+      "description": "Returns historical CMC Crypto Fear and Greed Index values.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1
+          },
+          "start": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fiatMap",
+      "description": "Returns a mapping of all supported fiat currencies to unique CoinMarketCap IDs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "sort": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "start": {
+            "type": "number"
+          },
+          "include_metals": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getPostmanCollection",
+      "description": "Returns a Postman collection for the CoinMarketCap API.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "priceConversion",
+      "description": "Convert an amount of one cryptocurrency or fiat currency into one or more different currencies.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "amount"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "convert": {
+            "type": "string"
+          },
+          "convert_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "keyInfo",
+      "description": "Returns API key details and usage stats.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@shinzo-labs/coinmarketcap-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "COINMARKETCAP_API_KEY"
+        ],
+        "properties": {
+          "SUBSCRIPTION_LEVEL": {
+            "type": "string",
+            "default": "Basic",
+            "description": "SUBSCRIPTION_LEVEL - One of: Basic, Hobbyist, Startup, Standard, Professional, or Enterprise (defaults to Basic)"
+          },
+          "COINMARKETCAP_API_KEY": {
+            "type": "string",
+            "description": "COINMARKETCAP_API_KEY - Your API key"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "qualifiedName": "@yusufsenyer/augment-agent",
+  "displayName": "Augment Weather Agent",
+  "description": "Provide natural language weather information and forecasts for any city worldwide. Answer user queries about current weather and 7-day forecasts with full Turkish language support. Integrate easily via REST API endpoints for chat and direct weather data access.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@yusufsenyer/augment-agent",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_current_weather",
+      "description": "Belirtilen koordinatlardaki güncel hava durumu bilgisini getirir",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90,
+            "minimum": -90,
+            "description": "Enlem (-90 ile 90 arası)"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180,
+            "minimum": -180,
+            "description": "Boylam (-180 ile 180 arası)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_weather_by_city",
+      "description": "Şehir adına göre güncel hava durumu bilgisini getirir (Türkiye şehirleri)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "city"
+        ],
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "Şehir adı (örn: istanbul, ankara, izmir)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_hourly_forecast",
+      "description": "Belirtilen koordinatlarda 24 saatlik hava durumu tahminini getirir",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90,
+            "minimum": -90,
+            "description": "Enlem (-90 ile 90 arası)"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180,
+            "minimum": -180,
+            "description": "Boylam (-180 ile 180 arası)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_daily_forecast",
+      "description": "Belirtilen koordinatlarda 7 günlük hava durumu tahminini getirir",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90,
+            "minimum": -90,
+            "description": "Enlem (-90 ile 90 arası)"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180,
+            "minimum": -180,
+            "description": "Boylam (-180 ile 180 arası)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_daily_forecast_by_city",
+      "description": "Şehir adına göre 7 günlük hava durumu tahminini getirir (Türkiye şehirleri)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "city"
+        ],
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "Şehir adı (örn: istanbul, ankara, izmir)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_supported_cities",
+      "description": "Desteklenen Türkiye şehirlerinin listesini getirir",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@yusufsenyer/augment-agent/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Debug loglarını etkinleştir"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "Europe/Istanbul",
+            "description": "Zaman dilimi ayarı"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "qualifiedName": "@gilberth/enhanced-homeassistant-mcp",
+  "displayName": "Enhanced Home Assistant Integration",
+  "description": "Enable AI assistants to seamlessly interact with your Home Assistant smart home environment. Manage devices, automations, scenes, and system settings through a comprehensive set of tools. Monitor history, control climate, media, lights, and more with ease and reliability.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.home-assistant.io.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@gilberth/enhanced-homeassistant-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "homeassistant_api",
+      "description": "Verify if the Home Assistant API is online and accessible",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "homeassistant_get_state",
+      "description": "Get the current state of a Home Assistant entity",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entity_id"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "The entity ID (e.g., 'light.living_room', 'sensor.temperature')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "homeassistant_list_entities",
+      "description": "List all available Home Assistant entities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of entities to return (default: 20)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@gilberth/enhanced-homeassistant-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "homeAssistantToken",
+          "homeAssistantUrl"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "requestTimeout": {
+            "type": "number",
+            "default": 10000,
+            "description": "Request timeout in milliseconds"
+          },
+          "homeAssistantUrl": {
+            "type": "string",
+            "description": "URL of your Home Assistant instance (e.g., http://homeassistant.local:8123)"
+          },
+          "homeAssistantToken": {
+            "type": "string",
+            "description": "Long-Lived Access Token for authenticating with Home Assistant"
+          }
+        }
+      }
+    }
+  ]
+}

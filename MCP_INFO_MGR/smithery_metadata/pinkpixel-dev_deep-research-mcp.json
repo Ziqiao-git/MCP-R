@@ -1,0 +1,305 @@
+{
+  "qualifiedName": "@pinkpixel-dev/deep-research-mcp",
+  "displayName": "Deep Research Server",
+  "description": "Perform comprehensive web research by combining AI-powered search and deep content crawling to gather extensive, up-to-date information on any topic. Aggregate and structure research data into detailed JSON outputs optimized for generating high-quality markdown documentation with LLMs. Customize documentation prompts and output paths to fit your workflow and save research results securely.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.npmjs.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "deep-research-tool",
+      "description": "Performs extensive web research using Tavily Search and Crawl. Returns aggregated JSON data including the query, search summary (if any), detailed research findings, and documentation instructions. The documentation instructions will guide you on how the user wants the research data to be formatted into markdown.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "days": {
+            "type": "number",
+            "description": "For 'news' topic: number of days back from current date to include results."
+          },
+          "query": {
+            "type": "string",
+            "description": "The main research topic or question."
+          },
+          "topic": {
+            "enum": [
+              "general",
+              "news"
+            ],
+            "type": "string",
+            "default": "general",
+            "description": "Category for the Tavily search ('general' or 'news')."
+          },
+          "time_range": {
+            "type": "string",
+            "description": "Time range for search results (e.g., 'd' for day, 'w' for week, 'm' for month, 'y' for year)."
+          },
+          "crawl_limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Total links crawler will process per root URL (1-20). Can be set via CRAWL_LIMIT environment variable."
+          },
+          "search_depth": {
+            "enum": [
+              "basic",
+              "advanced"
+            ],
+            "type": "string",
+            "default": "advanced",
+            "description": "Depth of the initial Tavily search ('basic' or 'advanced')."
+          },
+          "crawl_timeout": {
+            "type": "number",
+            "default": 180,
+            "description": "Timeout in seconds for Tavily crawl requests. Can be set via CRAWL_TIMEOUT environment variable."
+          },
+          "include_answer": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "enum": [
+                  "basic",
+                  "advanced"
+                ],
+                "type": "string"
+              }
+            ],
+            "default": false,
+            "description": "Include an LLM-generated answer from Tavily search (true implies 'basic')."
+          },
+          "search_timeout": {
+            "type": "number",
+            "default": 60,
+            "description": "Timeout in seconds for Tavily search requests. Can be set via SEARCH_TIMEOUT environment variable."
+          },
+          "crawl_max_depth": {
+            "type": "number",
+            "default": 1,
+            "description": "Max crawl depth from base URL (1-2). Higher values increase processing time significantly. Can be set via CRAWL_MAX_DEPTH environment variable."
+          },
+          "crawl_categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "Filter crawl URLs by categories (e.g., 'Blog', 'Documentation')."
+          },
+          "chunks_per_source": {
+            "type": "number",
+            "default": 3,
+            "maximum": 3,
+            "minimum": 1,
+            "description": "For 'advanced' search: number of content chunks from each source (1-3)."
+          },
+          "crawl_max_breadth": {
+            "type": "number",
+            "default": 10,
+            "description": "Max links to follow per page level during crawl (1-10)."
+          },
+          "crawl_instructions": {
+            "type": "string",
+            "description": "Natural language instructions for the crawler."
+          },
+          "crawl_select_paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "Regex for URLs paths to crawl (e.g., '/docs/.*')."
+          },
+          "max_search_results": {
+            "type": "number",
+            "default": 7,
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Max search results to retrieve for crawling (1-20). Can be set via MAX_SEARCH_RESULTS environment variable."
+          },
+          "crawl_exclude_paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "Regex for URL paths to exclude."
+          },
+          "crawl_extract_depth": {
+            "enum": [
+              "basic",
+              "advanced"
+            ],
+            "type": "string",
+            "default": "basic",
+            "description": "Extraction depth for crawl ('basic' or 'advanced')."
+          },
+          "crawl_allow_external": {
+            "type": "boolean",
+            "default": false,
+            "description": "Allow crawler to follow links to external domains."
+          },
+          "crawl_include_images": {
+            "type": "boolean",
+            "default": false,
+            "description": "Extract image URLs from crawled pages."
+          },
+          "crawl_select_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "Regex for domains/subdomains to crawl (e.g., '^docs\\.example\\.com$'). Overrides auto-domain focus."
+          },
+          "documentation_prompt": {
+            "type": "string",
+            "description": "Optional. Custom prompt for LLM documentation generation. Overrides 'DOCUMENTATION_PROMPT' env var and default. If none set, a comprehensive default is used."
+          },
+          "crawl_exclude_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "Regex for domains/subdomains to exclude."
+          },
+          "hardware_acceleration": {
+            "type": "boolean",
+            "default": false,
+            "description": "Try to use hardware acceleration (WebGPU) if available."
+          },
+          "include_search_images": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include image URLs from initial search results."
+          },
+          "exclude_domains_search": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "List of domains to specifically exclude from search."
+          },
+          "include_domains_search": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "List of domains to specifically include in search."
+          },
+          "include_raw_content_search": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include cleaned HTML from initial search results."
+          },
+          "include_search_image_descriptions": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include image descriptions from initial search results."
+          }
+        }
+      }
+    },
+    {
+      "name": "write-research-file",
+      "description": "Write research content to a file. This tool allows you to save research findings, documentation, or any text content to a specified file path.\n\n                    SECURITY: File writing is controlled by environment variables:\n                    - FILE_WRITE_ENABLED must be set to 'true' to enable file writing\n                    - ALLOWED_WRITE_PATHS can specify allowed directories (comma-separated)\n                    - If no ALLOWED_WRITE_PATHS specified, defaults to user's home directory\n                    - FILE_WRITE_LINE_LIMIT controls maximum lines per write operation (default: 200)\n\n                    Use this tool to save research reports, documentation, or any content generated from the deep-research-tool results.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "file_path",
+          "content"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "rewrite",
+              "append"
+            ],
+            "type": "string",
+            "default": "rewrite",
+            "description": "Write mode: 'rewrite' to overwrite file, 'append' to add to existing content."
+          },
+          "content": {
+            "type": "string",
+            "description": "Content to write to the file."
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Path where the file should be written. Must be within allowed directories."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@pinkpixel-dev/deep-research-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "tavilyApiKey"
+        ],
+        "properties": {
+          "crawlLimit": {
+            "type": "number",
+            "default": 10,
+            "description": "Optional maximum number of URLs to crawl per source."
+          },
+          "crawlTimeout": {
+            "type": "number",
+            "default": 180,
+            "description": "Optional timeout in seconds for crawl requests."
+          },
+          "tavilyApiKey": {
+            "type": "string",
+            "description": "Tavily API key for authentication."
+          },
+          "crawlMaxDepth": {
+            "type": "number",
+            "default": 1,
+            "description": "Optional maximum crawl depth from source URL."
+          },
+          "searchTimeout": {
+            "type": "number",
+            "default": 60,
+            "description": "Optional timeout in seconds for search requests."
+          },
+          "fileWriteEnabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable file writing tool."
+          },
+          "maxSearchResults": {
+            "type": "number",
+            "default": 7,
+            "description": "Optional maximum number of search results to retrieve."
+          },
+          "allowedWritePaths": {
+            "type": "string",
+            "description": "Comma-separated allowed directories for file writing."
+          },
+          "fileWriteLineLimit": {
+            "type": "number",
+            "default": 200,
+            "description": "Maximum lines per file write operation."
+          },
+          "documentationPrompt": {
+            "type": "string",
+            "description": "Optional custom documentation prompt to override default."
+          }
+        }
+      }
+    }
+  ]
+}

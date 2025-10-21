@@ -1,0 +1,83 @@
+{
+  "qualifiedName": "@pinkpixel-dev/web-scout-mcp",
+  "displayName": "Web Scout",
+  "description": "Search the web and extract clean, readable text from webpages. Process multiple URLs at once to speed up research with reliable throttling and error handling. Quickly compile sources and summaries for briefs, reports, or competitive analysis.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/5b4d1e97-6237-40ab-9b22-1e3837e41132.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@pinkpixel-dev/web-scout-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "DuckDuckGoWebSearch",
+      "description": "Initiates a web search query using the DuckDuckGo search engine and returns a well-structured list of findings. Input the keywords, question, or topic you want to search for using DuckDuckGo as your query. Input the maximum number of search entries you'd like to receive using maxResults - defaults to 10 if not provided.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Search query string"
+          },
+          "maxResults": {
+            "type": "integer",
+            "maximum": 25,
+            "minimum": 1,
+            "description": "Maximum number of results to return (default: 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "UrlContentExtractor",
+      "description": "Fetches and extracts content from a given webpage URL. Input the URL of the webpage you want to extract content from as a string using the url parameter. You can also input an array of URLs to fetch content from multiple pages at once.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri",
+                "description": "The webpage URL to fetch content from"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "description": "List of webpage URLs to get content from"
+              }
+            ],
+            "description": "URL or list of URLs to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@pinkpixel-dev/web-scout-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

@@ -1,0 +1,854 @@
+{
+  "qualifiedName": "@chrisdoc/hevy-mcp",
+  "displayName": "Hevy Fitness API MCP Server",
+  "description": "Access and manage your workout data seamlessly. Integrate with the Hevy fitness tracking app to create, update, and organize workouts and routines effortlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.hevyapp.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@chrisdoc/hevy-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-workouts",
+      "description": "Get a paginated list of workouts. Returns workout details including title, description, start/end times, and exercises performed. Results are ordered from newest to oldest.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "default": 5,
+            "maximum": 10,
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-workout",
+      "description": "Get complete details of a specific workout by ID. Returns all workout information including title, description, start/end times, and detailed exercise data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workoutId"
+        ],
+        "properties": {
+          "workoutId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-workout-count",
+      "description": "Get the total number of workouts on the account. Useful for pagination or statistics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-workout-events",
+      "description": "Retrieve a paged list of workout events (updates or deletes) since a given date. Events are ordered from newest to oldest. The intention is to allow clients to keep their local cache of workouts up to date without having to fetch the entire list of workouts.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "since": {
+            "type": "string",
+            "default": "1970-01-01T00:00:00Z"
+          },
+          "pageSize": {
+            "type": "integer",
+            "default": 5,
+            "maximum": 10,
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-workout",
+      "description": "Create a new workout in your Hevy account. Requires title, start/end times, and at least one exercise with sets. Returns the complete workout details upon successful creation including the newly assigned workout ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "startTime",
+          "endTime",
+          "exercises"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "endTime": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "exercises": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "exerciseTemplateId",
+                "sets"
+              ],
+              "properties": {
+                "sets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rpe": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "reps": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "integer"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "type": {
+                        "enum": [
+                          "warmup",
+                          "normal",
+                          "failure",
+                          "dropset"
+                        ],
+                        "type": "string",
+                        "default": "normal"
+                      },
+                      "weightKg": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "customMetric": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "distanceMeters": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "integer"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "durationSeconds": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "integer"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "notes": {
+                  "anyOf": [
+                    {
+                      "anyOf": [
+                        {
+                          "not": {}
+                        },
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "supersetId": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "exerciseTemplateId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "isPrivate": {
+            "type": "boolean",
+            "default": false
+          },
+          "startTime": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-workout",
+      "description": "Update an existing workout by ID. You can modify the title, description, start/end times, privacy setting, and exercise data. Returns the updated workout with all changes applied.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workoutId",
+          "title",
+          "startTime",
+          "endTime",
+          "exercises"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "endTime": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "exercises": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "exerciseTemplateId",
+                "sets"
+              ],
+              "properties": {
+                "sets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rpe": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "reps": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "integer"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "type": {
+                        "enum": [
+                          "warmup",
+                          "normal",
+                          "failure",
+                          "dropset"
+                        ],
+                        "type": "string",
+                        "default": "normal"
+                      },
+                      "weightKg": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "customMetric": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "distanceMeters": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "integer"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "durationSeconds": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "not": {}
+                              },
+                              {
+                                "type": "integer"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "notes": {
+                  "anyOf": [
+                    {
+                      "anyOf": [
+                        {
+                          "not": {}
+                        },
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "supersetId": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "exerciseTemplateId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "isPrivate": {
+            "type": "boolean",
+            "default": false
+          },
+          "startTime": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "workoutId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-routines",
+      "description": "Get a paginated list of routines. Returns routine details including title, creation date, folder assignment, and exercise configurations. Results include both default and custom routines.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "default": 5,
+            "maximum": 10,
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-routine",
+      "description": "Get complete details of a specific routine by ID. Returns all routine information including title, notes, assigned folder, and detailed exercise data with set configurations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "routineId"
+        ],
+        "properties": {
+          "routineId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-routine",
+      "description": "Create a new workout routine in your Hevy account. Requires title and at least one exercise with sets. Optionally assign to a specific folder. Returns the complete routine details upon successful creation including the newly assigned routine ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "exercises"
+        ],
+        "properties": {
+          "notes": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "folderId": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "exercises": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "exerciseTemplateId",
+                "sets"
+              ],
+              "properties": {
+                "sets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "reps": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "enum": [
+                          "warmup",
+                          "normal",
+                          "failure",
+                          "dropset"
+                        ],
+                        "type": "string",
+                        "default": "normal"
+                      },
+                      "weightKg": {
+                        "type": "number"
+                      },
+                      "customMetric": {
+                        "type": "number"
+                      },
+                      "distanceMeters": {
+                        "type": "integer"
+                      },
+                      "durationSeconds": {
+                        "type": "integer"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "notes": {
+                  "type": "string"
+                },
+                "supersetId": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "restSeconds": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "exerciseTemplateId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-routine",
+      "description": "Update an existing workout routine by ID. You can modify the title, notes, and exercise data. Returns the updated routine with all changes applied. Note that you cannot change the folder assignment through this method.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "routineId",
+          "title",
+          "exercises"
+        ],
+        "properties": {
+          "notes": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exercises": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "exerciseTemplateId",
+                "sets"
+              ],
+              "properties": {
+                "sets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "reps": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "enum": [
+                          "warmup",
+                          "normal",
+                          "failure",
+                          "dropset"
+                        ],
+                        "type": "string",
+                        "default": "normal"
+                      },
+                      "weightKg": {
+                        "type": "number"
+                      },
+                      "customMetric": {
+                        "type": "number"
+                      },
+                      "distanceMeters": {
+                        "type": "integer"
+                      },
+                      "durationSeconds": {
+                        "type": "integer"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "notes": {
+                  "type": "string"
+                },
+                "supersetId": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "restSeconds": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "exerciseTemplateId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "routineId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-exercise-templates",
+      "description": "Get a paginated list of exercise templates available on the account. Returns both default and custom exercise templates with details including title, type, primary muscle group, and secondary muscle groups. Supports up to 100 templates per page.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-exercise-template",
+      "description": "Get complete details of a specific exercise template by ID. Returns all template information including title, type, primary muscle group, secondary muscle groups, and whether it's a custom exercise.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "exerciseTemplateId"
+        ],
+        "properties": {
+          "exerciseTemplateId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-routine-folders",
+      "description": "Get a paginated list of routine folders available on the account. Returns folder details including ID, title, index (order position), and creation/update timestamps. Useful for organizing routines into categories.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "default": 5,
+            "maximum": 10,
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-routine-folder",
+      "description": "Get complete details of a specific routine folder by ID. Returns all folder information including title, index (order position), and creation/update timestamps.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "folderId"
+        ],
+        "properties": {
+          "folderId": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-routine-folder",
+      "description": "Create a new routine folder in your Hevy account. The folder will be created at index 0, and all other folders will have their indexes incremented. Returns the complete folder details upon successful creation including the newly assigned folder ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@chrisdoc/hevy-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "hevyApiKey"
+        ],
+        "properties": {
+          "hevyApiKey": {
+            "type": "string",
+            "description": "Your Hevy API key to authenticate with the Hevy Fitness API."
+          }
+        }
+      }
+    }
+  ]
+}

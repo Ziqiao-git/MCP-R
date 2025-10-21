@@ -1,0 +1,86 @@
+{
+  "qualifiedName": "@tkoba1974/mcp-kroki",
+  "displayName": "Kroki Server",
+  "description": "Generate and download diagrams in various formats using Kroki.io. Convert your Mermaid, PlantUML, and Graphviz diagrams to SVG, PNG, PDF, or JPEG files effortlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "generate_diagram_url",
+      "description": "Generate a URL for a diagram using Kroki.io. This tool takes Mermaid diagram code or other supported diagram formats and returns a URL to the rendered diagram. The URL can be used to display the diagram in web browsers or embedded in documents.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type",
+          "content"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Diagram type (e.g., \"mermaid\" for Mermaid diagrams, \"plantuml\" for PlantUML, \"graphviz\" for GraphViz DOT, \"c4plantuml\" for C4 architecture diagrams, and many more). See Kroki.io documentation for all supported formats."
+          },
+          "content": {
+            "type": "string",
+            "description": "The diagram content in the specified format. For Mermaid diagrams, this would be the Mermaid syntax code (e.g., \"graph TD; A-->B; B-->C;\")."
+          },
+          "outputFormat": {
+            "type": "string",
+            "description": "The format of the output image. Options are: \"svg\" (vector graphics, default), \"png\" (raster image), \"pdf\" (document format), \"jpeg\" (compressed raster image), or \"base64\" (base64-encoded SVG for direct embedding in HTML)."
+          }
+        }
+      }
+    },
+    {
+      "name": "download_diagram",
+      "description": "Download a diagram image to a local file. This tool converts diagram code (such as Mermaid) into an image file and saves it to the specified location. Useful for generating diagrams for presentations, documentation, or other offline use. Includes an option to scale SVG output.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type",
+          "content",
+          "outputPath"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Diagram type (e.g., \"mermaid\", \"plantuml\", \"graphviz\"). Supports the same diagram types as Kroki.io."
+          },
+          "scale": {
+            "type": "number",
+            "default": 1,
+            "minimum": 0.1,
+            "description": "Optional scaling factor to apply to the diagram dimensions. Default is 1.0 (no scaling). This currently only affects SVG output format by attempting to modify width/height attributes."
+          },
+          "content": {
+            "type": "string",
+            "description": "The diagram content in the specified format."
+          },
+          "outputPath": {
+            "type": "string",
+            "description": "The complete file path where the diagram image should be saved (e.g., \"/Users/username/Documents/diagram.svg\")."
+          },
+          "outputFormat": {
+            "type": "string",
+            "description": "Output image format. If unspecified, derived from outputPath extension. Options: \"svg\", \"png\", \"pdf\", \"jpeg\"."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@tkoba1974/mcp-kroki/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

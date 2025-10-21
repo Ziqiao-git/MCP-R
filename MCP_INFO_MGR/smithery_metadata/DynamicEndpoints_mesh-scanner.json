@@ -1,0 +1,135 @@
+{
+  "qualifiedName": "@DynamicEndpoints/mesh-scanner",
+  "displayName": "MESH by Viscount Vuln Scanner",
+  "description": "A comprehensive MCP server for scanning and analyzing MESH by Viscount systems for default credential vulnerabilities. This tool is designed for security research and educational purposes only.\n\n## 🚨 Important Notice\n\n**This tool is for educational and security research purposes only.** Unauthorized access to systems is illegal. Always obtain proper authorization before scanning any systems.\n\n## Features\n\n### 🔍 Scanning Capabilities\n- **Single IP Scanning**: Scan individual IP addresses for MESH systems\n- **IP Range Scanning**: Scan entire IP ranges with configurable concurrency\n- **Default Credential Testing**: Test for the default credentials (freedom:viscount)\n- **System Discovery**: Identify MESH by Viscount systems on networks\n\n### 📊 Security Assessment\n- **Comprehensive Reports**: Generate detailed security assessment reports\n- **Vulnerability Summaries**: Track vulnerabilities across timeframes\n- **Compliance Reports**: Generate reports for NIST, ISO27001, SOC2, and PCI-DSS\n- **Risk Analysis**: Automatic risk level assessment (LOW, MEDIUM, HIGH, CRITICAL)\n\n### 📋 Data Export\n- **Multiple Formats**: Export results as JSON, CSV, or XML\n- **Filtered Export**: Export only vulnerable systems or specific scans\n- **Historical Data**: Maintain scan history and statistics\n\n### 🎯 Advanced Features\n- **System Information**: Extract building details, user lists, and event logs\n- **Entrance Control**: Demonstrate entrance unlocking (educational only)\n- **Real-time Monitoring**: Track scanning progress and results\n- **Rate Limiting**: Configurable rate limiting for responsible scanning",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/mesh-scanner",
+  "security": null,
+  "tools": [
+    {
+      "name": "scan_ip",
+      "description": "Scan a single IP address for MESH system and test default credentials",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ipAddress"
+        ],
+        "properties": {
+          "ipAddress": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "scan_ip_range",
+      "description": "Scan a range of IP addresses for MESH systems",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "startIp",
+          "endIp"
+        ],
+        "properties": {
+          "endIp": {
+            "type": "string"
+          },
+          "startIp": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "test_default_credentials",
+      "description": "Test if a MESH system is vulnerable to default credentials",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_system_info",
+      "description": "Get information about a vulnerable MESH system",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "unlock_entrance",
+      "description": "Unlock an entrance (educational purposes only)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url",
+          "entranceId"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "entranceId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_scan_results",
+      "description": "Export scan results to various formats",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "format"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/mesh-scanner/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "port": {
+            "type": "number",
+            "default": 3000,
+            "description": "Port to run the server on (default: 3000)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "API key for enhanced features (optional)"
+          }
+        }
+      }
+    }
+  ]
+}

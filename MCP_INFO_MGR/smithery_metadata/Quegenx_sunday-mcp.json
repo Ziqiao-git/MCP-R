@@ -1,0 +1,507 @@
+{
+  "qualifiedName": "@Quegenx/sunday-mcp",
+  "displayName": "Medici Hotels Booking Server",
+  "description": "Enable AI assistants to search hotels, manage bookings, and access hotel data seamlessly through the Medici Hotels API. Simplify hotel price searches, room management, and booking operations with secure JWT authentication. Enhance your travel or hospitality applications with real-time hotel booking capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Quegenx/sunday-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_instant_search_price",
+      "annotations": {
+        "title": "Get Instant Search Price",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get instant search prices for hotels based on dates, location, and other criteria",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dateFrom",
+          "dateTo"
+        ],
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "stars": {
+            "type": "integer"
+          },
+          "adults": {
+            "type": "integer",
+            "default": 2
+          },
+          "dateTo": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "minLength": 1
+          },
+          "dateFrom": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "minLength": 1
+          },
+          "hotelName": {
+            "type": "string"
+          },
+          "paxChildren": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_rooms_active",
+      "annotations": {
+        "title": "Get Active Rooms",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get active room bookings with filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "hotelName": {
+            "type": "string"
+          },
+          "roomBoard": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "hotelStars": {
+            "type": "integer"
+          },
+          "roomCategory": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_rooms_sales",
+      "annotations": {
+        "title": "Get Room Sales",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get room sales data with filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "hotelName": {
+            "type": "string"
+          },
+          "roomBoard": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "hotelStars": {
+            "type": "integer"
+          },
+          "roomCategory": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_rooms_cancel",
+      "annotations": {
+        "title": "Get Cancelled Rooms",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get cancelled room bookings with filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "hotelName": {
+            "type": "string"
+          },
+          "roomBoard": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "hotelStars": {
+            "type": "integer"
+          },
+          "roomCategory": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_opportunities",
+      "annotations": {
+        "title": "Get Opportunities",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get booking opportunities with filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "hotelName": {
+            "type": "string"
+          },
+          "hotelStars": {
+            "type": "integer"
+          },
+          "checkInMonthDate": {
+            "type": "string"
+          },
+          "reservationMonthDate": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_room_archive_data",
+      "annotations": {
+        "title": "Get Room Archive Data",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get archived room data with filtering and pagination options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "stayTo": {
+            "type": "string"
+          },
+          "maxPrice": {
+            "type": "integer"
+          },
+          "minPrice": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer",
+            "default": 20
+          },
+          "stayFrom": {
+            "type": "string"
+          },
+          "hotelName": {
+            "type": "string"
+          },
+          "roomBoard": {
+            "type": "string"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "default": 1
+          },
+          "maxUpdatedAt": {
+            "type": "string"
+          },
+          "minUpdatedAt": {
+            "type": "string"
+          },
+          "roomCategory": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "insert_opportunity",
+      "annotations": {
+        "title": "Insert Opportunity",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Create a new booking opportunity",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDateStr",
+          "endDateStr",
+          "boardId",
+          "categoryId",
+          "buyPrice",
+          "pushPrice",
+          "maxRooms"
+        ],
+        "properties": {
+          "stars": {
+            "type": "integer"
+          },
+          "userId": {
+            "type": "integer"
+          },
+          "boardId": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          "hotelId": {
+            "type": "integer"
+          },
+          "buyPrice": {
+            "type": "number",
+            "maximum": 10000,
+            "minimum": 1
+          },
+          "maxRooms": {
+            "type": "integer",
+            "maximum": 30,
+            "minimum": 1
+          },
+          "paxAdults": {
+            "type": "integer"
+          },
+          "pushPrice": {
+            "type": "number",
+            "maximum": 10000,
+            "minimum": 1
+          },
+          "categoryId": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          "endDateStr": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1
+          },
+          "providerId": {
+            "type": "integer"
+          },
+          "invTypeCode": {
+            "type": "string"
+          },
+          "paxChildren": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "ratePlanCode": {
+            "type": "string"
+          },
+          "startDateStr": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1
+          },
+          "destinationId": {
+            "type": "integer"
+          },
+          "locationRange": {
+            "type": "integer"
+          },
+          "reservationFullName": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_rooms_active_push_price",
+      "annotations": {
+        "title": "Update Room Push Price",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Update the push price for active room bookings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "preBookId",
+          "pushPrice"
+        ],
+        "properties": {
+          "preBookId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "pushPrice": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cancel_room_active",
+      "annotations": {
+        "title": "Cancel Active Room",
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "idempotentHint": false,
+        "destructiveHint": true
+      },
+      "description": "Cancel an active room booking - WARNING: This action is irreversible",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prebookId"
+        ],
+        "properties": {
+          "prebookId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manual_book_room",
+      "annotations": {
+        "title": "Manual Book Room",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Manually book a room with complete guest and booking details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "to": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "room": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "hotelId": {
+            "type": "integer"
+          },
+          "guestName": {
+            "type": "string"
+          },
+          "searchResult": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Quegenx/sunday-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "mediciToken"
+        ],
+        "properties": {
+          "mediciToken": {
+            "type": "string",
+            "description": "Medici Hotels JWT token (required)"
+          },
+          "mediciBaseUrl": {
+            "type": "string",
+            "default": "https://medici-backend.azurewebsites.net",
+            "description": "Medici Hotels API base URL"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

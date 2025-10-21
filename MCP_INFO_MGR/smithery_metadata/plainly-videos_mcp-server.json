@@ -1,0 +1,462 @@
+{
+  "qualifiedName": "@plainly-videos/mcp-server",
+  "displayName": "Plainly Videos MCP Server (Adobe After Effects Automation)",
+  "description": "MCP server for Plainly Videos that lets users browse and render Adobe After Effects projects directly from their favorite LLM clients. It brings video automation to After Effects, making it easy to trigger batch rendering, personalization, and localization while keeping full creative control. Render at scale through API or CSV, making high-volume video production faster and more accessible.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/e6565925-f067-488a-bb34-672b1e14ca83.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@plainly-videos/mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_renderable_items",
+      "title": "List Renderable Items",
+      "description": "\nReturn all Projects and Designs the authenticated user can render.\nDesigns are pre-made projects with variants available for all users.\nProjects are created and maintained by the user, and may have custom templates.\n\nEach item includes a lightweight preview of its templates/variants (name, aspect ratio, duration) plus a parent-level description and metadata (tags, category, attributes).\n\nFiltering guidance (semantic first):\n- First, determine relevance using: metadata.tags, metadata.category, metadata.attributes, description, and name.\n- Only after a semantic match, consider technical fit (aspectRatio, durationSeconds) to break ties.\n- Do not guess or list unrelated items. If nothing is relevant, respond: \"No suitable templates found.\"\n\nUse when:\n- The user wants to browse, search, or choose a template/variant.\n- Before recommending or starting a render for a targeted campaign, platform, or audience.\n\nFollow-ups:\n- `get_renderable_item_details` — fetch the full parameter schema/defaults for the chosen template/variant before rendering.\n      ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "excludeDesigns": {
+            "type": "boolean",
+            "description": "If true, excludes designs from the results. Avoid setting both excludeDesigns and excludeProjects to true."
+          },
+          "excludeProjects": {
+            "type": "boolean",
+            "description": "If true, excludes projects from the results. Avoid setting both excludeDesigns and excludeProjects to true."
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "isDesign",
+                "id",
+                "name",
+                "description",
+                "metadata",
+                "templates"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Parent identifier (projectId or designId)."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Parent display name."
+                },
+                "isDesign": {
+                  "type": "boolean",
+                  "description": "True when the parent is a Design; false when it is a Project."
+                },
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "category",
+                    "attributes"
+                  ],
+                  "properties": {
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "High-level category label for Designs (if present)."
+                    },
+                    "attributes": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "Additional key-value metadata (e.g., tags, labels). May be null/omitted when unavailable."
+                    }
+                  },
+                  "description": "Metadata primarily used for semantic filtering and recommendations.",
+                  "additionalProperties": false
+                },
+                "templates": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "aspectRatio",
+                      "durationSeconds"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Template/variant identifier (renderable leaf)."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Template/variant display name."
+                      },
+                      "aspectRatio": {
+                        "type": "string",
+                        "description": "Aspect ratio string (e.g., '16:9', '1:1', '9:16')."
+                      },
+                      "durationSeconds": {
+                        "type": "number",
+                        "description": "Template/variant duration in seconds."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Lightweight preview of renderable leaf options under this parent (no parameter schema here)."
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Short description used for discovery and relevance matching."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Renderable parents (Projects/Designs) with preview of their templates/variants."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_renderable_items_details",
+      "title": "Get Renderable Item Details",
+      "description": "\nReturn the renderable templates/variants under a specific Project or Design, including the parameters required to render each.\n\nHow to use:\n- Call this after the user selects a candidate from `list_renderable_items`.\n- For each returned template/variant:\n  1) Read its parameters.\n  2) Collect values for all parameters marked mandatory.\n  3) Respect the declared type (e.g., MEDIA (image) vs MEDIA (video)).\n\nGuidance:\n- Prefer `description` to understand the intent of each parameter; fall back to `label`, then `key` if needed.\n- If any mandatory parameter is missing or unclear, ask the user to provide it—do not guess.\n- If the parent has multiple templates/variants, choose the one that best matches the user's stated goals and constraints; otherwise present the options.\n\nUse when:\n- The user wants details/parameters for a chosen template/variant.\n- Immediately before preparing values and calling render_item.\n\nFollow-ups:\n- `render_item` — submit a render for the chosen template/variant with the collected parameter values.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "renderableItemId",
+          "isDesign"
+        ],
+        "properties": {
+          "isDesign": {
+            "type": "boolean",
+            "description": "True if the parent item is a Design; false if it is a Project."
+          },
+          "renderableItemId": {
+            "type": "string",
+            "description": "Identifier of the parent item to inspect (projectId or designId)."
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "itemDetails"
+        ],
+        "properties": {
+          "itemDetails": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "isDesign",
+                "projectDesignId",
+                "templateVariantId",
+                "parameters"
+              ],
+              "properties": {
+                "isDesign": {
+                  "type": "boolean",
+                  "description": "True when the parent is a Design; false when it is a Project."
+                },
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "key",
+                      "mandatory",
+                      "type",
+                      "description",
+                      "label"
+                    ],
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "description": "Parameter key used by the render API. If description/label is missing, use this as the final hint to infer purpose."
+                      },
+                      "type": {
+                        "enum": [
+                          "STRING",
+                          "MEDIA",
+                          "MEDIA (image)",
+                          "MEDIA (audio)",
+                          "MEDIA (video)",
+                          "COLOR"
+                        ],
+                        "type": "string",
+                        "description": "Expected data type. Respect specific media subtypes (image/audio/video) when supplying values."
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "UI label for the parameter, used when description is missing or brief."
+                      },
+                      "mandatory": {
+                        "type": "boolean",
+                        "description": "Whether the parameter must be provided to render successfully."
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Human-readable explanation of the parameter's purpose, if available."
+                      },
+                      "defaultValue": {
+                        "anyOf": [
+                          {},
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Default value to use if none is provided. May be null or missing."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Parameters required by this template/variant. Provide all parameters marked mandatory; others are optional."
+                },
+                "exampleVideoUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Public preview video URL (usually MP4) if available for this template/variant."
+                },
+                "projectDesignId": {
+                  "type": "string",
+                  "description": "Parent identifier echoed back (projectId or designId)."
+                },
+                "templateVariantId": {
+                  "type": "string",
+                  "description": "Template/variant identifier (the renderable leaf under the parent)."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "One entry per template/variant under the requested parent, with the parameters needed to render each."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "render_item",
+      "title": "Render Item",
+      "description": "\nCreate a render for a selected Project template or Design variant with specified parameters.\n\nHow to use:\n- Call this after the user selects a candidate from `get_renderable_items_details`.\n- Call this only once the user approved all parameters for the chosen template/variant.\n\nGuidance:\n- Never submit more than one render with the same parameters, unless the user explicitly requests it.\n- Use parameters to customize the render.\n- All mandatory parameters must be provided.\n- Provide values for optional parameters if it makes sense.\n- Parameter types must be respected:\n      - STRING: text string relevant to the parameter context.\n      - MEDIA: URL to a media file (image, audio, or video). Ensure the URL is publicly accessible and points directly to the media file.\n      - MEDIA (image): URL to an image file (jpg, png, etc.).\n      - MEDIA (audio): URL to an audio file (mp3, wav, etc.).\n      - MEDIA (video): URL to a video file (mp4, mov, etc.).\n      - COLOR: hex color code (e.g. FF5733).\n- If a parameter has a default value and the user does not provide a value, the default will be used.\n- If the user is unsure about a parameter, ask for clarification rather than guessing.\n- When referencing parameters in conversation, use their `label` or `description` for clarity.\n\nUse when:\n- The user wants to create a video from a specific template/variant with defined parameters.\n      ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "isDesign",
+          "projectDesignId",
+          "templateVariantId",
+          "parameters"
+        ],
+        "properties": {
+          "isDesign": {
+            "type": "boolean",
+            "description": "True when the parent is a Design; false when it is a Project."
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Key-value parameters required by the chosen template/variant to customize the render. Mandatory parameters must be provided. Parameter type must be respected.",
+            "additionalProperties": {}
+          },
+          "projectDesignId": {
+            "type": "string",
+            "description": "Parent identifier (projectId or designId)."
+          },
+          "templateVariantId": {
+            "type": "string",
+            "description": "Template/variant identifier (the renderable leaf under the parent)."
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectDesignId",
+          "templateVariantId"
+        ],
+        "properties": {
+          "renderId": {
+            "type": "string",
+            "description": "Server-assigned render job ID."
+          },
+          "errorDetails": {
+            "type": "string",
+            "description": "Error details, if any."
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message, if any."
+          },
+          "errorSolution": {
+            "type": "string",
+            "description": "Error solution, if any."
+          },
+          "projectDesignId": {
+            "type": "string",
+            "description": "Parent identifier (projectId or designId)."
+          },
+          "projectDesignName": {
+            "type": "string",
+            "description": "Name of the project or design."
+          },
+          "templateVariantId": {
+            "type": "string",
+            "description": "Template/variant identifier (the renderable leaf under the parent)."
+          },
+          "templateVariantName": {
+            "type": "string",
+            "description": "Name of the template or variant."
+          },
+          "renderDetailsPageUrl": {
+            "type": "string",
+            "description": "URL to the render details page."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_render_status",
+      "title": "Check Render Status",
+      "description": "\nCheck the status of a render job.\n\nAvailable states:\n- PENDING: The render job has been created but not yet added to the queue.\n- THROTTLED: The render job is waiting due to rate limiting. It will be started as soon as a slot opens, no need for manual retries.\n- QUEUED: The render job is in the queue and will start soon.\n- IN_PROGRESS: The render job is currently being processed.\n- DONE: The render job has completed successfully. The output URL will be provided.\n- FAILED: The render job encountered an error and did not complete successfully. Error details will be provided.\n- INVALID: The render job was invalid (e.g., due to incorrect parameters). Error details will be provided.\n- CANCELLED: The render job was cancelled by the user.\n\nResponse format:\n- Always include a link to the render details page.\n- If the render is still in progress (PENDING, THROTTLED, QUEUED, IN_PROGRESS) tell user to check the status again later.\n- If the render is DONE, return the output URL and the render page details.\n- If the render FAILED or is INVALID, return the error message and details.\n\nUse when:\n- You need to check the progress of a render job\n- You want to retrieve the final render output URL\n- You want to retrieve render error details if the job failed\n      ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "renderId"
+        ],
+        "properties": {
+          "renderId": {
+            "type": "string",
+            "description": "The render ID returned from the `render_item` tool."
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message",
+          "renderId",
+          "projectDesignId",
+          "templateVariantId",
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "enum": [
+              "PENDING",
+              "THROTTLED",
+              "QUEUED",
+              "IN_PROGRESS",
+              "DONE",
+              "FAILED",
+              "INVALID",
+              "CANCELLED"
+            ],
+            "type": "string",
+            "description": "The current state of the render job."
+          },
+          "output": {
+            "type": "string",
+            "description": "The render output URL (only available when state is DONE)."
+          },
+          "message": {
+            "type": "string",
+            "description": "A message describing the render status."
+          },
+          "renderId": {
+            "type": "string",
+            "description": "The render job ID."
+          },
+          "errorDetails": {
+            "type": "string",
+            "description": "Error details, if any."
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message, if any."
+          },
+          "errorSolution": {
+            "type": "string",
+            "description": "Error solution, if any."
+          },
+          "projectDesignId": {
+            "type": "string",
+            "description": "Parent identifier (projectId or designId)."
+          },
+          "projectDesignName": {
+            "type": "string",
+            "description": "Name of the project or design."
+          },
+          "templateVariantId": {
+            "type": "string",
+            "description": "Template/variant identifier (the renderable leaf under the parent)."
+          },
+          "templateVariantName": {
+            "type": "string",
+            "description": "Name of the template or variant."
+          },
+          "renderDetailsPageUrl": {
+            "type": "string",
+            "description": "URL to the render details page."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@plainly-videos/mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Plainly API key."
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

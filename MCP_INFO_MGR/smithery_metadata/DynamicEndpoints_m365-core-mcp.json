@@ -1,0 +1,2849 @@
+{
+  "qualifiedName": "@DynamicEndpoints/m365-core-mcp",
+  "displayName": "Microsoft 365 Core Server",
+  "description": "*Updated September 25th 2025**\nManage your Microsoft 365 services effortlessly. Create and manage distribution lists, security groups, and user settings with ease, ensuring streamlined operations and enhanced collaboration. Automate offboarding processes to maintain security and compliance effortlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.microsoft.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/m365-core-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "manage_distribution_lists",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get",
+              "create",
+              "update",
+              "delete",
+              "add_members",
+              "remove_members"
+            ],
+            "type": "string",
+            "description": "Action to perform on distribution list"
+          },
+          "listId": {
+            "type": "string",
+            "description": "Distribution list ID for existing list operations"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of member email addresses"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "hideFromGAL": {
+                "type": "boolean",
+                "description": "Hide from Global Address List"
+              },
+              "moderatedBy": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of moderator email addresses"
+              },
+              "requireSenderAuthentication": {
+                "type": "boolean",
+                "description": "Require sender authentication"
+              }
+            },
+            "description": "Distribution list settings",
+            "additionalProperties": false
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name for the distribution list"
+          },
+          "emailAddress": {
+            "type": "string",
+            "description": "Email address for the distribution list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_security_groups",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get",
+              "create",
+              "update",
+              "delete",
+              "add_members",
+              "remove_members"
+            ],
+            "type": "string",
+            "description": "Action to perform on security group"
+          },
+          "groupId": {
+            "type": "string",
+            "description": "Security group ID for existing group operations"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of member email addresses"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "mailEnabled": {
+                "type": "boolean",
+                "description": "Whether mail is enabled"
+              },
+              "securityEnabled": {
+                "type": "boolean",
+                "description": "Whether security is enabled"
+              }
+            },
+            "description": "Security group settings",
+            "additionalProperties": false
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the security group"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name for the security group"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_m365_groups",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get",
+              "create",
+              "update",
+              "delete",
+              "add_members",
+              "remove_members"
+            ],
+            "type": "string",
+            "description": "Action to perform on M365 group"
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of owner email addresses"
+          },
+          "groupId": {
+            "type": "string",
+            "description": "M365 group ID for existing group operations"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of member email addresses"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "visibility": {
+                "enum": [
+                  "Private",
+                  "Public"
+                ],
+                "type": "string",
+                "description": "Group visibility setting"
+              },
+              "allowExternalSenders": {
+                "type": "boolean",
+                "description": "Allow external senders"
+              },
+              "autoSubscribeNewMembers": {
+                "type": "boolean",
+                "description": "Auto-subscribe new members"
+              }
+            },
+            "description": "M365 group settings",
+            "additionalProperties": false
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the M365 group"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name for the M365 group"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_exchange_settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "settingType"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get",
+              "update"
+            ],
+            "type": "string",
+            "description": "Action to perform on Exchange settings"
+          },
+          "target": {
+            "type": "string",
+            "description": "User/Group ID for mailbox settings"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "rules": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "conditions",
+                    "actions"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Rule name"
+                    },
+                    "actions": {
+                      "type": "object",
+                      "description": "Rule actions",
+                      "additionalProperties": {}
+                    },
+                    "conditions": {
+                      "type": "object",
+                      "description": "Rule conditions",
+                      "additionalProperties": {}
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "description": "Transport rules"
+              },
+              "retentionTags": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "type",
+                    "retentionDays"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Retention tag name"
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Retention tag type"
+                    },
+                    "retentionDays": {
+                      "type": "number",
+                      "description": "Retention period in days"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "description": "Retention tag definitions"
+              },
+              "sharingPolicy": {
+                "type": "object",
+                "properties": {
+                  "domains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Allowed domains"
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Enable sharing policy"
+                  }
+                },
+                "description": "Sharing policy settings",
+                "additionalProperties": false
+              },
+              "automateProcessing": {
+                "type": "object",
+                "properties": {
+                  "autoReplyEnabled": {
+                    "type": "boolean",
+                    "description": "Enable auto-reply"
+                  },
+                  "autoForwardEnabled": {
+                    "type": "boolean",
+                    "description": "Enable auto-forwarding"
+                  }
+                },
+                "description": "Automated processing settings",
+                "additionalProperties": false
+              }
+            },
+            "description": "Exchange configuration settings",
+            "additionalProperties": false
+          },
+          "settingType": {
+            "enum": [
+              "mailbox",
+              "transport",
+              "organization",
+              "retention"
+            ],
+            "type": "string",
+            "description": "Type of Exchange settings to manage"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_user_settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "userId"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get",
+              "update"
+            ],
+            "type": "string",
+            "description": "Action to perform on user settings"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID or UPN"
+          },
+          "settings": {
+            "type": "object",
+            "description": "User settings to update",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_offboarding",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "userId"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "start",
+              "check",
+              "complete"
+            ],
+            "type": "string",
+            "description": "Offboarding process action"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID or UPN to offboard"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "backupData": {
+                "type": "boolean",
+                "description": "Backup user data"
+              },
+              "revokeAccess": {
+                "type": "boolean",
+                "description": "Revoke all access immediately"
+              },
+              "retainMailbox": {
+                "type": "boolean",
+                "description": "Retain user mailbox"
+              },
+              "convertToShared": {
+                "type": "boolean",
+                "description": "Convert mailbox to shared"
+              }
+            },
+            "description": "Offboarding options",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_sharepoint_sites",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL for the SharePoint site"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title for the SharePoint site"
+          },
+          "action": {
+            "enum": [
+              "get",
+              "create",
+              "update",
+              "delete",
+              "add_users",
+              "remove_users"
+            ],
+            "type": "string",
+            "description": "Action to perform on SharePoint site"
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of owner email addresses"
+          },
+          "siteId": {
+            "type": "string",
+            "description": "SharePoint site ID for existing site operations"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of member email addresses"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "isPublic": {
+                "type": "boolean",
+                "description": "Whether the site is public"
+              },
+              "allowSharing": {
+                "type": "boolean",
+                "description": "Allow external sharing"
+              },
+              "storageQuota": {
+                "type": "number",
+                "description": "Storage quota in MB"
+              }
+            },
+            "description": "Site configuration settings",
+            "additionalProperties": false
+          },
+          "template": {
+            "type": "string",
+            "description": "Web template ID for site creation (e.g., STS#3 for Modern Team Site)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the SharePoint site"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_sharepoint_lists",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "siteId"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "Items to add to the list"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title for the SharePoint list"
+          },
+          "action": {
+            "enum": [
+              "get",
+              "create",
+              "update",
+              "delete",
+              "add_items",
+              "get_items"
+            ],
+            "type": "string",
+            "description": "Action to perform on SharePoint list"
+          },
+          "listId": {
+            "type": "string",
+            "description": "SharePoint list ID for existing list operations"
+          },
+          "siteId": {
+            "type": "string",
+            "description": "SharePoint site ID containing the list"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Column name"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Column type (Text, Number, DateTime, etc.)"
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "Whether the column is required"
+                },
+                "defaultValue": {
+                  "description": "Default value for the column"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "List column definitions"
+          },
+          "template": {
+            "type": "string",
+            "description": "Template to use for list creation"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the SharePoint list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_azure_ad_roles",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "list_roles",
+              "list_role_assignments",
+              "assign_role",
+              "remove_role_assignment"
+            ],
+            "type": "string",
+            "description": "Azure AD role management action"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter string"
+          },
+          "roleId": {
+            "type": "string",
+            "description": "ID of the directory role"
+          },
+          "principalId": {
+            "type": "string",
+            "description": "ID of the principal (user, group, SP)"
+          },
+          "assignmentId": {
+            "type": "string",
+            "description": "ID of the role assignment to remove"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_azure_ad_apps",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "appId": {
+            "type": "string",
+            "description": "Object ID of the application"
+          },
+          "action": {
+            "enum": [
+              "list_apps",
+              "get_app",
+              "update_app",
+              "add_owner",
+              "remove_owner"
+            ],
+            "type": "string",
+            "description": "Azure AD application management action"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter string"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Object ID of the user to add/remove as owner"
+          },
+          "appDetails": {
+            "type": "object",
+            "properties": {
+              "displayName": {
+                "type": "string",
+                "description": "Application display name"
+              },
+              "signInAudience": {
+                "type": "string",
+                "description": "Sign-in audience setting"
+              }
+            },
+            "description": "Application details for updates",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_azure_ad_devices",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "list_devices",
+              "get_device",
+              "enable_device",
+              "disable_device",
+              "delete_device"
+            ],
+            "type": "string",
+            "description": "Azure AD device management action"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter string"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Object ID of the device"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_service_principals",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "spId": {
+            "type": "string",
+            "description": "Object ID of the Service Principal"
+          },
+          "action": {
+            "enum": [
+              "list_sps",
+              "get_sp",
+              "add_owner",
+              "remove_owner"
+            ],
+            "type": "string",
+            "description": "Service principal management action"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter string"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Object ID of the user to add/remove as owner"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "call_microsoft_api",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "apiType",
+          "path",
+          "method"
+        ],
+        "properties": {
+          "body": {
+            "type": "object",
+            "description": "Request body (for POST, PUT, PATCH)",
+            "additionalProperties": {}
+          },
+          "path": {
+            "type": "string",
+            "description": "API URL path (e.g., '/users')"
+          },
+          "method": {
+            "enum": [
+              "get",
+              "post",
+              "put",
+              "patch",
+              "delete"
+            ],
+            "type": "string",
+            "description": "HTTP method"
+          },
+          "apiType": {
+            "enum": [
+              "graph",
+              "azure"
+            ],
+            "type": "string",
+            "description": "API type: Microsoft Graph or Azure Resource Management"
+          },
+          "timeout": {
+            "type": "number",
+            "default": 30000,
+            "maximum": 300000,
+            "minimum": 5000,
+            "description": "Request timeout in milliseconds (5000-300000, default: 30000)"
+          },
+          "fetchAll": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true to automatically fetch all pages for list results (e.g., users, groups). Default is false."
+          },
+          "batchSize": {
+            "type": "number",
+            "default": 100,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Batch size for pagination when fetchAll is true (1-1000, default: 100)"
+          },
+          "apiVersion": {
+            "type": "string",
+            "description": "Azure API version (required for Azure APIs)"
+          },
+          "maxRetries": {
+            "type": "number",
+            "default": 3,
+            "maximum": 5,
+            "minimum": 0,
+            "description": "Maximum number of retries for failed requests (0-5, default: 3)"
+          },
+          "retryDelay": {
+            "type": "number",
+            "default": 1000,
+            "maximum": 10000,
+            "minimum": 100,
+            "description": "Base delay between retries in milliseconds (100-10000, default: 1000)"
+          },
+          "queryParams": {
+            "type": "object",
+            "description": "Query parameters",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "expandFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of fields to expand (applies $expand automatically for Graph API)"
+          },
+          "selectFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of specific fields to select (applies $select automatically for Graph API)"
+          },
+          "customHeaders": {
+            "type": "object",
+            "description": "Additional custom headers to include in the request",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "responseFormat": {
+            "enum": [
+              "json",
+              "raw",
+              "minimal"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "Response format: 'json' (full response), 'raw' (as received), 'minimal' (values only)"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "description": "Azure Subscription ID (for Azure APIs)"
+          },
+          "graphApiVersion": {
+            "enum": [
+              "v1.0",
+              "beta"
+            ],
+            "type": "string",
+            "default": "v1.0",
+            "description": "Microsoft Graph API version to use (default: v1.0)"
+          },
+          "consistencyLevel": {
+            "type": "string",
+            "description": "Graph API ConsistencyLevel header. ADVISED to be set to 'eventual' for Graph GET requests using advanced query parameters ($filter, $count, $search, $orderby)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_audit_log",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "top": {
+            "type": "number",
+            "description": "Maximum number of records to return"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter string (e.g., 'activityDateTime ge 2024-01-01T00:00:00Z')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_alerts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "top": {
+            "type": "number",
+            "description": "Maximum number of alerts to return"
+          },
+          "action": {
+            "enum": [
+              "list_alerts",
+              "get_alert"
+            ],
+            "type": "string",
+            "description": "Alert management action"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter string (e.g., 'status eq \\'new\\'')"
+          },
+          "alertId": {
+            "type": "string",
+            "description": "ID of the alert (required for get_alert)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_dlp_policies",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Policy name"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "conditions",
+                "actions"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Rule name"
+                },
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "Block",
+                          "BlockWithOverride",
+                          "Notify",
+                          "Audit",
+                          "Quarantine"
+                        ],
+                        "type": "string",
+                        "description": "Action type"
+                      },
+                      "settings": {
+                        "type": "object",
+                        "properties": {
+                          "blockMessage": {
+                            "type": "string",
+                            "description": "Block message"
+                          },
+                          "allowOverride": {
+                            "type": "boolean",
+                            "description": "Allow override"
+                          },
+                          "notificationMessage": {
+                            "type": "string",
+                            "description": "Notification message"
+                          },
+                          "overrideJustificationRequired": {
+                            "type": "boolean",
+                            "description": "Override justification required"
+                          }
+                        },
+                        "description": "Action settings",
+                        "additionalProperties": false
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Rule actions"
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Whether rule is enabled"
+                },
+                "priority": {
+                  "type": "number",
+                  "description": "Rule priority"
+                },
+                "conditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "value"
+                    ],
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "ContentContains",
+                          "SensitiveInfoType",
+                          "DocumentProperty",
+                          "MessageProperty"
+                        ],
+                        "type": "string",
+                        "description": "Condition type"
+                      },
+                      "value": {
+                        "type": "string",
+                        "description": "Condition value"
+                      },
+                      "operator": {
+                        "enum": [
+                          "Equals",
+                          "Contains",
+                          "StartsWith",
+                          "EndsWith",
+                          "RegexMatch"
+                        ],
+                        "type": "string",
+                        "description": "Condition operator"
+                      },
+                      "caseSensitive": {
+                        "type": "boolean",
+                        "description": "Case sensitive matching"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Rule conditions"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Policy rules configuration"
+          },
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "create",
+              "update",
+              "delete",
+              "test"
+            ],
+            "type": "string",
+            "description": "DLP policy management action"
+          },
+          "policyId": {
+            "type": "string",
+            "description": "DLP policy ID"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "enum": [
+                  "Test",
+                  "TestWithNotifications",
+                  "Enforce"
+                ],
+                "type": "string",
+                "description": "Policy mode"
+              },
+              "enabled": {
+                "type": "boolean",
+                "description": "Whether policy is enabled"
+              },
+              "priority": {
+                "type": "number",
+                "description": "Policy priority"
+              }
+            },
+            "description": "Policy settings",
+            "additionalProperties": false
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Exchange",
+                "SharePoint",
+                "OneDrive",
+                "Teams",
+                "Endpoint"
+              ],
+              "type": "string"
+            },
+            "description": "Policy locations"
+          },
+          "description": {
+            "type": "string",
+            "description": "Policy description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_dlp_incidents",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "resolve",
+              "escalate"
+            ],
+            "type": "string",
+            "description": "DLP incident management action"
+          },
+          "status": {
+            "enum": [
+              "Active",
+              "Resolved",
+              "InProgress",
+              "Dismissed"
+            ],
+            "type": "string",
+            "description": "Incident status"
+          },
+          "policyId": {
+            "type": "string",
+            "description": "Associated policy ID"
+          },
+          "severity": {
+            "enum": [
+              "Low",
+              "Medium",
+              "High",
+              "Critical"
+            ],
+            "type": "string",
+            "description": "Incident severity"
+          },
+          "dateRange": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDate"
+            ],
+            "properties": {
+              "endDate": {
+                "type": "string",
+                "description": "End date"
+              },
+              "startDate": {
+                "type": "string",
+                "description": "Start date"
+              }
+            },
+            "description": "Date range filter",
+            "additionalProperties": false
+          },
+          "incidentId": {
+            "type": "string",
+            "description": "DLP incident ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_sensitivity_labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Label name"
+          },
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "create",
+              "update",
+              "delete",
+              "apply"
+            ],
+            "type": "string",
+            "description": "Sensitivity label action"
+          },
+          "labelId": {
+            "type": "string",
+            "description": "Sensitivity label ID"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Label settings and policies",
+            "additionalProperties": {}
+          },
+          "targetId": {
+            "type": "string",
+            "description": "Target resource ID for label application"
+          },
+          "description": {
+            "type": "string",
+            "description": "Label description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_macos_devices",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "enroll",
+              "retire",
+              "wipe",
+              "restart",
+              "sync",
+              "remote_lock",
+              "collect_logs"
+            ],
+            "type": "string",
+            "description": "Intune macOS device management action"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter for device listing"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device ID for device-specific operations"
+          },
+          "enrollmentType": {
+            "enum": [
+              "UserEnrollment",
+              "DeviceEnrollment",
+              "AutomaticDeviceEnrollment"
+            ],
+            "type": "string",
+            "description": "Enrollment type"
+          },
+          "assignmentTarget": {
+            "type": "object",
+            "properties": {
+              "userIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target user IDs"
+              },
+              "groupIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target group IDs"
+              },
+              "deviceIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target device IDs"
+              }
+            },
+            "description": "Assignment target",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_macos_policies",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "policyType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Policy name"
+          },
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "create",
+              "update",
+              "delete",
+              "assign",
+              "deploy"
+            ],
+            "type": "string",
+            "description": "Intune macOS policy management action"
+          },
+          "policyId": {
+            "type": "string",
+            "description": "Policy ID for policy-specific operations"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Policy configuration settings",
+            "additionalProperties": {}
+          },
+          "policyType": {
+            "enum": [
+              "Configuration",
+              "Compliance",
+              "Security",
+              "Update",
+              "AppProtection"
+            ],
+            "type": "string",
+            "description": "Type of macOS policy"
+          },
+          "assignments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "intent": {
+                  "enum": [
+                    "apply",
+                    "remove"
+                  ],
+                  "type": "string",
+                  "description": "Assignment intent"
+                },
+                "target": {
+                  "type": "object",
+                  "properties": {
+                    "groupId": {
+                      "type": "string",
+                      "description": "Group ID"
+                    },
+                    "collectionId": {
+                      "type": "string",
+                      "description": "Collection ID"
+                    },
+                    "deviceAndAppManagementAssignmentFilterId": {
+                      "type": "string",
+                      "description": "Filter ID"
+                    },
+                    "deviceAndAppManagementAssignmentFilterType": {
+                      "enum": [
+                        "none",
+                        "include",
+                        "exclude"
+                      ],
+                      "type": "string",
+                      "description": "Filter type"
+                    }
+                  },
+                  "description": "Assignment target",
+                  "additionalProperties": false
+                },
+                "settings": {
+                  "type": "object",
+                  "description": "Assignment settings",
+                  "additionalProperties": {}
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Policy assignments"
+          },
+          "description": {
+            "type": "string",
+            "description": "Policy description"
+          },
+          "deploymentSettings": {
+            "type": "object",
+            "properties": {
+              "installBehavior": {
+                "enum": [
+                  "doNotInstall",
+                  "installAsManaged",
+                  "installAsUnmanaged"
+                ],
+                "type": "string",
+                "description": "Install behavior"
+              },
+              "installAsManaged": {
+                "type": "boolean",
+                "description": "Install as managed"
+              },
+              "uninstallOnDeviceRemoval": {
+                "type": "boolean",
+                "description": "Uninstall on device removal"
+              }
+            },
+            "description": "Deployment settings",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_macos_apps",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Application name"
+          },
+          "appId": {
+            "type": "string",
+            "description": "App ID for app-specific operations"
+          },
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "deploy",
+              "update",
+              "remove"
+            ],
+            "type": "string",
+            "description": "Intune macOS app management action"
+          },
+          "version": {
+            "type": "string",
+            "description": "Application version"
+          },
+          "bundleId": {
+            "type": "string",
+            "description": "macOS app bundle identifier"
+          },
+          "assignmentGroups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Target groups for app deployment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_macos_compliance",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get_status",
+              "get_details",
+              "update_policy",
+              "force_evaluation"
+            ],
+            "type": "string",
+            "description": "Intune macOS compliance action"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device ID for compliance assessment"
+          },
+          "policies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific policy IDs to assess"
+          },
+          "complianceType": {
+            "enum": [
+              "security",
+              "configuration",
+              "update"
+            ],
+            "type": "string",
+            "description": "Type of compliance check"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_windows_devices",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "enroll",
+              "retire",
+              "wipe",
+              "restart",
+              "sync",
+              "remote_lock",
+              "collect_logs",
+              "bitlocker_recovery",
+              "autopilot_reset"
+            ],
+            "type": "string",
+            "description": "Intune Windows device management action"
+          },
+          "filter": {
+            "type": "string",
+            "description": "OData filter for device listing"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device ID for device-specific operations"
+          },
+          "enrollmentType": {
+            "enum": [
+              "AzureADJoin",
+              "HybridAzureADJoin",
+              "AutoPilot",
+              "BulkEnrollment"
+            ],
+            "type": "string",
+            "description": "Windows enrollment type"
+          },
+          "assignmentTarget": {
+            "type": "object",
+            "properties": {
+              "userIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target user IDs"
+              },
+              "groupIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target group IDs"
+              },
+              "deviceIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target device IDs"
+              }
+            },
+            "description": "Assignment target",
+            "additionalProperties": false
+          },
+          "bitlockerSettings": {
+            "type": "object",
+            "properties": {
+              "requireBitlockerEncryption": {
+                "type": "boolean",
+                "description": "Require BitLocker encryption"
+              },
+              "allowBitlockerRecoveryKeyBackup": {
+                "type": "boolean",
+                "description": "Allow recovery key backup"
+              }
+            },
+            "description": "BitLocker configuration",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_windows_policies",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "policyType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Policy name"
+          },
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "create",
+              "update",
+              "delete",
+              "assign",
+              "deploy"
+            ],
+            "type": "string",
+            "description": "Intune Windows policy management action"
+          },
+          "policyId": {
+            "type": "string",
+            "description": "Policy ID for policy-specific operations"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Policy configuration settings",
+            "additionalProperties": {}
+          },
+          "policyType": {
+            "enum": [
+              "Configuration",
+              "Compliance",
+              "Security",
+              "Update",
+              "AppProtection",
+              "EndpointSecurity"
+            ],
+            "type": "string",
+            "description": "Type of Windows policy"
+          },
+          "assignments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "intent": {
+                  "enum": [
+                    "apply",
+                    "remove"
+                  ],
+                  "type": "string",
+                  "description": "Assignment intent"
+                },
+                "target": {
+                  "type": "object",
+                  "properties": {
+                    "groupId": {
+                      "type": "string",
+                      "description": "Group ID"
+                    },
+                    "collectionId": {
+                      "type": "string",
+                      "description": "Collection ID"
+                    },
+                    "deviceAndAppManagementAssignmentFilterId": {
+                      "type": "string",
+                      "description": "Filter ID"
+                    },
+                    "deviceAndAppManagementAssignmentFilterType": {
+                      "enum": [
+                        "none",
+                        "include",
+                        "exclude"
+                      ],
+                      "type": "string",
+                      "description": "Filter type"
+                    }
+                  },
+                  "description": "Assignment target",
+                  "additionalProperties": false
+                },
+                "settings": {
+                  "type": "object",
+                  "description": "Assignment settings",
+                  "additionalProperties": {}
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Policy assignments"
+          },
+          "description": {
+            "type": "string",
+            "description": "Policy description"
+          },
+          "deploymentSettings": {
+            "type": "object",
+            "properties": {
+              "installBehavior": {
+                "enum": [
+                  "doNotInstall",
+                  "installAsManaged",
+                  "installAsUnmanaged"
+                ],
+                "type": "string",
+                "description": "Install behavior"
+              },
+              "installAsManaged": {
+                "type": "boolean",
+                "description": "Install as managed"
+              },
+              "uninstallOnDeviceRemoval": {
+                "type": "boolean",
+                "description": "Uninstall on device removal"
+              }
+            },
+            "description": "Deployment settings",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_windows_apps",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Application name"
+          },
+          "appId": {
+            "type": "string",
+            "description": "App ID for app-specific operations"
+          },
+          "action": {
+            "enum": [
+              "list",
+              "get",
+              "deploy",
+              "update",
+              "remove",
+              "sync_status"
+            ],
+            "type": "string",
+            "description": "Intune Windows app management action"
+          },
+          "appInfo": {
+            "type": "object",
+            "required": [
+              "displayName",
+              "publisher"
+            ],
+            "properties": {
+              "fileName": {
+                "type": "string",
+                "description": "Installation file name"
+              },
+              "publisher": {
+                "type": "string",
+                "description": "Application publisher"
+              },
+              "description": {
+                "type": "string",
+                "description": "Application description"
+              },
+              "displayName": {
+                "type": "string",
+                "description": "Application display name"
+              },
+              "setupFilePath": {
+                "type": "string",
+                "description": "Setup file path"
+              },
+              "packageFilePath": {
+                "type": "string",
+                "description": "Package file path"
+              },
+              "installCommandLine": {
+                "type": "string",
+                "description": "Install command line"
+              },
+              "uninstallCommandLine": {
+                "type": "string",
+                "description": "Uninstall command line"
+              },
+              "minimumSupportedOperatingSystem": {
+                "type": "string",
+                "description": "Minimum OS version"
+              }
+            },
+            "description": "Application information",
+            "additionalProperties": false
+          },
+          "appType": {
+            "enum": [
+              "win32LobApp",
+              "microsoftStoreForBusinessApp",
+              "webApp",
+              "officeSuiteApp",
+              "microsoftEdgeApp"
+            ],
+            "type": "string",
+            "description": "Windows app type"
+          },
+          "version": {
+            "type": "string",
+            "description": "Application version"
+          },
+          "assignment": {
+            "type": "object",
+            "required": [
+              "groupIds",
+              "installIntent"
+            ],
+            "properties": {
+              "groupIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target group IDs"
+              },
+              "installIntent": {
+                "enum": [
+                  "available",
+                  "required",
+                  "uninstall",
+                  "availableWithoutEnrollment"
+                ],
+                "type": "string",
+                "description": "Installation intent"
+              },
+              "deliveryOptimizationPriority": {
+                "enum": [
+                  "notConfigured",
+                  "foreground"
+                ],
+                "type": "string",
+                "description": "Delivery optimization priority"
+              }
+            },
+            "description": "App assignment configuration",
+            "additionalProperties": false
+          },
+          "assignmentGroups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Target groups for app deployment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_intune_windows_compliance",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get_status",
+              "get_details",
+              "update_policy",
+              "force_evaluation",
+              "get_bitlocker_keys"
+            ],
+            "type": "string",
+            "description": "Intune Windows compliance action"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device ID for compliance assessment"
+          },
+          "policies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific policy IDs to assess"
+          },
+          "complianceData": {
+            "type": "object",
+            "properties": {
+              "firewallCompliant": {
+                "type": "boolean",
+                "description": "Firewall compliance status"
+              },
+              "passwordCompliant": {
+                "type": "boolean",
+                "description": "Password compliance status"
+              },
+              "antivirusCompliant": {
+                "type": "boolean",
+                "description": "Antivirus compliance status"
+              },
+              "bitlockerCompliant": {
+                "type": "boolean",
+                "description": "BitLocker compliance status"
+              },
+              "osVersionCompliant": {
+                "type": "boolean",
+                "description": "OS version compliance status"
+              },
+              "encryptionCompliant": {
+                "type": "boolean",
+                "description": "Encryption compliance status"
+              },
+              "threatProtectionCompliant": {
+                "type": "boolean",
+                "description": "Threat protection compliance status"
+              }
+            },
+            "description": "Compliance assessment data",
+            "additionalProperties": false
+          },
+          "complianceType": {
+            "enum": [
+              "security",
+              "configuration",
+              "update",
+              "bitlocker"
+            ],
+            "type": "string",
+            "description": "Type of compliance check"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_compliance_frameworks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "framework"
+        ],
+        "properties": {
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Assessment scope (organization, specific systems)"
+          },
+          "action": {
+            "enum": [
+              "list",
+              "configure",
+              "status",
+              "assess",
+              "activate",
+              "deactivate"
+            ],
+            "type": "string",
+            "description": "Compliance framework management action"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Framework settings",
+            "additionalProperties": {}
+          },
+          "framework": {
+            "enum": [
+              "hitrust",
+              "iso27001",
+              "soc2",
+              "cis"
+            ],
+            "type": "string",
+            "description": "Compliance framework type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_compliance_assessments",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "framework",
+          "scope"
+        ],
+        "properties": {
+          "scope": {
+            "type": "object",
+            "description": "Assessment scope",
+            "additionalProperties": {}
+          },
+          "action": {
+            "enum": [
+              "create",
+              "update",
+              "execute",
+              "schedule",
+              "cancel",
+              "get_results"
+            ],
+            "type": "string",
+            "description": "Compliance assessment action"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Assessment settings",
+            "additionalProperties": {}
+          },
+          "framework": {
+            "enum": [
+              "hitrust",
+              "iso27001",
+              "soc2"
+            ],
+            "type": "string",
+            "description": "Framework to assess against"
+          },
+          "assessmentId": {
+            "type": "string",
+            "description": "Assessment ID for tracking"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_compliance_monitoring",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get_status",
+              "get_alerts",
+              "get_trends",
+              "configure_monitoring"
+            ],
+            "type": "string",
+            "description": "Compliance monitoring action"
+          },
+          "filters": {
+            "type": "object",
+            "description": "Monitoring filters",
+            "additionalProperties": {}
+          },
+          "framework": {
+            "enum": [
+              "hitrust",
+              "iso27001",
+              "soc2"
+            ],
+            "type": "string",
+            "description": "Framework to monitor"
+          },
+          "monitoringSettings": {
+            "type": "object",
+            "description": "Monitoring settings",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_evidence_collection",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get_status",
+              "schedule",
+              "collect",
+              "download"
+            ],
+            "type": "string",
+            "description": "Evidence collection action"
+          },
+          "systems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific systems to collect evidence from"
+          },
+          "timeRange": {
+            "type": "object",
+            "required": [
+              "start",
+              "end"
+            ],
+            "properties": {
+              "end": {
+                "type": "string",
+                "description": "End date (ISO format)"
+              },
+              "start": {
+                "type": "string",
+                "description": "Start date (ISO format)"
+              }
+            },
+            "description": "Time range for evidence collection",
+            "additionalProperties": false
+          },
+          "evidenceType": {
+            "enum": [
+              "configuration",
+              "logs",
+              "policies",
+              "certificates",
+              "reports"
+            ],
+            "type": "string",
+            "description": "Type of evidence to collect"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_gap_analysis",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "framework"
+        ],
+        "properties": {
+          "scope": {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Categories"
+              },
+              "controlIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Control IDs"
+              }
+            },
+            "description": "Analysis scope",
+            "additionalProperties": false
+          },
+          "action": {
+            "enum": [
+              "generate",
+              "get_results",
+              "export"
+            ],
+            "type": "string",
+            "description": "Gap analysis action"
+          },
+          "settings": {
+            "type": "object",
+            "required": [
+              "includeRecommendations",
+              "prioritizeByRisk",
+              "includeTimeline",
+              "includeCostEstimate"
+            ],
+            "properties": {
+              "includeTimeline": {
+                "type": "boolean",
+                "description": "Include timeline"
+              },
+              "prioritizeByRisk": {
+                "type": "boolean",
+                "description": "Prioritize by risk"
+              },
+              "includeCostEstimate": {
+                "type": "boolean",
+                "description": "Include cost estimate"
+              },
+              "includeRecommendations": {
+                "type": "boolean",
+                "description": "Include recommendations"
+              }
+            },
+            "description": "Analysis settings",
+            "additionalProperties": false
+          },
+          "framework": {
+            "enum": [
+              "hitrust",
+              "iso27001",
+              "soc2"
+            ],
+            "type": "string",
+            "description": "Framework for gap analysis"
+          },
+          "analysisId": {
+            "type": "string",
+            "description": "Analysis ID"
+          },
+          "targetFramework": {
+            "enum": [
+              "hitrust",
+              "iso27001",
+              "soc2"
+            ],
+            "type": "string",
+            "description": "Target framework for cross-framework mapping"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_audit_reports",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "framework",
+          "reportType",
+          "dateRange",
+          "format",
+          "includeEvidence"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "csv",
+              "html",
+              "pdf",
+              "xlsx"
+            ],
+            "type": "string",
+            "description": "Report output format"
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "owners": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Control owners"
+              },
+              "controlIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific control IDs"
+              },
+              "riskLevels": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "critical"
+                  ],
+                  "type": "string"
+                },
+                "description": "Risk levels to include"
+              },
+              "testingStatus": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "passed",
+                    "failed",
+                    "notTested",
+                    "inProgress"
+                  ],
+                  "type": "string"
+                },
+                "description": "Testing status filter"
+              },
+              "implementationStatus": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "implemented",
+                    "partiallyImplemented",
+                    "notImplemented",
+                    "notApplicable"
+                  ],
+                  "type": "string"
+                },
+                "description": "Implementation status filter"
+              }
+            },
+            "description": "Report filters",
+            "additionalProperties": false
+          },
+          "dateRange": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDate"
+            ],
+            "properties": {
+              "endDate": {
+                "type": "string",
+                "description": "End date (ISO format)"
+              },
+              "startDate": {
+                "type": "string",
+                "description": "Start date (ISO format)"
+              }
+            },
+            "description": "Report time range",
+            "additionalProperties": false
+          },
+          "framework": {
+            "enum": [
+              "hitrust",
+              "iso27001",
+              "soc2",
+              "cis"
+            ],
+            "type": "string",
+            "description": "Compliance framework"
+          },
+          "outputPath": {
+            "type": "string",
+            "description": "Output file path"
+          },
+          "reportType": {
+            "enum": [
+              "full",
+              "summary",
+              "gaps",
+              "evidence",
+              "executive",
+              "control_matrix",
+              "risk_assessment"
+            ],
+            "type": "string",
+            "description": "Type of audit report"
+          },
+          "customTemplate": {
+            "type": "string",
+            "description": "Custom template path"
+          },
+          "includeEvidence": {
+            "type": "boolean",
+            "description": "Include supporting evidence"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_cis_compliance",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "scope": {
+            "type": "object",
+            "properties": {
+              "users": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target users"
+              },
+              "devices": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target devices"
+              },
+              "policies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target policies"
+              }
+            },
+            "description": "Assessment scope",
+            "additionalProperties": false
+          },
+          "action": {
+            "enum": [
+              "assess",
+              "get_benchmark",
+              "generate_report",
+              "configure_monitoring",
+              "remediate"
+            ],
+            "type": "string",
+            "description": "CIS compliance action"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "automated": {
+                "type": "boolean",
+                "description": "Automated assessment"
+              },
+              "includeEvidence": {
+                "type": "boolean",
+                "description": "Include evidence"
+              },
+              "riskPrioritization": {
+                "type": "boolean",
+                "description": "Risk-based prioritization"
+              },
+              "generateRemediation": {
+                "type": "boolean",
+                "description": "Generate remediation plans"
+              }
+            },
+            "description": "Assessment settings",
+            "additionalProperties": false
+          },
+          "benchmark": {
+            "enum": [
+              "windows-10",
+              "windows-11",
+              "windows-server-2019",
+              "windows-server-2022",
+              "office365",
+              "azure",
+              "intune"
+            ],
+            "type": "string",
+            "description": "CIS benchmark to assess"
+          },
+          "controlIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific control IDs"
+          },
+          "implementationGroup": {
+            "enum": [
+              "1",
+              "2",
+              "3"
+            ],
+            "type": "string",
+            "description": "Implementation group"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_graph_batch",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "requests"
+        ],
+        "properties": {
+          "requests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "url"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "body": {},
+                "method": {
+                  "enum": [
+                    "GET",
+                    "POST",
+                    "PATCH",
+                    "PUT",
+                    "DELETE"
+                  ],
+                  "type": "string"
+                },
+                "headers": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "maxItems": 20,
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_delta_query",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "resource"
+        ],
+        "properties": {
+          "resource": {
+            "type": "string",
+            "description": "Graph resource path (e.g., /users, /groups)"
+          },
+          "deltaToken": {
+            "type": "string",
+            "description": "Delta token from previous query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_graph_subscriptions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "create",
+              "update",
+              "delete",
+              "list"
+            ],
+            "type": "string",
+            "description": "Subscription management action"
+          },
+          "updates": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "$ref": "#/properties/subscription/properties/resource",
+                "description": "Graph resource to monitor"
+              },
+              "tlsVersion": {
+                "$ref": "#/properties/subscription/properties/tlsVersion",
+                "description": "Minimum TLS version"
+              },
+              "changeTypes": {
+                "$ref": "#/properties/subscription/properties/changeTypes",
+                "description": "Types of changes to monitor"
+              },
+              "clientState": {
+                "$ref": "#/properties/subscription/properties/clientState",
+                "description": "Client state for validation"
+              },
+              "notificationUrl": {
+                "$ref": "#/properties/subscription/properties/notificationUrl",
+                "description": "Webhook endpoint URL"
+              },
+              "expirationDateTime": {
+                "$ref": "#/properties/subscription/properties/expirationDateTime",
+                "description": "Subscription expiration (ISO 8601)"
+              },
+              "lifecycleNotificationUrl": {
+                "$ref": "#/properties/subscription/properties/lifecycleNotificationUrl",
+                "description": "Lifecycle notification URL"
+              }
+            },
+            "description": "Updates for existing subscription",
+            "additionalProperties": false
+          },
+          "subscription": {
+            "type": "object",
+            "required": [
+              "resource",
+              "changeTypes",
+              "notificationUrl"
+            ],
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Graph resource to monitor"
+              },
+              "tlsVersion": {
+                "enum": [
+                  "v1_0",
+                  "v1_1",
+                  "v1_2",
+                  "v1_3"
+                ],
+                "type": "string",
+                "description": "Minimum TLS version"
+              },
+              "changeTypes": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "created",
+                    "updated",
+                    "deleted"
+                  ],
+                  "type": "string"
+                },
+                "description": "Types of changes to monitor"
+              },
+              "clientState": {
+                "type": "string",
+                "description": "Client state for validation"
+              },
+              "notificationUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "Webhook endpoint URL"
+              },
+              "expirationDateTime": {
+                "type": "string",
+                "description": "Subscription expiration (ISO 8601)"
+              },
+              "lifecycleNotificationUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "Lifecycle notification URL"
+              }
+            },
+            "description": "Subscription details for create/update",
+            "additionalProperties": false
+          },
+          "subscriptionId": {
+            "type": "string",
+            "description": "Subscription ID for update/delete operations"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_graph_search",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entityTypes",
+          "queryString"
+        ],
+        "properties": {
+          "from": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Starting index for results"
+          },
+          "size": {
+            "type": "number",
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Number of results to return"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields to include in results"
+          },
+          "entityTypes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "message",
+                "event",
+                "drive",
+                "driveItem",
+                "list",
+                "listItem",
+                "site",
+                "person"
+              ],
+              "type": "string"
+            }
+          },
+          "queryString": {
+            "type": "string",
+            "description": "Search query string"
+          },
+          "aggregations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field"
+              ],
+              "properties": {
+                "size": {
+                  "type": "number"
+                },
+                "field": {
+                  "type": "string"
+                },
+                "bucketDefinition": {}
+              },
+              "additionalProperties": false
+            },
+            "description": "Aggregation definitions"
+          },
+          "sortProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "isDescending": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Sort properties"
+          },
+          "queryAlterationOptions": {
+            "type": "object",
+            "properties": {
+              "enableSuggestion": {
+                "type": "boolean"
+              },
+              "enableModification": {
+                "type": "boolean"
+              }
+            },
+            "description": "Query alteration options",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/m365-core-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "msTenantId",
+          "msClientId",
+          "msClientSecret"
+        ],
+        "properties": {
+          "logLevel": {
+            "type": "string",
+            "default": "info",
+            "description": "Log level (default info)"
+          },
+          "stateless": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use stateless HTTP mode (default false)"
+          },
+          "msClientId": {
+            "type": "string",
+            "description": "Microsoft Client ID for authentication"
+          },
+          "msTenantId": {
+            "type": "string",
+            "description": "Microsoft Tenant ID for authentication"
+          },
+          "msClientSecret": {
+            "type": "string",
+            "description": "Microsoft Client Secret for authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "qualifiedName": "@CHIBOLAR/jira_mcp_sprinthealth",
+  "displayName": "Jira Sprint Dashboard",
+  "description": "Transform your Jira sprint data into actionable insights with interactive dashboards that track burndown charts, team velocity, sprint goal progress, and blocked issues. Generate executive-ready health dashboards to improve sprint management and team performance. Enhance decision-making with predictive analytics and comprehensive sprint health scoring.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@CHIBOLAR/jira_mcp_sprinthealth",
+  "security": null,
+  "tools": [
+    {
+      "name": "oauth_status",
+      "description": "Check OAuth authentication status",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "oauth_callback",
+      "description": "Handle OAuth callback (internal use)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "OAuth authorization code"
+          },
+          "error": {
+            "type": "string",
+            "description": "OAuth error if any"
+          },
+          "state": {
+            "type": "string",
+            "description": "OAuth state parameter"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "start_oauth",
+      "description": "Start browser OAuth authentication flow",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "test_jira_connection",
+      "description": "Test connection to Jira",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jira_get_issue",
+      "description": "Get details for a specific Jira issue",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueKey"
+        ],
+        "properties": {
+          "issueKey": {
+            "type": "string",
+            "description": "Jira issue key (e.g., \"PROJ-123\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "jira_search",
+      "description": "Search Jira issues with JQL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "jql"
+        ],
+        "properties": {
+          "jql": {
+            "type": "string",
+            "description": "JQL query (e.g., \"project = PROJ AND status = Open\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_projects",
+      "description": "List accessible Jira projects",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "help",
+      "description": "Get help with Jira MCP server",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@CHIBOLAR/jira_mcp_sprinthealth/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "companyUrl",
+          "userEmail"
+        ],
+        "properties": {
+          "userEmail": {
+            "type": "string",
+            "description": "Your work email address"
+          },
+          "authMethod": {
+            "enum": [
+              "oauth"
+            ],
+            "type": "string",
+            "default": "oauth",
+            "description": "Browser OAuth authentication"
+          },
+          "companyUrl": {
+            "type": "string",
+            "description": "Your company's Jira URL (e.g., https://company.atlassian.net)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

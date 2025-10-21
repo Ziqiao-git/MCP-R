@@ -1,0 +1,3908 @@
+{
+  "qualifiedName": "@slhad/aha-mcp",
+  "displayName": "Home Assistant Automations & Dashboards",
+  "description": "A TypeScript MCP server for Home Assistant, enabling programmatic management of entities, automations, services, and dashboards. Designed for extensibility. Includes Docker support and Vitest-based tests for easy deployment and reliability.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@slhad/aha-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get-rest-automation-trace",
+      "title": "Get automation trace by rest_id and run_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Fetches the trace for a specific automation run using its REST id and run id.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rest_id",
+          "run_id"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "description": "Automation run id"
+          },
+          "rest_id": {
+            "type": "string",
+            "description": "Automation REST API id"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "trace"
+        ],
+        "properties": {
+          "trace": {
+            "type": "object",
+            "required": [
+              "last_step",
+              "run_id",
+              "state",
+              "script_execution",
+              "timestamp",
+              "domain",
+              "item_id",
+              "trigger",
+              "trace",
+              "config",
+              "context"
+            ],
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "trace": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "timestamp"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "result": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "timestamp": {
+                        "type": "string"
+                      },
+                      "changed_variables": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "config": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "alias",
+                  "description",
+                  "triggers",
+                  "conditions",
+                  "actions",
+                  "mode"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "string"
+                  },
+                  "alias": {
+                    "type": "string"
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "triggers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  },
+                  "conditions": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "domain": {
+                "type": "string"
+              },
+              "run_id": {
+                "type": "string"
+              },
+              "context": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "parent_id",
+                  "user_id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent_id": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "trigger": {
+                "type": "string"
+              },
+              "last_step": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "object",
+                "required": [
+                  "start",
+                  "finish"
+                ],
+                "properties": {
+                  "start": {
+                    "type": "string"
+                  },
+                  "finish": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "blueprint_inputs": {},
+              "script_execution": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-rest-automation-traces",
+      "title": "List automation traces by rest_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all traces for a specific automation using its REST id.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rest_id"
+        ],
+        "properties": {
+          "rest_id": {
+            "type": "string",
+            "description": "Automation REST API id"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "traces"
+        ],
+        "properties": {
+          "traces": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "last_step",
+                "run_id",
+                "state",
+                "script_execution",
+                "timestamp",
+                "domain",
+                "item_id",
+                "trigger"
+              ],
+              "properties": {
+                "state": {
+                  "type": "string"
+                },
+                "domain": {
+                  "type": "string"
+                },
+                "run_id": {
+                  "type": "string"
+                },
+                "item_id": {
+                  "type": "string"
+                },
+                "trigger": {
+                  "type": "string"
+                },
+                "last_step": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "object",
+                  "required": [
+                    "start",
+                    "finish"
+                  ],
+                  "properties": {
+                    "start": {
+                      "type": "string"
+                    },
+                    "finish": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "script_execution": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-automations",
+      "title": "List all automations",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all automations",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automations"
+        ],
+        "properties": {
+          "automations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "entityId",
+                "state",
+                "attributes",
+                "lastChanged",
+                "lastUpdated",
+                "context"
+              ],
+              "properties": {
+                "state": {
+                  "type": "string"
+                },
+                "context": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "parent_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "entityId": {
+                  "type": "string"
+                },
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "mode",
+                    "current",
+                    "friendly_name"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "mode": {
+                      "type": "string"
+                    },
+                    "current": {
+                      "type": "number"
+                    },
+                    "friendly_name": {
+                      "type": "string"
+                    },
+                    "last_triggered": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "lastChanged": {
+                  "type": "string"
+                },
+                "lastUpdated": {
+                  "type": "string"
+                }
+              },
+              "description": "Home Assistant automation entity with state, attributes including automation ID, mode, and execution details",
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-automation",
+      "title": "Delete an automation",
+      "description": "Delete an automation by id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Automation unique ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-automation-by-entity-id",
+      "title": "Get automation by entity_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Find an automation entity using its entity_id (e.g. automation.my_automation).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entity_id"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "Automation entity_id, e.g. 'automation.my_automation'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automation"
+        ],
+        "properties": {
+          "automation": {
+            "type": "object",
+            "required": [
+              "entityId",
+              "state",
+              "attributes",
+              "lastChanged",
+              "lastUpdated",
+              "context"
+            ],
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "context": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "entityId": {
+                "type": "string"
+              },
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "mode",
+                  "current",
+                  "friendly_name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "string"
+                  },
+                  "current": {
+                    "type": "number"
+                  },
+                  "friendly_name": {
+                    "type": "string"
+                  },
+                  "last_triggered": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              },
+              "lastChanged": {
+                "type": "string"
+              },
+              "lastUpdated": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant automation entity with state, attributes including automation ID, mode, and execution details",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-rest-automation-by-entity-id",
+      "title": "Get REST automation by entity_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get an automation's REST definition using its entity_id (e.g. automation.my_automation).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entity_id"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "Automation entity_id, e.g. 'automation.my_automation'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automation"
+        ],
+        "properties": {
+          "automation": {
+            "type": "object",
+            "required": [
+              "id",
+              "alias",
+              "description",
+              "triggers",
+              "conditions",
+              "actions",
+              "mode"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "single",
+                  "parallel",
+                  "queued",
+                  "restart"
+                ],
+                "type": "string"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "actions": {
+                "type": "array",
+                "items": {}
+              },
+              "triggers": {
+                "type": "array",
+                "items": {}
+              },
+              "conditions": {
+                "type": "array",
+                "items": {}
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant automation configuration object with ID, alias, description, triggers, conditions, actions, and execution mode",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-automation-by-entity-id",
+      "title": "Update automation by entity_id",
+      "description": "Update an automation using its entity_id (e.g. automation.my_automation).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entity_id",
+          "automation"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "Automation entity_id, e.g. 'automation.my_automation'"
+          },
+          "automation": {
+            "type": "object",
+            "required": [
+              "id",
+              "alias",
+              "description",
+              "triggers",
+              "conditions",
+              "actions",
+              "mode"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "single",
+                  "parallel",
+                  "queued",
+                  "restart"
+                ],
+                "type": "string"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "actions": {
+                "type": "array",
+                "items": {}
+              },
+              "triggers": {
+                "type": "array",
+                "items": {}
+              },
+              "conditions": {
+                "type": "array",
+                "items": {}
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant automation configuration object with ID, alias, description, triggers, conditions, actions, and execution mode",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-automation-by-rest-id",
+      "title": "Get automation by rest_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Find an automation entity using its REST API id (rest_id, not entity_id).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rest_id"
+        ],
+        "properties": {
+          "rest_id": {
+            "type": "string",
+            "description": "Automation REST API id"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automation"
+        ],
+        "properties": {
+          "automation": {
+            "type": "object",
+            "required": [
+              "entityId",
+              "state",
+              "attributes",
+              "lastChanged",
+              "lastUpdated",
+              "context"
+            ],
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "context": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "entityId": {
+                "type": "string"
+              },
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "mode",
+                  "current",
+                  "friendly_name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "string"
+                  },
+                  "current": {
+                    "type": "number"
+                  },
+                  "friendly_name": {
+                    "type": "string"
+                  },
+                  "last_triggered": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              },
+              "lastChanged": {
+                "type": "string"
+              },
+              "lastUpdated": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant automation entity with state, attributes including automation ID, mode, and execution details",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-rest-automation-by-rest-id",
+      "title": "Get REST automation by rest_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get an automation's REST definition using its rest_id (REST API id, not entity_id).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rest_id"
+        ],
+        "properties": {
+          "rest_id": {
+            "type": "string",
+            "description": "Automation REST API id"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automation"
+        ],
+        "properties": {
+          "automation": {
+            "type": "object",
+            "required": [
+              "id",
+              "alias",
+              "description",
+              "triggers",
+              "conditions",
+              "actions",
+              "mode"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "single",
+                  "parallel",
+                  "queued",
+                  "restart"
+                ],
+                "type": "string"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "actions": {
+                "type": "array",
+                "items": {}
+              },
+              "triggers": {
+                "type": "array",
+                "items": {}
+              },
+              "conditions": {
+                "type": "array",
+                "items": {}
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant automation configuration object with ID, alias, description, triggers, conditions, actions, and execution mode",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-rest-automation-by-rest-id",
+      "title": "Update REST automation by rest_id",
+      "description": "Update an automation using its rest_id (REST API id, not entity_id).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automation"
+        ],
+        "properties": {
+          "automation": {
+            "type": "object",
+            "required": [
+              "id",
+              "alias",
+              "description",
+              "triggers",
+              "conditions",
+              "actions",
+              "mode"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "single",
+                  "parallel",
+                  "queued",
+                  "restart"
+                ],
+                "type": "string"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "actions": {
+                "type": "array",
+                "items": {}
+              },
+              "triggers": {
+                "type": "array",
+                "items": {}
+              },
+              "conditions": {
+                "type": "array",
+                "items": {}
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant automation configuration object with ID, alias, description, triggers, conditions, actions, and execution mode",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-rest-automation-by-rest-id",
+      "title": "Delete REST automation by rest_id",
+      "description": "Delete an automation using its rest_id (REST API id, not entity_id).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rest_id"
+        ],
+        "properties": {
+          "rest_id": {
+            "type": "string",
+            "description": "Automation REST API id"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-rest-automation",
+      "title": "Create REST automation",
+      "description": "Create a new automation via the Home Assistant REST API. Returns the new rest_id.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "automation"
+        ],
+        "properties": {
+          "automation": {
+            "type": "object",
+            "required": [
+              "alias",
+              "description",
+              "triggers",
+              "conditions",
+              "actions",
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "enum": [
+                  "single",
+                  "parallel",
+                  "queued",
+                  "restart"
+                ],
+                "type": "string"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "actions": {
+                "type": "array",
+                "items": {}
+              },
+              "triggers": {
+                "type": "array",
+                "items": {}
+              },
+              "conditions": {
+                "type": "array",
+                "items": {}
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant automation creation object without ID, used when creating new automations",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-device-automation-triggers",
+      "title": "List device automation triggers",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all triggers for a specific device's automations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "device_id"
+        ],
+        "properties": {
+          "device_id": {
+            "type": "string",
+            "description": "Device ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-status",
+      "title": "Get Home Assistant connection status",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get Home Assistant connection status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "object",
+            "required": [
+              "connected",
+              "entityCount"
+            ],
+            "properties": {
+              "connected": {
+                "type": "boolean"
+              },
+              "entityCount": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate-config",
+      "title": "Validate triggers, conditions and actions for any automation change",
+      "description": "Validate triggers, conditions and actions configurations as if part of an automation. Any changes to automation should be checked with this tool",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "config"
+        ],
+        "properties": {
+          "config": {
+            "type": "object",
+            "properties": {
+              "actions": {
+                "type": "array",
+                "items": {}
+              },
+              "triggers": {
+                "type": "array",
+                "items": {}
+              },
+              "conditions": {
+                "type": "array",
+                "items": {}
+              }
+            },
+            "description": "Validation configuration for Home Assistant automation triggers, conditions, and actions",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "call-service",
+      "title": "Call a Home Assistant service",
+      "description": "Call a Home Assistant service",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domain",
+          "service"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "domain": {
+            "type": "string",
+            "description": "Service domain (e.g., light, switch)"
+          },
+          "service": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-manifest",
+      "title": "Get Home Assistant integration manifest",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get the manifest of a Home Assistant integration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "integration"
+        ],
+        "properties": {
+          "integration": {
+            "type": "string",
+            "description": "Integration name, e.g. 'light'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-entity-registry-by-entity-id",
+      "title": "Get entity registry by entity_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get registry info for a specific entity_id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entityId"
+        ],
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "Entity ID, e.g. 'sensor.temperature'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "registry"
+        ],
+        "properties": {
+          "registry": {
+            "type": "object",
+            "required": [
+              "area_id",
+              "categories",
+              "config_entry_id",
+              "config_subentry_id",
+              "created_at",
+              "device_id",
+              "disabled_by",
+              "entity_category",
+              "entity_id",
+              "has_entity_name",
+              "hidden_by",
+              "icon",
+              "id",
+              "labels",
+              "modified_at",
+              "name",
+              "options",
+              "original_name",
+              "platform",
+              "translation_key",
+              "unique_id",
+              "aliases",
+              "device_class",
+              "original_device_class",
+              "original_icon"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "icon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "aliases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "options": {
+                "type": "object",
+                "properties": {
+                  "conversation": {
+                    "type": "object",
+                    "required": [
+                      "should_expose"
+                    ],
+                    "properties": {
+                      "should_expose": {
+                        "type": "boolean"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "platform": {
+                "type": "string"
+              },
+              "device_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "entity_id": {
+                "type": "string"
+              },
+              "hidden_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "unique_id": {
+                "type": "string"
+              },
+              "categories": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "created_at": {
+                "type": "number"
+              },
+              "disabled_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "modified_at": {
+                "type": "number"
+              },
+              "capabilities": {
+                "anyOf": [
+                  {},
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "device_class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "original_icon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "original_name": {
+                "type": "string"
+              },
+              "config_entry_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "entity_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_entity_name": {
+                "type": "boolean"
+              },
+              "translation_key": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "config_subentry_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "original_device_class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-device-id-by-entity-id",
+      "title": "Get device_id by entity_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get the device_id for a given entity_id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entityId"
+        ],
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "Entity ID, e.g. 'sensor.temperature'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "DeviceIdResponseSchema"
+        ],
+        "properties": {
+          "DeviceIdResponseSchema": {
+            "type": "object",
+            "required": [
+              "deviceId"
+            ],
+            "properties": {
+              "deviceId": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-config-entry-id-by-entity-id",
+      "title": "Get config_entry_id by entity_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get the config_entry_id for a given entity_id, useful for templated sensors and other config entry flows alike",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entityId"
+        ],
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "Entity ID, e.g. 'sensor.temperature'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "configEntryId"
+        ],
+        "properties": {
+          "configEntryId": {
+            "type": "string",
+            "description": "Config entry ID for the entity"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-device-registry",
+      "title": "Update device registry",
+      "description": "Update the device registry for a specific device_id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "device_id",
+          "device_config"
+        ],
+        "properties": {
+          "device_id": {
+            "type": "string",
+            "description": "Device ID, e.g. 'device_123'"
+          },
+          "device_config": {
+            "type": "object",
+            "properties": {
+              "area_id": {
+                "type": "string",
+                "description": "Area ID to assign the device to"
+              }
+            },
+            "description": "Any field device configuration to update",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-config-entry-flow",
+      "title": "Create config entry flow with a handler helpers",
+      "description": "Create a new config entry in the Home Assistant entity registry for a new config entry (new templated helpers for ex)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "handler"
+        ],
+        "properties": {
+          "handler": {
+            "type": "string",
+            "description": "The handler for the config entry flow"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "continue-config-entry-flow",
+      "title": "Continue config entry flow",
+      "description": "Continue an existing config entry flow with a next step Id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "flow_id",
+          "next_step_id"
+        ],
+        "properties": {
+          "flow_id": {
+            "type": "string",
+            "description": "The ID of the config entry flow to continue"
+          },
+          "next_step_id": {
+            "type": "string",
+            "description": "The ID of the next step to execute"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "finish-config-entry-flow",
+      "title": "Finish config entry flow",
+      "description": "Finish an existing config entry flow",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "flow_id",
+          "options"
+        ],
+        "properties": {
+          "flow_id": {
+            "type": "string",
+            "description": "The ID of the config entry flow to finish"
+          },
+          "options": {
+            "type": "object",
+            "description": "Parameters to finish the flow",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-config-entry-options-flow",
+      "title": "Create config entry options flow for a config entry id",
+      "description": "Create a new config entry options flow for a specific config entry (already existing config entry, templated helpers for ex)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "config_entry_id"
+        ],
+        "properties": {
+          "config_entry_id": {
+            "type": "string",
+            "description": "The ID of the config entry to create options flow for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-config-entry-options-flow",
+      "title": "Update config entry options flow",
+      "description": "Update an existing config entry options flow",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "flow_id",
+          "options"
+        ],
+        "properties": {
+          "flow_id": {
+            "type": "string",
+            "description": "The ID of the config entry flow to update"
+          },
+          "options": {
+            "type": "object",
+            "description": "Parameters to update the flow",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-config-entry-flows-helpers",
+      "title": "List helpers types",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List available config entry flow handlers for helpers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "flows"
+        ],
+        "properties": {
+          "flows": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-scripts",
+      "title": "List all scripts",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all scripts in Home Assistant, friendly_name = alias",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "scripts"
+        ],
+        "properties": {
+          "scripts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-rest-script-by-entity-id",
+      "title": "Get a script by entity_id",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get the details of a specific script by its entity_id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entityId"
+        ],
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "Entity ID of the script, e.g. 'my_script'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "script"
+        ],
+        "properties": {
+          "script": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-rest-script-by-alias",
+      "title": "Get a script by alias",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get the details of a specific script by its alias, not script.entity_id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "alias"
+        ],
+        "properties": {
+          "alias": {
+            "type": "string",
+            "description": "Alias of the script, e.g. 'My Script' not 'script.script_entity_id'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "script"
+        ],
+        "properties": {
+          "script": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "upsertScriptRest-rest-script-by-alias",
+      "title": "Create or Update a script by alias",
+      "description": "Create or Update the details of a specific script by its alias",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "alias",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {},
+            "description": "The script configuration data to create/update",
+            "additionalProperties": false
+          },
+          "alias": {
+            "type": "string",
+            "description": "alias of the script, e.g. 'My Script'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "success"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-rest-script-by-alias",
+      "title": "Delete a script by alias",
+      "description": "Delete a specific script by its alias",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "alias"
+        ],
+        "properties": {
+          "alias": {
+            "type": "string",
+            "description": "Alias of the script, e.g. 'My Script'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "success"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-entities-by-prefix",
+      "title": "List all entities by prefix",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all Home Assistant entities by prefix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prefix"
+        ],
+        "properties": {
+          "prefix": {
+            "type": "string",
+            "description": "Prefix to filter entities, e.g. 'sensor.'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-entities-by-regex",
+      "title": "List all entities by regex",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all Home Assistant entities matching a regex pattern",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pattern",
+          "flags"
+        ],
+        "properties": {
+          "flags": {
+            "type": "string",
+            "description": "Regex flags, e.g. 'i' for ignore case"
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Regex pattern for entity IDs, e.g. '^sensor\\.'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-entity-state",
+      "title": "Get state of a specific entity",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get state of a specific entity_id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entityId"
+        ],
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "Entity ID, e.g. 'sensor.temperature'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "object",
+            "required": [
+              "entityId",
+              "state",
+              "attributes",
+              "lastChanged",
+              "lastUpdated",
+              "context"
+            ],
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "context": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "parentId": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "entityId": {
+                "type": "string"
+              },
+              "attributes": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "lastChanged": {
+                "type": "string"
+              },
+              "lastUpdated": {
+                "type": "string"
+              }
+            },
+            "description": "Home Assistant entity state object with entity ID, state value, attributes, and context information",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-entity-domain",
+      "title": "Get domain of a specific entity",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Get domain of a specific entity_id",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entityId"
+        ],
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "Entity ID, e.g. 'sensor.temperature'"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-related",
+      "title": "Search related entities",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Search for entities related to a specific item_type (like 'area') and entity_id (like 'studio')",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "itemType",
+          "itemId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "ID of the item, e.g. 'sensor.temperature' or 'area.living_room'"
+          },
+          "itemType": {
+            "type": "string",
+            "description": "Type of the item, e.g. 'entity', 'area'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-area",
+      "title": "List all areas",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all Home Assistant areas",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get-lovelace-config",
+      "title": "Get Lovelace Config",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Fetch Lovelace dashboard config by url_path. The URL must contain a dash ('-') and must not contain spaces or special characters, except '_' and '-'",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url_path"
+        ],
+        "properties": {
+          "force": {
+            "type": "boolean"
+          },
+          "url_path": {
+            "type": "string",
+            "description": "The URL path of the Lovelace dashboard config to fetch, e.g., 'default-view' or 'dashboard-id'. The URL must contain a dash ('-') and must not contain spaces or special characters, except '_' and '-'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-lovelace-config",
+      "title": "Update Lovelace Config",
+      "description": "Update Lovelace dashboard config by url_path.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url_path",
+          "config"
+        ],
+        "properties": {
+          "config": {
+            "type": "object",
+            "required": [
+              "views"
+            ],
+            "properties": {
+              "views": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "sections",
+                    "badges",
+                    "type",
+                    "cards"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "sections"
+                    },
+                    "cards": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "badges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "entity"
+                        ],
+                        "properties": {
+                          "icon": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "entity"
+                          },
+                          "color": {
+                            "type": "string"
+                          },
+                          "entity": {
+                            "type": "string"
+                          },
+                          "show_icon": {
+                            "type": "boolean"
+                          },
+                          "show_name": {
+                            "type": "boolean"
+                          },
+                          "show_state": {
+                            "type": "boolean"
+                          },
+                          "tap_action": {
+                            "$ref": "#/properties/config/properties/views/items/properties/sections/items/properties/cards/items/anyOf/1/properties/tap_action"
+                          },
+                          "show_entity_picture": {
+                            "type": "boolean"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "sections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "cards"
+                        ],
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "grid"
+                          },
+                          "cards": {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "heading",
+                                    "heading_style"
+                                  ],
+                                  "properties": {
+                                    "icon": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "heading"
+                                    },
+                                    "heading": {
+                                      "type": "string"
+                                    },
+                                    "heading_style": {
+                                      "enum": [
+                                        "title",
+                                        "subtitle"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "entity"
+                                  ],
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom:mushroom-light-card"
+                                    },
+                                    "entity": {
+                                      "type": "string"
+                                    },
+                                    "layout": {
+                                      "enum": [
+                                        "horizontal",
+                                        "vertical"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "tap_action": {
+                                      "type": "object",
+                                      "required": [
+                                        "action"
+                                      ],
+                                      "properties": {
+                                        "data": {
+                                          "type": "object",
+                                          "additionalProperties": {}
+                                        },
+                                        "action": {
+                                          "enum": [
+                                            "none",
+                                            "toggle",
+                                            "more-info",
+                                            "perform-action"
+                                          ],
+                                          "type": "string"
+                                        },
+                                        "target": {
+                                          "type": "object",
+                                          "required": [
+                                            "entity_id"
+                                          ],
+                                          "properties": {
+                                            "entity_id": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "perform_action": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "hold_action": {
+                                      "type": "object",
+                                      "required": [
+                                        "action"
+                                      ],
+                                      "properties": {
+                                        "data": {
+                                          "type": "object",
+                                          "additionalProperties": {}
+                                        },
+                                        "action": {
+                                          "enum": [
+                                            "none",
+                                            "toggle",
+                                            "more-info",
+                                            "perform-action"
+                                          ],
+                                          "type": "string"
+                                        },
+                                        "target": {
+                                          "type": "object",
+                                          "required": [
+                                            "entity_id"
+                                          ],
+                                          "properties": {
+                                            "entity_id": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "perform_action": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "use_light_color": {
+                                      "type": "boolean"
+                                    },
+                                    "double_tap_action": {
+                                      "type": "object",
+                                      "required": [
+                                        "action"
+                                      ],
+                                      "properties": {
+                                        "action": {
+                                          "enum": [
+                                            "none",
+                                            "toggle",
+                                            "more-info",
+                                            "perform-action"
+                                          ],
+                                          "type": "string"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "show_color_control": {
+                                      "type": "boolean"
+                                    },
+                                    "collapsible_controls": {
+                                      "type": "boolean"
+                                    },
+                                    "show_brightness_control": {
+                                      "type": "boolean"
+                                    },
+                                    "show_color_temp_control": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "entity"
+                                  ],
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "tile"
+                                    },
+                                    "entity": {
+                                      "type": "string"
+                                    },
+                                    "vertical": {
+                                      "type": "boolean"
+                                    },
+                                    "hide_state": {
+                                      "type": "boolean"
+                                    },
+                                    "hold_action": {
+                                      "$ref": "#/properties/config/properties/views/items/properties/sections/items/properties/cards/items/anyOf/1/properties/hold_action"
+                                    },
+                                    "state_content": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "features_position": {
+                                      "enum": [
+                                        "top",
+                                        "bottom",
+                                        "left",
+                                        "right"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "show_entity_picture": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "url"
+                                  ],
+                                  "properties": {
+                                    "url": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom:webrtc-camera"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "entities"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "history-graph"
+                                    },
+                                    "entities": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "required": [
+                                          "entity"
+                                        ],
+                                        "properties": {
+                                          "name": {
+                                            "type": "string"
+                                          },
+                                          "entity": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "max_y_axis": {
+                                      "type": "number"
+                                    },
+                                    "min_y_axis": {
+                                      "type": "number"
+                                    },
+                                    "grid_options": {
+                                      "type": "object",
+                                      "required": [
+                                        "columns",
+                                        "rows"
+                                      ],
+                                      "properties": {
+                                        "rows": {
+                                          "type": "number"
+                                        },
+                                        "columns": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "hours_to_show": {
+                                      "type": "number"
+                                    },
+                                    "logarithmic_scale": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "entity"
+                                  ],
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom:mushroom-select-card"
+                                    },
+                                    "entity": {
+                                      "type": "string"
+                                    },
+                                    "layout": {
+                                      "enum": [
+                                        "horizontal",
+                                        "vertical"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "entity"
+                                  ],
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom:mushroom-climate-card"
+                                    },
+                                    "entity": {
+                                      "type": "string"
+                                    },
+                                    "layout": {
+                                      "enum": [
+                                        "horizontal",
+                                        "vertical"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "fill_container": {
+                                      "type": "boolean"
+                                    },
+                                    "collapsible_controls": {
+                                      "type": "boolean"
+                                    },
+                                    "show_temperature_control": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "entities"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "entities"
+                                    },
+                                    "entities": {
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "object",
+                                            "required": [
+                                              "entity"
+                                            ],
+                                            "properties": {
+                                              "name": {
+                                                "type": "string"
+                                              },
+                                              "entity": {
+                                                "type": "string"
+                                              },
+                                              "secondary_info": {
+                                                "enum": [
+                                                  "last-changed",
+                                                  "last-updated",
+                                                  "entity-id",
+                                                  "none"
+                                                ],
+                                                "type": "string"
+                                              }
+                                            },
+                                            "additionalProperties": false
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "state_color": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "entity"
+                                  ],
+                                  "properties": {
+                                    "icon": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom:mushroom-number-card"
+                                    },
+                                    "entity": {
+                                      "type": "string"
+                                    },
+                                    "layout": {
+                                      "enum": [
+                                        "horizontal",
+                                        "vertical"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "display_mode": {
+                                      "enum": [
+                                        "slider",
+                                        "buttons"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "fill_container": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "filter",
+                                    "card"
+                                  ],
+                                  "properties": {
+                                    "card": {
+                                      "type": "object",
+                                      "required": [
+                                        "type"
+                                      ],
+                                      "properties": {
+                                        "type": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom:auto-entities"
+                                    },
+                                    "filter": {
+                                      "type": "object",
+                                      "required": [
+                                        "include"
+                                      ],
+                                      "properties": {
+                                        "exclude": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "required": [
+                                              "options"
+                                            ],
+                                            "properties": {
+                                              "options": {
+                                                "type": "object",
+                                                "additionalProperties": {}
+                                              },
+                                              "entity_id": {
+                                                "type": "string"
+                                              },
+                                              "attributes": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            },
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "include": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "required": [
+                                              "options"
+                                            ],
+                                            "properties": {
+                                              "area": {
+                                                "type": "string"
+                                              },
+                                              "domain": {
+                                                "type": "string"
+                                              },
+                                              "options": {
+                                                "type": "object",
+                                                "additionalProperties": {}
+                                              }
+                                            },
+                                            "additionalProperties": false
+                                          }
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "card_param": {
+                                      "type": "string"
+                                    },
+                                    "show_empty": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "vertical-stack"
+                                    },
+                                    "cards": {
+                                      "type": "array",
+                                      "items": {
+                                        "$ref": "#/properties/config/properties/views/items/properties/sections/items/properties/cards/items"
+                                      }
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "series",
+                                    "chart_type"
+                                  ],
+                                  "properties": {
+                                    "fill": {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string"
+                                        },
+                                        "colors": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "opacity": {
+                                          "type": "number"
+                                        },
+                                        "pattern": {
+                                          "type": "object",
+                                          "properties": {
+                                            "style": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "gradient": {
+                                          "type": "object",
+                                          "properties": {
+                                            "type": {
+                                              "type": "string"
+                                            },
+                                            "shade": {
+                                              "type": "string"
+                                            },
+                                            "stops": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "opacityTo": {
+                                              "type": "number"
+                                            },
+                                            "opacityFrom": {
+                                              "type": "number"
+                                            },
+                                            "inverseColors": {
+                                              "type": "boolean"
+                                            },
+                                            "shadeIntensity": {
+                                              "type": "number"
+                                            },
+                                            "gradientToColors": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string"
+                                              }
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "grid": {
+                                      "type": "object",
+                                      "properties": {
+                                        "xaxis": {
+                                          "type": "object",
+                                          "properties": {
+                                            "lines": {
+                                              "type": "object",
+                                              "properties": {
+                                                "show": {
+                                                  "type": "boolean"
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "yaxis": {
+                                          "type": "object",
+                                          "properties": {
+                                            "lines": {
+                                              "type": "object",
+                                              "properties": {
+                                                "show": {
+                                                  "type": "boolean"
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "padding": {
+                                          "type": "object",
+                                          "properties": {
+                                            "top": {
+                                              "type": "number"
+                                            },
+                                            "bottom": {
+                                              "type": "number"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "span": {
+                                      "type": "object",
+                                      "required": [
+                                        "start",
+                                        "offset"
+                                      ],
+                                      "properties": {
+                                        "start": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "custom:apexcharts-card"
+                                    },
+                                    "chart": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "type": {
+                                          "type": "string"
+                                        },
+                                        "zoom": {
+                                          "type": "object",
+                                          "properties": {
+                                            "type": {
+                                              "type": "string"
+                                            },
+                                            "enabled": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "width": {
+                                          "type": [
+                                            "number",
+                                            "string"
+                                          ]
+                                        },
+                                        "height": {
+                                          "type": "number"
+                                        },
+                                        "stacked": {
+                                          "type": "boolean"
+                                        },
+                                        "toolbar": {
+                                          "type": "object",
+                                          "properties": {
+                                            "show": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "sparkline": {
+                                          "type": "object",
+                                          "properties": {
+                                            "enabled": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "animations": {
+                                          "type": "object",
+                                          "properties": {
+                                            "easing": {
+                                              "type": "string"
+                                            },
+                                            "enabled": {
+                                              "type": "boolean"
+                                            },
+                                            "dynamicAnimation": {
+                                              "type": "object",
+                                              "properties": {
+                                                "speed": {
+                                                  "type": "number"
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "dropShadow": {
+                                          "type": "object",
+                                          "properties": {
+                                            "top": {
+                                              "type": "number"
+                                            },
+                                            "blur": {
+                                              "type": "number"
+                                            },
+                                            "left": {
+                                              "type": "number"
+                                            },
+                                            "color": {
+                                              "type": "string"
+                                            },
+                                            "enabled": {
+                                              "type": "boolean"
+                                            },
+                                            "opacity": {
+                                              "type": "number"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "title": {
+                                      "type": "object",
+                                      "properties": {
+                                        "text": {
+                                          "type": "string"
+                                        },
+                                        "align": {
+                                          "type": "string"
+                                        },
+                                        "style": {
+                                          "type": "object",
+                                          "properties": {
+                                            "color": {
+                                              "type": "string"
+                                            },
+                                            "fontSize": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "offsetX": {
+                                          "type": "number"
+                                        },
+                                        "offsetY": {
+                                          "type": "number"
+                                        },
+                                        "floating": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "xaxis": {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string"
+                                        },
+                                        "labels": {
+                                          "type": "object",
+                                          "properties": {
+                                            "rotate": {
+                                              "type": "number"
+                                            },
+                                            "formatter": {}
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "tooltip": {
+                                          "type": "object",
+                                          "properties": {
+                                            "enabled": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "position": {
+                                          "type": "string"
+                                        },
+                                        "axisTicks": {
+                                          "type": "object",
+                                          "properties": {
+                                            "show": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "axisBorder": {
+                                          "type": "object",
+                                          "properties": {
+                                            "show": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "categories": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": [
+                                              "string",
+                                              "number"
+                                            ]
+                                          }
+                                        },
+                                        "crosshairs": {
+                                          "type": "object",
+                                          "properties": {
+                                            "fill": {
+                                              "type": "object",
+                                              "properties": {
+                                                "type": {
+                                                  "type": "string"
+                                                },
+                                                "gradient": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "stops": {
+                                                      "type": "array",
+                                                      "items": {
+                                                        "type": "number"
+                                                      }
+                                                    },
+                                                    "colorTo": {
+                                                      "type": "string"
+                                                    },
+                                                    "colorFrom": {
+                                                      "type": "string"
+                                                    },
+                                                    "opacityTo": {
+                                                      "type": "number"
+                                                    },
+                                                    "opacityFrom": {
+                                                      "type": "number"
+                                                    }
+                                                  },
+                                                  "additionalProperties": false
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "tickAmount": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "yaxis": {
+                                      "type": "object",
+                                      "properties": {
+                                        "max": {
+                                          "type": "number"
+                                        },
+                                        "min": {
+                                          "type": "number"
+                                        },
+                                        "show": {
+                                          "type": "boolean"
+                                        },
+                                        "title": {
+                                          "type": "object",
+                                          "properties": {
+                                            "text": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "labels": {
+                                          "type": "object",
+                                          "properties": {
+                                            "show": {
+                                              "type": "boolean"
+                                            },
+                                            "formatter": {}
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "tooltip": {
+                                          "type": "object",
+                                          "properties": {
+                                            "enabled": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "reversed": {
+                                          "type": "boolean"
+                                        },
+                                        "stepSize": {
+                                          "type": "number"
+                                        },
+                                        "axisTicks": {
+                                          "type": "object",
+                                          "properties": {
+                                            "show": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "axisBorder": {
+                                          "type": "object",
+                                          "properties": {
+                                            "show": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "tickAmount": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "colors": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "header": {
+                                      "type": "object",
+                                      "required": [
+                                        "title",
+                                        "show"
+                                      ],
+                                      "properties": {
+                                        "show": {
+                                          "type": "boolean"
+                                        },
+                                        "title": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "labels": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "legend": {
+                                      "type": "object",
+                                      "properties": {
+                                        "show": {
+                                          "type": "boolean"
+                                        },
+                                        "offsetX": {
+                                          "type": "number"
+                                        },
+                                        "offsetY": {
+                                          "type": "number"
+                                        },
+                                        "position": {
+                                          "type": "string"
+                                        },
+                                        "horizontalAlign": {
+                                          "type": "string"
+                                        },
+                                        "customLegendItems": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "showForSingleSeries": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "series": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "required": [
+                                          "entity",
+                                          "name",
+                                          "type"
+                                        ],
+                                        "properties": {
+                                          "name": {
+                                            "type": "string"
+                                          },
+                                          "type": {
+                                            "enum": [
+                                              "line",
+                                              "area",
+                                              "column",
+                                              "scatter"
+                                            ],
+                                            "type": "string"
+                                          },
+                                          "entity": {
+                                            "type": "string"
+                                          },
+                                          "group_by": {
+                                            "type": "object",
+                                            "required": [
+                                              "duration"
+                                            ],
+                                            "properties": {
+                                              "duration": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "additionalProperties": false
+                                          },
+                                          "stroke_width": {
+                                            "type": "number"
+                                          }
+                                        },
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "stroke": {
+                                      "type": "object",
+                                      "properties": {
+                                        "curve": {
+                                          "type": "string"
+                                        },
+                                        "width": {
+                                          "anyOf": [
+                                            {
+                                              "type": "number"
+                                            },
+                                            {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "number"
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "colors": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string"
+                                          }
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "tooltip": {
+                                      "type": "object",
+                                      "properties": {
+                                        "x": {
+                                          "type": "object",
+                                          "properties": {
+                                            "show": {
+                                              "type": "boolean"
+                                            },
+                                            "formatter": {}
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "y": {
+                                          "type": "object",
+                                          "properties": {
+                                            "formatter": {}
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "shared": {
+                                          "type": "boolean"
+                                        },
+                                        "enabled": {
+                                          "type": "boolean"
+                                        },
+                                        "intersect": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "subtitle": {
+                                      "type": "object",
+                                      "properties": {
+                                        "text": {
+                                          "type": "string"
+                                        },
+                                        "offsetX": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "chart_type": {
+                                      "enum": [
+                                        "line",
+                                        "area",
+                                        "column",
+                                        "pie",
+                                        "donut",
+                                        "radialBar",
+                                        "scatter"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "dataLabels": {
+                                      "type": "object",
+                                      "properties": {
+                                        "style": {
+                                          "type": "object",
+                                          "properties": {
+                                            "colors": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "fontSize": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "enabled": {
+                                          "type": "boolean"
+                                        },
+                                        "offsetX": {
+                                          "type": "number"
+                                        },
+                                        "offsetY": {
+                                          "type": "number"
+                                        },
+                                        "formatter": {},
+                                        "dropShadow": {
+                                          "type": "object",
+                                          "properties": {
+                                            "enabled": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "textAnchor": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "responsive": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "required": [
+                                          "breakpoint",
+                                          "options"
+                                        ],
+                                        "properties": {
+                                          "options": {
+                                            "type": "object",
+                                            "additionalProperties": {}
+                                          },
+                                          "breakpoint": {
+                                            "type": "number"
+                                          }
+                                        },
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "annotations": {
+                                      "type": "object",
+                                      "properties": {
+                                        "xaxis": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "x": {
+                                                "type": [
+                                                  "string",
+                                                  "number"
+                                                ]
+                                              },
+                                              "label": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "text": {
+                                                    "type": "string"
+                                                  },
+                                                  "style": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "color": {
+                                                        "type": "string"
+                                                      },
+                                                      "fontSize": {
+                                                        "type": "string"
+                                                      },
+                                                      "background": {
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "additionalProperties": false
+                                                  },
+                                                  "offsetY": {
+                                                    "type": "number"
+                                                  },
+                                                  "borderColor": {
+                                                    "type": "string"
+                                                  },
+                                                  "orientation": {
+                                                    "type": "string"
+                                                  }
+                                                },
+                                                "additionalProperties": false
+                                              },
+                                              "borderColor": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "yaxis": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "y": {
+                                                "type": [
+                                                  "string",
+                                                  "number"
+                                                ]
+                                              },
+                                              "y2": {
+                                                "type": [
+                                                  "string",
+                                                  "number"
+                                                ]
+                                              },
+                                              "label": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "text": {
+                                                    "type": "string"
+                                                  }
+                                                },
+                                                "additionalProperties": false
+                                              }
+                                            },
+                                            "additionalProperties": false
+                                          }
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "plotOptions": {
+                                      "type": "object",
+                                      "properties": {
+                                        "bar": {
+                                          "type": "object",
+                                          "properties": {
+                                            "colors": {
+                                              "type": "object",
+                                              "properties": {
+                                                "ranges": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                      "from",
+                                                      "to",
+                                                      "color"
+                                                    ],
+                                                    "properties": {
+                                                      "to": {
+                                                        "type": "number"
+                                                      },
+                                                      "from": {
+                                                        "type": "number"
+                                                      },
+                                                      "color": {
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "additionalProperties": false
+                                                  }
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            },
+                                            "isFunnel": {
+                                              "type": "boolean"
+                                            },
+                                            "barHeight": {
+                                              "type": [
+                                                "string",
+                                                "number"
+                                              ]
+                                            },
+                                            "dataLabels": {
+                                              "type": "object",
+                                              "properties": {
+                                                "total": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "style": {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "fontSize": {
+                                                          "type": "string"
+                                                        },
+                                                        "fontWeight": {
+                                                          "type": [
+                                                            "string",
+                                                            "number"
+                                                          ]
+                                                        }
+                                                      },
+                                                      "additionalProperties": false
+                                                    },
+                                                    "enabled": {
+                                                      "type": "boolean"
+                                                    }
+                                                  },
+                                                  "additionalProperties": false
+                                                },
+                                                "position": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            },
+                                            "horizontal": {
+                                              "type": "boolean"
+                                            },
+                                            "isDumbbell": {
+                                              "type": "boolean"
+                                            },
+                                            "columnWidth": {
+                                              "type": [
+                                                "string",
+                                                "number"
+                                              ]
+                                            },
+                                            "distributed": {
+                                              "type": "boolean"
+                                            },
+                                            "borderRadius": {
+                                              "type": [
+                                                "number",
+                                                "string"
+                                              ]
+                                            },
+                                            "dumbbellColors": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            },
+                                            "borderRadiusApplication": {
+                                              "type": "string"
+                                            },
+                                            "borderRadiusWhenStacked": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "pie": {
+                                          "type": "object",
+                                          "properties": {
+                                            "offsetY": {
+                                              "type": "number"
+                                            },
+                                            "endAngle": {
+                                              "type": "number"
+                                            },
+                                            "startAngle": {
+                                              "type": "number"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "radialBar": {
+                                          "type": "object",
+                                          "properties": {
+                                            "track": {
+                                              "type": "object",
+                                              "properties": {
+                                                "margin": {
+                                                  "type": "number"
+                                                },
+                                                "background": {
+                                                  "type": "string"
+                                                },
+                                                "dropShadow": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "top": {
+                                                      "type": "number"
+                                                    },
+                                                    "blur": {
+                                                      "type": "number"
+                                                    },
+                                                    "left": {
+                                                      "type": "number"
+                                                    },
+                                                    "color": {
+                                                      "type": "string"
+                                                    },
+                                                    "enabled": {
+                                                      "type": "boolean"
+                                                    },
+                                                    "opacity": {
+                                                      "type": "number"
+                                                    }
+                                                  },
+                                                  "additionalProperties": false
+                                                },
+                                                "strokeWidth": {
+                                                  "type": [
+                                                    "string",
+                                                    "number"
+                                                  ]
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            },
+                                            "endAngle": {
+                                              "type": "number"
+                                            },
+                                            "dataLabels": {
+                                              "type": "object",
+                                              "properties": {
+                                                "name": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "show": {
+                                                      "type": "boolean"
+                                                    }
+                                                  },
+                                                  "additionalProperties": false
+                                                },
+                                                "value": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "offsetY": {
+                                                      "type": "number"
+                                                    },
+                                                    "fontSize": {
+                                                      "type": "string"
+                                                    }
+                                                  },
+                                                  "additionalProperties": false
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            },
+                                            "startAngle": {
+                                              "type": "number"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "candlestick": {
+                                          "type": "object",
+                                          "properties": {
+                                            "type": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "type",
+                                    "cards"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "grid"
+                                    },
+                                    "cards": {
+                                      "type": "array",
+                                      "items": {
+                                        "$ref": "#/properties/config/properties/views/items/properties/sections/items/properties/cards/items"
+                                      }
+                                    },
+                                    "square": {
+                                      "type": "boolean"
+                                    },
+                                    "columns": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                }
+                              ]
+                            }
+                          },
+                          "visibility": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "condition",
+                                "entity",
+                                "state"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "type": "string"
+                                },
+                                "entity": {
+                                  "type": "string"
+                                },
+                                "condition": {
+                                  "enum": [
+                                    "state"
+                                  ],
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "max_columns": {
+                      "type": "number"
+                    },
+                    "dense_section_placement": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "description": "The updated Lovelace dashboard config",
+            "additionalProperties": false
+          },
+          "url_path": {
+            "type": "string",
+            "description": "The URL path of the Lovelace dashboard config to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-lovelace-dashboards",
+      "title": "List Lovelace Dashboards",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "List all Lovelace dashboards.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "create-lovelace-dashboard",
+      "title": "Create Lovelace Dashboard",
+      "description": "Create a new Lovelace dashboard.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "url_path"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url_path": {
+            "type": "string",
+            "description": "The URL must contain a dash ('-') and must not contain spaces or special characters, except '_' and '-'"
+          },
+          "require_admin": {
+            "type": "boolean"
+          },
+          "show_in_sidebar": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-lovelace-dashboard",
+      "title": "Delete Lovelace Dashboard",
+      "description": "Delete a Lovelace dashboard by dashboard_id.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dashboard_id"
+        ],
+        "properties": {
+          "dashboard_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-lovelace-resources",
+      "title": "Get Lovelace Resources",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Fetch Lovelace resources.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@slhad/aha-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "url",
+          "accessToken"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "debugMode": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "default": false,
+                "description": "Enable debug mode for verbose logging"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Enable debug mode for verbose logging"
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "LIMIT_RESOURCES": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "default": -1,
+                "description": "Limit the number of resources to convert, -1 for no limit"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Limit the number of resources to convert, -1 for no limit"
+          },
+          "RESOURCES_TO_TOOLS": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "not": {}
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "default": true,
+                "description": "Enable resource to tool conversion"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Enable resource to tool conversion"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

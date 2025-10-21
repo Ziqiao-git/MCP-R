@@ -1,0 +1,226 @@
+{
+  "qualifiedName": "@KaranThink41/keka_official_mcp",
+  "displayName": "Keka HR Integration Server",
+  "description": "Integrate and automate Keka HR platform features such as employee management, attendance, leave, payslip, and holiday data through a secure MCP server. Utilize OAuth2 authentication for safe access and leverage modular tools to streamline HR workflows. Deploy easily with Docker support for containerized environments.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.keka.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "keka_get_employee_profile",
+      "description": "Get detailed profile information for a specific employee",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "employee_id"
+        ],
+        "properties": {
+          "employee_id": {
+            "type": "string",
+            "description": "The UUID of the employee"
+          }
+        }
+      }
+    },
+    {
+      "name": "keka_get_attendance",
+      "description": "Get attendance records for an employee within a date range",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "employee_id",
+          "start_date",
+          "end_date"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination (default: 1)"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "page_size": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of records per page (default: 100, max: 100)"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          },
+          "employee_id": {
+            "type": "string",
+            "description": "The UUID of the employee"
+          }
+        }
+      }
+    },
+    {
+      "name": "keka_get_leave_types",
+      "description": "Get the list of available leave types",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "keka_apply_leave",
+      "description": "Apply for leave for an employee",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "employee_id",
+          "start_date",
+          "end_date",
+          "leave_type",
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for applying leave"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "leave_type": {
+            "type": "string",
+            "description": "UUID of the leave type"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          },
+          "employee_id": {
+            "type": "string",
+            "description": "The UUID of the employee"
+          }
+        }
+      }
+    },
+    {
+      "name": "keka_get_leave_balances",
+      "description": "Get a consolidated view of all leave balances for an employee",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "employee_id"
+        ],
+        "properties": {
+          "employee_id": {
+            "type": "string",
+            "description": "The UUID of the employee"
+          }
+        }
+      }
+    },
+    {
+      "name": "keka_view_leave_history",
+      "description": "View the leave history for an employee",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "employee_id"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination (default: 1)"
+          },
+          "status": {
+            "type": "string",
+            "description": "Filter by leave request status"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Filter by end date (YYYY-MM-DD)"
+          },
+          "page_size": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of records per page (default: 100)"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Filter by start date (YYYY-MM-DD)"
+          },
+          "employee_id": {
+            "type": "string",
+            "description": "The UUID of the employee"
+          }
+        }
+      }
+    },
+    {
+      "name": "keka_get_payslip",
+      "description": "Get payslip for an employee for a specific month and year",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "employee_id",
+          "month",
+          "year"
+        ],
+        "properties": {
+          "year": {
+            "type": "string",
+            "description": "Year (YYYY)"
+          },
+          "month": {
+            "type": "string",
+            "description": "Month (1-12)"
+          },
+          "employee_id": {
+            "type": "string",
+            "description": "The UUID of the employee"
+          }
+        }
+      }
+    },
+    {
+      "name": "keka_get_upcoming_holidays",
+      "description": "Get the list of upcoming company holidays",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@KaranThink41/keka_official_mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "kekaClientId",
+          "kekaClientSecret",
+          "kekaRefreshToken"
+        ],
+        "properties": {
+          "kekaClientId": {
+            "type": "string",
+            "description": "Client ID for your Keka application"
+          },
+          "kekaClientSecret": {
+            "type": "string",
+            "description": "Client Secret for your Keka application"
+          },
+          "kekaRefreshToken": {
+            "type": "string",
+            "description": "Refresh Token for your Keka application"
+          }
+        }
+      }
+    }
+  ]
+}

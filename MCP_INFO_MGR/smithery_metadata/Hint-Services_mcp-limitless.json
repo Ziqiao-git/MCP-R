@@ -1,0 +1,142 @@
+{
+  "qualifiedName": "@Hint-Services/mcp-limitless",
+  "displayName": "Limitless AI Lifelog Access",
+  "description": "Enable AI assistants to seamlessly access and analyze your personal lifelog data recorded by Limitless AI. Retrieve, search, and understand your daily conversations and activities to enhance productivity, decision-making, and content creation. Integrate your lifelog with AI for context-aware assistance and intelligent insights.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.limitless.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Hint-Services/mcp-limitless",
+  "security": null,
+  "tools": [
+    {
+      "name": "getLifelogs",
+      "description": "Retrieve lifelog entries from your Limitless AI pendant. Access your recorded conversations, thoughts, and daily activities with flexible filtering options.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Date in YYYY-MM-DD format to filter entries"
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 10,
+            "minimum": 1,
+            "description": "Number of entries to retrieve (max 10)"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for retrieving next page"
+          },
+          "end_time": {
+            "type": "string",
+            "description": "End time filter (ISO 8601 format)"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone (e.g., 'America/Los_Angeles')"
+          },
+          "start_time": {
+            "type": "string",
+            "description": "Start time filter (ISO 8601 format)"
+          },
+          "sort_direction": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction for results"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getLifelogEntry",
+      "description": "Retrieve a specific lifelog entry by its ID. Get detailed information about a particular recorded moment from your Limitless AI pendant.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "lifelog_id"
+        ],
+        "properties": {
+          "lifelog_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The unique ID of the lifelog entry to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "searchLifelogs",
+      "description": "Search through your lifelog entries from Limitless AI. Find specific conversations, topics, or moments by searching through the content and summaries of your recorded activities.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 10,
+            "minimum": 1,
+            "description": "Maximum number of results to return (max 10)"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Search query to find in lifelog content and summaries"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for retrieving next page of results"
+          },
+          "date_to": {
+            "type": "string",
+            "description": "End date for search range (YYYY-MM-DD format)"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone for date filtering (e.g., 'America/Los_Angeles')"
+          },
+          "date_from": {
+            "type": "string",
+            "description": "Start date for search range (YYYY-MM-DD format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Hint-Services/mcp-limitless/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "baseUrl": {
+            "type": "string",
+            "format": "uri",
+            "default": "https://api.limitless.ai"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

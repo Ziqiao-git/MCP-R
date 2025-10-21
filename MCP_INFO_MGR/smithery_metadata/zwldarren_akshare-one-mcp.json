@@ -1,0 +1,504 @@
+{
+  "qualifiedName": "@zwldarren/akshare-one-mcp",
+  "displayName": "AKShare One MCP Server",
+  "description": "Provide access to Chinese stock market data including historical prices, real-time data, news, and financial statements. Retrieve comprehensive financial information for stocks with flexible parameters. Enhance your financial analysis and decision-making with up-to-date market insights.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@zwldarren/akshare-one-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_hist_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get historical stock market data. 'eastmoney_direct' support all A,B,H shares",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "adjust": {
+            "enum": [
+              "none",
+              "qfq",
+              "hfq"
+            ],
+            "type": "string",
+            "default": "none",
+            "description": "Adjustment type"
+          },
+          "source": {
+            "enum": [
+              "eastmoney",
+              "eastmoney_direct",
+              "sina"
+            ],
+            "type": "string",
+            "default": "eastmoney",
+            "description": "Data source"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          },
+          "end_date": {
+            "type": "string",
+            "default": "2030-12-31",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "interval": {
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year"
+            ],
+            "type": "string",
+            "default": "day",
+            "description": "Time interval"
+          },
+          "recent_n": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 100,
+            "description": "Number of most recent records to return"
+          },
+          "start_date": {
+            "type": "string",
+            "default": "1970-01-01",
+            "description": "Start date in YYYY-MM-DD format"
+          },
+          "indicators_list": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "SMA",
+                    "EMA",
+                    "RSI",
+                    "MACD",
+                    "BOLL",
+                    "STOCH",
+                    "ATR",
+                    "CCI",
+                    "ADX",
+                    "WILLR",
+                    "AD",
+                    "ADOSC",
+                    "OBV",
+                    "MOM",
+                    "SAR",
+                    "TSF",
+                    "APO",
+                    "AROON",
+                    "AROONOSC",
+                    "BOP",
+                    "CMO",
+                    "DX",
+                    "MFI",
+                    "MINUS_DI",
+                    "MINUS_DM",
+                    "PLUS_DI",
+                    "PLUS_DM",
+                    "PPO",
+                    "ROC",
+                    "ROCP",
+                    "ROCR",
+                    "ROCR100",
+                    "TRIX",
+                    "ULTOSC"
+                  ],
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Technical indicators to add"
+          },
+          "interval_multiplier": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "description": "Interval multiplier"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_realtime_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get real-time stock market data. 'eastmoney_direct' support all A,B,H shares",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "enum": [
+              "xueqiu",
+              "eastmoney",
+              "eastmoney_direct"
+            ],
+            "type": "string",
+            "default": "eastmoney_direct",
+            "description": "Data source"
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_news_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get stock-related news data.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          },
+          "recent_n": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "description": "Number of most recent records to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_balance_sheet",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get company balance sheet data.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          },
+          "recent_n": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "description": "Number of most recent records to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_income_statement",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get company income statement data.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          },
+          "recent_n": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "description": "Number of most recent records to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_cash_flow",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get company cash flow statement data.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "const": "sina",
+            "default": "sina",
+            "description": "Data source"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          },
+          "recent_n": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "description": "Number of most recent records to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_inner_trade_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get company insider trading data.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_financial_metrics",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get key financial metrics from the three major financial statements.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Stock symbol/ticker (e.g. '000001')"
+          },
+          "recent_n": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "description": "Number of most recent records to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_time_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get current time with ISO format, timestamp, and the last trading day.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@zwldarren/akshare-one-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "default": {},
+        "description": "No configuration required for akshare-one-mcp",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

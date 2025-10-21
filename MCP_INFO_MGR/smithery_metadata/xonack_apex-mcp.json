@@ -1,0 +1,455 @@
+{
+  "qualifiedName": "@xonack/apex-mcp",
+  "displayName": "X (Twitter) Management",
+  "description": "Frictionless: Manage all your social media operations with a single API key.\n\n- Get unlimited data\n- Generate quality content\n- Post bangers\n\nSupported Platforms:\n- X (Twitter)\n\nNeed an API key? Send support message (bottom right): https://apexagents.ai/mcp",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/5922cc9f-e3c6-436a-a737-dbb55292ac5f.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@xonack/apex-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_tweet",
+      "description": "A tool to get a tweet by its id.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the tweet to get."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_reply",
+      "description": "Tool that generates a reply to a message.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text to be replied to."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of image URLs used as context for the reply. If not provided, the reply will be to only text."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_reply_to_tweet",
+      "description": "A tool to generate a reply suggestion to a tweet. Use if you don't have any context to generate a reply yet.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the tweet to generate a reply to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "post_tweet",
+      "description": "Tool that posts a tweet.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "username",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text of the tweet to be posted."
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the user posting the tweet."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional image URLs to include with the tweet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "post_reply_to_tweet",
+      "description": "Tool that posts a reply to a tweet with input text & optional image.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tweet_id",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text of the reply to be posted."
+          },
+          "tweet_id": {
+            "type": "string",
+            "description": "Id of the tweet to reply to."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_tweets",
+      "description": "Advanced Twitter/X search tool for finding tweets with powerful filtering capabilities.\n    \n    Returns tweets matching your criteria, sorted by relevance or time. Expect 2-5 second response times.\n    Note: API may return duplicate entries - this is normal behavior.\n    \n    Common patterns:\n    • High-quality content: Set minLikes to 100+ and use includeWords for topics\n    • Viral analysis: Use minRetweets 50+ with hashtags and top=true\n    • User analysis: Combine fromUsers with date ranges and engagement filters\n    • Content exclusion: Use excludeWords to filter out unwanted topics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "top": {
+            "type": "boolean",
+            "description": "Set to true for trending/popular tweets instead of recent. Returns high-engagement content sorted by relevance"
+          },
+          "list": {
+            "type": "string",
+            "description": "Twitter/X list ID to search within. Limits results to tweets from members of this list."
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of tweets to return. Recommended: 50 for comprehensive results, 20 for quick scans. Max practical limit ~50."
+          },
+          "maxId": {
+            "type": "string",
+            "description": "Tweet ID upper bound - only return tweets with IDs less than this. Useful for pagination backwards in time."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for next batch of results. Use the cursor from previous response to get more results."
+          },
+          "quoted": {
+            "type": "string",
+            "description": "Tweet ID to find quote tweets of. Returns all tweets that quote this specific tweet"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date for search range. Format: YYYY-MM-DD (e.g., '2025-07-30')"
+          },
+          "sinceId": {
+            "type": "string",
+            "description": "Tweet ID lower bound - only return tweets with IDs greater than this. Useful for getting new tweets since last search"
+          },
+          "toUsers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Find tweets TO/replying to these users. Format: ['username'] WITHOUT @ symbol. Example: ['elonmusk'] NOT ['@elonmusk']"
+          },
+          "hashtags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Hashtags to search for. Format: ['tag1', 'tag2'] WITHOUT # symbol. Example: ['AI', 'web3'] NOT ['#AI', '#web3']"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language filter using ISO codes. Examples: 'en' (English), 'es' (Spanish), 'fr' (French), 'de' (German), 'ja' (Japanese)"
+          },
+          "mentions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Find tweets mentioning these users. Format: ['username'] WITHOUT @ symbol. Example: ['JensHonack'] NOT ['@JensHonack']"
+          },
+          "minLikes": {
+            "type": "number",
+            "description": "Minimum likes threshold. Use 50+ for social proof, 100+ for popular content, 1000+ for viral tweets"
+          },
+          "onlyText": {
+            "type": "boolean",
+            "description": "Set to true to exclude tweets with media (photos/videos). Gets text-only content"
+          },
+          "fromUsers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Search tweets FROM these users. Format: ['username'] WITHOUT @ symbol. Example: ['elonmusk', 'OpenAI'] NOT ['@elonmusk', '@OpenAI']"
+          },
+          "onlyLinks": {
+            "type": "boolean",
+            "description": "Set to true to find only tweets containing URLs. Useful for finding shared articles, resources, or media"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date for search range. Format: YYYY-MM-DD (e.g., '2025-07-25'). Can search historical tweets from months/years back"
+          },
+          "minReplies": {
+            "type": "number",
+            "description": "Minimum replies threshold. Useful for finding tweets that sparked discussion. Try 10+ for engaged conversations"
+          },
+          "minRetweets": {
+            "type": "number",
+            "description": "Minimum retweets threshold. Use 10+ for shared content, 50+ for viral reach, 100+ for highly viral"
+          },
+          "onlyReplies": {
+            "type": "boolean",
+            "description": "Set to true to find only reply tweets. Useful for analyzing conversations and discussions"
+          },
+          "excludeWords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Words to exclude from results. Format: ['word1', 'word2']. Useful for filtering out unwanted topics like ['crypto', 'spam']"
+          },
+          "includeWords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Words that must appear in results. Format: ['word1', 'word2']. Example: ['AI', 'machine learning'] to find tweets about AI/ML"
+          },
+          "onlyOriginal": {
+            "type": "boolean",
+            "description": "Set to true to exclude retweets and quote tweets. Gets only original content from users"
+          },
+          "includePhrase": {
+            "type": "string",
+            "description": "Exact phrase to search for. Will match this exact sequence of words in tweets."
+          },
+          "optionalWords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional words that may appear. Format: ['word1', 'word2']. Tweets may contain any of these words"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add_list_member",
+      "description": "Add a member to an X/Twitter list.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId",
+          "userId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string",
+            "description": "ID of the list"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID of the user to add to the list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_list_members",
+      "description": "Get members of a list with pagination support. Returns user objects for each member.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor from previous response"
+          },
+          "listId": {
+            "type": "string",
+            "description": "ID of the list"
+          },
+          "maxResults": {
+            "type": "number",
+            "maximum": 200,
+            "minimum": 1,
+            "description": "Maximum results per page (1-200, default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_list",
+      "description": "Create a new X/Twitter list. Returns the created list object with assigned ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 25,
+            "minLength": 1,
+            "description": "Name of the list (1-25 characters)"
+          },
+          "private": {
+            "type": "boolean",
+            "description": "Whether the list is private (default: false)"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Description of the list (max 100 characters)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user_lists",
+      "description": "Get all lists owned by the authenticated user. Returns list objects with metadata.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor from previous response"
+          },
+          "maxResults": {
+            "type": "number",
+            "maximum": 200,
+            "minimum": 1,
+            "description": "Maximum results per page (1-200, default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_list",
+      "description": "Delete an X/Twitter list. This action cannot be undone.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string",
+            "description": "ID of the list to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_list",
+      "description": "Get detailed information about a specific list including member/follower counts.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string",
+            "description": "ID of the list to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_list",
+      "description": "Update an existing list's properties. Only provided fields will be updated.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 25,
+            "minLength": 1,
+            "description": "New name for the list (1-25 characters)"
+          },
+          "listId": {
+            "type": "string",
+            "description": "ID of the list to update"
+          },
+          "private": {
+            "type": "boolean",
+            "description": "Update privacy setting"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "New description (max 100 characters)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@xonack/apex-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "bearerToken"
+        ],
+        "properties": {
+          "apiUrl": {
+            "type": "string",
+            "default": "https://api.apexagents.ai",
+            "description": "Enter your Apex API URL."
+          },
+          "bearerToken": {
+            "type": "string",
+            "description": "Enter your Apex Bearer Token"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

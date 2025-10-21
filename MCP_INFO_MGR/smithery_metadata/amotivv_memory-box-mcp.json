@@ -1,0 +1,432 @@
+{
+  "qualifiedName": "@amotivv/memory-box-mcp",
+  "displayName": "Memory Box MCP Server",
+  "description": "Save, search, and format memories with semantic understanding. Enhance your memory management by leveraging advanced semantic search capabilities directly from Cline. Organize and retrieve your memories efficiently with structured formatting and detailed context.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/memorybox.amotivv.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "save_memory",
+      "description": "Save a memory to Memory Box",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The memory content to save (either text OR raw_content required)"
+          },
+          "bucket_id": {
+            "type": "string",
+            "description": "The bucket to save the memory to (default: \"General\")"
+          },
+          "raw_content": {
+            "type": "string",
+            "description": "Raw content for processing (alternative to text)"
+          },
+          "source_type": {
+            "type": "string",
+            "description": "Type of memory source (default: 'llm_plugin')"
+          },
+          "reference_data": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "object",
+                "required": [
+                  "platform"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "Source URL"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Source type"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Source title"
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "Version info"
+                  },
+                  "platform": {
+                    "type": "string",
+                    "description": "Platform identifier (required)"
+                  },
+                  "additional_metadata": {
+                    "type": "object",
+                    "description": "Extra metadata"
+                  }
+                }
+              },
+              "context": {
+                "type": "object",
+                "properties": {
+                  "message_id": {
+                    "type": "string",
+                    "description": "Message identifier"
+                  },
+                  "conversation_id": {
+                    "type": "string",
+                    "description": "Conversation identifier"
+                  },
+                  "related_memories": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Related memory references"
+                  }
+                }
+              },
+              "content_context": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "Content URL"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Content title"
+                  },
+                  "selected_text": {
+                    "type": "string",
+                    "description": "Selected text"
+                  },
+                  "surrounding_text": {
+                    "type": "string",
+                    "description": "Context around selection"
+                  },
+                  "additional_context": {
+                    "type": "object",
+                    "description": "Extra context"
+                  }
+                }
+              }
+            },
+            "description": "Structured metadata for memory storage"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_memories",
+      "description": "Search for memories using semantic search",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "description": "Include debug information in results (default: false)"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return (1-100, default: 10)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The search query (semantic search)"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of results to skip for pagination (default: 0)"
+          },
+          "bucket_id": {
+            "type": "string",
+            "description": "Filter to specific bucket"
+          },
+          "date_sort": {
+            "type": "boolean",
+            "description": "Sort semantic search results by date after similarity filtering (default: false)"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort order when date_sort is enabled (default: 'desc')"
+          },
+          "source_type": {
+            "type": "string",
+            "description": "Filter by source type"
+          },
+          "include_reference_data": {
+            "type": "boolean",
+            "description": "Include reference data in response (default: false)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_all_memories",
+      "description": "Retrieve all memories with pagination support",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "all": {
+            "type": "boolean",
+            "description": "Get all memories (overrides pagination, default: false)"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return (1-100, default: 10)"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of results to skip for pagination (default: 0)"
+          },
+          "bucket_id": {
+            "type": "string",
+            "description": "Filter to specific bucket"
+          },
+          "date_sort": {
+            "type": "boolean",
+            "description": "Sort results by date (default: false)"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort order (default: 'desc')"
+          },
+          "source_type": {
+            "type": "string",
+            "description": "Filter by source type"
+          },
+          "include_reference_data": {
+            "type": "boolean",
+            "description": "Include reference data in response (default: false)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_bucket_memories",
+      "description": "Get memories from a specific bucket",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bucket_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return (1-100, default: 10)"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of results to skip for pagination (default: 0)"
+          },
+          "bucket_id": {
+            "type": "string",
+            "description": "The bucket to retrieve memories from"
+          },
+          "include_reference_data": {
+            "type": "boolean",
+            "description": "Include reference data in response (default: false)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_related_memories",
+      "description": "Find semantically similar memories to a specific memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "memory_id"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "integer",
+            "description": "The ID of the memory to find related memories for"
+          },
+          "min_similarity": {
+            "type": "number",
+            "description": "Minimum similarity threshold (0.0-1.0) for related memories (default: 0.7)"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_memory_status",
+      "description": "Check the processing status of a memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "memory_id"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "integer",
+            "description": "The ID of the memory to check status for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_usage_stats",
+      "description": "Retrieve user usage statistics and plan information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_buckets",
+      "description": "Retrieve a list of all available buckets",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "create_bucket",
+      "description": "Create a new bucket for organizing memories",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bucket_name"
+        ],
+        "properties": {
+          "bucket_name": {
+            "type": "string",
+            "description": "Name of the bucket to create"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_bucket",
+      "description": "Delete a bucket (empty by default, use force to delete with content)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bucket_name"
+        ],
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "description": "Force deletion even if bucket contains memories (default: false)"
+          },
+          "bucket_name": {
+            "type": "string",
+            "description": "Name of the bucket to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_memory",
+      "description": "Update an existing memory including text, bucket, and relationships",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "memory_id"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "New text content for the memory"
+          },
+          "bucket_id": {
+            "type": "string",
+            "description": "Move memory to different bucket"
+          },
+          "memory_id": {
+            "type": "integer",
+            "description": "The ID of the memory to update"
+          },
+          "raw_content": {
+            "type": "string",
+            "description": "New raw content for the memory"
+          },
+          "source_type": {
+            "type": "string",
+            "description": "Update source type"
+          },
+          "reference_data": {
+            "type": "object",
+            "description": "Updated reference data (same structure as save_memory)"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_memory",
+      "description": "Delete a specific memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "memory_id"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "integer",
+            "description": "The ID of the memory to delete"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@amotivv/memory-box-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "memoryBoxToken"
+        ],
+        "properties": {
+          "systemPrompt": {
+            "type": "string",
+            "default": "",
+            "description": "Optional custom system prompt."
+          },
+          "defaultBucket": {
+            "type": "string",
+            "default": "General",
+            "description": "Default bucket to store or query memories."
+          },
+          "memoryBoxToken": {
+            "type": "string",
+            "description": "Token for authenticating with the Memory Box instance."
+          },
+          "memoryBoxApiUrl": {
+            "type": "string",
+            "default": "https://memorybox.amotivv.ai",
+            "description": "URL for the Memory Box instance."
+          }
+        }
+      }
+    }
+  ]
+}

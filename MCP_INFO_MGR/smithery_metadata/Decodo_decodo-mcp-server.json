@@ -1,0 +1,165 @@
+{
+  "qualifiedName": "@Decodo/decodo-mcp-server",
+  "displayName": "Decodo MCP Server",
+  "description": "Enable your AI agents to scrape and parse web content dynamically, including geo-restricted sites, by leveraging Decodo's scraping capabilities.\n\nTo use, head on over to https://dashboard.decodo.com, start a free Web Advanced trial and input the generated credentials into your MCP client of choice on the right-hand side of this page.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/4003b770-304e-432b-95ff-dc5513703ee2.jpeg",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "scrape_as_markdown",
+      "description": "Scrape the contents of a website and return Markdown-formatted results",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "geo": {
+            "type": "string",
+            "description": "Geolocation of the desired request, expressed as a country name"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL to scrape"
+          },
+          "locale": {
+            "type": "string",
+            "description": "Locale of the desired request"
+          },
+          "jsRender": {
+            "type": "boolean",
+            "description": "Should the request be opened in a headless browser, false by default"
+          },
+          "tokenLimit": {
+            "type": "number",
+            "description": "The number of tokens to return in the response - anything above this limit will be truncated"
+          },
+          "fullResponse": {
+            "type": "boolean",
+            "description": "If true, content will not be truncated"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "google_search_parsed",
+      "description": "Scrape Google Search results with automatic parsing",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "geo": {
+            "type": "string",
+            "description": "Geolocation of the desired request, expressed as a country name"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "locale": {
+            "type": "string",
+            "description": "Locale of the desired request"
+          },
+          "jsRender": {
+            "type": "boolean",
+            "description": "Should the request be opened in a headless browser, false by default"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "amazon_search_parsed",
+      "description": "Scrape Amazon Search results with automatic parsing",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "geo": {
+            "type": "string",
+            "description": "Geolocation of the desired request, expressed as a country name"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "jsRender": {
+            "type": "boolean",
+            "description": "Should the request be opened in a headless browser, false by default"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reddit_post",
+      "description": "Scrape a specific Reddit post",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "reddit post URL"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reddit_subreddit",
+      "description": "Scrape Reddit subreddit results with automatic parsing",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to subreddit"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Decodo/decodo-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "scraperApi01Username",
+          "scraperApi02Password"
+        ],
+        "properties": {
+          "scraperApi01Username": {
+            "type": "string",
+            "description": "Username for Decodo Scraper API"
+          },
+          "scraperApi02Password": {
+            "type": "string",
+            "description": "Password for Decodo Scraper API"
+          }
+        }
+      }
+    }
+  ]
+}

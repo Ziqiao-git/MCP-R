@@ -1,0 +1,71 @@
+{
+  "qualifiedName": "@parallel/search",
+  "displayName": "Parallel Web Search",
+  "description": "Highest accuracy web search for AIs",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/ed6c63b2-270e-4978-a221-8b0b20938f64.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@parallel/search",
+  "security": null,
+  "tools": [
+    {
+      "name": "web_search_preview",
+      "annotations": {
+        "title": "Web search",
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Purpose: Perform web searches for a given objective and return results\nin an LLM-friendly format and with parameters tuned for LLMs.\n\nIdeal Use Cases:\n- For live queries that benefit from updated data from the web.\n- When needing to gather information from multiple sources at once or gathering\ndetailed information from a single source.\nPerformance Benefits:\n- Ability to handle complex queries more effectively.\n- Controllability in output size and sources considered.\n\nExamples:\n- Performing a broad search on a topic with multiple facets.\n- Enquiring about a specific detail on a topic.\n\nHow to use:\n- For multi-hop queries, first try to use list to narrow down sources. Then\nuse targeted with include_domains to get more detailed results.\n- If you have budget or multi turn capabilities, start with list searches first.\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "simple_search_toolArguments",
+        "required": [
+          "objective",
+          "search_queries",
+          "search_type"
+        ],
+        "properties": {
+          "objective": {
+            "type": "string",
+            "title": "Objective",
+            "description": "Natural-language description of what the web research goal\n is. Specify the broad intent of the search query here. Also include any source or\n freshness guidance here. Limit to 200 characters. This should reflect the end goal so\n that the tool can better understand the intent and return the best results. Do not\n dump long texts."
+          },
+          "search_type": {
+            "enum": [
+              "list",
+              "targeted",
+              "general",
+              "single_page"
+            ],
+            "type": "string",
+            "title": "Search Type",
+            "description": "Can be \"list\", \"general\", \"single_page\" or \"targeted\".\n \"list\" should be used for searching for data broadly, like aggregating data or\n considering multiple sources or doing broad initial research. \"targeted\" should be\n used for searching for data from a specific source set. \"general\" is a catch all case\n if there is no specific use case from list or targeted. \"single_page\" extracts data\n from a single page - extremely targeted. If there is a specific webpage you want the\n data from, use \"single_page\" and mention the URL in the objective.\n Use search_type appropriately."
+          },
+          "search_queries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Search Queries",
+            "description": "(optional) List of keyword search queries of 1-6\n words, which may include search operators. The search queries should be related to the\n objective. Limited to 5 entries of 200 characters each. Usually 1-3 queries are\n ideal."
+          },
+          "include_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Include Domains",
+            "default": [],
+            "description": "(optional) List of valid URL domains to explicitly\n focus on for the search. This will restrict all search results to only include results\n from the provided list. This is useful when you want to only use a specific set of\n sources. example: [\"google.com\", \"wikipedia.org\"]. Maximum 10 entries."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@parallel/search/mcp",
+      "configSchema": {}
+    }
+  ]
+}

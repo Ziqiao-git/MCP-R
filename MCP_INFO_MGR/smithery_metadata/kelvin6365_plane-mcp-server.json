@@ -1,0 +1,220 @@
+{
+  "qualifiedName": "@kelvin6365/plane-mcp-server",
+  "displayName": "Plane MCP Server",
+  "description": "Manage your projects and issues seamlessly with Plane's API. Enable LLMs to interact with your project management workflows while ensuring user control and security. Streamline your project management tasks effortlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list-projects",
+      "description": "List all projects in the workspace",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "get-project",
+      "description": "Get detailed information about a specific project",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "project_id"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "description": "ID of the project to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "create-issue",
+      "description": "Create a new issue in a project",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Title of the issue"
+          },
+          "priority": {
+            "enum": [
+              "urgent",
+              "high",
+              "medium",
+              "low",
+              "none"
+            ],
+            "type": "string",
+            "description": "Priority of the issue (urgent, high, medium, low, none)"
+          },
+          "state_id": {
+            "type": "string",
+            "description": "ID of the state for this issue (optional)"
+          },
+          "assignees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of user IDs to assign to this issue (optional)"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "ID of the project where the issue should be created"
+          },
+          "description_html": {
+            "type": "string",
+            "description": "HTML description of the issue (required by Plane API)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list-issues",
+      "description": "List issues from a project",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "project_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of issues to return (default: 50)"
+          },
+          "priority": {
+            "enum": [
+              "urgent",
+              "high",
+              "medium",
+              "low",
+              "none"
+            ],
+            "type": "string",
+            "description": "Filter by priority (optional)"
+          },
+          "state_id": {
+            "type": "string",
+            "description": "Filter by state ID (optional)"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "ID of the project to get issues from"
+          },
+          "assignee_id": {
+            "type": "string",
+            "description": "Filter by assignee ID (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-issue",
+      "description": "Get detailed information about a specific issue",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "issue_id"
+        ],
+        "properties": {
+          "issue_id": {
+            "type": "string",
+            "description": "ID of the issue to retrieve"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "ID of the project containing the issue"
+          }
+        }
+      }
+    },
+    {
+      "name": "update-issue",
+      "description": "Update an existing issue in a project, delete just update the issue title with 'delete' or 'remove'",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "issue_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Updated title of the issue (optional)"
+          },
+          "issue_id": {
+            "type": "string",
+            "description": "ID of the issue to update"
+          },
+          "priority": {
+            "enum": [
+              "urgent",
+              "high",
+              "medium",
+              "low",
+              "none"
+            ],
+            "type": "string",
+            "description": "Updated priority of the issue (optional)"
+          },
+          "state_id": {
+            "type": "string",
+            "description": "Updated state ID of the issue (optional)"
+          },
+          "assignees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Updated array of user IDs to assign to this issue (optional)"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "ID of the project containing the issue"
+          },
+          "description_html": {
+            "type": "string",
+            "description": "HTML description of the issue (required by Plane API)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kelvin6365/plane-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "planeApiKey",
+          "planeWorkspaceSlug"
+        ],
+        "properties": {
+          "planeApiKey": {
+            "type": "string",
+            "description": "Your Plane.so API key."
+          },
+          "planeWorkspaceSlug": {
+            "type": "string",
+            "description": "Your Plane.so workspace slug identifier."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1361 @@
+{
+  "qualifiedName": "@Open-Scout/mcp",
+  "displayName": "OnePager",
+  "description": "Create and publish one-pagers and boards for your organization. Upload images from the web, update content, and manage links before going live. Check slug availability and share instantly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Open-Scout/mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_onepager",
+      "title": "Create OnePager",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false
+      },
+      "description": "Creates a new OnePager in your organization. After creation, call update_onepager to populate fields, then publish_onepager. Example: {\"onepager_name\":\"Acme\",\"onepager_type\":\"fundraising\"}",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "onepager_name"
+        ],
+        "properties": {
+          "job_title": {
+            "type": "string",
+            "description": "Recruiting-only: primary job title"
+          },
+          "onepager_name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Display name shown in dashboard and builder"
+          },
+          "onepager_type": {
+            "enum": [
+              "fundraising",
+              "recruiting"
+            ],
+            "type": "string",
+            "description": "Type of OnePager; default fundraising"
+          },
+          "organization_uuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Target organization UUID; defaults to your primary org"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "onepager_uuid"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "onepager_uuid": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_board",
+      "title": "Create Board",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false
+      },
+      "description": "Creates a Board (curated list). location and description are required at creation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "board_name",
+          "location",
+          "description"
+        ],
+        "properties": {
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Location label (required at create)"
+          },
+          "board_name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Board display name"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Board description (required at create)"
+          },
+          "organization_uuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Target organization UUID; defaults to your primary org"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "board_uuid"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "board_uuid": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "upload_image_from_url",
+      "title": "Upload Image From URL",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Fetch an image and upload via signed S3 URL. Use returned key in update_onepager (image_key, founders[].image_key, investors[].image_key).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Remote image URL to fetch"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Desired filename; default: remote-image"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "key"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_onepager",
+      "title": "Update OnePager",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false
+      },
+      "description": "Update any OnePager fields. Typical flow: set short_description, links.web_url, founders[], image_key, category_uuids; then publish_onepager. Use list_categories to map category names to UUIDs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uuid"
+        ],
+        "properties": {
+          "faqs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "title",
+                "rich_description"
+              ],
+              "properties": {
+                "uuid": {
+                  "type": "string"
+                },
+                "order": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "rich_description": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "color": {
+            "type": "object",
+            "properties": {
+              "hex": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hsl": {
+                "type": "object",
+                "properties": {
+                  "a": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "h": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "l": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "s": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "rgb": {
+                "type": "object",
+                "properties": {
+                  "a": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "b": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "g": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "r": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "socials": {
+                "type": "object",
+                "properties": {
+                  "twitter": {
+                    "type": "string"
+                  },
+                  "facebook": {
+                    "type": "string"
+                  },
+                  "linkedin": {
+                    "type": "string"
+                  },
+                  "instagram": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "web_url": {
+                "type": "string"
+              },
+              "demo_link": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "raises": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "uuid": {
+                  "type": "string"
+                },
+                "round": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "pre_seed",
+                        "seed",
+                        "series_a",
+                        "series_b",
+                        "other_na"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "terms": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "safe",
+                        "convertible_note",
+                        "priced_round",
+                        "other_na"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "raised_amount": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "raising_amount": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "pdf_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "founders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bio": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "uuid": {
+                  "type": "string"
+                },
+                "links": {
+                  "type": "object",
+                  "properties": {
+                    "twitter": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "facebook": {
+                      "type": "string"
+                    },
+                    "linkedin": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "order": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "image_key": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "location": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "description",
+                "date"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "ISO date string, e.g., 2024-12-31"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "uuid": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "urg_team": {
+            "type": "boolean"
+          },
+          "image_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "investors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bio": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "uuid": {
+                  "type": "string"
+                },
+                "links": {
+                  "$ref": "#/properties/founders/items/properties/links"
+                },
+                "order": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "image_key": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "video_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "company_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "company_size": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pdf_filename": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "view_setting": {
+            "enum": [
+              "anyone_with_link",
+              "access_list_only",
+              "anyone_anonymous"
+            ],
+            "type": "string"
+          },
+          "onepager_name": {
+            "type": "string"
+          },
+          "onepager_type": {
+            "type": "string"
+          },
+          "revenue_stage": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "category_uuids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pdf_total_pages": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "role_information": {
+            "type": "object",
+            "required": [
+              "job_title",
+              "description",
+              "rich_description"
+            ],
+            "properties": {
+              "links": {
+                "type": "object",
+                "properties": {
+                  "apply_link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "more_jobs_link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "job_type": {
+                "type": "string"
+              },
+              "location": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "job_title": {
+                "type": "string"
+              },
+              "equity_max": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "equity_min": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "salary_max": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "salary_min": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "seniorities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "job_commitment": {
+                "type": "string"
+              },
+              "referral_bonus": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "rich_description": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "newsletter_discoverable": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "referral_bonus_currency": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "urg_team_details": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "short_description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pdf_download_enabled": {
+            "type": "boolean"
+          },
+          "traction_and_performance": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "parent_metric",
+                "sub_metric",
+                "time_period",
+                "metric_value"
+              ],
+              "properties": {
+                "uuid": {
+                  "type": "string"
+                },
+                "order": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "prefix": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "suffix": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "acronym": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sub_metric": {
+                  "type": "string"
+                },
+                "time_period": {
+                  "type": "string"
+                },
+                "metric_value": {
+                  "type": "string"
+                },
+                "parent_metric": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "video_total_duration_in_seconds": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_board",
+      "title": "Update Board",
+      "description": "Update board properties, curators, and tags. Wraps backend shape { update: { board, curators, tags } }.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uuid"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "uuid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Existing tag UUID (if updating)"
+                },
+                "order": {
+                  "type": "number",
+                  "description": "Display order"
+                },
+                "tag_name": {
+                  "type": "string",
+                  "description": "Tag label"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Tag description"
+                },
+                "onepagerUuids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "OnePager UUIDs to include under this tag"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "board": {
+            "type": "object",
+            "properties": {
+              "links": {
+                "type": "object",
+                "description": "Arbitrary link map",
+                "additionalProperties": {}
+              },
+              "location": {
+                "type": "string",
+                "description": "Label shown on board"
+              },
+              "image_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Primary image URL"
+              },
+              "board_name": {
+                "type": "string",
+                "description": "Board display name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Board description"
+              },
+              "background_image_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Background image URL"
+              }
+            },
+            "additionalProperties": false
+          },
+          "curators": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bio": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Short bio"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Curator name"
+                },
+                "uuid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Existing curator UUID (if updating)"
+                },
+                "links": {
+                  "type": "object",
+                  "description": "Links map (e.g., linkedin)",
+                  "additionalProperties": {}
+                },
+                "order": {
+                  "type": "number",
+                  "description": "Display order"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Curator title/role"
+                },
+                "image_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Curator avatar URL"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "publish_board",
+      "title": "Publish Board",
+      "description": "Publish a board. If first publish, slug is required and must be unique; otherwise slug cannot change.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uuid"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_board_slug",
+      "title": "Check Board Slug",
+      "description": "Checks if a board slug is available (based on 404 for GET /boards/p/{slug}/valid).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "available"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "available": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "publish_onepager",
+      "title": "Publish OnePager",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false
+      },
+      "description": "Publishes a OnePager. Optionally set slug and view_setting (anyone_with_link | access_list_only | anyone_anonymous). Use check_onepager_slug to validate custom slugs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uuid"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "view_setting": {
+            "enum": [
+              "anyone_with_link",
+              "access_list_only",
+              "anyone_anonymous"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "slug"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "slug": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_onepager_slug",
+      "title": "Check Slug",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true
+      },
+      "description": "Checks if a slug is available for publishing.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "valid"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "valid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_categories",
+      "title": "List Categories",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true
+      },
+      "description": "Lists categories (uuid, name) to map tags to internal categories. Use uuids in update_onepager.category_uuids.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "categories"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "uuid",
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "uuid": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "health",
+      "title": "Health",
+      "annotations": {
+        "readOnlyHint": true,
+        "idempotentHint": true
+      },
+      "description": "Returns ok: true to verify tool detection",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_organization",
+      "title": "Create Organization",
+      "description": "Creates a new organization and adds the current user as admin.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "plan_type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Organization display name"
+          },
+          "plan_type": {
+            "type": "string",
+            "description": "Plan type (e.g., basic, pro)"
+          },
+          "trial_expiration_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ISO date or null"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok",
+          "organization_uuid"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "organization_uuid": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "invite_user_to_organization",
+      "title": "Invite User To Organization",
+      "description": "Adds an existing user or invites a new one to the organization, and grants access to existing OnePagers/Boards.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "organization_uuid",
+          "name",
+          "email"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User full name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User email"
+          },
+          "inviterUserName": {
+            "type": "string",
+            "description": "Inviter display name for email"
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Organization name for email"
+          },
+          "organization_uuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Target organization UUID"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_organization_user",
+      "title": "Update Organization User",
+      "description": "Updates user role or nickname in the organization.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "organization_uuid",
+          "user_uuid"
+        ],
+        "properties": {
+          "admin": {
+            "type": "boolean",
+            "description": "Set/unset admin"
+          },
+          "user_uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_nickname": {
+            "type": "string",
+            "description": "Optional nickname"
+          },
+          "organization_uuid": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Open-Scout/mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {
+          "userEmail": {
+            "type": "string",
+            "description": "ONEPAGER_USER_EMAIL"
+          },
+          "apiBaseUrl": {
+            "type": "string",
+            "description": "ONEPAGER_API_BASE_URL"
+          },
+          "userPassword": {
+            "type": "string",
+            "description": "ONEPAGER_USER_PASSWORD"
+          },
+          "publicBaseUrl": {
+            "type": "string",
+            "description": "PUBLIC_ONEPAGER_BASE_URL"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

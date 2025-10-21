@@ -1,0 +1,97 @@
+{
+  "qualifiedName": "@jeanibarz/knowledge-base-mcp-server",
+  "displayName": "Knowledge Base Server",
+  "description": "Retrieve and list content from various knowledge bases effortlessly. Enhance your applications with semantic search capabilities to find relevant information quickly. Utilize a structured approach to manage and access knowledge efficiently.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list_knowledge_bases",
+      "description": "Lists the available knowledge bases.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "retrieve_knowledge",
+      "description": "Retrieves similar chunks from the knowledge base based on a query. Optionally, if a knowledge base is specified, only that one is searched; otherwise, all available knowledge bases are considered. By default, at most 10 documents are returned with a score below a threshold of 2. A different threshold can optionally be provided.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The query text to use for semantic search."
+          },
+          "threshold": {
+            "type": "number",
+            "description": "Optional. The maximum similarity score to return."
+          },
+          "knowledge_base_name": {
+            "type": "string",
+            "description": "Optional. Name of the knowledge base to query (e.g., 'company', 'it_support', 'onboarding'). If omitted, the search is performed across all available knowledge bases."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@jeanibarz/knowledge-base-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "knowledgeBasesRootDir",
+          "faissIndexPath",
+          "embeddingProvider"
+        ],
+        "properties": {
+          "ollamaModel": {
+            "type": "string",
+            "default": "dengcao/Qwen3-Embedding-0.6B:Q8_0",
+            "description": "Ollama model to use for embeddings"
+          },
+          "ollamaBaseUrl": {
+            "type": "string",
+            "default": "http://localhost:11434",
+            "description": "Base URL for the Ollama API"
+          },
+          "faissIndexPath": {
+            "type": "string",
+            "default": "/root/knowledge_bases/.faiss",
+            "description": "Path to FAISS index file"
+          },
+          "embeddingProvider": {
+            "type": "string",
+            "default": "huggingface",
+            "description": "Embedding provider to use (huggingface or ollama)"
+          },
+          "huggingfaceApiKey": {
+            "type": "string",
+            "description": "Hugging Face API key for inference"
+          },
+          "huggingfaceModelName": {
+            "type": "string",
+            "default": "sentence-transformers/all-MiniLM-L6-v2",
+            "description": "Hugging Face model for embeddings"
+          },
+          "knowledgeBasesRootDir": {
+            "type": "string",
+            "default": "/root/knowledge_bases",
+            "description": "Root directory for knowledge bases"
+          }
+        }
+      }
+    }
+  ]
+}

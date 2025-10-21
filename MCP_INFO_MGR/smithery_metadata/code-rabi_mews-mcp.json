@@ -1,0 +1,1540 @@
+{
+  "qualifiedName": "@code-rabi/mews-mcp",
+  "displayName": "Mews Hospitality Platform Server",
+  "description": "Provide seamless access to the Mews hospitality platform API through a standardized interface. Manage customers, reservations, financial transactions, and services inventory efficiently. Enable integration of hospitality management operations into AI workflows with ease.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/mews.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@code-rabi/mews-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "getAllAddresses",
+      "description": "Get all addresses associated with specified accounts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "AccountIds": {
+            "type": "array",
+            "description": "Array of account IDs to get addresses for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addAddresses",
+      "description": "Add new addresses to accounts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Addresses": {
+            "type": "array"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllCustomers",
+      "description": "Get customers with filters. Note: At least one filter must be provided (CustomerIds, Emails, FirstNames, LastNames, LoyaltyCodes, CompanyIds, CreatedUtc, UpdatedUtc, or DeletedUtc). If no filters are specified, defaults to ActivityStates: [\"Active\"] to return all active customers. IMPORTANT LIMITATIONS: Date range filters (CreatedUtc, UpdatedUtc, DeletedUtc) have a maximum interval of 3 months and 1 day. All array filters have specific maximum item limits (typically 1000, except CompanyIds which is limited to 1).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Emails": {
+            "type": "array",
+            "description": "Emails of the Customers"
+          },
+          "Extent": {
+            "type": "object",
+            "properties": {},
+            "description": "Extent of data to be returned",
+            "additionalProperties": true
+          },
+          "ChainIds": {
+            "type": "array",
+            "description": "Unique identifiers of the chains. Required when using Portfolio Access Tokens, ignored otherwise."
+          },
+          "LastNames": {
+            "type": "array",
+            "description": "Last names of the Customers"
+          },
+          "CompanyIds": {
+            "type": "array",
+            "description": "Unique identifier of the Company the customer is associated with"
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Interval in which Customer was created (max length 3 months)",
+            "additionalProperties": true
+          },
+          "DeletedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Interval in which Customer was deleted (max length 3 months)",
+            "additionalProperties": true
+          },
+          "FirstNames": {
+            "type": "array",
+            "description": "First names of the Customers"
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Limitation on the quantity of data returned",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Interval in which Customer was updated (max length 3 months)",
+            "additionalProperties": true
+          },
+          "CustomerIds": {
+            "type": "array",
+            "description": "Unique identifiers of Customers. Required if no other filter is provided."
+          },
+          "LoyaltyCodes": {
+            "type": "array",
+            "description": "Loyalty codes of the Customers"
+          },
+          "ActivityStates": {
+            "type": "array",
+            "description": "Whether to return only active, only deleted or both records"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addCustomer",
+      "description": "Create a new customer",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Email": {
+            "type": "string",
+            "description": "Customer email address"
+          },
+          "Phone": {
+            "type": "string",
+            "description": "Customer phone number"
+          },
+          "Title": {
+            "type": "string",
+            "description": "Customer title (Mr, Ms, etc.)"
+          },
+          "LastName": {
+            "type": "string",
+            "description": "Customer last name"
+          },
+          "BirthDate": {
+            "type": "string",
+            "description": "Birth date (ISO 8601 format)"
+          },
+          "FirstName": {
+            "type": "string",
+            "description": "Customer first name"
+          },
+          "BirthPlace": {
+            "type": "string",
+            "description": "Place of birth"
+          },
+          "GenderCode": {
+            "type": "string",
+            "description": "Gender code"
+          },
+          "Occupation": {
+            "type": "string",
+            "description": "Customer occupation"
+          },
+          "LoyaltyCode": {
+            "type": "string",
+            "description": "Loyalty program code"
+          },
+          "LanguageCode": {
+            "type": "string",
+            "description": "Preferred language ISO code"
+          },
+          "TaxIdentifier": {
+            "type": "string",
+            "description": "Tax identification number"
+          },
+          "SecondLastName": {
+            "type": "string",
+            "description": "Second last name"
+          },
+          "CitizenshipCountryCode": {
+            "type": "string",
+            "description": "ISO country code of citizenship"
+          },
+          "NationalityCountryCode": {
+            "type": "string",
+            "description": "ISO country code of nationality"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateCustomers",
+      "description": "Updates personal information of existing customers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "CustomerUpdates": {
+            "type": "array",
+            "description": "Array of customer update objects"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteCustomers",
+      "description": "Deletes specified customers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "CustomerIds": {
+            "type": "array",
+            "description": "Array of customer IDs to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mergeCustomers",
+      "description": "Merges two customers together",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "SourceCustomerId": {
+            "type": "string",
+            "description": "ID of customer to merge from"
+          },
+          "TargetCustomerId": {
+            "type": "string",
+            "description": "ID of customer to merge into"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllCompanies",
+      "description": "Returns all companies, optionally filtered by criteria",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Names": {
+            "type": "array",
+            "description": "Filter by company names"
+          },
+          "CompanyIds": {
+            "type": "array",
+            "description": "Filter by specific company IDs"
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for company creation",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Pagination settings",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for company updates",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addCompany",
+      "description": "Adds a new company",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Name": {
+            "type": "string",
+            "description": "Company name"
+          },
+          "Email": {
+            "type": "string",
+            "description": "Company email address"
+          },
+          "Phone": {
+            "type": "string",
+            "description": "Company phone number"
+          },
+          "WebsiteUrl": {
+            "type": "string",
+            "description": "Company website URL"
+          },
+          "TaxIdentifier": {
+            "type": "string",
+            "description": "Tax identification number"
+          },
+          "InvoicingEmail": {
+            "type": "string",
+            "description": "Billing email address"
+          },
+          "ContactPersonId": {
+            "type": "string",
+            "description": "Contact person customer ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateCompanies",
+      "description": "Updates company information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "CompanyUpdates": {
+            "type": "array",
+            "description": "Array of company update objects"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteCompanies",
+      "description": "Deletes specified companies",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "CompanyIds": {
+            "type": "array",
+            "description": "Array of company IDs to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllReservations",
+      "description": "Get reservations with filters. Note: The time interval between StartUtc and EndUtc must not exceed 100 hours.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "EndUtc": {
+            "type": "string",
+            "description": "End date for search (ISO 8601)"
+          },
+          "States": {
+            "type": "array",
+            "description": "Filter by reservation states (Confirmed, Canceled, etc.)"
+          },
+          "StartUtc": {
+            "type": "string",
+            "description": "Start date for search (ISO 8601)"
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Pagination settings",
+            "additionalProperties": true
+          },
+          "CustomerIds": {
+            "type": "array",
+            "description": "Filter by customer IDs"
+          },
+          "ReservationIds": {
+            "type": "array",
+            "description": "Specific reservation IDs to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addReservation",
+      "description": "Adds a new reservation with the specified details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Notes": {
+            "type": "string",
+            "description": "Reservation notes"
+          },
+          "EndUtc": {
+            "type": "string",
+            "description": "Check-out date/time (ISO 8601)"
+          },
+          "StartUtc": {
+            "type": "string",
+            "description": "Check-in date/time (ISO 8601)"
+          },
+          "ServiceId": {
+            "type": "string",
+            "description": "Service ID"
+          },
+          "AdultCount": {
+            "type": "number",
+            "description": "Number of adults"
+          },
+          "ChildCount": {
+            "type": "number",
+            "description": "Number of children"
+          },
+          "CustomerId": {
+            "type": "string",
+            "description": "Customer ID for the reservation"
+          },
+          "RatePlanId": {
+            "type": "string",
+            "description": "Rate plan ID"
+          },
+          "VoucherCode": {
+            "type": "string",
+            "description": "Discount voucher code"
+          },
+          "BookingChannel": {
+            "type": "string",
+            "description": "Channel for booking"
+          },
+          "SpaceCategoryId": {
+            "type": "string",
+            "description": "Space category ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateReservations",
+      "description": "Updates reservation properties",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ReservationUpdates": {
+            "type": "array",
+            "description": "Array of reservation update objects"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cancelReservations",
+      "description": "Cancels specified reservations",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Notes": {
+            "type": "string",
+            "description": "Cancellation notes"
+          },
+          "ReservationIds": {
+            "type": "array",
+            "description": "Array of reservation IDs to cancel"
+          },
+          "CancellationReason": {
+            "type": "string",
+            "description": "Reason for cancellation"
+          },
+          "ChargeCancellationFee": {
+            "type": "boolean",
+            "description": "Whether to charge cancellation fee"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getConfiguration",
+      "description": "Returns configuration of the enterprise and the client",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllCountries",
+      "description": "Returns all countries supported by the API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllCurrencies",
+      "description": "Returns all currencies supported by the API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllTaxEnvironments",
+      "description": "Returns all tax environments supported by the API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllTaxations",
+      "description": "Returns all taxations supported in tax environments",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "TaxEnvironmentIds": {
+            "type": "array",
+            "description": "Filter by tax environment IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllLanguages",
+      "description": "Returns all languages supported by the API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getLanguageTexts",
+      "description": "Returns translations of texts in the specified languages",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Scope": {
+            "type": "string",
+            "description": "Scope of texts to retrieve"
+          },
+          "LanguageCodes": {
+            "type": "array",
+            "description": "Array of language codes to get translations for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllBills",
+      "description": "Returns all bills by filter parameters, used for retrieving billing information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "States": {
+            "type": "array",
+            "description": "Filter by bill states"
+          },
+          "BillIds": {
+            "type": "array",
+            "description": "Filter by specific bill IDs"
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for bill creation",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Pagination settings",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for bill updates",
+            "additionalProperties": true
+          },
+          "CustomerIds": {
+            "type": "array",
+            "description": "Filter by customer IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllAccountingItems",
+      "description": "Returns all accounting items (charges, payments, etc.) based on filter parameters. REQUIRED: At least one of the following filters must be specified: AccountingItemIds, RebatedItemIds, ClosedUtc, ConsumedUtc, or UpdatedUtc.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "States": {
+            "type": "array",
+            "description": "Filter by item states"
+          },
+          "BillIds": {
+            "type": "array",
+            "description": "Filter by bill IDs"
+          },
+          "ClosedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for when items were closed (one of the required filters)",
+            "additionalProperties": true
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for item creation",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Pagination settings",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for when items were last updated (one of the required filters)",
+            "additionalProperties": true
+          },
+          "ConsumedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for item consumption (one of the required filters)",
+            "additionalProperties": true
+          },
+          "CustomerIds": {
+            "type": "array",
+            "description": "Filter by customer IDs"
+          },
+          "RebatedItemIds": {
+            "type": "array",
+            "description": "Filter by rebated item IDs (one of the required filters)"
+          },
+          "AccountingItemIds": {
+            "type": "array",
+            "description": "Filter by specific item IDs (one of the required filters)"
+          },
+          "AccountingCategoryIds": {
+            "type": "array",
+            "description": "Filter by accounting category IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addAccountingItems",
+      "description": "Adds new accounting items (charges, payments, etc.) to customer bills",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "AccountingItems": {
+            "type": "array",
+            "description": "Array of accounting item objects to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addPayment",
+      "description": "Adds a new payment to a customer's bill",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "Amount"
+        ],
+        "properties": {
+          "Notes": {
+            "type": "string",
+            "description": "Payment notes"
+          },
+          "Amount": {
+            "type": "object",
+            "properties": {},
+            "description": "Payment amount object",
+            "additionalProperties": true
+          },
+          "BillId": {
+            "type": "string",
+            "description": "Specific bill ID to apply payment to"
+          },
+          "CustomerId": {
+            "type": "string",
+            "description": "Customer ID for the payment"
+          },
+          "ConsumedUtc": {
+            "type": "string",
+            "description": "Payment consumption date/time (ISO 8601)"
+          },
+          "PaymentMethodId": {
+            "type": "string",
+            "description": "Payment method identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "chargeCreditCard",
+      "description": "Charges a credit card and adds the resulting payment to a customer bill",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "Amount",
+          "CreditCardData"
+        ],
+        "properties": {
+          "Notes": {
+            "type": "string",
+            "description": "Charge notes"
+          },
+          "Amount": {
+            "type": "object",
+            "properties": {},
+            "description": "Charge amount object",
+            "additionalProperties": true
+          },
+          "BillId": {
+            "type": "string",
+            "description": "Specific bill ID to apply charge to"
+          },
+          "CustomerId": {
+            "type": "string",
+            "description": "Customer ID for the charge"
+          },
+          "CreditCardData": {
+            "type": "object",
+            "properties": {},
+            "description": "Credit card information",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllPayments",
+      "description": "Returns all payments based on filter parameters",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "States": {
+            "type": "array",
+            "description": "Filter by payment states"
+          },
+          "BillIds": {
+            "type": "array",
+            "description": "Filter by bill IDs"
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for payment creation",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Pagination settings",
+            "additionalProperties": true
+          },
+          "PaymentIds": {
+            "type": "array",
+            "description": "Filter by specific payment IDs"
+          },
+          "ConsumedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for payment consumption",
+            "additionalProperties": true
+          },
+          "CustomerIds": {
+            "type": "array",
+            "description": "Filter by customer IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllServices",
+      "description": "Returns all services offered by the enterprise",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ServiceIds": {
+            "type": "array",
+            "description": "Filter by specific service IDs"
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for service updates",
+            "additionalProperties": true
+          },
+          "ServiceTypes": {
+            "type": "array",
+            "description": "Filter by service types"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllSpaces",
+      "description": "Returns all spaces of the enterprise, or only those specified",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "SpaceIds": {
+            "type": "array",
+            "description": "Filter by specific space IDs"
+          },
+          "ServiceIds": {
+            "type": "array",
+            "description": "Filter by service IDs"
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for space updates",
+            "additionalProperties": true
+          },
+          "SpaceCategoryIds": {
+            "type": "array",
+            "description": "Filter by space category IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllSpaceCategories",
+      "description": "Returns all space categories of a service",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ServiceIds": {
+            "type": "array",
+            "description": "Filter by service IDs"
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for category updates",
+            "additionalProperties": true
+          },
+          "SpaceCategoryIds": {
+            "type": "array",
+            "description": "Filter by specific category IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllAccountNotes",
+      "description": "Returns all the account notes associated with the specified accounts within the chain",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "AccountIds": {
+            "type": "array",
+            "description": "Filter by account IDs"
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for note creation",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Pagination settings",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for note updates",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addAccountNotes",
+      "description": "Adds new account notes to the system and assigns them to specified accounts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "AccountNotes": {
+            "type": "array",
+            "description": "Array of note objects to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllRates",
+      "description": "Returns all rates (pricing) of the enterprise",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "RateIds": {
+            "type": "array",
+            "description": "Filter by specific rate IDs"
+          },
+          "ServiceIds": {
+            "type": "array",
+            "description": "Filter by service IDs"
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for rate updates",
+            "additionalProperties": true
+          },
+          "RateGroupIds": {
+            "type": "array",
+            "description": "Filter by rate group IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getRatePricing",
+      "description": "Returns prices of rates during the specified period",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "EndUtc": {
+            "type": "string",
+            "description": "End date for pricing period (ISO 8601)"
+          },
+          "RateIds": {
+            "type": "array",
+            "description": "Array of rate IDs to get pricing for"
+          },
+          "StartUtc": {
+            "type": "string",
+            "description": "Start date for pricing period (ISO 8601)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "exportAccountingItems",
+      "description": "Exports accounting items (charges, payments, etc.) in the specified format and period",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "EndUtc": {
+            "type": "string",
+            "description": "End date for export (ISO 8601)"
+          },
+          "Format": {
+            "type": "string",
+            "description": "Export format (CSV, JSON, etc.)"
+          },
+          "Currency": {
+            "type": "string",
+            "description": "Currency code for export amounts"
+          },
+          "StartUtc": {
+            "type": "string",
+            "description": "Start date for export (ISO 8601)"
+          },
+          "TimeZone": {
+            "type": "string",
+            "description": "Time zone for date formatting"
+          },
+          "AccountingItemIds": {
+            "type": "array",
+            "description": "Specific accounting item IDs to export"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "exportReservations",
+      "description": "Exports reservations in the specified format and period",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "EndUtc": {
+            "type": "string",
+            "description": "End date for export (ISO 8601)"
+          },
+          "Format": {
+            "type": "string",
+            "description": "Export format (CSV, JSON, etc.)"
+          },
+          "States": {
+            "type": "array",
+            "description": "Filter by reservation states"
+          },
+          "StartUtc": {
+            "type": "string",
+            "description": "Start date for export (ISO 8601)"
+          },
+          "TimeZone": {
+            "type": "string",
+            "description": "Time zone for date formatting"
+          },
+          "ReservationIds": {
+            "type": "array",
+            "description": "Specific reservation IDs to export"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllAvailabilityBlocks",
+      "description": "Returns all availability blocks (reservations blocked by rate, space category, or space) based on filter parameters. Note: At least one filter must be provided (CreatedUtc, UpdatedUtc, CollidingUtc, AvailabilityBlockIds, or ExternalIdentifiers). The time interval must not exceed 100 hours.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "EndUtc": {
+            "type": "string",
+            "description": "End date for search (ISO 8601)"
+          },
+          "StartUtc": {
+            "type": "string",
+            "description": "Start date for search (ISO 8601)"
+          },
+          "ServiceIds": {
+            "type": "array",
+            "description": "Filter by service IDs"
+          },
+          "CollidingUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Find blocks that collide with this time range",
+            "additionalProperties": true
+          },
+          "AvailabilityBlockIds": {
+            "type": "array",
+            "description": "Filter by specific availability block IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addVouchers",
+      "description": "Adds new vouchers (discount codes, gift certificates) to the system",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Vouchers": {
+            "type": "array",
+            "description": "Array of voucher objects to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllTasks",
+      "description": "Returns all tasks of the enterprise, filtered by identifiers or other filters. REQUIRED: At least one filter must be provided (TaskIds, DepartmentIds, ServiceOrderIds, CreatedUtc, ClosedUtc, or DeadlineUtc). LIMITATIONS: Date range filters (CreatedUtc, ClosedUtc, DeadlineUtc) have a maximum interval of 3 months and 1 day. Array filters (TaskIds, DepartmentIds, ServiceOrderIds) are limited to 1000 items each. The Limitation parameter with Count is mandatory for pagination.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "Limitation"
+        ],
+        "properties": {
+          "TaskIds": {
+            "type": "array",
+            "description": "Filter by specific task IDs"
+          },
+          "ClosedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for task closure (max 3 months)",
+            "additionalProperties": true
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for task creation (max 3 months)",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Pagination settings with cursor support",
+            "additionalProperties": true
+          },
+          "DeadlineUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "Date range filter for task deadlines (max 3 months)",
+            "additionalProperties": true
+          },
+          "DepartmentIds": {
+            "type": "array",
+            "description": "Filter by department IDs"
+          },
+          "ServiceOrderIds": {
+            "type": "array",
+            "description": "Filter by service order IDs (reservations or product service orders)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addTask",
+      "description": "Adds a new task to the enterprise, optionally to a specified department",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Name": {
+            "type": "string",
+            "description": "Task name or title"
+          },
+          "Type": {
+            "type": "string",
+            "description": "Task type or category"
+          },
+          "State": {
+            "type": "string",
+            "description": "Initial task state (defaults to Open)"
+          },
+          "DeadlineUtc": {
+            "type": "string",
+            "description": "Task deadline (ISO 8601)"
+          },
+          "Description": {
+            "type": "string",
+            "description": "Detailed task description"
+          },
+          "DepartmentId": {
+            "type": "string",
+            "description": "Department ID to assign the task to"
+          },
+          "ServiceOrderId": {
+            "type": "string",
+            "description": "Service order ID (reservation or product service order) to associate with"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllLoyaltyMemberships",
+      "description": "Returns all loyalty memberships of the enterprise, optionally filtered by specific loyalty membership identifiers, activity states, or other filter parameters. Note this operation uses Pagination and supports Portfolio Access Tokens.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Codes": {
+            "type": "array",
+            "description": "List of loyalty membership codes, such as identification numbers printed on loyalty cards visible to the customer."
+          },
+          "ChainIds": {
+            "type": "array",
+            "description": "Unique identifiers of the chain. If not specified, the operation returns data for all chains within scope of the Access Token."
+          },
+          "AccountIds": {
+            "type": "array",
+            "description": "Unique identifiers of accounts (for example Customers or Companies) the membership is associated with."
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "The time interval during which the membership was created (max length 3 months)",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Limitation on the quantity of data returned",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "The time interval during which the membership was last updated (max length 3 months)",
+            "additionalProperties": true
+          },
+          "ActivityStates": {
+            "type": "array",
+            "description": "Whether to return only active, only deleted or both records."
+          },
+          "MembershipStates": {
+            "type": "array",
+            "description": "States of the loyalty memberships."
+          },
+          "LoyaltyProgramIds": {
+            "type": "array",
+            "description": "Unique identifiers of Loyalty programs."
+          },
+          "LoyaltyMembershipIds": {
+            "type": "array",
+            "description": "Unique identifiers of Loyalty memberships."
+          },
+          "ProviderMembershipIds": {
+            "type": "array",
+            "description": "List of unique loyalty membership identifiers assigned and managed by the external loyalty provider's system."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addLoyaltyMemberships",
+      "description": "Adds new loyalty memberships to the system",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ChainId": {
+            "type": "string",
+            "description": "Unique identifier of the chain. Required when using Portfolio Access Tokens, ignored otherwise."
+          },
+          "LoyaltyMemberships": {
+            "type": "array",
+            "description": "Array of loyalty membership objects to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateLoyaltyMemberships",
+      "description": "Updates information about the specified loyalty memberships. Note this operation supports Portfolio Access Tokens.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ChainId": {
+            "type": "string",
+            "description": "Unique identifier of the chain. Required when using Portfolio Access Tokens, ignored otherwise."
+          },
+          "LoyaltyMembershipUpdates": {
+            "type": "array",
+            "description": "Loyalty memberships to be updated"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteLoyaltyMemberships",
+      "description": "Deletes loyalty memberships",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "LoyaltyMembershipIds": {
+            "type": "array",
+            "description": "Unique identifier of the loyalty memberships to be deleted"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllLoyaltyPrograms",
+      "description": "Returns all loyalty programs of the enterprise, optionally filtered by specific loyalty program identifiers or other filter parameters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Names": {
+            "type": "array",
+            "description": "Names of the loyalty programs."
+          },
+          "ChainIds": {
+            "type": "array",
+            "description": "Unique identifiers of the chain. If not specified, the operation returns data for all chains within scope of the Access Token."
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "The time interval during which the program was created (max length 3 months)",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Limitation on the quantity of data returned",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "The time interval during which the program was last updated (max length 3 months)",
+            "additionalProperties": true
+          },
+          "ActivityStates": {
+            "type": "array",
+            "description": "Whether to return only active, only deleted or both records."
+          },
+          "LoyaltyProgramIds": {
+            "type": "array",
+            "description": "Unique identifiers of Loyalty programs."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addLoyaltyPrograms",
+      "description": "Adds new loyalty programs to the system",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ChainId": {
+            "type": "string",
+            "description": "Unique identifier of the chain. Required when using Portfolio Access Tokens, ignored otherwise."
+          },
+          "LoyaltyPrograms": {
+            "type": "array",
+            "description": "Array of loyalty program objects to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateLoyaltyPrograms",
+      "description": "Updates information about the specified loyalty programs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ChainId": {
+            "type": "string",
+            "description": "Unique identifier of the chain. Required when using Portfolio Access Tokens, ignored otherwise."
+          },
+          "LoyaltyProgramUpdates": {
+            "type": "array",
+            "description": "Loyalty programs to be updated"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteLoyaltyPrograms",
+      "description": "Deletes loyalty programs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "LoyaltyProgramIds": {
+            "type": "array",
+            "description": "Unique identifier of the loyalty programs to be deleted"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAllLoyaltyTiers",
+      "description": "Returns all loyalty tiers of the enterprise, optionally filtered by specific loyalty tier identifiers or other filter parameters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "Names": {
+            "type": "array",
+            "description": "Names of the loyalty tiers."
+          },
+          "ChainIds": {
+            "type": "array",
+            "description": "Unique identifiers of the chain. If not specified, the operation returns data for all chains within scope of the Access Token."
+          },
+          "CreatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "The time interval during which the tier was created (max length 3 months)",
+            "additionalProperties": true
+          },
+          "Limitation": {
+            "type": "object",
+            "properties": {},
+            "description": "Limitation on the quantity of data returned",
+            "additionalProperties": true
+          },
+          "UpdatedUtc": {
+            "type": "object",
+            "properties": {},
+            "description": "The time interval during which the tier was last updated (max length 3 months)",
+            "additionalProperties": true
+          },
+          "ActivityStates": {
+            "type": "array",
+            "description": "Whether to return only active, only deleted or both records."
+          },
+          "LoyaltyTierIds": {
+            "type": "array",
+            "description": "Unique identifiers of Loyalty tiers."
+          },
+          "LoyaltyProgramIds": {
+            "type": "array",
+            "description": "Unique identifiers of Loyalty programs."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addLoyaltyTiers",
+      "description": "Adds new loyalty tiers to the system",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ChainId": {
+            "type": "string",
+            "description": "Unique identifier of the chain. Required when using Portfolio Access Tokens, ignored otherwise."
+          },
+          "LoyaltyTiers": {
+            "type": "array",
+            "description": "Array of loyalty tier objects to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateLoyaltyTiers",
+      "description": "Updates information about the specified loyalty tiers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ChainId": {
+            "type": "string",
+            "description": "Unique identifier of the chain. Required when using Portfolio Access Tokens, ignored otherwise."
+          },
+          "LoyaltyTierUpdates": {
+            "type": "array",
+            "description": "Loyalty tiers to be updated"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteLoyaltyTiers",
+      "description": "Deletes loyalty tiers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "LoyaltyTierIds": {
+            "type": "array",
+            "description": "Unique identifier of the loyalty tiers to be deleted"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@code-rabi/mews-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "clientToken",
+          "accessToken"
+        ],
+        "properties": {
+          "client": {
+            "type": "string",
+            "default": "mews-mcp",
+            "description": "Client identifier for API requests"
+          },
+          "baseUrl": {
+            "type": "string",
+            "default": "https://api.mews.com",
+            "description": "Mews API base URL"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Mews API access token"
+          },
+          "clientToken": {
+            "type": "string",
+            "description": "Mews API client token"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

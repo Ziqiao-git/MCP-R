@@ -1,0 +1,886 @@
+{
+  "qualifiedName": "@sitebay/sitebay-mcp",
+  "displayName": "SiteBay WordPress Hosting Manager",
+  "description": "Manage your WordPress hosting on SiteBay through natural language commands. Create, update, and delete sites, execute server commands, edit files, and view logs seamlessly. Access hosting regions, templates, and proxy configurations to streamline your SiteBay cloud infrastructure management.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/sitebay.org.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@sitebay/sitebay-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "sitebay_list_sites",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "List all WordPress sites for the authenticated user.\n\nArgs:\n    team_id: Optional team ID (UUID4) to filter sites by team\n\nReturns:\n    Formatted string with site details including domain, status, region, and versions",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "team_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Id",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_get_site",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get detailed information about a specific WordPress site.\n\nArgs:\n    fqdn: The fully qualified domain name of the site (e.g., \"www.example.com\")\n\nReturns:\n    Detailed site information including status, versions, URLs, and configuration",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_create_site",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Create a new WordPress site (SiteLiveCreate schema).\n\nArgs:\n    team_id: Team UUID that owns the site\n    fqdn: The fully qualified domain name for the new site (e.g., \"www.example.org\")\n    wordpress_blog_name: Blog/site title\n    wordpress_first_name: Admin first name\n    wordpress_last_name: Admin last name\n    wordpress_email: Admin email address\n    wordpress_username: Admin username\n    wordpress_password: Admin password (strong)\n    git_url: Optional Git repository URL\n    ready_made_site_name: Optional ready-made site name\n    is_free: Optional flag for free plan\n\nReturns:\n    Success message with new site details and access information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "team_id",
+          "fqdn",
+          "wordpress_blog_name",
+          "wordpress_first_name",
+          "wordpress_last_name",
+          "wordpress_email",
+          "wordpress_username",
+          "wordpress_password"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          },
+          "git_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Git Url",
+            "default": null
+          },
+          "is_free": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Free",
+            "default": null
+          },
+          "team_id": {
+            "type": "string",
+            "title": "Team Id"
+          },
+          "wordpress_email": {
+            "type": "string",
+            "title": "Wordpress Email"
+          },
+          "wordpress_password": {
+            "type": "string",
+            "title": "Wordpress Password"
+          },
+          "wordpress_username": {
+            "type": "string",
+            "title": "Wordpress Username"
+          },
+          "wordpress_blog_name": {
+            "type": "string",
+            "title": "Wordpress Blog Name"
+          },
+          "wordpress_last_name": {
+            "type": "string",
+            "title": "Wordpress Last Name"
+          },
+          "ready_made_site_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ready Made Site Name",
+            "default": null
+          },
+          "wordpress_first_name": {
+            "type": "string",
+            "title": "Wordpress First Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_update_site",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Update an existing SiteBay site configuration.\n\nArgs:\n    fqdn: Site domain to update\n    cf_dev_mode_enabled: Enable/disable Cloudflare dev mode\n    new_fqdn: Change the site domain\n    git_url: Set repository URL for deployments\n    http_auth_enabled: Enable/disable HTTP basic auth\n    team_id: Move site to a different team\n    is_free: Toggle free plan flag\n\nReturns:\n    Confirmation message with updated settings",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          },
+          "git_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Git Url",
+            "default": null
+          },
+          "is_free": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Free",
+            "default": null
+          },
+          "team_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Id",
+            "default": null
+          },
+          "new_fqdn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Fqdn",
+            "default": null
+          },
+          "http_auth_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Http Auth Enabled",
+            "default": null
+          },
+          "cf_dev_mode_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cf Dev Mode Enabled",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_delete_site",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Delete a WordPress site permanently. This action cannot be undone.\n\nArgs:\n    fqdn: The fully qualified domain name of the site to delete\n\nReturns:\n    Confirmation message",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_site_shell_command",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Execute a shell command on a WordPress site. Supports WP-CLI commands, system commands, etc.\n\nArgs:\n    fqdn: The fully qualified domain name of the site\n    command: The shell command to execute (e.g., \"wp plugin list\", \"ls -la\", \"wp search-replace\")\n\nReturns:\n    Command output and execution details",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn",
+          "command"
+        ],
+        "properties": {
+          "cwd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cwd",
+            "default": null
+          },
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          },
+          "command": {
+            "type": "string",
+            "title": "Command"
+          },
+          "auto_track_dir": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Track Dir",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_site_edit_file",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Edit a file in the site's wp-content directory.\n\nArgs:\n    fqdn: The fully qualified domain name of the site\n    file_path: Path to the file in wp-content (e.g., \"wp-content/themes/mytheme/style.css\")\n    content: New content for the file\n\nReturns:\n    Success confirmation with file details",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn",
+          "file_path",
+          "file_edit_using_search_replace_blocks"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          },
+          "file_path": {
+            "type": "string",
+            "title": "File Path"
+          },
+          "file_edit_using_search_replace_blocks": {
+            "type": "string",
+            "title": "File Edit Using Search Replace Blocks"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_list_ready_made_sites",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "List available ready-made sites for quick launches.\n\nReturns:\n    List of ready-made sites with descriptions",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_list_teams",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "List all teams for the authenticated user.\n\nReturns:\n    Formatted list of teams with their details and member information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_wordpress_proxy",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Proxy requests to a WordPress site's REST API.\n\nArgs:\n    fqdn: The site domain\n    path: WordPress API path (e.g., \"/wp-json/wp/v2/posts\")\n    query_params_json: Optional JSON string for payload or query params\n    method: HTTP method (get, post, put, delete)\n\nReturns:\n    WordPress API response",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "default": "/wp-json/wp/v2/"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method",
+            "default": "get"
+          },
+          "query_params_json": {
+            "type": "string",
+            "title": "Query Params Json",
+            "default": ""
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_shopify_proxy",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Proxy requests to a Shopify Admin API.\n\nArgs:\n    shop_name: Shopify shop name\n    path: Shopify API path (e.g., \"/admin/api/2024-04/products.json\")\n    query_params_json: Optional JSON string for payload or query params\n    method: HTTP method (get, post, put, delete)\n\nReturns:\n    Shopify API response",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "shop_name"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "default": "/admin/api/2024-04"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method",
+            "default": "get"
+          },
+          "shop_name": {
+            "type": "string",
+            "title": "Shop Name"
+          },
+          "query_params_json": {
+            "type": "string",
+            "title": "Query Params Json",
+            "default": ""
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_posthog_proxy",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Proxy POST requests to PostHog analytics API.\n\nArgs:\n    path: PostHog API path\n    query_params_json: Optional JSON string for payload or query params\n    method: HTTP method (get, post, put, delete)\n\nReturns:\n    PostHog API response",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method",
+            "default": "get"
+          },
+          "query_params_json": {
+            "type": "string",
+            "title": "Query Params Json",
+            "default": ""
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_backup_list_commits",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "List available backup commits for point-in-time restore.\n\nArgs:\n    fqdn: The site domain\n    number_to_fetch: Number of backup entries to fetch (default: 1)\n\nReturns:\n    List of available backup commits",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          },
+          "number_to_fetch": {
+            "type": "integer",
+            "title": "Number To Fetch",
+            "default": 1
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_backup_restore",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Restore a site to a previous point in time.\n\nArgs (PITRestoreCreate schema):\n    fqdn: The site domain\n    restore_point: ISO datetime string (or omit for latest)\n    for_stage_site: Whether to restore the stage site\n    restore_db: Restore database (default true)\n    restore_wp_content: Restore wp-content (default true)\n    delete_extra_files: Delete extra files from target (default false)\n    dolt_restore_hash: Optional Dolt hash to restore DB\n    is_dry_run: Simulate restore without applying changes\n\nReturns:\n    Restore operation confirmation",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fqdn"
+        ],
+        "properties": {
+          "fqdn": {
+            "type": "string",
+            "title": "Fqdn"
+          },
+          "is_dry_run": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Dry Run",
+            "default": null
+          },
+          "restore_db": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restore Db",
+            "default": null
+          },
+          "restore_point": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restore Point",
+            "default": null
+          },
+          "for_stage_site": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "For Stage Site",
+            "default": null
+          },
+          "dolt_restore_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dolt Restore Hash",
+            "default": null
+          },
+          "delete_extra_files": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delete Extra Files",
+            "default": null
+          },
+          "restore_wp_content": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restore Wp Content",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_account_affiliates",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get affiliate referral information.\n\nReturns:\n    List of users who signed up using your affiliate links",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "sitebay_account_create_checkout",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Create a Stripe checkout session for team billing.\n\nArgs:\n    plan_name: Plan type (\"starter\", \"business\", \"micro\")\n    interval: Billing interval (\"month\", \"year\")\n    team_id: Optional team ID to purchase for\n\nReturns:\n    Stripe checkout URL",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "team_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Id",
+            "default": null
+          },
+          "interval": {
+            "type": "string",
+            "title": "Interval",
+            "default": "month"
+          },
+          "plan_name": {
+            "type": "string",
+            "title": "Plan Name",
+            "default": "starter"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@sitebay/sitebay-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

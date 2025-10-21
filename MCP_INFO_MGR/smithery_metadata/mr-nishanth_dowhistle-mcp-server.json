@@ -1,0 +1,1191 @@
+{
+  "qualifiedName": "@mr-nishanth/dowhistle-mcp-server",
+  "displayName": "DoWhistle",
+  "description": "Find nearby service providers and instantly create requests from natural language. Manage your profile and visibility while tracking active whistles in one place. Search by location and keyword to get relevant results fast.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/35d1a501-35d0-40ff-974d-7734519e807f.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@mr-nishanth/dowhistle-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_businesses",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Search for providers near a specific location.\n\nArgs:\n    latitude: The latitude coordinate of the search location\n    longitude: The longitude coordinate of the search location\n    radius: Search radius in kilometers (default: 10)\n    keyword: Keyword to search for (e.g., \"mechanic\", \"restaurant\")\n    limit: Maximum number of results to return (default: 10)\n\nReturns:\n    A dictionary containing providers found near the location",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 10,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "radius": {
+            "type": "integer",
+            "title": "Radius",
+            "default": 10,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Search radius in kilometers"
+          },
+          "keyword": {
+            "type": "string",
+            "title": "Keyword",
+            "default": "",
+            "description": "Keyword to search for (e.g., 'mechanic', 'restaurant')"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude",
+            "description": "Latitude of the search location"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude",
+            "description": "Longitude of the search location"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "Provider": {
+            "type": "object",
+            "title": "Provider",
+            "required": [
+              "id",
+              "name",
+              "phone",
+              "address",
+              "distance",
+              "latitude",
+              "longitude"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Id"
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "phone": {
+                "type": "string",
+                "title": "Phone"
+              },
+              "rating": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Rating",
+                "default": null
+              },
+              "address": {
+                "type": "string",
+                "title": "Address"
+              },
+              "distance": {
+                "type": "number",
+                "title": "Distance"
+              },
+              "latitude": {
+                "type": "number",
+                "title": "Latitude"
+              },
+              "longitude": {
+                "type": "number",
+                "title": "Longitude"
+              }
+            }
+          }
+        },
+        "title": "SearchNearMeResponse",
+        "required": [
+          "providers",
+          "total_count",
+          "search_radius",
+          "search_location"
+        ],
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/Provider"
+            },
+            "title": "Providers"
+          },
+          "total_count": {
+            "type": "integer",
+            "title": "Total Count"
+          },
+          "search_radius": {
+            "type": "number",
+            "title": "Search Radius"
+          },
+          "search_location": {
+            "type": "object",
+            "title": "Search Location",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sign_in",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Authenticate user with phone, country code, name, latitude and longitude using OTP verification.\n\nArgs:\n    phone: Digits only, without country code (e.g., \"9994076214\")\n    country_code: User's country calling code (supported values: \"+1\" for USA, \"+91\" for India, or just \"1\", \"91\")\n    name: User name\n    latitude: Latitude coordinate (-90 to 90)\n    longitude: Longitude coordinate (-180 to 180)\n\nReturns:\n    SignInResponse: Contains message and user details\n    SignInErrorResponse: Contains error message and request payload",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "phone",
+          "country_code",
+          "name",
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "country_code": {
+            "type": "string",
+            "title": "Country Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "SignInUser": {
+            "type": "object",
+            "title": "SignInUser",
+            "required": [
+              "id",
+              "otp"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Id",
+                "description": "Unique user identifier"
+              },
+              "_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Id",
+                "default": null,
+                "description": "MongoDB ObjectId (alternative user identifier)"
+              },
+              "otp": {
+                "type": "string",
+                "title": "Otp",
+                "description": "One-time password for verification"
+              }
+            }
+          },
+          "SignInRequest": {
+            "type": "object",
+            "title": "SignInRequest",
+            "required": [
+              "phone",
+              "countryCode",
+              "name",
+              "latitude",
+              "longitude",
+              "location"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "phone": {
+                "type": "string",
+                "title": "Phone",
+                "description": "Digits only, without country code"
+              },
+              "latitude": {
+                "type": "number",
+                "title": "Latitude",
+                "maximum": 90,
+                "minimum": -90,
+                "description": "Latitude coordinate (-90 to 90)"
+              },
+              "location": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "title": "Location",
+                "readOnly": true
+              },
+              "longitude": {
+                "type": "number",
+                "title": "Longitude",
+                "maximum": 180,
+                "minimum": -180,
+                "description": "Longitude coordinate (-180 to 180)"
+              },
+              "countryCode": {
+                "type": "string",
+                "title": "Countrycode",
+                "description": "Country code starting with +"
+              }
+            }
+          },
+          "SignInResponse": {
+            "type": "object",
+            "title": "SignInResponse",
+            "required": [
+              "message",
+              "user",
+              "success"
+            ],
+            "properties": {
+              "user": {
+                "$ref": "#/$defs/SignInUser"
+              },
+              "message": {
+                "type": "string",
+                "title": "Message"
+              },
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Indicates whether sign in was successful"
+              }
+            }
+          },
+          "SignInErrorResponse": {
+            "type": "object",
+            "title": "SignInErrorResponse",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string",
+                "title": "Error"
+              },
+              "payload": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SignInRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "default": false
+              }
+            }
+          }
+        },
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SignInResponse"
+              },
+              {
+                "$ref": "#/$defs/SignInErrorResponse"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "verify_otp",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Verify OTP code for user authentication.\n\nArgs:\n    user_id: User ID returned from sign_in (must not be a phone number)\n    otp_code: OTP code digits (6-digit string)\n\nReturns:\n    VerifyOtpResponse: Contains message, user details, auth token, and upload token\n    VerifyOtpErrorResponse: Contains error message and request payload",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "otp_code",
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "otp_code": {
+            "type": "string",
+            "title": "Otp Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "VerifyOtpUser": {
+            "type": "object",
+            "title": "VerifyOtpUser",
+            "required": [
+              "name",
+              "phone",
+              "countryCode",
+              "taxiProvider",
+              "certified"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "phone": {
+                "type": "string",
+                "title": "Phone"
+              },
+              "certified": {
+                "type": "boolean",
+                "title": "Certified"
+              },
+              "countryCode": {
+                "type": "string",
+                "title": "Countrycode"
+              },
+              "taxiProvider": {
+                "type": "boolean",
+                "title": "Taxiprovider"
+              }
+            }
+          },
+          "VerifyOtpRequest": {
+            "type": "object",
+            "title": "VerifyOtpRequest",
+            "required": [
+              "id",
+              "otp"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Id"
+              },
+              "otp": {
+                "type": "string",
+                "title": "Otp"
+              }
+            }
+          },
+          "VerifyOtpResponse": {
+            "type": "object",
+            "title": "VerifyOtpResponse",
+            "required": [
+              "message",
+              "user",
+              "token",
+              "uploadToken",
+              "success"
+            ],
+            "properties": {
+              "user": {
+                "$ref": "#/$defs/VerifyOtpUser"
+              },
+              "token": {
+                "type": "string",
+                "title": "Token"
+              },
+              "message": {
+                "type": "string",
+                "title": "Message"
+              },
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Indicates whether OTP verification was successful"
+              },
+              "uploadToken": {
+                "type": "string",
+                "title": "Uploadtoken"
+              }
+            }
+          },
+          "VerifyOtpErrorResponse": {
+            "type": "object",
+            "title": "VerifyOtpErrorResponse",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string",
+                "title": "Error"
+              },
+              "payload": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/VerifyOtpRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "default": false
+              }
+            }
+          }
+        },
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/VerifyOtpResponse"
+              },
+              {
+                "$ref": "#/$defs/VerifyOtpErrorResponse"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "resend_otp",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Resend OTP code to user phone number.\n\nArgs:\n    user_id: User ID returned from sign_in (must not be a phone number)\n\nReturns:\n    ResendOtpResponse: Contains success message\n    ResendOtpErrorResponse: Contains error message and request payload",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "ResendOtpRequest": {
+            "type": "object",
+            "title": "ResendOtpRequest",
+            "required": [
+              "userid"
+            ],
+            "properties": {
+              "userid": {
+                "type": "string",
+                "title": "Userid"
+              }
+            }
+          },
+          "ResendOtpResponse": {
+            "type": "object",
+            "title": "ResendOtpResponse",
+            "required": [
+              "message",
+              "success"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "title": "Message"
+              },
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Indicates whether resend was successful"
+              }
+            }
+          },
+          "ResendOtpErrorResponse": {
+            "type": "object",
+            "title": "ResendOtpErrorResponse",
+            "required": [
+              "error"
+            ],
+            "properties": {
+              "error": {
+                "type": "string",
+                "title": "Error"
+              },
+              "payload": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResendOtpRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "default": false
+              }
+            }
+          }
+        },
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResendOtpResponse"
+              },
+              {
+                "$ref": "#/$defs/ResendOtpErrorResponse"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "create_whistle",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Create a whistle from any natural language input using advanced AI processing.\n\nThis tool uses sophisticated language understanding to extract service information\nfrom conversational input without relying on keywords or patterns.\n\nReturns:\n- success: Whistle created successfully\n- clarification_needed: More information required\n- error: Creation failed",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "user_input"
+        ],
+        "properties": {
+          "user_input": {
+            "type": "string",
+            "title": "User Input",
+            "description": "Natural language input describing any service request or offer.\n                    \n                    The system uses advanced AI to understand:\n                    - Any type of service, skill, or help needed/offered\n                    - Whether you're providing or seeking services\n                    - Location preferences and timing\n                    - Context and intent from conversational input\n                    \n                    Examples of what works:\n                    - \"I need someone to fix my leaky faucet\"\n                    - \"Can teach piano lessons to beginners\"\n                    - \"Looking for a babysitter this weekend\"\n                    - \"Available for freelance graphic design work\"\n                    - \"Need help moving furniture tomorrow\"\n                    - \"Offering Spanish conversation practice\"\n                    \n                    Just describe what you need or can offer naturally."
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "default": "",
+            "description": "User authentication token"
+          },
+          "force_create": {
+            "type": "boolean",
+            "title": "Force Create",
+            "default": false,
+            "description": "Force creation even with low confidence"
+          },
+          "confidence_threshold": {
+            "type": "number",
+            "title": "Confidence Threshold",
+            "default": 0.6,
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Minimum confidence score to proceed (0.0-1.0)"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "list_whistles",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Fetch all whistles for the authenticated user.\n\nArgs:\n    access_token: User authentication token\n    active_only: If True, only return active whistles\n\nReturns:\n    Dictionary with success status and list of whistles",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "active_only": {
+            "type": "boolean",
+            "title": "Active Only",
+            "default": false,
+            "description": "If True, only return active whistles"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "default": "",
+            "description": "User authentication token"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "toggle_visibility",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Toggle user visibility status.\n\nThis function updates the user's visibility setting on the backend.  \nIf `visible` is `\"true\"`, the user becomes publicly visible.  \nIf `visible` is `\"false\"`, the user is hidden.\n\nArgs:\n    access_token (str): User authentication token obtained from sign_in or verify_otp.\n    visible (Literal[\"true\", \"false\"]): Whether the user should be visible (\"true\") or hidden (\"false\").\n\nReturns:\n    UserProfileResponse: Success flag and updated user profile data if successful.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "access_token",
+          "visible"
+        ],
+        "properties": {
+          "visible": {
+            "enum": [
+              "true",
+              "false"
+            ],
+            "type": "string",
+            "title": "Visible",
+            "description": "Whether the user should be visible ('true') or hidden ('false')"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "description": "User authentication token from sign_in or verify_otp"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "Quarantine": {
+            "type": "object",
+            "title": "Quarantine",
+            "properties": {
+              "activeAlert": {
+                "type": "boolean",
+                "title": "Activealert",
+                "default": false
+              },
+              "homeLocation": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Homelocation",
+                "default": null
+              }
+            }
+          },
+          "UserProfile": {
+            "type": "object",
+            "title": "UserProfile",
+            "required": [
+              "_id",
+              "name",
+              "phone",
+              "countryCode"
+            ],
+            "properties": {
+              "_id": {
+                "type": "string",
+                "title": "Id"
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "phone": {
+                "type": "string",
+                "title": "Phone"
+              },
+              "active": {
+                "type": "boolean",
+                "title": "Active",
+                "default": true
+              },
+              "visible": {
+                "type": "boolean",
+                "title": "Visible",
+                "default": true
+              },
+              "migrated": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Migrated",
+                "default": false
+              },
+              "usertype": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Usertype",
+                "default": "individual"
+              },
+              "verified": {
+                "type": "boolean",
+                "title": "Verified",
+                "default": false
+              },
+              "certified": {
+                "type": "boolean",
+                "title": "Certified",
+                "default": false
+              },
+              "createdAt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Createdat",
+                "default": null
+              },
+              "updatedAt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Updatedat",
+                "default": null
+              },
+              "quarantine": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Quarantine"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "countryCode": {
+                "type": "string",
+                "title": "Countrycode"
+              },
+              "reachability": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Reachability"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "taxiProvider": {
+                "type": "boolean",
+                "title": "Taxiprovider",
+                "default": false
+              },
+              "quarantineAdmin": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Quarantineadmin",
+                "default": false
+              },
+              "safetyAlertsEnabled": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Safetyalertsenabled",
+                "default": false
+              }
+            }
+          },
+          "Reachability": {
+            "type": "object",
+            "title": "Reachability",
+            "properties": {
+              "SMS": {
+                "type": "boolean",
+                "title": "Sms",
+                "default": false
+              },
+              "call": {
+                "type": "boolean",
+                "title": "Call",
+                "default": false
+              },
+              "email": {
+                "type": "boolean",
+                "title": "Email",
+                "default": false
+              }
+            }
+          }
+        },
+        "title": "UserProfileResponse",
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/UserProfile"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_profile",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieve the user profile details.\n\nThis function fetches the user's profile information from the backend,  \nincluding whistles and visibility status.\n\nArgs:\n    access_token (str): User authentication token obtained from sign_in or verify_otp.\n\nReturns:\n    UserProfileResponse: Success flag and user profile data if retrieval succeeds.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "access_token"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "description": "User authentication token from sign_in or verify_otp"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "Quarantine": {
+            "type": "object",
+            "title": "Quarantine",
+            "properties": {
+              "activeAlert": {
+                "type": "boolean",
+                "title": "Activealert",
+                "default": false
+              },
+              "homeLocation": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Homelocation",
+                "default": null
+              }
+            }
+          },
+          "UserProfile": {
+            "type": "object",
+            "title": "UserProfile",
+            "required": [
+              "_id",
+              "name",
+              "phone",
+              "countryCode"
+            ],
+            "properties": {
+              "_id": {
+                "type": "string",
+                "title": "Id"
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "phone": {
+                "type": "string",
+                "title": "Phone"
+              },
+              "active": {
+                "type": "boolean",
+                "title": "Active",
+                "default": true
+              },
+              "visible": {
+                "type": "boolean",
+                "title": "Visible",
+                "default": true
+              },
+              "migrated": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Migrated",
+                "default": false
+              },
+              "usertype": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Usertype",
+                "default": "individual"
+              },
+              "verified": {
+                "type": "boolean",
+                "title": "Verified",
+                "default": false
+              },
+              "certified": {
+                "type": "boolean",
+                "title": "Certified",
+                "default": false
+              },
+              "createdAt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Createdat",
+                "default": null
+              },
+              "updatedAt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Updatedat",
+                "default": null
+              },
+              "quarantine": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Quarantine"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "countryCode": {
+                "type": "string",
+                "title": "Countrycode"
+              },
+              "reachability": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Reachability"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "taxiProvider": {
+                "type": "boolean",
+                "title": "Taxiprovider",
+                "default": false
+              },
+              "quarantineAdmin": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Quarantineadmin",
+                "default": false
+              },
+              "safetyAlertsEnabled": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Safetyalertsenabled",
+                "default": false
+              }
+            }
+          },
+          "Reachability": {
+            "type": "object",
+            "title": "Reachability",
+            "properties": {
+              "SMS": {
+                "type": "boolean",
+                "title": "Sms",
+                "default": false
+              },
+              "call": {
+                "type": "boolean",
+                "title": "Call",
+                "default": false
+              },
+              "email": {
+                "type": "boolean",
+                "title": "Email",
+                "default": false
+              }
+            }
+          }
+        },
+        "title": "UserProfileResponse",
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/UserProfile"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@mr-nishanth/dowhistle-mcp-server/mcp",
+      "configSchema": {}
+    }
+  ]
+}

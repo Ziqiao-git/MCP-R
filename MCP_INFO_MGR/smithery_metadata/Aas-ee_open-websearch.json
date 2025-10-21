@@ -1,0 +1,163 @@
+{
+  "qualifiedName": "@Aas-ee/open-websearch",
+  "displayName": "OpenWebSearch",
+  "description": "Web search using free multi-engine search (NO API KEYS REQUIRED) — Supports Bing, Baidu, DuckDuckGo, Brave, Exa, Github, Juejin, and CSDN.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/2fff8aa3-1644-41dd-bf3d-44ba95210ca6.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Aas-ee/open-websearch",
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Search the web using multiple engines (e.g., Baidu, Bing, DuckDuckGo, CSDN, Exa, Brave, Juejin(掘金)) with no API key required",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1
+          },
+          "engines": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "baidu",
+                "bing",
+                "csdn",
+                "duckduckgo",
+                "exa",
+                "brave",
+                "juejin"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "bing"
+            ],
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetchLinuxDoArticle",
+      "description": "Fetch full article content from a linux.do post URL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetchCsdnArticle",
+      "description": "Fetch full article content from a csdn post URL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetchGithubReadme",
+      "description": "Fetch README content from a GitHub repository URL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetchJuejinArticle",
+      "description": "Fetch full article content from a Juejin(掘金) post URL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Aas-ee/open-websearch/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "proxyUrl": {
+            "type": "string",
+            "default": "http://127.0.0.1:10809",
+            "description": "Proxy server URL"
+          },
+          "useProxy": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable HTTP proxy"
+          },
+          "corsOrigin": {
+            "type": "string",
+            "default": "*",
+            "description": "CORS origin"
+          },
+          "enableCors": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable CORS"
+          },
+          "defaultSearchEngine": {
+            "type": "string",
+            "default": "duckduckgo",
+            "description": "Default search engine (bing, baidu, duckduckgo, exa, brave, juejin)"
+          }
+        }
+      }
+    }
+  ]
+}

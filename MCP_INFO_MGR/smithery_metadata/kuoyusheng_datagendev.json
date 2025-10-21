@@ -1,0 +1,881 @@
+{
+  "qualifiedName": "@kuoyusheng/datagendev",
+  "displayName": "DataGen",
+  "description": "Run and orchestrate DataGen deployments from validation through execution and monitoring. Generate copy-ready curl commands, input/output schemas, and accessible Mermaid flowcharts to integrate and explain workflows. Build, test, and deploy Python automations, then schedule and track them with ease.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@kuoyusheng/datagendev",
+  "security": null,
+  "tools": [
+    {
+      "name": "getDeploymentDetails",
+      "description": "🔍 Get comprehensive deployment details for easy copying to Clay or other tools.\n\n\t\t\tRetrieves complete information about a specific deployment including code, input examples,\n\t\t\tand ready-to-use curl commands for external integrations.\n\n\t\t\t**Perfect for:**\n\t\t\t- Getting curl commands for external API calls\n\t\t\t- Understanding deployment input/output schemas\n\t\t\t- Integrating deployments into external systems\n\n\t\t\t**Parameters:**\n\t\t\t- deployment_uuid: UUID of the deployment\n\t\t\t- brief: (optional, default: false) Set to true to get only essential information for LLM understanding (name, description, input/output schemas, and example values)\n\n\t\t\t**Returns:**\n\t\t\t- Complete deployment metadata and code (when brief=false)\n\t\t\t- Ready-to-copy curl commands for sync and async execution\n\t\t\t- Input/output schemas with examples\n\t\t\t- API endpoint information for external use\n\t\t\t- When brief=true: Only name, description, input_vars, input_schema, output_schema, and default_input_vars\n\t\t\t\n\t\t\t**📊 Create Accessible Mermaid Flowchart from Code:** After receiving the response, analyze the `final_code` field and create clear mermaid diagrams that help non-technical users understand and interact with the code:\n\t\t\t\n\t\t\t**🚨 CRITICAL SYNTAX REQUIREMENT:** Always use double-quoted brackets for all nodes: `A[\"Node Content\"]` NOT `A[Node Content]`\n\t\t\t\n\t\t\t**Process Flow Structure:**\n\t\t\t- Use **top-to-bottom flowchart** format (`flowchart TD`)\n\t\t\t- Show **main workflow** with clear start and end points  \n\t\t\t- Include **decision points** (diamonds) for conditional logic\n\t\t\t- Use **descriptive labels** in plain English, avoiding technical jargon\n\t\t\t- Group related functions into **logical sections** with subgraphs when helpful\n\t\t\t\n\t\t\t**Function Details:** For each function/process box, include:\n\t\t\t- **Function name** in readable format (e.g., \"Get Repository Data\" instead of \"mcp_GitHub_get_repo()\")\n\t\t\t- **Key arguments/inputs** that users might want to modify\n\t\t\t- **Purpose** in simple terms (what it does, not how)\n\t\t\t- Format: `A[\"**Function Name**<br/>Purpose: [what it accomplishes]<br/>Input: [key parameters]\"]`\n\t\t\t\n\t\t\t**Data Classification** - Use color coding and styling:\n\t\t\t- 📝 **User inputs** (blue/cyan boxes): Variables users can modify\n\t\t\t- ⚙️ **Processing steps** (green boxes): Data transformation and logic\n\t\t\t- 🔗 **External calls** (orange boxes): MCP tools, APIs, external services\n\t\t\t- 📊 **Outputs** (purple boxes): Final results and return values\n\t\t\t- 🔄 **Decision points** (yellow diamonds): Conditional logic and branching\n\t\t\t- ⚠️ **Hardcoded values** (red/pink boxes): Fixed data not user-configurable (URLs, API keys, constants)\n\t\t\t\n\t\t\t**Code Analysis Requirements:**\n\t\t\t- **Parse the `final_code`** to understand real processing workflow\n\t\t\t- **Extract function calls** especially MCP tool calls (starting with `mcp_`)\n\t\t\t- **Identify control flow** including if/else conditions, loops, try/catch blocks\n\t\t\t- **Map data transformations** showing how inputs become outputs\n\t\t\t- **Detect service interactions** between different tools and APIs\n\t\t\t- **Identify hardcoded values** that are embedded in code vs user-configurable\n\t\t\t- **Make technical concepts accessible** to non-technical users",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deployment_uuid"
+        ],
+        "properties": {
+          "brief": {
+            "type": "boolean",
+            "description": "Set to true to get only essential information (name, description, schemas, examples) for LLM understanding. if its user who want to learn/use the deployment, set to false. Default: false"
+          },
+          "deployment_uuid": {
+            "type": "string",
+            "description": "UUID of the deployment to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validateDeploymentConnection",
+      "description": "Validate deployment connection before executing a workflow. Recommend to use this tool before running a deployment.\n\t\tUse this to confirm that required MCP connections, secrets, and environment variables are configured for the authenticated user.\n\t\t\n\t\t**Returns (JSON text):**\n\t\t- `deployment_uuid`, `is_valid`, `status`, and `readiness_flag`\n\t\t- Compact `missing` object for environment variables, secrets, and MCP connections (with auth/URL hints)\n\t\t- `note` with a manage URL whenever secrets are missing\n\t\t- `next_steps` array describing remediation actions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deployment_uuid"
+        ],
+        "properties": {
+          "deployment_uuid": {
+            "type": "string",
+            "description": "UUID of the deployment to validate authentication for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "submitDeploymentRun",
+      "description": "Execute a deployed DataGen workflow with custom inputs.\n      \n      Use this to run pre-built workflows (like data processing pipelines, web scrapers, or automation scripts) that have been deployed as API endpoints. This starts an asynchronous execution - you'll get a run ID that you can monitor with 'checkRunStatus'.\n      \n      **Typical workflow:** \n\t  1. Use `validateDeploymentConnection` tool to validate the deployment and get the missing MCP or Secrets.\n      2. Use this tool to start a deployment\n      3. Get a run_uuid in response\n      4. Use `checkRunStatus` to monitor progress\n      5. Retrieve results when complete\n      \n      **Use cases:** Run data pipelines, execute scrapers, trigger automations, process files. \n\t  **Error handling:** If found any missing MCP or Secrets, try to run validate deployment connection tool to validate the deployment and get the missing MCP or Secrets.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deployment_uuid"
+        ],
+        "properties": {
+          "input_vars": {
+            "type": "object",
+            "description": "Custom input data for the workflow. Supported types: 'string', 'integer', 'number', 'boolean', 'array', 'object', 'any' (e.g., {'url': 'https://example.com', 'count': 10, 'enabled': true})",
+            "additionalProperties": {}
+          },
+          "deployment_uuid": {
+            "type": "string",
+            "description": "Unique identifier of the deployed workflow to execute (get this from deployment listings)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "checkRunStatus",
+      "description": "Monitor the progress and results of a running DataGen workflow with automatic polling.\n\n\t\tAfter starting a workflow with 'submitDeploymentRun', use this to check if it's still running, completed successfully, or failed. Provide a run UUID directly, or supply a deployment UUID to automatically locate the most recent run for that deployment.\n\n\t\t**Status types:**\n\t\t- 'pending': Waiting in queue, check again in a few seconds\n\t\t- 'running': Still executing, check again in a few seconds\n\t\t- 'completed': Finished successfully, output data available\n\t\t- 'failed': Execution failed, error details provided\n\n\t\t**Controls:**\n\t\t- 'timeout_seconds' (default 180, max 600) to cap how long to poll\n\t\t- 'poll_interval_seconds' (default 5, min 2, max 30) between checks\n\n\t\t**Lookup options:**\n\t\t- Provide 'run_uuid' for direct status polling\n\t\t- Provide 'deployment_uuid' to look up the latest run automatically",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "run_uuid": {
+            "type": "string",
+            "description": "Unique run identifier returned by 'submitDeploymentRun'. Provide this when you already know the run UUID."
+          },
+          "deployment_uuid": {
+            "type": "string",
+            "description": "Deployment UUID to locate and monitor the most recent run for that deployment."
+          },
+          "timeout_seconds": {
+            "type": "number",
+            "default": 180,
+            "description": "Total seconds to wait before timing out (default 180, max 600)"
+          },
+          "poll_interval_seconds": {
+            "type": "number",
+            "default": 5,
+            "description": "Seconds between status checks (default 5, min 2, max 30)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "executeCode",
+      "description": "Execute Python code with full access to MCP tools and data processing libraries.\n\t\t\n\t\tThis is your Python sandbox for building workflows, processing data, and integrating multiple tools. You can call MCP tools directly as Python functions (e.g., `mcp_Supabase_list_projects()`) and use libraries like pandas, requests, and more.\n\t\t\n\t\t**Key features:**\n\t\t- Call any tool as a Python function, including MCP tools\n\t\t- Rich execution logs and error handling\n\t\t- All the MCP tools(tool start with mcp_) output have been parsed by json.loads() already if its json parsable,If json.loads() fails, returns the original string\n\t\t- b/c MCP output schema may not be defined, always first try test the mcp tool output data structure. especially for user defined data like google sheet, airtable, supabase sql results.\n\n\t\t**Make sure to include the right MCP server name in mcp_server_names and tool name in the required_tools array.**\n\t\t- do not guess the tool name or server name. if its not in the context, use SearchTool tool to get the correct tool name and server name. before using this code execution tool\n\t\t- If you get back with 401 authorizied error. its very likely that you did not include the right server name in the mcp_server_names array. \n\t\t- If the required server is not installed, prompt user to install the server. with \"addRemoteMcpServer\" tool.\n\n\n\t\t**Do not use any local() or global() in the code.**\n\t\tyou can assume the input variables are already defined in the global scope. and you can use them directly with data type defined in the input_schema.\n\t\t**Do not use any async in the code. it will cause the code to not work.**\n\n\t\t** When work with API** \n\t\t- use httpx instead of requests.\n\t\t- if API key is needed, use getUserSecrets tool to get the API key. if not in their, prompt user to add the API key in Datagen.\n\t\t- when use API key just use the key like other variables. DO NOT USE os.getenv() to get the API key.\n\t\t- use polling if the API is async and you want to wait for the result.\n\n\t\t**Coding Style:**\n\t\t- use python 3.12 syntax.\n\t\t- Keep it simple and readable. do not use exntensive comments and logger. only necessary print out for debugging.\n\t\t- Focus on the main logic and do not add unnecessary code.\n\n\t\t**Error handling:**\n\t\t- If you get back with 401 authorizied error. its very likely that you did not include the right server name in the mcp_server_names array or missing required_tools. \n\t\t- If you have trouble to parse the tool response, try to use the native tool call to observe the response structure. \n\t\t- <example>\n\t\tif you get parsing erro with mcp_Supabase_list_projects(), try to use the user's native list_projects tool in LLM client(like Cursor or Claude) to get the response structure.\n\t\t</example>\n\t\t\n\t\t**See the 'how to use executeCode' resource for detailed examples and best practices.**",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "script"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Descriptive name for this execution (helpful for tracking multi-step workflows)"
+          },
+          "local": {
+            "type": "boolean",
+            "description": "Whether to run locally (true) or in E2B sandbox (false)"
+          },
+          "script": {
+            "type": "string",
+            "description": "Python code to execute - can include MCP tool calls, data processing, loops, etc."
+          },
+          "timeout": {
+            "type": "number",
+            "maximum": 300,
+            "minimum": 30,
+            "description": "Execution timeout in seconds (default: 300 seconds, range: 30-300)"
+          },
+          "input_vars": {
+            "type": "object",
+            "description": "Variables to make available in the script. Supported types: 'string', 'integer', 'number', 'boolean', 'array', 'object', 'any' (e.g., {'url': 'https://api.example.com', 'count': 10, 'enabled': true})",
+            "additionalProperties": {}
+          },
+          "session_id": {
+            "type": "string",
+            "description": "Session identifier to group related executions together"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of what this code accomplishes"
+          },
+          "output_vars": {
+            "type": "object",
+            "description": "Expected output variables and their types for validation. Supported types: 'string', 'integer', 'number', 'boolean', 'array', 'object', 'any' (e.g., {'result': 'string', 'status': 'boolean', 'data': 'array'})",
+            "additionalProperties": {}
+          },
+          "required_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of required MCP tools (e.g., ['mcp_Supabase_list_projects'])"
+          },
+          "mcp_server_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of MCP server names to spin up for this execution (only these servers will be started to reduce startup time)"
+          },
+          "required_secrets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of environment variable names that should be fetched from user's secret management system (e.g., ['OPENAI_API_KEY', 'SUPABASE_URL']). Secrets become available as Python variables with the same name - access directly in your script: api_key = OPENAI_API_KEY"
+          },
+          "additional_imports": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "asyncio",
+                "pydantic",
+                "typing",
+                "datetime",
+                "enum",
+                "json",
+                "requests",
+                "bs4",
+                "pandas",
+                "re",
+                "uuid",
+                "httpx",
+                "urllib",
+                "collections",
+                "itertools",
+                "math",
+                "queue",
+                "random",
+                "stat",
+                "statistics",
+                "time",
+                "unicodedata",
+                "google",
+                "openai",
+                "numpy"
+              ],
+              "type": "string"
+            },
+            "description": "Additional Python imports needed. Allowed imports are: [\n  \"asyncio\",\n  \"pydantic\",\n  \"typing\",\n  \"datetime\",\n  \"enum\",\n  \"json\",\n  \"requests\",\n  \"bs4\",\n  \"pandas\",\n  \"re\",\n  \"uuid\",\n  \"httpx\",\n  \"urllib\",\n  \"collections\",\n  \"itertools\",\n  \"math\",\n  \"queue\",\n  \"random\",\n  \"stat\",\n  \"statistics\",\n  \"time\",\n  \"unicodedata\",\n  \"google\",\n  \"openai\",\n  \"numpy\"\n]"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "asyncExecuteCode",
+      "description": "Execute Python code asynchronously for long-running operations.\n\t\t\n\t\tThis tool starts Python code execution in the background and returns immediately with an execution UUID. Use 'checkCodeExecStatus' to monitor progress and retrieve results. Perfect for long-running scripts, large data processing, or operations that might take several minutes.\n\t\tcall this tool when you are dealing with long running operations.\n\t\t\n\t\t**Key advantages over executeCode:**\n\t\t- Non-blocking execution\n\t\t- No timeout limitations \n\n\t\t\n\t\t**Workflow:**\n\t\t1. Call this tool to start execution\n\t\t2. Get execution_uuid in response\n\t\t3. Use 'checkCodeExecStatus' to monitor progress\n\t\t4. Retrieve results when status is 'completed'\n\t\t\n\t\t**Do not use any local() or global() in the code.**\n\t\t**Do not use any async in the code. it will cause the code to not work.**\n\t\t**When work with API directly, use httpx instead of requests.**\n\t\t",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "script"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Descriptive name for this execution (helpful for tracking)"
+          },
+          "local": {
+            "type": "boolean",
+            "description": "Whether to run locally (true) or in E2B sandbox (false)"
+          },
+          "script": {
+            "type": "string",
+            "description": "Python code to execute - can include MCP tool calls, data processing, loops, etc."
+          },
+          "timeout": {
+            "type": "number",
+            "maximum": 300,
+            "minimum": 30,
+            "description": "Execution timeout in seconds (default: 300 seconds, range: 30-300)"
+          },
+          "input_vars": {
+            "type": "object",
+            "description": "Variables to make available in the script. Supported types: 'string', 'integer', 'number', 'boolean', 'array', 'object', 'any' (e.g., {'url': 'https://api.example.com', 'count': 10, 'enabled': true})",
+            "additionalProperties": {}
+          },
+          "session_id": {
+            "type": "string",
+            "description": "Session identifier to group related executions together"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of what this code accomplishes"
+          },
+          "output_vars": {
+            "type": "object",
+            "description": "Expected output variables and their types for validation. Supported types: 'string', 'integer', 'number', 'boolean', 'array', 'object', 'any' (e.g., {'result': 'string', 'status': 'boolean', 'data': 'array'})",
+            "additionalProperties": {}
+          },
+          "required_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of required MCP tools or functions"
+          },
+          "mcp_server_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of MCP server names to spin up for this execution"
+          },
+          "required_secrets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of environment variable names that should be fetched from user's secret management system (e.g., ['OPENAI_API_KEY', 'SUPABASE_URL']). Secrets become available as Python variables with the same name - access directly in your script: api_key = OPENAI_API_KEY"
+          },
+          "additional_imports": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "asyncio",
+                "pydantic",
+                "typing",
+                "datetime",
+                "enum",
+                "json",
+                "requests",
+                "bs4",
+                "pandas",
+                "re",
+                "uuid",
+                "httpx",
+                "urllib",
+                "collections",
+                "itertools",
+                "math",
+                "queue",
+                "random",
+                "stat",
+                "statistics",
+                "time",
+                "unicodedata",
+                "google",
+                "openai",
+                "numpy"
+              ],
+              "type": "string"
+            },
+            "description": "Additional Python imports needed. Allowed imports are: [\n  \"asyncio\",\n  \"pydantic\",\n  \"typing\",\n  \"datetime\",\n  \"enum\",\n  \"json\",\n  \"requests\",\n  \"bs4\",\n  \"pandas\",\n  \"re\",\n  \"uuid\",\n  \"httpx\",\n  \"urllib\",\n  \"collections\",\n  \"itertools\",\n  \"math\",\n  \"queue\",\n  \"random\",\n  \"stat\",\n  \"statistics\",\n  \"time\",\n  \"unicodedata\",\n  \"google\",\n  \"openai\",\n  \"numpy\"\n]"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "checkCodeExecStatus",
+      "description": "Monitor the progress and retrieve results of asynchronous code execution with automatic polling.\n\n\t\tAfter starting code execution with 'asyncExecuteCode', use this tool to check the current status and get results when complete. This tool provides real-time updates on execution progress.\n\n\t\t**Status types:**\n\t\t- 'pending': Execution queued but not yet started\n\t\t- 'running': Currently executing your code\n\t\t- 'completed': Finished successfully, results available\n\t\t- 'failed': Execution failed, error details provided\n\t\t- 'cancelled': Execution was cancelled\n\n\t\t**Controls:**\n\t\t- 'timeout_seconds' (default 300, max 900) to cap how long to poll\n\t\t- 'poll_interval_seconds' (default 5, min 2, max 30) between checks\n\n\t\t**Tip:** For long operations, poll every 10-30 seconds until completion.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "execution_uuid"
+        ],
+        "properties": {
+          "execution_uuid": {
+            "type": "string",
+            "description": "Execution UUID returned by 'asyncExecuteCode'"
+          },
+          "timeout_seconds": {
+            "type": "number",
+            "default": 300,
+            "description": "Total seconds to wait before timing out (default 300, max 900)"
+          },
+          "poll_interval_seconds": {
+            "type": "number",
+            "default": 5,
+            "description": "Seconds between status checks (default 5, min 2, max 30)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getToolDetails",
+      "description": "Get comprehensive documentation for any specific tool. \n\t\t\tyou use it to find the tool details and the server name to use in code execution tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tool_name"
+        ],
+        "properties": {
+          "tool_name": {
+            "type": "string",
+            "description": "Exact tool name to get details for (e.g., 'mcp_Supabase_execute_sql', 'executeCode')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "searchTools",
+      "description": "🔎 Find tools by functionality, keywords, or provider.\n\t\t\n\t\tSmart search across all available tools when you know what you want to accomplish but aren't sure which specific tool to use. Search by functionality, keywords, or filter by tool type and provider.\n\t\t\n\t\t**Search examples:**\n\t\t- \"database\" → Find all database-related tools\n\t\t- \"web scraping\" → Discover scraping and data extraction tools  \n\t\t- \"Supabase\" → All Supabase integration tools\n\t\t- \"file upload\" → Tools for handling file operations\n\t\t\n\t\t**Filters help you** narrow down to exactly what you need - specific providers, etc.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "What you want to accomplish (e.g., 'send email', 'scrape website', 'analyze data')"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Filter MCP tools by specific provider (e.g., 'Supabase', 'GitHub', 'Test')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deployCode",
+      "description": "Deploys working Python code as a DataGen standalone deployment.\n\t\t\t\tThis tool orchestrates the complete workflow: takes your Python code, tests it, \n\t\t\t\tand creates a standalone deployment as an API endpoint with default values.\n\t\t\t\tPerfect for converting working code into a production-ready deployment without flows.\n\t\t\t\t\n\t\t\t\tUses OpenAPI/JSON Schema for rich input and output validation with descriptions, \n\t\t\t\ttype constraints, default values, and comprehensive documentation.\n\t\t\t\n\t\t\t\t**Schema Example:**\n\t\t\t\tinput_schema: {\n\t\t\t\t  'type': 'object',\n\t\t\t\t  'properties': {\n\t\t\t\t    'name': {'type': 'string', 'description': 'User name'},\n\t\t\t\t    'count': {'type': 'integer', 'minimum': 1, 'default': 10},\n\t\t\t\t    'data': {'type': 'array', 'items': {'type': 'string'}}\n\t\t\t\t  },\n\t\t\t\t  'required': ['name']\n\t\t\t\t}\n\t\t\t\n\t\t\t**Do not use any local() or global() in the code.**\n\t\t\tyou can assume the input variables are already defined in the global scope. and you can use them directly with data type defined in the input_schema.\n\t\t\t\n\t\t\t**Do Not Return anthing for Output** \n\t\t\tDeploy code use the globa variable to reference the input and output variables. so do not return in main script. otherwise it would trigger ReturnException. \n\t\t\tTo return output, just reference the global variable. \n\n\t\t\tfor example: \n\t\t\tif I need to return the output variable \"result\" in the main script, I can do this:\n\t\t\t\n\t\t\tresult = \"Hello, World!\"\n\n\t\t\tand in the output_variables, I can do this:\n\t\t\toutput_variables: ['result']\n\t\t\tjust simply reference the global variable in the output_variables.\n\n\t\t\t**No Async in the code**\n\t\t\tDo not use any async in the code. it will cause the code to not work.\n\n\t\t\t**Steps to take before deploying code**\n\t\t\t<step0> Try to briefly explain the code or plan to the user. </step0>\n\t\t\t<step1> Come up with right input_schema and output_schema to define the input and output variables </step1>\n\t\t\t<step2> Confirm with user if the input and output are correct. modify if needed. </step2>\n\t\t\t<step3> Run submitDeploymentRun tool to test the code is working on Datagen after the deployment is created. </step3>\n\t\t\t",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "script",
+          "deployment_name",
+          "description"
+        ],
+        "properties": {
+          "local": {
+            "type": "boolean",
+            "description": "Whether to run locally (true) or in E2B sandbox (false)"
+          },
+          "script": {
+            "type": "string",
+            "description": "The Python script to deploy"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what this deployment does"
+          },
+          "input_schema": {
+            "type": "object",
+            "description": "OpenAPI/JSON Schema defining input variables structure with validation, descriptions, defaults. Example: {type: 'object', properties: {name: {type: 'string'}, count: {type: 'integer', minimum: 1}}, required: ['name']}",
+            "additionalProperties": {}
+          },
+          "required_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of required MCP tools or functions"
+          },
+          "deployment_name": {
+            "type": "string",
+            "description": "Name for the deployment (will be used as the API name). it should be short one liner connected by understcode like sync_supabase_to_heyreach "
+          },
+          "deployment_type": {
+            "enum": [
+              "private",
+              "public"
+            ],
+            "type": "string",
+            "default": "private",
+            "description": "Deployment type: 'private' (default, only owner can access) or 'public' (anyone with valid API key can access)"
+          },
+          "mcp_server_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "MCP server names for tools"
+          },
+          "output_variables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "list of output variables to return. Example: ['result', 'status']. dont need to define the schema for the output variables. just list the variables."
+          },
+          "required_secrets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of environment variable names that should be fetched from user's secret management system (e.g., ['OPENAI_API_KEY', 'SUPABASE_URL']). Secrets become available as Python variables with the same name - access directly in your script: api_key = OPENAI_API_KEY"
+          },
+          "additional_imports": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "asyncio",
+                "pydantic",
+                "typing",
+                "datetime",
+                "enum",
+                "json",
+                "requests",
+                "bs4",
+                "pandas",
+                "re",
+                "uuid",
+                "httpx",
+                "urllib",
+                "collections",
+                "itertools",
+                "math",
+                "queue",
+                "random",
+                "stat",
+                "statistics",
+                "time",
+                "unicodedata",
+                "google",
+                "openai",
+                "numpy"
+              ],
+              "type": "string"
+            },
+            "description": "Additional Python imports needed. Allowed libraries: asyncio, pydantic, typing, datetime, enum, json, requests, bs4, pandas, re, uuid, httpx, urllib, collections, itertools, math, queue, random, stat, statistics, time, unicodedata, google, openai, numpy"
+          },
+          "default_input_vars": {
+            "type": "object",
+            "description": "Default values for input variables",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addRemoteMcpServer",
+      "description": "Add a remote MCP server with OAuth or direct URL to DataGen. \n\t\t\t\n\t\t\t<Find Remote MCP Server URL>\n\t\t\tBefore adding a remote MCP server, and if you have web research tool, you should first search and find the officail remote MCP server with their URL. \n\t\t\tIf No official remote MCP available, recommend user to look for MCP hosted services \n\t\t\tlike smithery.ai(https://smithery.ai), Klavis AI(https://klavis.ai), etc. to add the remote MCP server. \n\t\t\t</Find Remote MCP Server URL>\n\n\t\t\t<Add Remote MCP Server>\n\t\t\tDirectly add remote MCP servers by providing server name, and URL\n\t\t\t</Add Remote MCP Server>\n\n\t\t\tSupports OAuth flows. Returns available tools upon successful connection.\n\t\t\n\t\t\tPerfect for:\n\t\t\t- Connecting to external MCP services to DataGen\n\t\t\t\n\t\t\tInput Requirements:\n\t\t\t- server_name: Display name for the server (must follow naming rules)\n\t\t\t- server_url: Remote server endpoint (HTTP/SSE)\n\t\t\t\n\t\t\tNaming Rules:\n\t\t\t- Use only alphanumeric characters (no spaces, underscores, or dashes)\n\t\t\t- Start with an uppercase letter\n\t\t\t- Use CamelCase for multiple words\n\t\t\t- Examples: 'GitHub', 'Slack', 'GoogleDrive'\n\t\t\t\n\t\t\tReturns: \n\t\t\t- Server info + complete list of available tools with descriptions or auth url if OAuth is required.\n\t\t\t- if success is false, it means the server is not found or the URL is not valid.\n\t\t\t- if Auth url is returned, plese use the proper formating like [Auth url](https://your-auth-url.com) to format the auth url.\n\t\t\t and use checkRemoteMcpOauthStatus tool to check the status of the OAuth flow right after this tool call.\n\t\t\t",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "server_name",
+          "server_url"
+        ],
+        "properties": {
+          "server_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Remote server endpoint URL (e.g., 'https://api.github.com/mcp' or 'https://mcp.slack.com/sse')"
+          },
+          "server_name": {
+            "type": "string",
+            "description": "Display name for the MCP server (must follow naming rules: alphanumeric only, start with uppercase, use CamelCase). Examples: 'GitHub', 'Slack', 'GoogleDrive'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "checkRemoteMcpOauthStatus",
+      "description": "Check the status of an OAuth flow for remote MCP server connection with polling.\n\n\t\t\tAfter receiving an OAuth redirect URL from addRemoteMcpServer, use this tool to check if the user has completed authentication. This tool will poll the status until completion or timeout.\n\n\t\t\t**Use this when:**\n\t\t\t- addRemoteMcpServer returned requires_auth: true\n\t\t\t- User has completed OAuth authentication in browser\n\t\t\t- You want to confirm the server connection is established\n\n\t\t\t**Returns:** Final connection status on success, or error details on failure/timeout\n\n\t\t\t**Next steps after success:**\n\t\t\t- When status is \"completed\", the MCP server is now connected and ready\n\t\t\t- Use 'searchTools' to discover what tools are available from the newly connected server\n\t\t\t- Example: searchTools({query: \"server_name\", tool_type: \"mcp\"})",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "flow_id"
+        ],
+        "properties": {
+          "flow_id": {
+            "type": "string",
+            "description": "OAuth flow ID returned by addRemoteMcpServer"
+          },
+          "timeout_seconds": {
+            "type": "number",
+            "default": 120,
+            "description": "Maximum time to wait for OAuth completion (default: 120 seconds, max: 300)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ReAuthRemoteMcpServer",
+      "description": "🔄 Reauthenticate an existing remote MCP server connection.\n\t\t\t\n\t\t\tWhen an existing remote MCP server's OAuth tokens have expired or become invalid, use this tool to initiate a fresh authentication flow. This will start a new OAuth flow while preserving the server configuration.\n\t\t\t\n\t\t\t**Use this when:**\n\t\t\t- Server tools stop working due to expired tokens\n\t\t\t- You receive authentication errors from MCP tools\n\t\t\t- OAuth tokens need to be refreshed for a connected server\n\t\t\t- Server connection has been lost and needs re-authentication\n\t\t\t\n\t\t\t**Process:**\n\t\t\t1. Call this tool with the server name (must follow naming rules)\n\t\t\t2. If OAuth is required, you'll get an auth_url\n\t\t\t3. Complete authentication in the browser\n\t\t\t4. Use checkRemoteMcpOauthStatus to verify completion\n\t\t\t\n\t\t\t**Naming Rules:**\n\t\t\t- Use only alphanumeric characters (no spaces, underscores, or dashes)\n\t\t\t- Start with an uppercase letter\n\t\t\t- Use CamelCase for multiple words\n\t\t\t- Examples: 'GitHub', 'Slack', 'GoogleDrive', 'OpenAI'\n\t\t\t\n\t\t\t**Returns:** Either immediate success or OAuth flow details for browser authentication",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "server_name"
+        ],
+        "properties": {
+          "server_name": {
+            "type": "string",
+            "description": "Name of the existing MCP server to reauthenticate (must follow naming rules: alphanumeric only, start with uppercase, use CamelCase). Examples: 'GitHub', 'Slack', 'GoogleDrive'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateRemoteMcpServer",
+      "description": "Update an existing remote MCP server with new configuration and refresh its tools list.\n\t\t\t\n\t\t\tUse this tool to update the configuration of an existing remote MCP server connection.\n\t\t\tThis allows you to change the server URL, update authentication credentials, or refresh environment variables.\n\t\t\t\n\t\t\t**Perfect for:**\n\t\t\t- Updating server URL when endpoints change\n\t\t\t- Refreshing API keys or authentication tokens\n\t\t\t- Updating environment variables or configuration\n\t\t\t- Migrating to new API versions or endpoints\n\t\t\t- Getting the latest available tools after config changes\n\t\t\t\n\t\t\t**Requirements:**\n\t\t\t- Server with the given name must already exist\n\t\t\t- New server URL must be accessible\n\t\t\t- New authentication credentials must be valid\n\t\t\t\n\t\t\t**Input Requirements:**\n\t\t\t- server_name: Name of the existing server (must match exactly and follow naming rules)\n\t\t\t- server_url: New remote server endpoint URL\n\t\t\t- env_args: Updated environment variables/configuration\n\t\t\t\n\t\t\t**Naming Rules:**\n\t\t\t- Use only alphanumeric characters (no spaces, underscores, or dashes)\n\t\t\t- Start with an uppercase letter\n\t\t\t- Use CamelCase for multiple words\n\t\t\t- Examples: 'GitHub', 'Slack', 'GoogleDrive', 'OpenAI'\n\t\t\t\n\t\t\t**Returns:** Updated server info with refreshed tools list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "server_name",
+          "server_url",
+          "env_args"
+        ],
+        "properties": {
+          "env_args": {
+            "type": "object",
+            "description": "Updated environment variables/configuration (e.g., {'API_KEY': 'new-key', 'BEARER_TOKEN': 'new-token'})",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                }
+              ]
+            }
+          },
+          "server_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "New remote server endpoint URL (e.g., 'https://api.github.com/mcp' or 'https://mcp.slack.com/sse')"
+          },
+          "server_name": {
+            "type": "string",
+            "description": "Name of the existing MCP server to update (must follow naming rules: alphanumeric only, start with uppercase, use CamelCase). Examples: 'GitHub', 'Slack', 'GoogleDrive'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getUserSecrets",
+      "description": "Get User Secret Keys\n\t\t\t\n\t\t\tRetrieve all available secret keys for the authenticated user. These keys can be referenced in Python code execution for MCP tool integrations, but the actual values are never exposed for security.\n\t\t\t\n\t\t\t**Perfect for:**\n\t\t\t- Discovering what secret keys are available for workflow integrations\n\t\t\t- Understanding which MCP providers are configured\n\t\t\t- Planning workflows that require authentication with external services\n\t\t\t\n\t\t\t**Returns:**\n\t\t\t- List of available secret keys with their names and providers\n\t\t\t- Metadata including total count and available providers\n\t\t\t- Usage instructions for referencing secrets in executeCode\n\t\t\t\n\t\t\t**Security Note:** Only secret key names and metadata are returned, never the actual secret values.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scheduleDeployment",
+      "description": "🕐 Schedule a deployment to run at specific times or intervals.\n\t\t\t\n\t\t\tSet up automated execution of deployments using flexible scheduling options including:\n\t\t\t- One-time execution at a specific date/time\n\t\t\t- Recurring schedules using cron expressions\n\t\t\t- Simple interval-based schedules (daily, weekly, monthly)\n\t\t\t\n\t\t\t**Perfect for:**\n\t\t\t- Automated data processing workflows\n\t\t\t- Regular report generation\n\t\t\t- Periodic API data syncing\n\t\t\t- Scheduled backup operations\n\t\t\t- Time-based business process automation\n\t\t\t\n\t\t\t**Schedule Types:**\n\t\t\t- 'once': Execute once at a specific datetime\n\t\t\t- 'cron': Use cron expression for complex schedules\n\t\t\t- 'interval': Simple recurring intervals (daily, weekly, monthly)\n\t\t\t\n\t\t\t**Examples:**\n\t\t\t- Daily at 9 AM: schedule_type='interval', interval='daily', time='09:00'\n\t\t\t- Every Monday at 2 PM: schedule_type='cron', cron_expression='0 14 * * 1'\n\t\t\t- Once on Dec 25, 2024 at 10:30 AM: schedule_type='once', datetime='2024-12-25T10:30:00Z'",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deployment_uuid",
+          "schedule_name",
+          "schedule_type"
+        ],
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "Time for interval schedules in HH:MM format (e.g., '09:00' for 9 AM)"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the schedule is active (default: true)"
+          },
+          "datetime": {
+            "type": "string",
+            "description": "ISO datetime string for one-time execution (required if schedule_type='once'). Format: 2024-12-25T10:30:00Z"
+          },
+          "interval": {
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly",
+              "hourly"
+            ],
+            "type": "string",
+            "description": "Simple interval type (required if schedule_type='interval')"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "UTC",
+            "description": "Timezone for scheduling (default: UTC). Format: 'America/New_York', 'Europe/London', etc."
+          },
+          "input_vars": {
+            "type": "object",
+            "description": "Input variables to pass to the deployment when it runs",
+            "additionalProperties": {}
+          },
+          "day_of_week": {
+            "type": "number",
+            "maximum": 6,
+            "minimum": 0,
+            "description": "Day of week for weekly intervals (0=Sunday, 1=Monday, ..., 6=Saturday)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of what this scheduled deployment does"
+          },
+          "day_of_month": {
+            "type": "number",
+            "maximum": 31,
+            "minimum": 1,
+            "description": "Day of month for monthly intervals (1-31)"
+          },
+          "schedule_name": {
+            "type": "string",
+            "description": "Descriptive name for this scheduled task"
+          },
+          "schedule_type": {
+            "enum": [
+              "once",
+              "cron",
+              "interval"
+            ],
+            "type": "string",
+            "description": "Type of schedule: 'once' for one-time, 'cron' for cron expression, 'interval' for simple recurring"
+          },
+          "cron_expression": {
+            "type": "string",
+            "description": "Cron expression for complex schedules (required if schedule_type='cron'). Format: '0 14 * * 1' for Monday 2PM"
+          },
+          "deployment_uuid": {
+            "type": "string",
+            "description": "UUID of the deployment to schedule"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "listSchedules",
+      "description": "List all scheduled deployments for the current user.\n\n\t\t\tView and manage all your scheduled deployment executions with filtering and pagination options.\n\n\t\t\t**Perfect for:**\n\t\t\t- Getting an overview of all scheduled tasks\n\t\t\t- Finding specific schedules by deployment or status\n\t\t\t- Managing and monitoring scheduled executions\n\t\t\t- Planning workflow timing and coordination\n\n\t\t\t**Returns:**\n\t\t\t- List of all schedules with details\n\t\t\t- Schedule status and next execution times\n\t\t\t- Deployment information and input variables\n\t\t\t- Pagination support for large lists",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deployment_uuid"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of schedules to return (1-100, default: 50)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of schedules to skip for pagination (default: 0)"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "disabled",
+              "completed",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Filter by schedule status (default: all)"
+          },
+          "deployment_uuid": {
+            "type": "string",
+            "description": "Deployment UUID to list schedules for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory_write",
+      "description": "💾 Write a personalized memory for the authenticated user.\n\nCapture durable preferences, ongoing work, or contextual notes so future workflows can tailor their behaviour automatically.\n\n**Great for:**\n- Remembering preferred tone or formatting\n- Storing project milestones or TODOs\n- Persisting CRM or onboarding notes\n- Tracking tool configuration choices",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "role": {
+            "enum": [
+              "user",
+              "assistant",
+              "system",
+              "tool"
+            ],
+            "type": "string",
+            "default": "user",
+            "description": "Role for the single-message shortcut"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional tags to help group or filter memories later"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Convenience field: single-message content if 'messages' is omitted"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "content"
+              ],
+              "properties": {
+                "role": {
+                  "enum": [
+                    "user",
+                    "assistant",
+                    "tool"
+                  ],
+                  "type": "string",
+                  "description": "Role associated with this message, its either user(some factual thing about user), assistant(if its about the workflow process) or tool(if its about tool details)"
+                },
+                "content": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Message content to store"
+                },
+                "metadata": {
+                  "type": "object",
+                  "description": "Optional per-message metadata (e.g., source, timestamp)",
+                  "additionalProperties": {}
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Provide one or more memory messages. If omitted, `content` will be used"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Top-level metadata to attach to the memory",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory_search",
+      "description": "🔍 Search memories previously saved for the current user.\n\nRun semantic search across stored context to quickly retrieve preferences, project history, or tagged notes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of results to return (default 10)"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Natural language query to search stored memories"
+          },
+          "filters": {
+            "type": "object",
+            "description": "Optional metadata filters to narrow results",
+            "additionalProperties": {}
+          },
+          "include_metadata": {
+            "type": "boolean",
+            "description": "Whether to include metadata in the response (default true)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteSchedule",
+      "description": "🗑️ Delete a scheduled deployment permanently.\n\n\t\t\tRemove a scheduled deployment from the system. This action cannot be undone, but it will not affect any deployments that have already been executed.\n\n\t\t\t**Perfect for:**\n\t\t\t- Removing schedules that are no longer needed\n\t\t\t- Cleaning up test or temporary schedules\n\t\t\t- Managing schedule cleanup and maintenance\n\n\t\t\t**Warning:** This action is permanent and cannot be undone.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "schedule_id"
+        ],
+        "properties": {
+          "confirm": {
+            "type": "boolean",
+            "default": false,
+            "description": "Confirmation that you want to permanently delete this schedule"
+          },
+          "schedule_id": {
+            "type": "string",
+            "description": "ID of the schedule to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@kuoyusheng/datagendev/mcp",
+      "configSchema": {}
+    }
+  ]
+}

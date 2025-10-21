@@ -1,0 +1,149 @@
+{
+  "qualifiedName": "@demomagic/dune-mcp-server",
+  "displayName": "Dune MCP Server",
+  "description": "Provide a server implementation that integrates with the Model Context Protocol to expose tools, resources, and prompts for LLM applications. Enable dynamic interaction with external data and actions through a standardized JSON-RPC interface. Facilitate seamless extension of LLM capabilities by serving as a bridge to external context and operations.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@demomagic/dune-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_latest_result",
+      "description": "Get the latest results for a specific query ID as a CSV string on dune analytics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Limit the number of results returned (default: 100)"
+          },
+          "query_id": {
+            "type": "number",
+            "description": "Dune query ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "run_query",
+      "description": "Run a query by ID and return results as a CSV string on dune analytics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Limit the number of results returned (default: 100)"
+          },
+          "query_id": {
+            "type": "number",
+            "description": "Dune query ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_chainlink_revenue",
+      "description": "Get comprehensive Chainlink revenue data including cumulative revenue, product-wise income, and financial metrics. This tool aggregates data from multiple Dune Analytics queries to provide insights into Chainlink's revenue streams across different products like Feeds, VRF (Verifiable Random Function), CCIP (Cross-Chain Interoperability Protocol), and Automation. The data covers revenue periods from October 2020 to July 2024, showing total product revenue breakdown and cumulative income trends.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Limit the number of results returned per query (default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_pumpfun_data",
+      "description": "Get comprehensive Pump.fun platform data including top token creators, active wallets, address distribution, and trader rankings. This tool aggregates data from multiple Dune Analytics queries to provide insights into Pump.fun's ecosystem metrics. The data includes top token creators with metrics like token creation count, graduated tokens, graduation rate, and daily token numbers. It also covers active Pump.fun wallets ranked by realized profits over the past 30 days, total Pumpfun and PumpSwap addresses with volume distribution (excluding bots), and PumpFun trader leaderboards showing wallet addresses, transaction counts, active days, total volume, and rankings with distinction between including and excluding high-frequency bots.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Limit the number of results returned per query (default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_solana_memecoin_data",
+      "description": "Get comprehensive Solana memecoin launch platform ecosystem data including platform performance metrics, daily statistics, and trending tokens. This tool aggregates data from multiple Dune Analytics queries to provide insights into various Solana memecoin launch platforms like Pump.fun, LaunchLab, Moonshot, Believe, LetsBonk, and Boop. The data includes platform statistics such as launched token counts, active addresses, and graduated token numbers. It also covers performance metrics like daily active addresses, daily graduated tokens, market share, and daily deployed token counts. Additionally, it provides trending tokens from the past 24 hours and 7 days with detailed tables showing market cap and launch platforms, highlighting top performers like 'sdmtinggi' and 'INFERNO' on Pump.fun. The tool also includes platform descriptions and independent dashboard links for featured launch platforms.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Limit the number of results returned per query (default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_dex_trading_data",
+      "description": "Get comprehensive DEX (Decentralized Exchange) trading data including volume metrics, unique trading addresses, market share analysis, and platform rankings. This tool aggregates data from multiple Dune Analytics queries to provide insights into DEX trading volumes across different time periods (24 hours, 7 days, 30 days, and 12 months), with total 12-month volume reaching $2.7 trillion. It covers unique trading addresses exceeding 210 million total addresses. The data includes market share analysis by trading volume for DEXs, frontend market share, and Solana DEX trading volume. It also provides DEX and aggregator rankings based on 7-day and 24-hour trading volumes, with Pancakeswap leading among DEXs and 1inch topping the aggregator rankings. The tool explains the methodology used for calculating USD trading volumes and trader counts, noting that some trading volume may be omitted for uncommon tokens and proxy contract interactions are counted as single traders.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Limit the number of results returned per query (default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@demomagic/dune-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "DUNE_API_KEY"
+        ],
+        "properties": {
+          "BASE_URL": {
+            "type": "string",
+            "default": "https://api.dune.com/api/v1",
+            "description": "Dune API base url (optional, default: https://api.dune.com/api/v1)"
+          },
+          "DUNE_API_KEY": {
+            "type": "string",
+            "description": "Dune API Key (from https://dune.com/docs/api/)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

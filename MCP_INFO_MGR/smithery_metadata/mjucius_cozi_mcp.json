@@ -1,0 +1,537 @@
+{
+  "qualifiedName": "@mjucius/cozi_mcp",
+  "displayName": "Cozi Family Organizer",
+  "description": "Manage your family's calendars and lists in Cozi. View, create, and update appointments; organize shopping and to-do lists; and manage family members. Stay coordinated with quick access to monthly schedules and list items.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@mjucius/cozi_mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_family_members",
+      "description": "Get all family members in the Cozi account.\n\n        This is often used as a first step when creating appointments with specific attendees.\n        Use the 'id' field from each family member when specifying attendees for appointments.\n\n        Returns:\n            List of family member objects with their details including:\n            - id: Unique identifier (use this for appointment attendees)\n            - name: Display name\n            - Other member details\n\n        Example workflow:\n            1. Call get_family_members() to get family member IDs\n            2. Use those IDs in the attendees parameter when creating appointments\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_family_membersArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_family_membersOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_lists",
+      "description": "Get all lists (shopping and todo lists).\n        \n        Returns:\n            List of list objects with their items\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_listsArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_listsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_lists_by_type",
+      "description": "Get lists filtered by type.\n        \n        Args:\n            list_type: Type of lists to retrieve ('shopping' or 'todo')\n            \n        Returns:\n            List of list objects filtered by type\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_lists_by_typeArguments",
+        "required": [
+          "list_type"
+        ],
+        "properties": {
+          "list_type": {
+            "type": "string",
+            "title": "List Type"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_lists_by_typeOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_list",
+      "description": "Create a new list.\n        \n        Args:\n            name: Name of the new list\n            list_type: Type of list to create ('shopping' or 'todo')\n            \n        Returns:\n            Created list object\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "create_listArguments",
+        "required": [
+          "name",
+          "list_type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "list_type": {
+            "type": "string",
+            "title": "List Type"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "create_listOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_list",
+      "description": "Delete an existing list.\n        \n        Args:\n            list_id: ID of the list to delete\n            \n        Returns:\n            True if deletion was successful\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "delete_listArguments",
+        "required": [
+          "list_id"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string",
+            "title": "List Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "delete_listOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_item",
+      "description": "Add an item to a list.\n        \n        Args:\n            list_id: ID of the list to add item to\n            item_text: Text content of the item to add\n            \n        Returns:\n            Updated list object with the new item\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "add_itemArguments",
+        "required": [
+          "list_id",
+          "item_text"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string",
+            "title": "List Id"
+          },
+          "item_text": {
+            "type": "string",
+            "title": "Item Text"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "add_itemOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "update_item_text",
+      "description": "Update the text of an existing item.\n        \n        Args:\n            list_id: ID of the list containing the item\n            item_id: ID of the item to update\n            new_text: New text content for the item\n            \n        Returns:\n            Updated list object\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "update_item_textArguments",
+        "required": [
+          "list_id",
+          "item_id",
+          "new_text"
+        ],
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "title": "Item Id"
+          },
+          "list_id": {
+            "type": "string",
+            "title": "List Id"
+          },
+          "new_text": {
+            "type": "string",
+            "title": "New Text"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "update_item_textOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "mark_item",
+      "description": "Mark an item as complete or incomplete.\n        \n        Args:\n            list_id: ID of the list containing the item\n            item_id: ID of the item to mark\n            completed: True to mark complete, False to mark incomplete\n            \n        Returns:\n            Updated list object\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "mark_itemArguments",
+        "required": [
+          "list_id",
+          "item_id",
+          "completed"
+        ],
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "title": "Item Id"
+          },
+          "list_id": {
+            "type": "string",
+            "title": "List Id"
+          },
+          "completed": {
+            "type": "boolean",
+            "title": "Completed"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "mark_itemOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_items",
+      "description": "Remove items from a list.\n\n        Args:\n            list_id: ID of the list to remove items from\n            item_ids: List of item IDs to remove\n\n        Returns:\n            True if removal was successful\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "remove_itemsArguments",
+        "required": [
+          "list_id",
+          "item_ids"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string",
+            "title": "List Id"
+          },
+          "item_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Item Ids"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "remove_itemsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_calendar",
+      "description": "Get calendar appointments for a specific month.\n        \n        Args:\n            year: Year (e.g., 2024)\n            month: Month number (1-12)\n            \n        Returns:\n            List of appointment objects for the specified month\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_calendarArguments",
+        "required": [
+          "year",
+          "month"
+        ],
+        "properties": {
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "month": {
+            "type": "integer",
+            "title": "Month"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_calendarOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_appointment",
+      "description": "Create a new calendar appointment.\n\n        When creating appointments for specific people, first use get_family_members()\n        to get the family member IDs, then include those IDs in the attendees parameter.\n\n        Args:\n            subject: Appointment title/subject (e.g., \"Soccer practice - Alice, Bob, Charlie\")\n            start_date: Start date/time in ISO format (e.g., \"2024-03-15T10:00:00\")\n            end_date: End date/time in ISO format (e.g., \"2024-03-15T11:00:00\")\n            attendees: List of family member IDs who will attend this event.\n                      Use get_family_members() first to get the correct IDs.\n                      Leave empty for family-wide events (default: empty list)\n            all_day: Whether this is an all-day event (default: False)\n            notes: Additional notes for the appointment (default: \"\")\n\n        Returns:\n            Created appointment object\n\n        Example workflow for appointments with specific people:\n            1. Call get_family_members() to get family member details\n            2. Find the IDs of the people mentioned in the appointment\n            3. Pass those IDs in the attendees parameter\n\n        Example:\n            # For \"Soccer practice - Alice, Bob, Charlie\"\n            # First get family members, find Alice's, Bob's, and Charlie's IDs\n            # Then call: create_appointment(\n            #   subject=\"Soccer practice - Alice, Bob, Charlie\",\n            #   attendees=[\"alice-id-123\", \"bob-id-456\", \"charlie-id-789\"],\n            #   ...\n            # )\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "create_appointmentArguments",
+        "required": [
+          "subject",
+          "start_date",
+          "end_date"
+        ],
+        "properties": {
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "default": ""
+          },
+          "all_day": {
+            "type": "boolean",
+            "title": "All Day",
+            "default": false
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "end_date": {
+            "type": "string",
+            "title": "End Date"
+          },
+          "attendees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Attendees",
+            "default": null
+          },
+          "start_date": {
+            "type": "string",
+            "title": "Start Date"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "create_appointmentOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "update_appointment",
+      "description": "Update an existing calendar appointment.\n\n        To modify attendees for an appointment, use get_family_members() to get the\n        correct family member IDs, then update the 'attendees' field in the appointment object.\n\n        Args:\n            appointment_obj: Appointment object dictionary to update. Modify any fields\n                           you want to change, including:\n                           - subject: Change the title\n                           - attendees: List of family member IDs (use get_family_members() first)\n                           - start_day, start_time, end_time: Change timing\n                           - notes: Add or modify notes\n                           - all other appointment fields\n\n        Returns:\n            Updated appointment object\n\n        Example workflow for modifying attendees:\n            1. Get the current appointment (from get_calendar() or previous operations)\n            2. Call get_family_members() to get family member details\n            3. Find the IDs of people who should attend\n            4. Modify the appointment_obj['attendees'] field with the new list of IDs\n            5. Call update_appointment() with the modified appointment object\n\n        Example:\n            # To add or change attendees for an existing appointment\n            # 1. Get appointment from calendar\n            # 2. Get family members to find IDs\n            # 3. Update attendees:\n            # appointment_obj['attendees'] = ['alice-id-123', 'bob-id-456']\n            # 4. Call update_appointment(appointment_obj)\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "update_appointmentArguments",
+        "required": [
+          "appointment_obj"
+        ],
+        "properties": {
+          "appointment_obj": {
+            "type": "object",
+            "title": "Appointment Obj",
+            "additionalProperties": true
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "update_appointmentOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_appointment",
+      "description": "Delete a calendar appointment.\n        \n        Args:\n            appointment_id: ID of the appointment to delete\n            \n        Returns:\n            True if deletion was successful\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "delete_appointmentArguments",
+        "required": [
+          "appointment_id"
+        ],
+        "properties": {
+          "appointment_id": {
+            "type": "string",
+            "title": "Appointment Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "delete_appointmentOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_list",
+      "description": "Update an existing list (mainly for reordering items).\n        \n        Args:\n            list_obj: List object dictionary to update\n            \n        Returns:\n            Updated list object\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "update_listArguments",
+        "required": [
+          "list_obj"
+        ],
+        "properties": {
+          "list_obj": {
+            "type": "object",
+            "title": "List Obj",
+            "additionalProperties": true
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "update_listOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@mjucius/cozi_mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "CoziConfigSchema",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "description": "Cozi account password"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Cozi account username/email"
+          }
+        }
+      }
+    }
+  ]
+}

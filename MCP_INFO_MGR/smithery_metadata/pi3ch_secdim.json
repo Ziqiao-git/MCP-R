@@ -1,0 +1,158 @@
+{
+  "qualifiedName": "@pi3ch/secdim",
+  "displayName": "SecDim Secure Coding Labs",
+  "description": "Find hands-on secure coding labs for vulnerabilities like XSS, SQL Injection, and OWASP Top 10 topics. Get a personalized learning pathway based on your GitHub or SecDim profile to accelerate your remediation skills. Access curated resources and practice exercises tailored to your languages, frameworks, and experience level.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/3b7bdc40-81e0-4d1d-b6bd-7684ae4cad5a.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@pi3ch/secdim",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_learning_pathway",
+      "description": "\n    Return a personalized secure code learning pathway based on github or secdim profile context.\n\n    Use this tool to:\n    - Analyze GitHub profile to understand developer's experience and provide a personilized learning path\n    - Analyze SecDim profile to understand developer's experience and provide a personilized learning path\n    - Provide important resources and link to secure code learning labs on how to fix specific vulnerabilities\n    - Teach developer how to patch a specific vulnerability\n    - Provide a series of hands-on labs to practice secure coding\n    - Create a personalized learning path for secure coding practices\n\n    When secdim_username is provided, the tool will:\n    - Fetch player profile from /player/{username}/activity API\n    - Fetch completed challenges from /player/{username}/completed API\n    - Filter out challenges the user has already completed\n    - Use player skill data to better match language and technology recommendations\n    - Estimate experience level based on challenge completion history\n\n    The tool will provide error feedback if:\n    - No suitable challenges were found for the requested language\n    - The main vulnerability was not provided or had no matching labs\n    - The user has completed a large number of challenges (50+)\n    - There was an issue analyzing either GitHub or SecDim profiles\n\n    Args:\n        language: Programming language (e.g., 'javascript', 'python')\n        vulnerability: The vulnerability to focus on (e.g., 'xss', 'sql-injection')\n        experience_level: Developer experience level (default: beginner)\n        github_username: GitHub username for profile analysis (at least one of github_username or secdim_username is required)\n        secdim_username: SecDim username for profile analysis (at least one of github_username or secdim_username is required)\n        github_token: GitHub token for API access (optional)\n\n    Returns:\n        Dictionary containing the learning pathway or error\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_learning_pathwayArguments",
+        "required": [
+          "language"
+        ],
+        "properties": {
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "github_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Token",
+            "default": null
+          },
+          "vulnerability": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vulnerability",
+            "default": null
+          },
+          "github_username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Username",
+            "default": null
+          },
+          "secdim_username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secdim Username",
+            "default": null
+          },
+          "experience_level": {
+            "type": "string",
+            "title": "Experience Level",
+            "default": "beginner"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_vulnerable_practice_labs",
+      "description": "\n    Return a list of hands-on SecDim secure coding labs related to a detected or suspected vulnerability.\n\n    Use this tool to:\n    - Find secure coding learning labs for specific vulnerabilities like XSS, SQL Injection, etc.\n    - Explore OWASP Top 10 vulnerabilities and related labs\n    - Provide additional resources and guides to help developers improve their secure coding skills\n\n    Args:\n        search: Search term for the vulnerability (e.g., 'xss', 'sql-injection', 'injection')\n        cwe: Common Weakness Enumeration (CWE) ID to filter by\n        owasp: OWASP category to filter by (e.g., 'a03:2021')\n        technology: Technology or framework to filter by (e.g., 'react', 'django')\n        language: Programming language to filter by (e.g., 'javascript', 'python')\n\n    Labs are secure coding challenges each simulating a real vulnerability. They are tagged with the following difficulty levels\n        - Trivial: Easy to find and path vulnerabilities. It can be completed in 5-10 minutes. 1-15 points.\n        - Easy: Known vulnerabilities. It can be completed in 10-30 minutes. 16-35 points.\n        - Medium: Known vulnerabilities but require defence-in-depth patch. It can be completed in 20-30 minutes. 36-70 points.\n        - Hard: Hard to find or patch vulnerabilities. It can be completed in 30-60 minutes. 71-100 points.\n        - Battle: SecDim Flagship attack and defence challenge that require both vulnerability exploitation and mitigation skills. Points are accumulated.\n\n    Returns:\n        Dictionary containing labs results or error\n        If there are no results, user can perform a manual search on https://play.secdim.com/browse\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_vulnerable_practice_labsArguments",
+        "properties": {
+          "cwe": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cwe",
+            "default": null
+          },
+          "owasp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owasp",
+            "default": null
+          },
+          "search": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search",
+            "default": null
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "default": null
+          },
+          "technology": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technology",
+            "default": null
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@pi3ch/secdim/mcp",
+      "configSchema": {}
+    }
+  ]
+}

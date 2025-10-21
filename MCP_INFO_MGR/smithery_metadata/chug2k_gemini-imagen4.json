@@ -1,0 +1,88 @@
+{
+  "qualifiedName": "@chug2k/gemini-imagen4",
+  "displayName": "Gemini Imagen4",
+  "description": "Generate stunning images from text descriptions using Google's cutting-edge Imagen 4.0 models. Customize image generation with multiple model variants, aspect ratios, and output formats. Browse and manage generated images locally through the MCP protocol with built-in safety filtering.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/ai.google.dev.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@chug2k/gemini-imagen4",
+  "security": null,
+  "tools": [
+    {
+      "name": "generate_image_from_text",
+      "title": "Generate Image from Text",
+      "description": "Generate an image from a text description using Google Imagen 4.0 models",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "imagen-4.0-generate-preview-06-06",
+              "imagen-4.0-fast-generate-preview-06-06",
+              "imagen-4.0-ultra-generate-preview-06-06"
+            ],
+            "type": "string",
+            "default": "imagen-4.0-generate-preview-06-06",
+            "description": "Imagen 4.0 model variant to use"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Text description of the image to generate"
+          },
+          "aspectRatio": {
+            "enum": [
+              "1:1",
+              "3:4",
+              "4:3",
+              "9:16",
+              "16:9"
+            ],
+            "type": "string",
+            "description": "Aspect ratio of generated images"
+          },
+          "outputMimeType": {
+            "enum": [
+              "image/png",
+              "image/jpeg"
+            ],
+            "type": "string",
+            "default": "image/png",
+            "description": "Output image format"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@chug2k/gemini-imagen4/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "geminiApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "geminiApiKey": {
+            "type": "string",
+            "description": "Your Google Gemini API key"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

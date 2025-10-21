@@ -1,0 +1,321 @@
+{
+  "qualifiedName": "@deepwriter-ai/deepwriter-mcp",
+  "displayName": "DeepWriter MCP Server",
+  "description": "Provide seamless integration with DeepWriter's AI content generation and project management capabilities through a standardized MCP interface. Manage projects, generate content, and retrieve project details efficiently using this server. Enhance your AI assistant workflows by connecting to DeepWriter's powerful API via MCP.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "listProjects",
+      "description": "List all projects for the authenticated user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getProjectDetails",
+      "description": "Get detailed information about a specific project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "description": "The ID of the project to retrieve details for."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createProject",
+      "description": "Create a new project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The email associated with the project."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title for the new project."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateProject",
+      "description": "Update an existing project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id",
+          "updates"
+        ],
+        "properties": {
+          "updates": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Email associated with the project"
+              },
+              "model": {
+                "type": "string",
+                "description": "AI model used"
+              },
+              "title": {
+                "type": "string",
+                "description": "New title for the project"
+              },
+              "author": {
+                "type": "string",
+                "description": "Author of the work"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Main prompt for generation"
+              },
+              "style_text": {
+                "type": "string",
+                "description": "Stylistic guidance text"
+              },
+              "work_vision": {
+                "type": "string",
+                "description": "Vision for the work"
+              },
+              "outline_text": {
+                "type": "string",
+                "description": "Outline text"
+              },
+              "work_details": {
+                "type": "string",
+                "description": "Detailed information about the work"
+              },
+              "work_description": {
+                "type": "string",
+                "description": "Description of the work"
+              },
+              "supplemental_info": {
+                "type": "string",
+                "description": "Supplemental information"
+              }
+            },
+            "description": "Object containing fields to update.",
+            "additionalProperties": false
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The ID of the project to update."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteProject",
+      "description": "Delete a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "description": "The ID of the project to delete."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generateWizardWork",
+      "description": "Generate content using the enhanced wizard workflow with comprehensive parameter support",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id",
+          "prompt",
+          "author",
+          "email"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "deepwriter",
+              "benchmark",
+              "romance",
+              "homework",
+              "deepseek",
+              "skunkworks"
+            ],
+            "type": "string",
+            "description": "Content generation mode."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Author email address."
+          },
+          "author": {
+            "type": "string",
+            "description": "Author name for the document."
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Main generation prompt describing the content to create."
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether to use default system API key."
+          },
+          "max_pages": {
+            "type": "number",
+            "maximum": 350,
+            "minimum": 1,
+            "description": "Maximum pages allowed for generation."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The ID of the project to generate work for."
+          },
+          "page_length": {
+            "type": "string",
+            "description": "Desired document length specification."
+          },
+          "outline_text": {
+            "type": "string",
+            "description": "Additional outline instructions or structure guidance."
+          },
+          "free_trial_mode": {
+            "enum": [
+              "true",
+              "false"
+            ],
+            "type": "string",
+            "description": "Whether user is on free trial."
+          },
+          "use_web_research": {
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "type": "string",
+            "description": "Whether to use web research."
+          },
+          "has_tableofcontents": {
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "type": "string",
+            "description": "Whether to include table of contents."
+          },
+          "questions_and_answers": {
+            "type": "string",
+            "description": "JSON string of follow-up questions and answers."
+          },
+          "has_technical_diagrams": {
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "type": "string",
+            "description": "Whether to include technical diagrams."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "formatPrompt",
+      "description": "Format and enhance prompts using AI to improve clarity and effectiveness",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "The prompt to format and enhance."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Associated project ID for file access."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "uploadProjectFiles",
+      "description": "Upload multiple files to a project with enhanced support for 20+ file types including PDF, Word, text, code, and data files",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id",
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "description": "Array of File objects to upload."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The ID of the project to associate files with."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@deepwriter-ai/deepwriter-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "deepwriterApiKey"
+        ],
+        "properties": {
+          "deepwriterApiKey": {
+            "type": "string",
+            "description": "DeepWriter API key for authenticating requests against the DeepWriter API"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "qualifiedName": "@oharkins/weatherxm-mcp-server",
+  "displayName": "WeatherXM Pro Weather Data Server",
+  "description": "Provide real-time and historical weather data, forecasts, alerts, and station information from the WeatherXM decentralized weather network worldwide. Enable detailed weather insights including temperature, wind, precipitation, UV index, and data quality assessments. Discover nearby weather stations and explore network coverage for comprehensive weather analysis.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/1c956c76-7cd9-4270-82b6-3783852d191d.jpeg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@oharkins/weatherxm-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_current_weather",
+      "description": "Get current weather conditions for a specific WeatherXM station by station ID. Use this when you already know the station ID. For location-based queries, use 'get_weather_for_location' or 'search_weather_by_location' instead.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "station_id"
+        ],
+        "properties": {
+          "station_id": {
+            "type": "string",
+            "description": "WeatherXM station ID. Example: '812c3670-1cff-11ed-9972-4f669f2d96bd'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_hourly_forecast",
+      "description": "Get hourly weather forecast for a specific WeatherXM station by station ID. Use this when you already know the station ID. For location-based queries, use 'get_weather_forecast_for_location' instead.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "station_id"
+        ],
+        "properties": {
+          "hours": {
+            "type": "number",
+            "default": 48,
+            "description": "Number of hours to forecast (1-48, default 48)"
+          },
+          "station_id": {
+            "type": "string",
+            "description": "WeatherXM station ID. Example: '812c3670-1cff-11ed-9972-4f669f2d96bd'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_daily_forecast",
+      "description": "Get daily weather forecast for a specific WeatherXM station by station ID. Use this when you already know the station ID. For location-based queries, use 'get_weather_forecast_for_location' instead.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "station_id"
+        ],
+        "properties": {
+          "days": {
+            "type": "number",
+            "default": 7,
+            "description": "Number of days to forecast (1-7, default 7)"
+          },
+          "station_id": {
+            "type": "string",
+            "description": "WeatherXM station ID. Example: '812c3670-1cff-11ed-9972-4f669f2d96bd'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_stations_near",
+      "description": "Get a list of WeatherXM stations within a specified radius from a location. Uses the stations/near endpoint with radius in meters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "Latitude of the center of the area in decimal degrees. Example: 40.7128 for New York City."
+          },
+          "lon": {
+            "type": "number",
+            "description": "Longitude of the center of the area in decimal degrees. Example: -74.0060 for New York City."
+          },
+          "radius": {
+            "type": "number",
+            "default": 10000,
+            "description": "Radius in meters for which stations are queried. Example: 5000 for 5km radius."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_historical_observations",
+      "description": "Get historical weather observations for a specific WeatherXM station on a specific date. Use this when you already know the station ID and want to see past weather data. Note: Only recent past dates are supported (typically last few days). Future dates are not supported.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "station_id",
+          "date"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Date in YYYY-MM-DD format (UTC). Must be a recent past date (typically last few days), not in the future. Example: '2025-07-01'"
+          },
+          "station_id": {
+            "type": "string",
+            "description": "WeatherXM station ID. Example: '812c3670-1cff-11ed-9972-4f669f2d96bd'"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@oharkins/weatherxm-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "WeatherXM Pro API key required for accessing weather data"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

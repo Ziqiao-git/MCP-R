@@ -1,0 +1,86 @@
+{
+  "qualifiedName": "@vaebe/github-search",
+  "displayName": "GitHub Search API Server",
+  "description": "Leverage the GitHub search API to enhance your applications with powerful search capabilities. Integrate seamlessly and retrieve relevant data from GitHub repositories efficiently. Start building smarter applications with enhanced search functionalities today.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "github_search",
+      "description": "在 GitHub 上搜索仓库、代码、Issues 或用户",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "当前页码，用于分页查询"
+          },
+          "type": {
+            "enum": [
+              "repositories",
+              "code",
+              "issues",
+              "users"
+            ],
+            "type": "string",
+            "description": "搜索类型，可选值为 repositories、code、issues 或 users"
+          },
+          "query": {
+            "type": "string",
+            "description": "搜索关键词，用于匹配 GitHub 中的内容"
+          },
+          "perPage": {
+            "type": "number",
+            "default": 30,
+            "description": "每页返回的搜索结果数量"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_github_user",
+      "description": "获取指定 GitHub 用户的详细信息",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "GitHub 的用户名"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@vaebe/github-search/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "GithubToken": {
+            "type": "string",
+            "description": "The personal access token for accessing the GitHub API."
+          }
+        }
+      }
+    }
+  ]
+}

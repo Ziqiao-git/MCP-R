@@ -1,0 +1,122 @@
+{
+  "qualifiedName": "@Magic-Sauce/quickchart-mcp-server",
+  "displayName": "QuickChart Server",
+  "description": "Generate various types of charts effortlessly using QuickChart.io. Create chart images by providing data and styling parameters, and download them directly to your local system. Enhance your data visualization capabilities with customizable chart options and easy integration.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/quickchart.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "generate_chart",
+      "description": "Generate a chart using QuickChart",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type",
+          "datasets"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Chart type (bar, line, pie, doughnut, radar, polarArea, scatter, bubble, radialGauge, speedometer)"
+          },
+          "title": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels for data points"
+          },
+          "options": {
+            "type": "object"
+          },
+          "datasets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "borderColor": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ]
+                },
+                "backgroundColor": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ]
+                },
+                "additionalConfig": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "download_chart",
+      "description": "Download a chart image to a local file",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "config",
+          "outputPath"
+        ],
+        "properties": {
+          "config": {
+            "type": "object",
+            "description": "Chart configuration object"
+          },
+          "outputPath": {
+            "type": "string",
+            "description": "Path where the chart image should be saved"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Magic-Sauce/quickchart-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

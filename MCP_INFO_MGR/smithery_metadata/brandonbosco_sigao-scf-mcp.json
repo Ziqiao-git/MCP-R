@@ -1,0 +1,426 @@
+{
+  "qualifiedName": "@brandonbosco/sigao-scf-mcp",
+  "displayName": "See Click Fix MCP Server",
+  "description": "Provides access to Civic Plus - See Click Fix,  allowing you to interact with your data via an LLM. \n\nDeveloped and maintained by Sigao. ",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/557931b7-6946-483d-8bda-9889b0caafa5.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@brandonbosco/sigao-scf-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "getIssue",
+      "description": "Get a single issue by its ID from SeeClickFix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId"
+        ],
+        "properties": {
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getIssues",
+      "description": "Get a list of issues from SeeClickFix with optional date filtering",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date for filtering issues ISO 8601 format (e.g., \"2024-07-28T00:00:00Z\")"
+          },
+          "perPage": {
+            "type": "number",
+            "description": "Number of issues per page (default: 20)"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date for filtering issues ISO 8601 format (e.g., \"2024-07-28T00:00:00Z\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getRequestTypes",
+      "description": "Step 1 of 3 when creating a new issue. The user must provide a location to get the request types available in that area.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "lat",
+          "lng"
+        ],
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "Latitude coordinate of the location"
+          },
+          "lng": {
+            "type": "number",
+            "description": "Longitude coordinate of the location"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getRequestTypeDetails",
+      "description": "Step 2 of 3 when creating a new issue. Use the information requirements that are returned to prompt the user for that information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "requestTypeId"
+        ],
+        "properties": {
+          "requestTypeId": {
+            "type": "string",
+            "description": "The ID of the request type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createIssueWithDetails",
+      "description": "Step 3 of 3 when creating a new issue. Use the information collected from the user to create the issue.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "requestTypeId",
+          "address",
+          "lat",
+          "lng",
+          "answers"
+        ],
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "Latitude coordinate (required)"
+          },
+          "lng": {
+            "type": "number",
+            "description": "Longitude coordinate (required)"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address where the issue is located"
+          },
+          "answers": {
+            "type": "object",
+            "description": "Answers to the request type questions (key-value pairs where keys are question IDs)",
+            "additionalProperties": {}
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device ID for tracking"
+          },
+          "mediaUrl": {
+            "type": "string",
+            "description": "URL of media attachment"
+          },
+          "reporterName": {
+            "type": "string",
+            "description": "Name of the person reporting the issue"
+          },
+          "reporterEmail": {
+            "type": "string",
+            "description": "Email address of the person reporting the issue"
+          },
+          "requestTypeId": {
+            "type": "string",
+            "description": "ID of the request type for this issue"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "flagIssue",
+      "description": "Flag an issue as inappropriate or problematic in SeeClickFix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId",
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "The reason for flagging the issue (e.g., 'inappropriate', 'spam', 'duplicate', 'not_an_issue')"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Additional comment explaining why the issue is being flagged"
+          },
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to flag"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "followIssue",
+      "description": "Follow an issue to receive notifications about updates in SeeClickFix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId"
+        ],
+        "properties": {
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to follow"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateIssue",
+      "description": "Update an existing issue in SeeClickFix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId"
+        ],
+        "properties": {
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to update"
+          },
+          "priority": {
+            "type": "string",
+            "description": "New priority for the issue"
+          },
+          "assigneeId": {
+            "type": "string",
+            "description": "ID of the user to assign the issue to"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "ID of the category to assign the issue to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addComment",
+      "description": "Add a comment to an issue in SeeClickFix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId",
+          "comment"
+        ],
+        "properties": {
+          "comment": {
+            "type": "string",
+            "description": "The comment text to add"
+          },
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to comment on"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getComments",
+      "description": "Get all comments for a specific issue in SeeClickFix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to get comments for"
+          },
+          "perPage": {
+            "type": "number",
+            "description": "Number of comments per page (default: 20)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "closeIssue",
+      "description": "Close an issue in SeeClickFix with a closing comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId",
+          "comment"
+        ],
+        "properties": {
+          "comment": {
+            "type": "string",
+            "description": "The closing comment"
+          },
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to close"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reopenIssue",
+      "description": "Reopen a closed issue in SeeClickFix with a comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId",
+          "comment"
+        ],
+        "properties": {
+          "comment": {
+            "type": "string",
+            "description": "The reopening comment"
+          },
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to reopen"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "acknowledgeIssue",
+      "description": "Acknowledge an issue in SeeClickFix with a comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId",
+          "comment"
+        ],
+        "properties": {
+          "comment": {
+            "type": "string",
+            "description": "The acknowledgment comment"
+          },
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to acknowledge"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "changeLocation",
+      "description": "Change the location of an existing issue in SeeClickFix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueId",
+          "lat",
+          "lng",
+          "address"
+        ],
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "New latitude coordinate for the issue"
+          },
+          "lng": {
+            "type": "number",
+            "description": "New longitude coordinate for the issue"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address of the new location"
+          },
+          "issueId": {
+            "type": "string",
+            "description": "The ID of the issue to update location"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getCurrentTime",
+      "description": "Get the current date and time",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@brandonbosco/sigao-scf-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "serviceUserName",
+          "serviceUserPassword",
+          "orgId",
+          "debug"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "description": "Enable debug mode. If TRUE, the server will use the 'crm-int' subdomain for See Click Fix API requests."
+          },
+          "orgId": {
+            "type": "string",
+            "description": "The organization ID for See Click Fix. Note: if debug is TRUE, this should be the ID for your Sandbox instance."
+          },
+          "serviceUserName": {
+            "type": "string",
+            "description": "The email address/username of the service account that will make changes in See Click Fix"
+          },
+          "serviceUserPassword": {
+            "type": "string",
+            "description": "The password of the service account that will make changes in See Click Fix"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

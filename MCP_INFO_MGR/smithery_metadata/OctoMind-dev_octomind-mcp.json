@@ -1,0 +1,805 @@
+{
+  "qualifiedName": "@OctoMind-dev/octomind-mcp",
+  "displayName": "Octomind MCP Server",
+  "description": "Enable your agents to create, execute, and manage end-to-end tests seamlessly. Leverage Octomind's tools and resources in your local development environment to enhance your testing capabilities. Simplify your testing workflow with automated features and easy integration.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/octomind.dev.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "search",
+      "description": "the search tool can be used to search the octomind documentation for a given query.\n    The search results are returned as a list of links to the documentation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getTestCase",
+      "description": "the getTestCase tool can retrieve a test case for a given test target and test case id.\n    A test case id is unique to the test target. The test case includes a set of interactions and assertions.\n    it is the result of a discovery or a manual creation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testCaseId",
+          "testTargetId"
+        ],
+        "properties": {
+          "testCaseId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test case"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "executeTests",
+      "description": "the executeTests tool can trigger a set of tests for a given test target.\n    The test target id is unique to the test target. The tests are executed on the provided url.\n    The context object is used to provide information about the source of the test execution.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId",
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL where the tests will be executed"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "List of tags used for filtering the tests to execute"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the test execution"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          },
+          "environmentName": {
+            "type": "string",
+            "default": "default",
+            "description": "Name of the environment to use for test execution"
+          },
+          "variablesToOverwrite": {
+            "type": "object",
+            "description": "Optional variables to override during test execution",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getEnvironments",
+      "description": "the getEnvironments tool can retrieve environments for a given test target.\n   an environment represents a specific setup or deployments for a test target. It include a test account when necsesary\n    to login, a header configuration, a discovery url and a set of variables.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId"
+        ],
+        "properties": {
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createEnvironment",
+      "description": "the createEnvironment tool can create an environment for a given test target.\n    an environment represents a specific setup or deployments for a test target. It include a test account when necsesary\n    to login, a header configuration, a discovery url and a set of variables.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId",
+          "name",
+          "discoveryUrl"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the environment"
+          },
+          "basicAuth": {
+            "type": "object",
+            "required": [
+              "username",
+              "password"
+            ],
+            "properties": {
+              "password": {
+                "type": "string",
+                "description": "Password for basic auth, if discovery needs authentication"
+              },
+              "username": {
+                "type": "string",
+                "description": "Username for basic auth, if discovery needs authentication "
+              }
+            },
+            "description": "Optional basic authentication credentials, if discovery needs authentication",
+            "additionalProperties": false
+          },
+          "testAccount": {
+            "type": "object",
+            "required": [
+              "username",
+              "password"
+            ],
+            "properties": {
+              "password": {
+                "type": "string",
+                "description": "Password for test account, if discovery needs authentication"
+              },
+              "username": {
+                "type": "string",
+                "description": "Username for test account, if discovery needs authentication"
+              },
+              "otpInitializerKey": {
+                "type": "string",
+                "description": "Optional OTP initializer key, if discovery needs authentication with otp"
+              }
+            },
+            "description": "Optional test account credentials, if discovery needs authentication",
+            "additionalProperties": false
+          },
+          "discoveryUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL used for test discovery"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          },
+          "privateLocationName": {
+            "type": "string",
+            "default": "US Proxy",
+            "description": "Optional name of the private location, if discovery         needs to discover in a private location e.g. behind a firewall or VPN"
+          },
+          "additionalHeaderFields": {
+            "type": "object",
+            "description": "Optional additional HTTP header fields,         if discovery needs additional headers to be set",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateEnvironment",
+      "description": "the updateEnvironment tool can update an environment for a given test target.\n    An environment represents a specific setup or deployments for a test target. It includes a test account when necessary\n    to login, a header configuration or a discovery url.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId",
+          "environmentId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Optional new name for the environment"
+          },
+          "basicAuth": {
+            "type": "object",
+            "required": [
+              "username",
+              "password"
+            ],
+            "properties": {
+              "password": {
+                "type": "string",
+                "description": "Password for basic auth, if discovery needs authentication"
+              },
+              "username": {
+                "type": "string",
+                "description": "Username for basic auth, if discovery needs authentication "
+              }
+            },
+            "description": "Optional basic authentication credentials, if discovery needs authentication",
+            "additionalProperties": false
+          },
+          "testAccount": {
+            "type": "object",
+            "required": [
+              "username",
+              "password"
+            ],
+            "properties": {
+              "password": {
+                "type": "string",
+                "description": "Password for test account, if discovery needs authentication"
+              },
+              "username": {
+                "type": "string",
+                "description": "Username for test account, if discovery needs authentication"
+              },
+              "otpInitializerKey": {
+                "type": "string",
+                "description": "Optional OTP initializer key, if discovery needs authentication with otp"
+              }
+            },
+            "description": "Optional test account credentials, if discovery needs authentication",
+            "additionalProperties": false
+          },
+          "discoveryUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional new discovery URL"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          },
+          "environmentId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the environment"
+          },
+          "privateLocationName": {
+            "type": "string",
+            "description": "Optional name of the private location, if discovery needs to discover in a private location e.g. behind a firewall or VPN"
+          },
+          "additionalHeaderFields": {
+            "type": "object",
+            "description": "Optional additional HTTP header fields, if discovery needs additional headers to be set",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteEnvironment",
+      "description": "deleteEnvironment tool can delete an environment for a given test target.\n    The environment id is unique to the test target. The call is not reversible.\n    an environment represents a specific setup or deployments for a test target. It include a test account when necsesary\n    to login, a header configuration, a discovery url and a set of variables.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId",
+          "environmentId"
+        ],
+        "properties": {
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          },
+          "environmentId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the environment to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getTestReports",
+      "description": "the getTestReports tool can retrieve test reports for a given test target.\n    Test reports are generated when set of tests are executed. The test report id is unique to the test target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId"
+        ],
+        "properties": {
+          "key": {
+            "type": "object",
+            "required": [
+              "createdAt"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Creation timestamp for filtering reports"
+              }
+            },
+            "description": "Optional key for filtering test reports",
+            "additionalProperties": false
+          },
+          "filter": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "operator",
+                "value"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Filter key"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Filter value"
+                },
+                "operator": {
+                  "enum": [
+                    "EQUALS"
+                  ],
+                  "type": "string",
+                  "description": "Filter operator, currently only EQUALS is supported"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Optional filters for test reports"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getTestReport",
+      "description": "the getTestReport tool can retrieve a test report for a given test target and test report id.\n    A test report id is generated when a set of test are executed on\n    a test target. The test report id is unique to the test target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId",
+          "testReportId"
+        ],
+        "properties": {
+          "testReportId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test report"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "discovery",
+      "description": "the discovery tool can create a test case on a given test target with a test case description or prompt.\n    One can either start from the predefined url for that test case or provide a new entry point url.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "testTargetId",
+          "prompt"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the test case to create"
+          },
+          "type": {
+            "enum": [
+              "LOGIN",
+              "COOKIE_BANNER"
+            ],
+            "type": "string",
+            "description": "Type of the test case to discover. A login is often used as a prerequisite for other test cases and should discovered first.\n          When it is completed it can be used as prerequisite for other test cases. A cookie banner is a test case is used to close the cookie banner of a website.\n          Is is also often used as a prerequisite for other test cases. Only set this option for these special test cases. Only one LOGIN or COOKIE_BANNER test case can\n          exist per test target at a time."
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Description or prompt that is used for test case generation. Best results are achieved when the prompt is strctured like: \"INTENT \n<describe what you want to test> \nINSTRUCTIONS\n<everything important you want the agent to take into account> \nrecord evidence by checking for relevant UI elements \nEXPECTED RESULT \n<describe what the agent should see once the task is done>\""
+          },
+          "tagNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of tag names to assign to the newly discovered test case"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "Optional external identifier. E.g. a ticket number or test rail id"
+          },
+          "folderName": {
+            "type": "string",
+            "description": "Optional folder name that the newly discovered test case will be added to"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          },
+          "prerequisiteName": {
+            "type": "string",
+            "description": "Optional prerequisite test case name. If set all steps of the prerequisite will be executed before the test case discovery starts"
+          },
+          "entryPointUrlPath": {
+            "type": "string",
+            "description": "Optional entry point URL path, if not provided the predefined url of the test target will be used"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getPrivateLocations",
+      "description": "the getPrivateLocations tool can retrieve all private locations configured for that org. \n    A private location is a server that can be used to access a test target behind a firewall or VPN.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getTestTargets",
+      "description": "the getTestTargets tool can retrieve all test targets or projects.\n    Test targets represent applications or services that can be tested using Octomind.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createTestTarget",
+      "description": "the createTestTarget tool can create a new test target or project.\n    A test target represents an application or service that can be tested using Octomind.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "app",
+          "discoveryUrl"
+        ],
+        "properties": {
+          "app": {
+            "type": "string",
+            "description": "The app name or project name of the test target"
+          },
+          "discoveryUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "The discovery URL of the test target"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateTestTarget",
+      "description": "the updateTestTarget tool can update an existing test target.\n    A test target represents an application or service that can be tested using Octomind.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId"
+        ],
+        "properties": {
+          "app": {
+            "type": "string",
+            "description": "The app name or project name of the test target"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target to update"
+          },
+          "timeoutPerStep": {
+            "type": "number",
+            "maximum": 30000,
+            "minimum": 5000,
+            "description": "The timeout per step in milliseconds"
+          },
+          "testIdAttribute": {
+            "type": "string",
+            "description": "The attribute name of the test ID"
+          },
+          "testRailIntegration": {
+            "type": "object",
+            "required": [
+              "domain",
+              "username",
+              "projectId",
+              "apiKey"
+            ],
+            "properties": {
+              "apiKey": {
+                "type": "string",
+                "description": "The TestRail API key"
+              },
+              "domain": {
+                "type": "string",
+                "description": "The domain of the TestRail instance"
+              },
+              "username": {
+                "type": "string",
+                "description": "The username for the TestRail instance"
+              },
+              "projectId": {
+                "type": "string",
+                "description": "The project ID for the TestRail instance"
+              }
+            },
+            "description": "TestRail integration configuration",
+            "additionalProperties": false
+          },
+          "skipAutomaticTestCreation": {
+            "type": "boolean",
+            "description": "Skip automatic test creation right after the test target is created"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteTestTarget",
+      "description": "the deleteTestTarget tool can delete an existing test target.\n    This operation cannot be undone.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId"
+        ],
+        "properties": {
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getVersion",
+      "description": "Returns the current version of the Octomind MCP server",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getTestCases",
+      "description": "the getTestCases tool can retrieve test cases for a given test target with optional filtering.\n    Test cases can be filtered by various criteria such as status, description, or tags.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId"
+        ],
+        "properties": {
+          "filter": {
+            "type": "object",
+            "properties": {
+              "folderId": {
+                "type": "string"
+              },
+              "runStatus": {
+                "enum": [
+                  "ON",
+                  "OFF"
+                ],
+                "type": "string"
+              },
+              "externalId": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "description": "Filter criteria for test cases, these are by default connected by AND. Includes description, runStatus, folderId and externalId. Example: \"{ description: \"create node\", runStatus: \"ON\" }\"",
+            "additionalProperties": false
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateTestCase",
+      "description": "the updateTestCase tool can update specific properties of a test case.\n    This allows modifying test case details such as description, status, or folderName.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId",
+          "testCaseId"
+        ],
+        "properties": {
+          "runStatus": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ON",
+                  "OFF"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional new run status for the test case"
+          },
+          "externalId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional external identifier for integration with external systems"
+          },
+          "folderName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional folder name to organize the test case"
+          },
+          "testCaseId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test case to update"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional new description for the test case"
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          },
+          "assignedTagNames": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional list of tag names to assign to the test case"
+          },
+          "entryPointUrlPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional new entry point URL path"
+          },
+          "interactionStatus": {
+            "anyOf": [
+              {
+                "enum": [
+                  "NEW",
+                  "OPENED"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional new interaction status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateTestCaseElement",
+      "description": "the updateTestCaseElement tool can update a specific element within a test case.\n    Test case elements represent individual steps in a test case, such as interactions (clicks, text input)\n    or assertions (checking if elements are visible, have text, etc.). Each element has selectors that\n    identify the target element on the page and an action to perform or assertion to verify. You can only update the locatorLine\n    of the element in question, for everything else the user currently needs to use the octomind ui.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "testTargetId",
+          "testCaseId",
+          "elementId",
+          "locatorLine"
+        ],
+        "properties": {
+          "elementId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test case element to update"
+          },
+          "testCaseId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test case containing the element"
+          },
+          "locatorLine": {
+            "type": "string",
+            "description": "a valid playwright locator line, e.g. \"locator('body')\", or \"getByRole('button', { name: 'some button'}).filter({ hasText: 'some text' })\""
+          },
+          "testTargetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the test target"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@OctoMind-dev/octomind-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apikey"
+        ],
+        "properties": {
+          "apikey": {
+            "type": "string",
+            "description": "The API key used to authenticate with Octomind API."
+          }
+        }
+      }
+    }
+  ]
+}

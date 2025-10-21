@@ -1,0 +1,485 @@
+{
+  "qualifiedName": "@mabeldata/pocketbase-mcp",
+  "displayName": "PocketBase MCP Server",
+  "description": "Manage your PocketBase collections effortlessly. Fetch, create, update, and delete records with ease, while also handling file uploads and downloads. Streamline your database operations and enhance your application's capabilities with this powerful server.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/pocketbase.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "fetch_record",
+      "description": "Fetch a single record from a PocketBase collection by ID.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection",
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the record to fetch."
+          },
+          "collection": {
+            "type": "string",
+            "description": "The name or ID of the PocketBase collection."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_records",
+      "description": "List records from a PocketBase collection. Supports filtering, sorting, pagination, and expansion.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Page number (defaults to 1)."
+          },
+          "sort": {
+            "type": "string",
+            "description": "PocketBase sort string (e.g., \"-created,name\")."
+          },
+          "expand": {
+            "type": "string",
+            "description": "PocketBase expand string (e.g., \"user,tags.name\")."
+          },
+          "filter": {
+            "type": "string",
+            "description": "PocketBase filter string (e.g., \"status='active'\")."
+          },
+          "perPage": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Items per page (defaults to 30, max 500)."
+          },
+          "collection": {
+            "type": "string",
+            "description": "The name or ID of the PocketBase collection."
+          }
+        }
+      }
+    },
+    {
+      "name": "create_record",
+      "description": "Create a new record in a PocketBase collection.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "The data for the new record (key-value pairs).",
+            "additionalProperties": true
+          },
+          "collection": {
+            "type": "string",
+            "description": "The name or ID of the PocketBase collection."
+          }
+        }
+      }
+    },
+    {
+      "name": "update_record",
+      "description": "Update an existing record in a PocketBase collection by ID.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection",
+          "id",
+          "data"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the record to update."
+          },
+          "data": {
+            "type": "object",
+            "description": "The data fields to update (key-value pairs).",
+            "additionalProperties": true
+          },
+          "collection": {
+            "type": "string",
+            "description": "The name or ID of the PocketBase collection."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_collection_schema",
+      "description": "Get the schema (fields, rules, etc.) of a PocketBase collection.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection"
+        ],
+        "properties": {
+          "collection": {
+            "type": "string",
+            "description": "The name or ID of the PocketBase collection."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_collections",
+      "description": "List all collections in the PocketBase instance.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "upload_file",
+      "description": "Upload a file (provided as content string) to a PocketBase collection record field.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection",
+          "recordId",
+          "fileField",
+          "fileContent",
+          "fileName"
+        ],
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "The desired name for the uploaded file (e.g., \"report.txt\")."
+          },
+          "recordId": {
+            "type": "string",
+            "description": "The ID of the record to attach the file to."
+          },
+          "fileField": {
+            "type": "string",
+            "description": "The name of the file field in the collection schema."
+          },
+          "collection": {
+            "type": "string",
+            "description": "The name or ID of the collection."
+          },
+          "fileContent": {
+            "type": "string",
+            "description": "The raw content of the file as a string."
+          }
+        }
+      }
+    },
+    {
+      "name": "download_file",
+      "description": "Get the URL to download a file from a PocketBase collection record field.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection",
+          "recordId",
+          "fileField"
+        ],
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "description": "The ID of the record containing the file."
+          },
+          "fileField": {
+            "type": "string",
+            "description": "The name of the file field."
+          },
+          "collection": {
+            "type": "string",
+            "description": "The name or ID of the collection."
+          }
+        }
+      }
+    },
+    {
+      "name": "set_migrations_directory",
+      "description": "Set the directory where migration files will be created and read from.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customPath": {
+            "type": "string",
+            "description": "Custom path for migrations. If not provided, defaults to \"pb_migrations\" in the current working directory."
+          }
+        }
+      }
+    },
+    {
+      "name": "create_migration",
+      "description": "Create a new, empty PocketBase migration file with a timestamped name.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "description"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "A brief description for the migration filename (e.g., \"add_user_email_index\")."
+          }
+        }
+      }
+    },
+    {
+      "name": "create_collection_migration",
+      "description": "Create a migration file specifically for creating a new PocketBase collection.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collectionDefinition"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Optional description override for the filename."
+          },
+          "collectionDefinition": {
+            "type": "object",
+            "required": [
+              "name",
+              "id"
+            ],
+            "description": "The full schema definition for the new collection (including name, id, fields, rules, etc.).",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "add_field_migration",
+      "description": "Create a migration file for adding a field to an existing collection.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collectionNameOrId",
+          "fieldDefinition"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Optional description override for the filename."
+          },
+          "fieldDefinition": {
+            "type": "object",
+            "required": [
+              "name",
+              "type"
+            ],
+            "description": "The schema definition for the new field.",
+            "additionalProperties": true
+          },
+          "collectionNameOrId": {
+            "type": "string",
+            "description": "The name or ID of the collection to update."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_migrations",
+      "description": "List all migration files found in the PocketBase migrations directory.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "apply_migration",
+      "description": "Apply a specific migration file.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "migrationFile"
+        ],
+        "properties": {
+          "migrationFile": {
+            "type": "string",
+            "description": "Name of the migration file to apply."
+          }
+        }
+      }
+    },
+    {
+      "name": "revert_migration",
+      "description": "Revert a specific migration file.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "migrationFile"
+        ],
+        "properties": {
+          "migrationFile": {
+            "type": "string",
+            "description": "Name of the migration file to revert."
+          }
+        }
+      }
+    },
+    {
+      "name": "apply_all_migrations",
+      "description": "Apply all pending migrations.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "appliedMigrations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of already applied migration filenames."
+          }
+        }
+      }
+    },
+    {
+      "name": "revert_to_migration",
+      "description": "Revert migrations up to a specific target.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "targetMigration"
+        ],
+        "properties": {
+          "targetMigration": {
+            "type": "string",
+            "description": "Name of the migration to revert to (exclusive). Use empty string to revert all."
+          },
+          "appliedMigrations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of already applied migration filenames."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_logs",
+      "description": "List API request logs from PocketBase with filtering, sorting, and pagination.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Page number (defaults to 1)."
+          },
+          "sort": {
+            "type": "string",
+            "description": "PocketBase sort string (e.g., \"-created,url\")."
+          },
+          "filter": {
+            "type": "string",
+            "description": "PocketBase filter string (e.g., \"method='GET'\")."
+          },
+          "perPage": {
+            "type": "number",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Items per page (defaults to 30, max 500)."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_log",
+      "description": "Get a single API request log by ID.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the log to fetch."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_logs_stats",
+      "description": "Get API request logs statistics with optional filtering.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "filter": {
+            "type": "string",
+            "description": "PocketBase filter string (e.g., \"method='GET'\")."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_cron_jobs",
+      "description": "Returns list with all registered app level cron jobs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "string",
+            "description": "Comma separated string of the fields to return in the JSON response (by default returns all fields). Ex.:?fields=*,expand.relField.name"
+          }
+        }
+      }
+    },
+    {
+      "name": "run_cron_job",
+      "description": "Triggers a single cron job by its id.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The identifier of the cron job to run."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@mabeldata/pocketbase-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "POCKETBASE_ADMIN_TOKEN"
+        ],
+        "properties": {
+          "POCKETBASE_API_URL": {
+            "type": "string",
+            "default": "http://127.0.0.1:8090",
+            "description": "The URL of your PocketBase instance."
+          },
+          "POCKETBASE_ADMIN_TOKEN": {
+            "type": "string",
+            "description": "Your PocketBase admin token."
+          }
+        }
+      }
+    }
+  ]
+}

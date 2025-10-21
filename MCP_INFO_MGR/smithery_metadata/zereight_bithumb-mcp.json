@@ -1,0 +1,467 @@
+{
+  "qualifiedName": "@zereight/bithumb-mcp",
+  "displayName": "Bithumb MCP Server",
+  "description": "Interact with the Bithumb API to fetch cryptocurrency information and manage transactions. Access real-time data and execute trades seamlessly through a standardized interface.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_ticker",
+      "description": "Get cryptocurrency ticker information (Public)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coinCode"
+        ],
+        "properties": {
+          "coinCode": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_orderbook",
+      "description": "Get order book information (Public)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coinCode"
+        ],
+        "properties": {
+          "coinCode": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_transaction_history",
+      "description": "Get recent transaction history (Public)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coinCode"
+        ],
+        "properties": {
+          "coinCode": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_assets_status",
+      "description": "Get asset deposit/withdrawal status (Public)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "orderCurrency"
+        ],
+        "properties": {
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_btci",
+      "description": "Get Bithumb Index (BTMI, BTAI) information (Public)",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_candlestick",
+      "description": "Get Candlestick data (Public)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "orderCurrency",
+          "paymentCurrency",
+          "chartIntervals"
+        ],
+        "properties": {
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          },
+          "chartIntervals": {
+            "enum": [
+              "1m",
+              "3m",
+              "5m",
+              "10m",
+              "30m",
+              "1h",
+              "6h",
+              "12h",
+              "24h"
+            ],
+            "type": "string",
+            "description": "Chart interval"
+          },
+          "paymentCurrency": {
+            "enum": [
+              "KRW",
+              "BTC"
+            ],
+            "type": "string",
+            "description": "Payment currency (KRW or BTC)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_account",
+      "description": "Get member account information and fees (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coinCode"
+        ],
+        "properties": {
+          "coinCode": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_balance",
+      "description": "Get account balance (Private)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "coinCode": {
+            "type": "string",
+            "default": "ALL",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH) or ALL"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_wallet_address",
+      "description": "Get member's coin deposit wallet address (Private)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "coinCode": {
+            "type": "string",
+            "default": "BTC",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_ticker_user",
+      "description": "Get member's recent virtual asset transaction information (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "orderCurrency"
+        ],
+        "properties": {
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_orders",
+      "description": "Get member's order details (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "order_currency"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "bid",
+              "ask"
+            ],
+            "type": "string",
+            "description": "Order type (bid or ask) (optional)"
+          },
+          "after": {
+            "type": "number",
+            "description": "Retrieve orders after this timestamp (optional)"
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of orders to retrieve (optional, default: 100)"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Order ID (optional)"
+          },
+          "order_currency": {
+            "type": "string",
+            "description": "Order currency symbol"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_order_detail",
+      "description": "Get details of a specific member order (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "orderId",
+          "orderCurrency"
+        ],
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Order ID"
+          },
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_user_transactions",
+      "description": "Get member's transaction completion history (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "searchGb",
+          "orderCurrency"
+        ],
+        "properties": {
+          "count": {
+            "type": "number",
+            "description": "Number of transactions to retrieve (optional, default: 20)"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Start index for retrieval (optional)"
+          },
+          "searchGb": {
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              9
+            ],
+            "type": "number",
+            "description": "Search type (0: all, 1: buy complete, 2: sell complete, 3: withdrawal processing, 4: deposit, 5: withdrawal complete, 9: KRW deposit)"
+          },
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_place",
+      "description": "Place a limit order (buy/sell) (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "orderCurrency",
+          "units",
+          "price",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "bid",
+              "ask"
+            ],
+            "type": "string",
+            "description": "Order type (bid or ask)"
+          },
+          "price": {
+            "type": "number",
+            "description": "Order price"
+          },
+          "units": {
+            "type": "number",
+            "description": "Order quantity"
+          },
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_cancel",
+      "description": "Cancel an order (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type",
+          "orderId",
+          "orderCurrency"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "bid",
+              "ask"
+            ],
+            "type": "string",
+            "description": "Order type (bid or ask)"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Order ID to cancel"
+          },
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_market_buy",
+      "description": "Place a market buy order (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "units",
+          "orderCurrency"
+        ],
+        "properties": {
+          "units": {
+            "type": "number",
+            "description": "Quantity to buy"
+          },
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_market_sell",
+      "description": "Place a market sell order (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "units",
+          "orderCurrency"
+        ],
+        "properties": {
+          "units": {
+            "type": "number",
+            "description": "Quantity to sell"
+          },
+          "orderCurrency": {
+            "type": "string",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_withdrawal_coin",
+      "description": "Request a coin withdrawal (Private)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "units",
+          "address"
+        ],
+        "properties": {
+          "units": {
+            "type": "number",
+            "description": "Withdrawal quantity"
+          },
+          "address": {
+            "type": "string",
+            "description": "Withdrawal address"
+          },
+          "currency": {
+            "type": "string",
+            "default": "BTC",
+            "description": "Cryptocurrency symbol (e.g. BTC, ETH)"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Destination tag/memo (optional, if required)"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_withdrawal_krw",
+      "description": "Request a KRW withdrawal (Private, Deprecated by Bithumb)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bank",
+          "account",
+          "price"
+        ],
+        "properties": {
+          "bank": {
+            "type": "string",
+            "description": "Bank code and name (e.g., 004_은행)"
+          },
+          "price": {
+            "type": "number",
+            "description": "Withdrawal amount"
+          },
+          "account": {
+            "type": "string",
+            "description": "Account number"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@zereight/bithumb-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "bithumbApiKey",
+          "bithumbSecretKey"
+        ],
+        "properties": {
+          "bithumbApiKey": {
+            "type": "string",
+            "description": "Your BITHUMB API Key"
+          },
+          "bithumbSecretKey": {
+            "type": "string",
+            "description": "Your BITHUMB Secret Key"
+          }
+        }
+      }
+    }
+  ]
+}

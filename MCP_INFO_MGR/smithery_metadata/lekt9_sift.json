@@ -1,0 +1,151 @@
+{
+  "qualifiedName": "@lekt9/sift",
+  "displayName": "SiftDB",
+  "description": "Search codebases for patterns and references with fast, precise results. Open files on demand to inspect context without leaving your workflow. Browse available collections to quickly target the right code and accelerate understanding.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@lekt9/sift",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_code",
+      "description": "\nSearch the codebase for patterns.\n\nArgs:\n    query: Search query (e.g., 'async def', 'TODO')\n    limit: Maximum number of results (default: 50)\n    path_glob: Filter by path pattern (e.g., '**/*.py')\n    collection: Collection path (e.g., 'examples/smol_example/codex.sift')\n\nReturns:\n    Search results with file:line citations\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_codeArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 50
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "path_glob": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path Glob",
+            "default": null
+          },
+          "collection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_codeOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "view_file",
+      "description": "\nView file content from the collection.\n\nArgs:\n    path: File path in the collection\n    start_line: Start line (1-based, default: 1)\n    end_line: End line (0 = end of file, default: 0)\n    collection: Collection path (e.g., 'examples/smol_example/codex.sift')\n\nReturns:\n    File content\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "view_fileArguments",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "end_line": {
+            "type": "integer",
+            "title": "End Line",
+            "default": 0
+          },
+          "collection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection",
+            "default": null
+          },
+          "start_line": {
+            "type": "integer",
+            "title": "Start Line",
+            "default": 1
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "view_fileOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_collections",
+      "description": "\nList all available collections.\n\nReturns:\n    List of available collections with their paths\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "list_collectionsArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "list_collectionsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@lekt9/sift/mcp",
+      "configSchema": {}
+    }
+  ]
+}

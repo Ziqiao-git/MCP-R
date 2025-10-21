@@ -1,0 +1,683 @@
+{
+  "qualifiedName": "@rakeshdavid/tavus-mcp",
+  "displayName": "Tavus MCP Server",
+  "description": "Enable AI video generation, replica management, conversational AI, lipsync, and speech synthesis through a comprehensive MCP server for the Tavus API. Manage AI replicas, generate videos, create interactive conversations, synchronize audio, and generate speech seamlessly within MCP-compatible applications. Access full Tavus API v2 capabilities with robust error handling and easy integration.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/platform.tavus.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "create_replica",
+      "description": "Create a new AI replica from a training video",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "train_video_url"
+        ],
+        "properties": {
+          "model_name": {
+            "enum": [
+              "phoenix-2",
+              "phoenix-3"
+            ],
+            "type": "string",
+            "description": "Phoenix model version (phoenix-3 default)"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "gaze_correction": {
+                "type": "boolean"
+              },
+              "background_green_screen": {
+                "type": "boolean"
+              }
+            },
+            "description": "Additional replica properties"
+          },
+          "callback_url": {
+            "type": "string",
+            "description": "URL to receive training completion callback"
+          },
+          "replica_name": {
+            "type": "string",
+            "description": "Name for the replica"
+          },
+          "train_video_url": {
+            "type": "string",
+            "description": "Direct link to training video (S3, etc.)"
+          },
+          "consent_video_url": {
+            "type": "string",
+            "description": "Optional separate consent video URL"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_replica",
+      "description": "Get details of a specific replica",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "replica_id"
+        ],
+        "properties": {
+          "verbose": {
+            "type": "boolean",
+            "description": "Include additional replica data"
+          },
+          "replica_id": {
+            "type": "string",
+            "description": "Unique identifier for the replica"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_replicas",
+      "description": "List all replicas in your account",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "delete_replica",
+      "description": "Delete a replica permanently",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "replica_id"
+        ],
+        "properties": {
+          "replica_id": {
+            "type": "string",
+            "description": "Unique identifier for the replica"
+          }
+        }
+      }
+    },
+    {
+      "name": "rename_replica",
+      "description": "Rename an existing replica",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "replica_id",
+          "replica_name"
+        ],
+        "properties": {
+          "replica_id": {
+            "type": "string",
+            "description": "Unique identifier for the replica"
+          },
+          "replica_name": {
+            "type": "string",
+            "description": "New name for the replica"
+          }
+        }
+      }
+    },
+    {
+      "name": "generate_video",
+      "description": "Generate a video using a replica and script or audio",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "script"
+            ]
+          },
+          {
+            "required": [
+              "audio_url"
+            ]
+          }
+        ],
+        "required": [
+          "replica_id"
+        ],
+        "properties": {
+          "fast": {
+            "type": "boolean",
+            "description": "Use fast rendering (limited features)"
+          },
+          "script": {
+            "type": "string",
+            "description": "Text script for the video (alternative to audio_url)"
+          },
+          "audio_url": {
+            "type": "string",
+            "description": "URL to audio file (.wav/.mp3) (alternative to script)"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "start_with_wave": {
+                "type": "boolean"
+              },
+              "background_scroll": {
+                "type": "boolean"
+              },
+              "background_scroll_type": {
+                "enum": [
+                  "human",
+                  "smooth"
+                ],
+                "type": "string"
+              },
+              "background_scroll_depth": {
+                "enum": [
+                  "middle",
+                  "bottom"
+                ],
+                "type": "string"
+              },
+              "background_scroll_return": {
+                "enum": [
+                  "return",
+                  "halt"
+                ],
+                "type": "string"
+              }
+            },
+            "description": "Additional video properties"
+          },
+          "replica_id": {
+            "type": "string",
+            "description": "Unique identifier for the replica"
+          },
+          "video_name": {
+            "type": "string",
+            "description": "Name for the generated video"
+          },
+          "callback_url": {
+            "type": "string",
+            "description": "URL to receive completion callback"
+          },
+          "background_url": {
+            "type": "string",
+            "description": "Website URL to use as background"
+          },
+          "watermark_image_url": {
+            "type": "string",
+            "description": "URL to watermark image (png/jpeg)"
+          },
+          "background_source_url": {
+            "type": "string",
+            "description": "Direct video URL to use as background"
+          },
+          "transparent_background": {
+            "type": "boolean",
+            "description": "Generate with transparent background (.webm)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_video",
+      "description": "Get details of a specific video",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "video_id"
+        ],
+        "properties": {
+          "video_id": {
+            "type": "string",
+            "description": "Unique identifier for the video"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_videos",
+      "description": "List all videos in your account",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "delete_video",
+      "description": "Delete a video permanently",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "video_id"
+        ],
+        "properties": {
+          "video_id": {
+            "type": "string",
+            "description": "Unique identifier for the video"
+          }
+        }
+      }
+    },
+    {
+      "name": "rename_video",
+      "description": "Rename an existing video",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "video_id",
+          "video_name"
+        ],
+        "properties": {
+          "video_id": {
+            "type": "string",
+            "description": "Unique identifier for the video"
+          },
+          "video_name": {
+            "type": "string",
+            "description": "New name for the video"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_conversation",
+      "description": "Create a new conversational video interface",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "persona_id": {
+            "type": "string",
+            "description": "Persona to use for the conversation"
+          },
+          "replica_id": {
+            "type": "string",
+            "description": "Replica to use for the conversation"
+          },
+          "callback_url": {
+            "type": "string",
+            "description": "URL to receive conversation events"
+          },
+          "custom_greeting": {
+            "type": "string",
+            "description": "Custom greeting message"
+          },
+          "enable_recording": {
+            "type": "boolean",
+            "description": "Enable conversation recording"
+          },
+          "conversation_name": {
+            "type": "string",
+            "description": "Name for the conversation"
+          },
+          "conversational_context": {
+            "type": "string",
+            "description": "Context for the conversation"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_conversation",
+      "description": "Get details of a specific conversation",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conversation_id"
+        ],
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "description": "Unique identifier for the conversation"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_conversations",
+      "description": "List all conversations in your account",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "end_conversation",
+      "description": "End an active conversation",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conversation_id"
+        ],
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "description": "Unique identifier for the conversation"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_conversation",
+      "description": "Delete a conversation permanently",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conversation_id"
+        ],
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "description": "Unique identifier for the conversation"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_persona",
+      "description": "Create a new persona for conversational AI",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "layers": {
+            "type": "object",
+            "properties": {
+              "llm": {
+                "type": "object",
+                "description": "Language model settings"
+              },
+              "stt": {
+                "type": "object",
+                "description": "Speech-to-text settings"
+              },
+              "tts": {
+                "type": "object",
+                "description": "Text-to-speech settings"
+              },
+              "perception": {
+                "type": "object",
+                "description": "Perception settings (Raven-0)"
+              }
+            },
+            "description": "Configuration layers for the persona"
+          },
+          "context": {
+            "type": "string",
+            "description": "Contextual information for the LLM"
+          },
+          "replica_id": {
+            "type": "string",
+            "description": "Replica to use for this persona"
+          },
+          "persona_name": {
+            "type": "string",
+            "description": "Name for the persona"
+          },
+          "system_prompt": {
+            "type": "string",
+            "description": "System prompt for the LLM"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_persona",
+      "description": "Get details of a specific persona",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "persona_id"
+        ],
+        "properties": {
+          "persona_id": {
+            "type": "string",
+            "description": "Unique identifier for the persona"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_personas",
+      "description": "List all personas in your account",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "patch_persona",
+      "description": "Update a persona using JSON patch format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "persona_id",
+          "patch"
+        ],
+        "properties": {
+          "patch": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "op",
+                "path"
+              ],
+              "properties": {
+                "op": {
+                  "enum": [
+                    "add",
+                    "remove",
+                    "replace",
+                    "copy",
+                    "move",
+                    "test"
+                  ],
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "value": {}
+              }
+            },
+            "description": "JSON patch operations (RFC 6902)"
+          },
+          "persona_id": {
+            "type": "string",
+            "description": "Unique identifier for the persona"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_persona",
+      "description": "Delete a persona permanently",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "persona_id"
+        ],
+        "properties": {
+          "persona_id": {
+            "type": "string",
+            "description": "Unique identifier for the persona"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_lipsync",
+      "description": "Create a lipsync video by synchronizing audio with video",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "video_url",
+          "audio_url"
+        ],
+        "properties": {
+          "audio_url": {
+            "type": "string",
+            "description": "URL to the audio file to sync"
+          },
+          "video_url": {
+            "type": "string",
+            "description": "URL to the source video"
+          },
+          "callback_url": {
+            "type": "string",
+            "description": "URL to receive completion callback"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_lipsync",
+      "description": "Get details of a specific lipsync",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "lipsync_id"
+        ],
+        "properties": {
+          "lipsync_id": {
+            "type": "string",
+            "description": "Unique identifier for the lipsync"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_lipsyncs",
+      "description": "List all lipsyncs in your account",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "delete_lipsync",
+      "description": "Delete a lipsync permanently",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "lipsync_id"
+        ],
+        "properties": {
+          "lipsync_id": {
+            "type": "string",
+            "description": "Unique identifier for the lipsync"
+          }
+        }
+      }
+    },
+    {
+      "name": "generate_speech",
+      "description": "Generate speech audio from text using a replica",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "replica_id",
+          "script"
+        ],
+        "properties": {
+          "script": {
+            "type": "string",
+            "description": "Text script to convert to speech"
+          },
+          "replica_id": {
+            "type": "string",
+            "description": "Replica to use for speech generation"
+          },
+          "speech_name": {
+            "type": "string",
+            "description": "Name for the generated speech"
+          },
+          "callback_url": {
+            "type": "string",
+            "description": "URL to receive completion callback"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_speech",
+      "description": "Get details of a specific speech",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "speech_id"
+        ],
+        "properties": {
+          "speech_id": {
+            "type": "string",
+            "description": "Unique identifier for the speech"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_speeches",
+      "description": "List all speeches in your account",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "delete_speech",
+      "description": "Delete a speech permanently",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "speech_id"
+        ],
+        "properties": {
+          "speech_id": {
+            "type": "string",
+            "description": "Unique identifier for the speech"
+          }
+        }
+      }
+    },
+    {
+      "name": "rename_speech",
+      "description": "Rename an existing speech",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "speech_id",
+          "speech_name"
+        ],
+        "properties": {
+          "speech_id": {
+            "type": "string",
+            "description": "Unique identifier for the speech"
+          },
+          "speech_name": {
+            "type": "string",
+            "description": "New name for the speech"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@rakeshdavid/tavus-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "tavusApiKey"
+        ],
+        "properties": {
+          "tavusApiKey": {
+            "type": "string",
+            "description": "Your Tavus API key"
+          }
+        }
+      }
+    }
+  ]
+}

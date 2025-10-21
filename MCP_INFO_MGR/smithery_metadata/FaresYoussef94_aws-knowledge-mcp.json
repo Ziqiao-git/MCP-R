@@ -1,0 +1,114 @@
+{
+  "qualifiedName": "@FaresYoussef94/aws-knowledge-mcp",
+  "displayName": "AWS Docs and Regions",
+  "description": "A fully managed remote MCP server that provides up-to-date documentation, code samples, knowledge about the regional availability of AWS APIs and CloudFormation resources, and other official AWS content.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/6ee52c34-a716-4ffd-a339-ca1cccb10900.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@FaresYoussef94/aws-knowledge-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "aws___get_regional_availability",
+      "description": "Retrieve AWS regional availability information for sdk service APIs and CloudFormation resources.\n\n## Core Features\n- Real-time availability checking across AWS regions \n- Support for APIs and CloudFormation resources \n- Batch query support with filtering options \n- Pagination if no filters are passed and all results are to be returned\n\n## When to Use \n1. Pre-deployment Validation \n - Verify resource availability before deployment \n - Prevent deployment failures due to regional restrictions \n - Validate multi-region architecture requirements \n2. Architecture Planning \n - Design region-specific solutions \n - Plan multi-region deployments \n - Compare regional capabilities\n \n## Result Format \nReturns a list of dictionaries with: \n - Resource identifiers \n - Key resource information fileds \n - Availability status: \n * 'AVAILABLE': Resource is available \n * 'NOT AVAILBLE': Resource is not available\n * 'NOT FOUND': Resource name or identifier is not valid\n \n## Filter Guidelines\n1. APIs (resource_type='api') \n Format: to filter on API level 'SdkServiceId+APIOperation'\n Example filters: \n - ['Athena+UpdateNamedQuery', 'ACM PCA+CreateCertificateAuthority', 'IAM+GetSSHPublicKey'] \n2. CloudFormation (resource_type='cfn') \n Format: 'CloudformationResourceType'\n Example filters: \n - ['AWS::EC2::Instance', 'AWS::Lambda::Function', 'AWS::Logs::LogGroup'] \n - ['AWS::CodeBuild::Project', 'AWS::CloudTrail::Dashboard']\nNote: Without filters, all resources are returned with pagination support via next_token.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "region",
+          "resource_type"
+        ],
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Target AWS region code (e.g., us-east-1, eu-west-1, ap-southeast-2)"
+          },
+          "filters": {
+            "type": "array",
+            "description": "Optional list of one or multiple specific resources to check. Format depends on resource_type:\n- APIs: ['IAM+GetSSHPublicKey']\n- CloudFormation: ['AWS::EC2::Instance']"
+          },
+          "next_token": {
+            "type": "string",
+            "description": "Pagination token for retrieving additional results. Only applicable when no filters are specified"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "Type of AWS resource to check: 'api' for API operations, or 'cfn' for CloudFormation resources"
+          }
+        }
+      }
+    },
+    {
+      "name": "aws___list_regions",
+      "description": "Retrieve a list of all AWS regions.\n\n## Usage\nThis tool provides information about all AWS regions, including their identifiers and names.\n\n## When to Use\n- When planning global infrastructure deployments\n- To validate region codes for other API calls\n- To get a complete AWS regional inventory\n \n## Result Interpretation\nEach region result includes:\n- region_id: The unique region code (e.g., 'us-east-1') \n- region_long_name: The human-friendly name (e.g., 'US East (N. Virginia)')\n \n## Common Use Cases\n1. Infrastructure Planning: Review available regions for global deployment\n2. Region Validation: Verify region codes before using in other operations\n3. Regional Inventory: Get a complete list of AWS's global infrastructure",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "aws___read_documentation",
+      "description": "Fetch and convert an AWS documentation page to markdown format.\n\n    ## Usage\n\n    This tool retrieves the content of an AWS documentation page and converts it to markdown format.\n    For long documents, you can make multiple calls with different start_index values to retrieve\n    the entire content in chunks.\n\n    ## URL Requirements\n\n    - Must be from the docs.aws.amazon.com or aws.amazon.com domain\n\n    ## Example URLs\n\n    - https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html\n    - https://docs.aws.amazon.com/lambda/latest/dg/lambda-invocation.html\n    - https://aws.amazon.com/about-aws/whats-new/2023/02/aws-telco-network-builder/\n    - https://aws.amazon.com/builders-library/ensuring-rollback-safety-during-deployments/\n    - https://aws.amazon.com/blogs/developer/make-the-most-of-community-resources-for-aws-sdks-and-tools/\n\n    ## Output Format\n\n    The output is formatted as markdown text with:\n    - Preserved headings and structure\n    - Code blocks for examples\n    - Lists and tables converted to markdown format\n\n    ## Handling Long Documents\n\n    If the response indicates the document was truncated, you have several options:\n\n    1. **Continue Reading**: Make another call with start_index set to the end of the previous response\n    2. **Stop Early**: For very long documents (>30,000 characters), if you've already found the specific information needed, you can stop reading",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the AWS documentation page to read"
+          },
+          "max_length": {
+            "type": "integer",
+            "description": "Maximum number of characters to return."
+          },
+          "start_index": {
+            "type": "integer",
+            "description": "On return output starting at this character index, useful if a previous fetch was truncated and more content is required."
+          }
+        }
+      }
+    },
+    {
+      "name": "aws___recommend",
+      "description": "Get content recommendations for an AWS documentation page.\n\n    ## Usage\n\n    This tool provides recommendations for related AWS documentation pages based on a given URL.\n    Use it to discover additional relevant content that might not appear in search results.\n    URL must be from the docs.aws.amazon.com domain.\n\n    ## Recommendation Types\n\n    The recommendations include four categories:\n\n    1. **Highly Rated**: Popular pages within the same AWS service\n    2. **New**: Recently added pages within the same AWS service - useful for finding newly released features\n    3. **Similar**: Pages covering similar topics to the current page\n    4. **Journey**: Pages commonly viewed next by other users\n\n    ## When to Use\n\n    - After reading a documentation page to find related content\n    - When exploring a new AWS service to discover important pages\n    - To find alternative explanations of complex concepts\n    - To discover the most popular pages for a service\n    - To find newly released information by using a service's welcome page URL and checking the **New** recommendations\n\n    ## Finding New Features\n\n    To find newly released information about a service:\n    1. Find any page belong to that service, typically you can try the welcome page\n    2. Call this tool with that URL\n    3. Look specifically at the **New** recommendation type in the results\n\n    ## Result Interpretation\n\n    Each recommendation includes:\n    - url: The documentation page URL\n    - title: The page title\n    - context: A brief description (if available)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the AWS documentation page to get recommendations for"
+          }
+        }
+      }
+    },
+    {
+      "name": "aws___search_documentation",
+      "description": "Search AWS documentation using the official AWS Documentation Search API.\n\n    ## Usage\n\n    This tool searches across all AWS documentation and other AWS Websites including AWS Blog, AWS Solutions Library, Getting started with AWS, AWS Architecture Center and AWS Prescriptive Guidance for pages matching your search phrase.\n    Use it to find relevant documentation when you don't have a specific URL.\n\n    ## Search Tips\n\n    - Use specific technical terms rather than general phrases\n    - Include service names to narrow results (e.g., \"S3 bucket versioning\" instead of just \"versioning\")\n    - Use quotes for exact phrase matching (e.g., \"AWS Lambda function URLs\")\n    - Include abbreviations and alternative terms to improve results\n\n    ## Result Interpretation\n\n    Each result includes:\n    - rank_order: The relevance ranking (lower is more relevant)\n    - url: The documentation page URL\n    - title: The page title\n    - context: A brief excerpt or summary (if available)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "search_phrase"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of results to return"
+          },
+          "search_phrase": {
+            "type": "string",
+            "description": "Search phrase to use"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@FaresYoussef94/aws-knowledge-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

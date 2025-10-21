@@ -1,0 +1,85 @@
+{
+  "qualifiedName": "@baranwang/mcp-deep-research",
+  "displayName": "Deep Research",
+  "description": "Search the web for information effortlessly. Leverage the power of the Tavily API to enhance your research capabilities with maximum efficiency. Configure your search parameters and get started quickly with this intuitive tool.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "deep-research",
+      "description": "Deep web information search tool that can conduct multi-round in-depth research based on keywords and topics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "topic": {
+            "enum": [
+              "general",
+              "news",
+              "finance"
+            ],
+            "type": "string",
+            "default": "general",
+            "description": "Search topic"
+          },
+          "rounds": {
+            "type": "number",
+            "default": 1,
+            "description": "Current search round, defaults to 1"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 0,
+            "description": "Search keywords, please provide 1~5 keywords. Each keyword must: include complete subject and predicate, avoid pronouns and references, have independent search value, avoid logical overlap between keywords, and be directly relevant to the question"
+          },
+          "question": {
+            "type": "string",
+            "description": "User question"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Reference materials"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@baranwang/mcp-deep-research/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "tavilyApiKey": {
+            "type": "string",
+            "default": "",
+            "description": "Configuration for Tavily Api Key"
+          },
+          "maxPlanningRounds": {
+            "type": "number",
+            "default": 5,
+            "description": "Configuration for Max Planning Rounds"
+          },
+          "maxSearchKeywords": {
+            "type": "number",
+            "default": 5,
+            "description": "Configuration for Max Search Keywords"
+          }
+        }
+      }
+    }
+  ]
+}

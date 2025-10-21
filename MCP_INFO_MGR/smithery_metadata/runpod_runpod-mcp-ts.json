@@ -1,0 +1,757 @@
+{
+  "qualifiedName": "@runpod/runpod-mcp-ts",
+  "displayName": "RunPod",
+  "description": "Manage your RunPod cloud resources directly through an MCP-compatible client. Create, list, update, start, stop, and delete pods, serverless endpoints, templates, network volumes, and container registry authentications with ease. Streamline your RunPod operations using natural language commands via Claude or other MCP clients.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.runpod.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list-pods",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Filter to Pods with the provided name"
+          },
+          "gpuTypeId": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter to Pods with any of the listed GPU types"
+          },
+          "computeType": {
+            "enum": [
+              "GPU",
+              "CPU"
+            ],
+            "type": "string",
+            "description": "Filter to only GPU or only CPU Pods"
+          },
+          "dataCenterId": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter to Pods in any of the provided data centers"
+          },
+          "includeMachine": {
+            "type": "boolean",
+            "description": "Include information about the machine"
+          },
+          "includeNetworkVolume": {
+            "type": "boolean",
+            "description": "Include information about attached network volumes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-pod",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "podId"
+        ],
+        "properties": {
+          "podId": {
+            "type": "string",
+            "description": "ID of the pod to retrieve"
+          },
+          "includeMachine": {
+            "type": "boolean",
+            "description": "Include information about the machine"
+          },
+          "includeNetworkVolume": {
+            "type": "boolean",
+            "description": "Include information about attached network volumes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-pod",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "imageName"
+        ],
+        "properties": {
+          "env": {
+            "type": "object",
+            "description": "Environment variables",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the pod"
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ports to expose (e.g., '8888/http', '22/tcp')"
+          },
+          "gpuCount": {
+            "type": "number",
+            "description": "Number of GPUs"
+          },
+          "cloudType": {
+            "enum": [
+              "SECURE",
+              "COMMUNITY"
+            ],
+            "type": "string",
+            "description": "SECURE or COMMUNITY cloud"
+          },
+          "imageName": {
+            "type": "string",
+            "description": "Docker image to use"
+          },
+          "gpuTypeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of acceptable GPU types"
+          },
+          "volumeInGb": {
+            "type": "number",
+            "description": "Volume size in GB"
+          },
+          "dataCenterIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of data centers"
+          },
+          "volumeMountPath": {
+            "type": "string",
+            "description": "Path to mount the volume"
+          },
+          "containerDiskInGb": {
+            "type": "number",
+            "description": "Container disk size in GB"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-pod",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "podId"
+        ],
+        "properties": {
+          "env": {
+            "type": "object",
+            "description": "New environment variables",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "New name for the pod"
+          },
+          "podId": {
+            "type": "string",
+            "description": "ID of the pod to update"
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "New ports to expose"
+          },
+          "imageName": {
+            "type": "string",
+            "description": "New Docker image"
+          },
+          "volumeInGb": {
+            "type": "number",
+            "description": "New volume size in GB"
+          },
+          "volumeMountPath": {
+            "type": "string",
+            "description": "New path to mount the volume"
+          },
+          "containerDiskInGb": {
+            "type": "number",
+            "description": "New container disk size in GB"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "start-pod",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "podId"
+        ],
+        "properties": {
+          "podId": {
+            "type": "string",
+            "description": "ID of the pod to start"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "stop-pod",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "podId"
+        ],
+        "properties": {
+          "podId": {
+            "type": "string",
+            "description": "ID of the pod to stop"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-pod",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "podId"
+        ],
+        "properties": {
+          "podId": {
+            "type": "string",
+            "description": "ID of the pod to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-endpoints",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "includeWorkers": {
+            "type": "boolean",
+            "description": "Include information about workers"
+          },
+          "includeTemplate": {
+            "type": "boolean",
+            "description": "Include template information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-endpoint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "endpointId"
+        ],
+        "properties": {
+          "endpointId": {
+            "type": "string",
+            "description": "ID of the endpoint to retrieve"
+          },
+          "includeWorkers": {
+            "type": "boolean",
+            "description": "Include information about workers"
+          },
+          "includeTemplate": {
+            "type": "boolean",
+            "description": "Include template information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-endpoint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "templateId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the endpoint"
+          },
+          "gpuCount": {
+            "type": "number",
+            "description": "Number of GPUs per worker"
+          },
+          "gpuTypeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of acceptable GPU types"
+          },
+          "templateId": {
+            "type": "string",
+            "description": "Template ID to use"
+          },
+          "workersMax": {
+            "type": "number",
+            "description": "Maximum number of workers"
+          },
+          "workersMin": {
+            "type": "number",
+            "description": "Minimum number of workers"
+          },
+          "computeType": {
+            "enum": [
+              "GPU",
+              "CPU"
+            ],
+            "type": "string",
+            "description": "GPU or CPU endpoint"
+          },
+          "dataCenterIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of data centers"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-endpoint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "endpointId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the endpoint"
+          },
+          "endpointId": {
+            "type": "string",
+            "description": "ID of the endpoint to update"
+          },
+          "scalerType": {
+            "enum": [
+              "QUEUE_DELAY",
+              "REQUEST_COUNT"
+            ],
+            "type": "string",
+            "description": "Scaler type"
+          },
+          "workersMax": {
+            "type": "number",
+            "description": "New maximum number of workers"
+          },
+          "workersMin": {
+            "type": "number",
+            "description": "New minimum number of workers"
+          },
+          "idleTimeout": {
+            "type": "number",
+            "description": "New idle timeout in seconds"
+          },
+          "scalerValue": {
+            "type": "number",
+            "description": "Scaler value"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-endpoint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "endpointId"
+        ],
+        "properties": {
+          "endpointId": {
+            "type": "string",
+            "description": "ID of the endpoint to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-templates",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-template",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "templateId"
+        ],
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "description": "ID of the template to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-template",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "imageName"
+        ],
+        "properties": {
+          "env": {
+            "type": "object",
+            "description": "Environment variables",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the template"
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ports to expose"
+          },
+          "readme": {
+            "type": "string",
+            "description": "README content in markdown format"
+          },
+          "imageName": {
+            "type": "string",
+            "description": "Docker image to use"
+          },
+          "volumeInGb": {
+            "type": "number",
+            "description": "Volume size in GB"
+          },
+          "isServerless": {
+            "type": "boolean",
+            "description": "Is this a serverless template"
+          },
+          "dockerStartCmd": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Docker start commands"
+          },
+          "volumeMountPath": {
+            "type": "string",
+            "description": "Path to mount the volume"
+          },
+          "dockerEntrypoint": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Docker entrypoint commands"
+          },
+          "containerDiskInGb": {
+            "type": "number",
+            "description": "Container disk size in GB"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-template",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "templateId"
+        ],
+        "properties": {
+          "env": {
+            "type": "object",
+            "description": "New environment variables",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "New name for the template"
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "New ports to expose"
+          },
+          "readme": {
+            "type": "string",
+            "description": "New README content in markdown format"
+          },
+          "imageName": {
+            "type": "string",
+            "description": "New Docker image"
+          },
+          "templateId": {
+            "type": "string",
+            "description": "ID of the template to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-template",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "templateId"
+        ],
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "description": "ID of the template to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-network-volumes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-network-volume",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "networkVolumeId"
+        ],
+        "properties": {
+          "networkVolumeId": {
+            "type": "string",
+            "description": "ID of the network volume to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-network-volume",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "size",
+          "dataCenterId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the network volume"
+          },
+          "size": {
+            "type": "number",
+            "description": "Size in GB (1-4000)"
+          },
+          "dataCenterId": {
+            "type": "string",
+            "description": "Data center ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-network-volume",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "networkVolumeId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the network volume"
+          },
+          "size": {
+            "type": "number",
+            "description": "New size in GB (must be larger than current)"
+          },
+          "networkVolumeId": {
+            "type": "string",
+            "description": "ID of the network volume to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-network-volume",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "networkVolumeId"
+        ],
+        "properties": {
+          "networkVolumeId": {
+            "type": "string",
+            "description": "ID of the network volume to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-container-registry-auths",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-container-registry-auth",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "containerRegistryAuthId"
+        ],
+        "properties": {
+          "containerRegistryAuthId": {
+            "type": "string",
+            "description": "ID of the container registry auth to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-container-registry-auth",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the container registry auth"
+          },
+          "password": {
+            "type": "string",
+            "description": "Registry password"
+          },
+          "username": {
+            "type": "string",
+            "description": "Registry username"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-container-registry-auth",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "containerRegistryAuthId"
+        ],
+        "properties": {
+          "containerRegistryAuthId": {
+            "type": "string",
+            "description": "ID of the container registry auth to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@runpod/runpod-mcp-ts/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "runpodApiKey"
+        ],
+        "properties": {
+          "runpodApiKey": {
+            "type": "string",
+            "description": "Your RunPod API key"
+          }
+        }
+      }
+    }
+  ]
+}

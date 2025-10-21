@@ -1,0 +1,975 @@
+{
+  "qualifiedName": "@cuongpo/coti-mcp-1",
+  "displayName": "COTI Private Assets",
+  "description": "Manage COTI accounts, deploy private ERC20 and ERC721 contracts, and transfer tokens and NFTs with privacy. Monitor balances, allowances, ownership, and transaction status, and decode event logs when needed. Securely sign, verify, and encrypt or decrypt values to build privacy-preserving workflows across testnet or mainnet.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cuongpo/coti-mcp-1",
+  "security": null,
+  "tools": [
+    {
+      "name": "change_default_account",
+      "title": "Change Default Account",
+      "description": "Change the default account used for COTI blockchain operations. This allows switching between different accounts configured in the environment. The account must be configured in the environment variables with corresponding private and AES keys. Returns the new default account address upon successful change.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "account_address"
+        ],
+        "properties": {
+          "account_address": {
+            "type": "string",
+            "description": "COTI account address to set as default, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_account",
+      "title": "Create Account",
+      "description": "Create a new COTI account with a randomly generated private key and AES key. Returns the new account address, private key, and AES key.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "set_as_default": {
+            "type": "boolean",
+            "default": false,
+            "description": "Optional, whether to set the new account as the default account. Default is false."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "decrypt_value",
+      "title": "Decrypt Value",
+      "description": "Decrypt a value using the COTI AES key. Requires a ciphertext as input. Returns the decrypted value.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ciphertext"
+        ],
+        "properties": {
+          "ciphertext": {
+            "type": "string",
+            "description": "Ciphertext to decrypt"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_current_network",
+      "title": "Get Current Network",
+      "description": "Get the currently configured COTI network (testnet or mainnet). Returns the network that all blockchain operations will use.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "encrypt_value",
+      "title": "Encrypt Value",
+      "description": "Encrypt a value using the COTI AES key. This is used for encrypting values to be sent to another address. Requires a value, contract address, and function selector as input. Returns the signature.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message",
+          "contract_address",
+          "function_selector"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to encrypt"
+          },
+          "contract_address": {
+            "type": "string",
+            "description": "Contract address"
+          },
+          "function_selector": {
+            "type": "string",
+            "description": "Function selector. To get the function selector, use the keccak256 hash of the function signature. For instance, for the transfer function of an ERC20 token, the function selector is '0xa9059cbb'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_accounts",
+      "title": "Export accounts",
+      "description": "Backup all available COTI accounts and export them as a JSON string for future import. Returns a JSON string that can be copied and used for importing later.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "account_addresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of account addresses to export. If not provided, all accounts will be exported."
+          },
+          "include_sensitive_data": {
+            "type": "boolean",
+            "default": true,
+            "description": "Optional, whether to include sensitive data (private keys and AES keys) in the output. Default is true."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_aes_key",
+      "title": "Generate AES Key",
+      "description": "Generate a new AES key for the current account. Returns the AES key.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "account_address"
+        ],
+        "properties": {
+          "account_address": {
+            "type": "string",
+            "description": "The address of the account to generate the AES key for."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "import_accounts",
+      "title": "Import Accounts",
+      "description": "Import COTI accounts from a JSON backup string previously created with the export_accounts tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "backup_data",
+          "merge_with_existing",
+          "set_default_account"
+        ],
+        "properties": {
+          "backup_data": {
+            "type": "string",
+            "description": "The JSON backup string containing the accounts to import. Example:\n\n{\n    \"timestamp\": \"2025-06-03T17:18:55.123Z\",\n    \"accounts\": [\n        {\n            \"address\": \"0x123...\",\n            \"private_key\": \"0x456...\",\n            \"aes_key\": \"0x789...\",\n            \"is_default\": true\n        },\n        ...\n    ]\n}\n"
+          },
+          "merge_with_existing": {
+            "type": "boolean",
+            "description": "Whether to merge with existing accounts or replace them. Default is true (merge)."
+          },
+          "set_default_account": {
+            "type": "string",
+            "description": "Optional address to set as the default account after import. If not provided, will use the default from the backup."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_accounts",
+      "title": "List Accounts",
+      "description": "List all available COTI accounts configured in the environment. Returns the account addresses, current default account, and masked versions of the private and AES keys.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sign_message",
+      "title": "Sign Message",
+      "description": "Sign a message using the COTI private key. This creates a cryptographic signature that proves the message was signed by the owner of the private key. Requires a message to sign as input. Returns the signature.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to sign"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "switch_network",
+      "title": "Switch Network",
+      "description": "Switch between COTI testnet and mainnet networks. This changes the network for all subsequent blockchain operations. Valid networks are 'testnet' and 'mainnet'. Returns confirmation of the network switch.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "network"
+        ],
+        "properties": {
+          "network": {
+            "enum": [
+              "testnet",
+              "mainnet"
+            ],
+            "type": "string",
+            "description": "Network to switch to - either 'testnet' or 'mainnet'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_signature",
+      "title": "Verify Signature",
+      "description": "Verify a message signature and recover the address that signed it. This is used to determine who signed a specific message. Requires the original message and the signature as input. Returns the address that created the signature.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message",
+          "signature"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Original message that was signed"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Signature to verify (hexadecimal string)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "approve_erc20_spender",
+      "title": "Approve ERC20 Spender",
+      "description": "Approve another address to spend tokens on behalf of the owner. This is used for allowing another address (like a contract) to transfer your tokens. Requires token contract address, spender address, and amount as input. Returns the transaction hash upon successful approval.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "spender_address",
+          "amount_wei"
+        ],
+        "properties": {
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the transaction"
+          },
+          "amount_wei": {
+            "type": "string",
+            "description": "Amount of tokens to approve (in Wei)"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC20 token contract address on COTI blockchain"
+          },
+          "spender_address": {
+            "type": "string",
+            "description": "Address to approve as spender, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deploy_private_erc20_contract",
+      "title": "Deploy Private ERC20 Contract",
+      "description": "Deploy a new standard private ERC20 token contract on the COTI blockchain. This creates a new private token with the specified name, symbol, and decimals. Returns the deployed contract address upon successful deployment.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "symbol",
+          "decimals"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the token"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol of the token (typically 3-5 characters)"
+          },
+          "decimals": {
+            "type": "number",
+            "description": "Number of decimals for the token"
+          },
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the deployment transaction"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc20_allowance",
+      "title": "Get ERC20 Allowance",
+      "description": "Check how many tokens a spender is allowed to use. This is used for checking the current allowance a spender has for an owner's tokens. Requires token contract address, owner address, and spender address as input. Returns the allowance amount.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "owner_address",
+          "spender_address"
+        ],
+        "properties": {
+          "owner_address": {
+            "type": "string",
+            "description": "Address of the token owner"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC20 token contract address on COTI blockchain"
+          },
+          "spender_address": {
+            "type": "string",
+            "description": "Address of the spender to check allowance for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc20_balance",
+      "title": "Get Private ERC20 Token Balance",
+      "description": "Get the balance of a private ERC20 token on the COTI blockchain. This is used for checking the current balance of a private token for a COTI account. Requires a COTI account address and token contract address as input. Returns the decrypted token balance.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "account_address",
+          "token_address"
+        ],
+        "properties": {
+          "token_address": {
+            "type": "string",
+            "description": "ERC20 token contract address on COTI blockchain"
+          },
+          "account_address": {
+            "type": "string",
+            "description": "COTI account address, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc20_decimals",
+      "title": "Get Private ERC20 Decimals",
+      "description": "Get the number of decimals for a private ERC20 token on the COTI blockchain. This is used for checking the number of decimals in this token. Requires token contract address as input. Returns the number of decimals in this contract.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address"
+        ],
+        "properties": {
+          "token_address": {
+            "type": "string",
+            "description": "ERC20 token contract address on COTI blockchain"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc20_total_supply",
+      "title": "Get Private ERC20 Total Supply",
+      "description": "Get the total supply of tokens for a private ERC20 token on the COTI blockchain. This is used for checking how many tokens have been minted in this token. Requires token contract address as input. Returns the total number of tokens in this contract.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address"
+        ],
+        "properties": {
+          "token_address": {
+            "type": "string",
+            "description": "ERC20 token contract address on COTI blockchain"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mint_private_erc20_token",
+      "title": "Mint Private ERC20 Token",
+      "description": "Mint additional private ERC20 tokens on the COTI blockchain. This adds new tokens to the specified recipient address. Returns the transaction hash upon successful minting.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "recipient_address",
+          "amount_wei"
+        ],
+        "properties": {
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the minting transaction"
+          },
+          "amount_wei": {
+            "type": "string",
+            "description": "Amount of tokens to mint in wei (smallest unit)"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC20 token contract address on COTI blockchain"
+          },
+          "recipient_address": {
+            "type": "string",
+            "description": "Address to receive the minted tokens"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_private_erc20",
+      "description": "Transfer private ERC20 tokens on the COTI blockchain. This is used for sending private tokens from your wallet to another address. Requires token contract address, recipient address, and amount as input. Returns the transaction hash upon successful transfer.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "recipient_address",
+          "amount_wei"
+        ],
+        "properties": {
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the transaction"
+          },
+          "amount_wei": {
+            "type": "string",
+            "description": "Amount of tokens to transfer (in Wei)"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC20 token contract address on COTI blockchain"
+          },
+          "recipient_address": {
+            "type": "string",
+            "description": "Recipient COTI address, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "approve_private_erc721",
+      "title": "Approve Private ERC721",
+      "description": "Approve an address to transfer a specific private ERC721 NFT token on the COTI blockchain. This allows the approved address to transfer the specified NFT on behalf of the owner. Requires token contract address, token ID, and spender address as input. Returns the transaction hash upon successful approval.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "token_id",
+          "spender_address"
+        ],
+        "properties": {
+          "token_id": {
+            "type": "string",
+            "description": "ID of the NFT token to approve for transfer"
+          },
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the transaction"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          },
+          "spender_address": {
+            "type": "string",
+            "description": "Address to approve as spender, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deploy_private_erc721_contract",
+      "title": "Deploy Private ERC721 Contract",
+      "description": "Deploy a new standard private ERC721 NFT contract on the COTI blockchain. This creates a new private NFT collection with the specified name and symbol. Returns the deployed contract address upon successful deployment.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "symbol"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the NFT collection"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol of the NFT collection (typically 3-5 characters)"
+          },
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the deployment transaction"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc721_approved",
+      "title": "Get Private ERC721 Approved",
+      "description": "Get the approved address for a private ERC721 NFT token on the COTI blockchain. This is used for checking which address is currently approved to transfer a specific NFT. Requires token contract address and token ID as input. Returns the address that is approved to transfer the specified NFT.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "token_id"
+        ],
+        "properties": {
+          "token_id": {
+            "type": "string",
+            "description": "ID of the NFT token to check approval for"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc721_balance",
+      "title": "Get Private ERC721 Balance",
+      "description": "Get the balance of a private ERC721 NFT collection on the COTI blockchain. This is used for checking how many NFTs an address owns in a collection. Requires token contract address and account address as input. Returns the number of NFTs owned by the specified address.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "account_address"
+        ],
+        "properties": {
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          },
+          "account_address": {
+            "type": "string",
+            "description": "COTI account address, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc721_is_approved_for_all",
+      "title": "Get Private ERC721 Is Approved For All",
+      "description": "Check if an operator is approved to transfer all private ERC721 NFT tokens on the COTI blockchain. This is used for checking if an operator has been granted approval to manage all NFTs owned by an address. Requires token contract address, owner address, and operator address as input. Returns whether the operator is approved for all NFTs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "owner_address",
+          "operator_address"
+        ],
+        "properties": {
+          "owner_address": {
+            "type": "string",
+            "description": "Address of the token owner"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          },
+          "operator_address": {
+            "type": "string",
+            "description": "Address of the operator to check approval for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc721_token_owner",
+      "title": "Get Private ERC721 Token Owner",
+      "description": "Get the owner address of a private ERC721 NFT token on the COTI blockchain. This is used for checking who currently owns a specific NFT. Requires token contract address and token ID as input. Returns the owner's address of the specified NFT.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "token_id"
+        ],
+        "properties": {
+          "token_id": {
+            "type": "string",
+            "description": "ID of the NFT token to check ownership for"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc721_token_uri",
+      "title": "Get Private ERC721 Token URI",
+      "description": "Get the tokenURI for a private ERC721 NFT token on the COTI blockchain. This is used for retrieving the metadata URI of a private NFT. Requires token contract address and token ID as input. Returns the decrypted tokenURI.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "token_id"
+        ],
+        "properties": {
+          "token_id": {
+            "type": "string",
+            "description": "ID of the NFT token to get the URI for"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_private_erc721_total_supply",
+      "title": "Get Private ERC721 Total Supply",
+      "description": "Get the total supply of tokens for a private ERC721 NFT collection on the COTI blockchain. This is used for checking how many NFTs have been minted in a collection. Requires token contract address as input. Returns the total number of tokens in the collection.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address"
+        ],
+        "properties": {
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mint_private_erc721_token",
+      "title": "Mint Private ERC721 Token",
+      "description": "Mint a new private ERC721 NFT token on the COTI blockchain. This creates a new NFT in the specified collection with the provided token URI. Returns the transaction hash and token ID upon successful minting.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "to_address",
+          "token_uri"
+        ],
+        "properties": {
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the minting transaction"
+          },
+          "token_uri": {
+            "type": "string",
+            "description": "URI for the token metadata (can be IPFS URI or any other URI), Example: \"https://example.com/token/0\""
+          },
+          "to_address": {
+            "type": "string",
+            "description": "Address to receive the minted NFT"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_private_erc721_approval_for_all",
+      "title": "Set Private ERC721 Approval For All",
+      "description": "Approve or revoke an operator to transfer all private ERC721 NFT tokens on the COTI blockchain. This allows the operator to transfer any NFT owned by the caller in this collection. Requires token contract address, operator address, and approval status as input. Returns the transaction hash upon successful approval setting.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "operator_address",
+          "approved"
+        ],
+        "properties": {
+          "approved": {
+            "type": "boolean",
+            "description": "Whether to approve (true) or revoke (false) the operator"
+          },
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the transaction"
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          },
+          "operator_address": {
+            "type": "string",
+            "description": "Address to approve as operator, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_private_erc721",
+      "title": "Transfer Private ERC721 Token",
+      "description": "Transfer a private ERC721 NFT token on the COTI blockchain. This is used for sending a private NFT from your wallet to another address. Requires token contract address, recipient address, and token ID as input. Returns the transaction hash upon successful transfer.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token_address",
+          "recipient_address",
+          "token_id"
+        ],
+        "properties": {
+          "token_id": {
+            "type": "string",
+            "description": "ID of the NFT token to transfer"
+          },
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the transaction"
+          },
+          "from_address": {
+            "type": "string",
+            "description": "Optional, address to transfer from. If not provided, the current account will be used."
+          },
+          "token_address": {
+            "type": "string",
+            "description": "ERC721 token contract address on COTI blockchain"
+          },
+          "recipient_address": {
+            "type": "string",
+            "description": "Recipient COTI address, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          },
+          "use_safe_transfer": {
+            "type": "boolean",
+            "description": "Optional, whether to use safeTransferFrom instead of transferFrom. Default is false."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "call_contract_function",
+      "title": "Call Contract Function",
+      "description": "Call a read-only function on any smart contract on the COTI blockchain. This allows retrieving data from any contract by specifying the contract address, function name, and parameters. Returns the function result in a human-readable format.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "contract_address",
+          "function_name",
+          "function_args"
+        ],
+        "properties": {
+          "abi": {
+            "type": "string",
+            "description": "Optional JSON string representation of the contract ABI. If not provided, will attempt to use standard ERC20/ERC721 ABIs."
+          },
+          "function_args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of arguments to pass to the function (can be empty if function takes no arguments)"
+          },
+          "function_name": {
+            "type": "string",
+            "description": "Name of the function to call on the contract"
+          },
+          "contract_address": {
+            "type": "string",
+            "description": "Address of the smart contract to call"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "decode_event_data",
+      "title": "Decode Event Data",
+      "description": "Decode event data from a transaction log based on the event signature. This helps interpret the raw data in transaction logs by matching the event signature to known event types and decoding the parameters. Requires event signature, topics, and data from a transaction log.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topics",
+          "data"
+        ],
+        "properties": {
+          "abi": {
+            "type": "string",
+            "description": "Optional JSON string representation of the contract ABI. If not provided, will attempt to use standard ERC20/ERC721 ABIs."
+          },
+          "data": {
+            "type": "string",
+            "description": "Data field from the transaction log"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of topics from the transaction log"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_transaction_status",
+      "title": "Get Transaction Status",
+      "description": "Get the status of a transaction on the COTI blockchain. This is used for checking if a transaction has been confirmed, pending, or failed. Requires a transaction hash as input. Returns detailed information about the transaction status.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "transaction_hash"
+        ],
+        "properties": {
+          "transaction_hash": {
+            "type": "string",
+            "description": "Transaction hash to check status for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_transaction_logs",
+      "title": "Get Transaction Logs",
+      "description": "Get the logs from a transaction on the COTI blockchain. This is used for retrieving event logs emitted during transaction execution. Requires a transaction hash as input. Returns detailed information about the transaction logs including event names, topics, and data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "transaction_hash"
+        ],
+        "properties": {
+          "transaction_hash": {
+            "type": "string",
+            "description": "Transaction hash to get logs for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_native_balance",
+      "title": "Get Native Balance",
+      "description": "Get the native COTI token balance of a COTI blockchain account. This is used for checking the current balance of a COTI account. Requires a COTI account address as input. Returns the account balance in COTI tokens.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "account_address"
+        ],
+        "properties": {
+          "account_address": {
+            "type": "string",
+            "description": "COTI account address, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_native",
+      "title": "Transfer Native",
+      "description": "Transfer native COTI tokens to another wallet. This is used for sending COTI tokens from your wallet to another address. Requires recipient address and amount in Wei as input. Returns the transaction hash upon successful transfer.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "recipient_address",
+          "amount_wei"
+        ],
+        "properties": {
+          "gas_limit": {
+            "type": "string",
+            "description": "Optional gas limit for the transaction"
+          },
+          "amount_wei": {
+            "type": "string",
+            "description": "Amount of COTI to transfer (in Wei)"
+          },
+          "recipient_address": {
+            "type": "string",
+            "description": "Recipient COTI address, e.g., 0x0D7C5C1DA069fd7C1fAFBeb922482B2C7B15D273"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cuongpo/coti-mcp-1/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "cotiMcpAesKey": {
+            "type": "string",
+            "description": "COTI MCP AES key for encrypting values."
+          },
+          "cotiMcpNetwork": {
+            "type": "string",
+            "default": "testnet",
+            "description": "COTI MCP network to connect to."
+          },
+          "cotiMcpPrivateKey": {
+            "type": "string",
+            "description": "COTI MCP private key for signing transactions."
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

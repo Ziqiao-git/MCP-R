@@ -1,0 +1,109 @@
+{
+  "qualifiedName": "@truss44/mcp-crypto-price",
+  "displayName": "Crypto Price & Market Analysis Server",
+  "description": "Provide real-time cryptocurrency price data and market analysis.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.coincap.io.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@truss44/mcp-crypto-price",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-crypto-price",
+      "title": "Get Crypto Price",
+      "description": "Get current price and 24h stats for a cryptocurrency",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-market-analysis",
+      "title": "Get Market Analysis",
+      "description": "Get detailed market analysis including top exchanges and volume distribution",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-historical-analysis",
+      "title": "Get Historical Analysis",
+      "description": "Get historical price analysis with customizable timeframe",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "days": {
+            "type": "number",
+            "default": 7,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "symbol": {
+            "type": "string",
+            "minLength": 1
+          },
+          "interval": {
+            "enum": [
+              "m5",
+              "m15",
+              "m30",
+              "h1",
+              "h2",
+              "h6",
+              "h12",
+              "d1"
+            ],
+            "type": "string",
+            "default": "h1"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@truss44/mcp-crypto-price/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "coincapApiKey": {
+            "type": "string",
+            "description": "Optional API key for CoinCap to increase rate limits"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

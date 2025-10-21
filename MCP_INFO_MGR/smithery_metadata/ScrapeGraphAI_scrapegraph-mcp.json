@@ -1,0 +1,234 @@
+{
+  "qualifiedName": "@ScrapeGraphAI/scrapegraph-mcp",
+  "displayName": "ScrapeGraph AI Integration Server",
+  "description": "Enable language models to perform advanced AI-powered web scraping with enterprise-grade reliability. Transform webpages into structured markdown, extract data using AI, and execute AI-powered web searches seamlessly. Enhance your applications with powerful web data extraction capabilities through this integration.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/scrapegraphai.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ScrapeGraphAI/scrapegraph-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "markdownify",
+      "description": "\n    Convert a webpage into clean, formatted markdown.\n\n    Args:\n        website_url: URL of the webpage to convert\n\n    Returns:\n        Dictionary containing the markdown result\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "markdownifyArguments",
+        "required": [
+          "website_url"
+        ],
+        "properties": {
+          "website_url": {
+            "type": "string",
+            "title": "Website Url"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "markdownifyOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "smartscraper",
+      "description": "\n    Extract structured data from a webpage using AI.\n\n    Args:\n        user_prompt: Instructions for what data to extract\n        website_url: URL of the webpage to scrape\n        number_of_scrolls: Number of infinite scrolls to perform (optional)\n        markdown_only: Whether to return only markdown content without AI processing (optional)\n\n    Returns:\n        Dictionary containing the extracted data or markdown content\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "smartscraperArguments",
+        "required": [
+          "user_prompt",
+          "website_url"
+        ],
+        "properties": {
+          "user_prompt": {
+            "type": "string",
+            "title": "User Prompt"
+          },
+          "website_url": {
+            "type": "string",
+            "title": "Website Url"
+          },
+          "markdown_only": {
+            "type": "boolean",
+            "title": "Markdown Only",
+            "default": null
+          },
+          "number_of_scrolls": {
+            "type": "integer",
+            "title": "Number Of Scrolls",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "smartscraperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "searchscraper",
+      "description": "\n    Perform AI-powered web searches with structured results.\n\n    Args:\n        user_prompt: Search query or instructions\n        num_results: Number of websites to search (optional, default: 3 websites = 30 credits)\n        number_of_scrolls: Number of infinite scrolls to perform on each website (optional)\n\n    Returns:\n        Dictionary containing search results and reference URLs\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "searchscraperArguments",
+        "required": [
+          "user_prompt"
+        ],
+        "properties": {
+          "num_results": {
+            "type": "integer",
+            "title": "Num Results",
+            "default": null
+          },
+          "user_prompt": {
+            "type": "string",
+            "title": "User Prompt"
+          },
+          "number_of_scrolls": {
+            "type": "integer",
+            "title": "Number Of Scrolls",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "searchscraperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "smartcrawler_initiate",
+      "description": "\n    Initiate a SmartCrawler request for intelligent multi-page web crawling.\n    \n    SmartCrawler supports two modes:\n    - AI Extraction Mode (10 credits per page): Extracts structured data based on your prompt\n    - Markdown Conversion Mode (2 credits per page): Converts pages to clean markdown\n\n    Args:\n        url: Starting URL to crawl\n        prompt: AI prompt for data extraction (required for AI mode)\n        extraction_mode: \"ai\" for AI extraction or \"markdown\" for markdown conversion (default: \"ai\")\n        depth: Maximum link traversal depth (optional)\n        max_pages: Maximum number of pages to crawl (optional)\n        same_domain_only: Whether to crawl only within the same domain (optional)\n\n    Returns:\n        Dictionary containing the request ID for async processing\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "smartcrawler_initiateArguments",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth",
+            "default": null
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": null
+          },
+          "max_pages": {
+            "type": "integer",
+            "title": "Max Pages",
+            "default": null
+          },
+          "extraction_mode": {
+            "type": "string",
+            "title": "Extraction Mode",
+            "default": "ai"
+          },
+          "same_domain_only": {
+            "type": "boolean",
+            "title": "Same Domain Only",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "smartcrawler_initiateOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "smartcrawler_fetch_results",
+      "description": "\n    Fetch the results of a SmartCrawler operation.\n\n    Args:\n        request_id: The request ID returned by smartcrawler_initiate\n\n    Returns:\n        Dictionary containing the crawled data (structured extraction or markdown)\n        and metadata about processed pages\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "smartcrawler_fetch_resultsArguments",
+        "required": [
+          "request_id"
+        ],
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "smartcrawler_fetch_resultsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ScrapeGraphAI/scrapegraph-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "scrapegraphApiKey"
+        ],
+        "properties": {
+          "scrapegraphApiKey": {
+            "type": "string",
+            "description": "Your Scrapegraph API key"
+          }
+        }
+      }
+    }
+  ]
+}

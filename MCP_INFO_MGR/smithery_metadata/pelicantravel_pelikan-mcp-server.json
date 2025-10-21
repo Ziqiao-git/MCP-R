@@ -1,0 +1,395 @@
+{
+  "qualifiedName": "@pelicantravel/pelikan-mcp-server",
+  "displayName": "Pelikan Flight Search Server",
+  "description": "Provide flight search and detailed flight information retrieval capabilities through a server backend. Enable users to start unique sessions, search for flights between airports, and access detailed flight data seamlessly. Integrate easily with client applications to enhance travel planning workflows.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@pelicantravel/pelikan-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "getsession",
+      "description": "\nStarts an unique session on the server. Must be called before any other tool is invoked. Must be called only once.\nReturns:\n    A string representing the session.\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "getsessionArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "getsessionOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search",
+      "description": "\nSearches for flights. Use this tool ONLY for NEW searches, NOT when user wants details about already found flights.\nArgs:\n    from_airport - airport code to depart from\n    to_airport - airport code to arrive to\n    date_from - date of departure, format yyyy-mm-dd\n    session_id - unique session id. use getsession tool to get one before search.\n    date_to - date of return, format yyyy-mm-dd (optional, for round-trip flights)\nReturns:\n    A list of JSON strings representing flights. Each flight contains:\n    {\"fare_id\": \"340000\", \"there_trip_id\": \"118\", \"back_trip_id\": \"119\", \"session_id\": \"075e3a12...\", \"price\": \"123.41\", \n     \"stops_there\": 0, \"stops_back\": 1, \"there_flight_numbers\": [\"FR7350\"], \"back_flight_numbers\": [\"FR7351\"], \n     \"marketing_carriers\": [\"FR\"], \"flight_numbers_combined\": [\"FR7350\", \"FR7351\"], ...}\n    \nENHANCED FEATURES:\n- stops_there: Number of stops on outbound journey (segments-1)\n- stops_back: Number of stops on return journey (segments-1) \n- there_carriers/back_carriers: List of carrier codes for each direction\n- there_flight_numbers/back_flight_numbers: Flight numbers with carrier code (e.g. \"FR7350\")\n- marketing_carriers: Unique list of all carriers used\n- flight_numbers_combined: All flight numbers for the entire journey\n\nWhen showing results focus on differences between flights - direct vs connecting, carriers, transfer cities, duration.\n\nIMPORTANT: Remember the flight IDs from search results! If user later asks for details about a specific flight, \nuse the 'detail' tool with the FARE_ID, THERE_TRIP_ID, BACK_TRIP_ID from these results.\n\nEXAMPLE JSON RESULT: \n{\"fare_id\": \"340000\", \"there_trip_id\": \"118\", \"back_trip_id\": \"119\", \"from_airport\": \"VIE\", \"to_airport\": \"BCN\", \n \"departure_date\": \"2025-10-15\", \"return_date\": \"2025-10-15\", \"price\": \"123.41\", \"duration\": \"17700000\", \n \"session_id\": \"075e3a12b773412e968e69846a1eac35\", \"notes\": \"DIRECT_FLIGHT|\", \"is_direct\": true}\n\nPARSING: Parse each result as JSON, then extract values:\nflight_data = json.loads(result)\nfare_id = flight_data[\"fare_id\"]\nthere_trip_id = flight_data[\"there_trip_id\"] \nback_trip_id = flight_data[\"back_trip_id\"]\nsession_id = flight_data[\"session_id\"]\n\nTo get details: detail(fare_id=fare_id, there_trip_id=there_trip_id, back_trip_id=back_trip_id, session_id=session_id)\nTo send offer: sendoffer(flight_id=fare_id, there_trip_id=there_trip_id, back_trip_id=back_trip_id, session_id=session_id, ...)\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "searchArguments",
+        "required": [
+          "from_airport",
+          "to_airport",
+          "date_from",
+          "session_id"
+        ],
+        "properties": {
+          "date_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date To",
+            "default": null
+          },
+          "date_from": {
+            "type": "string",
+            "title": "Date From"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "to_airport": {
+            "type": "string",
+            "title": "To Airport"
+          },
+          "from_airport": {
+            "type": "string",
+            "title": "From Airport"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "searchOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "detail",
+      "description": "\nGets detailed information about a selected flight from previous search results.\n\nArgs:\n    fare_id - unique fare identifier from search results (first part before first colon)\n    there_trip_id - unique there trip identifier from search results (second part)\n    back_trip_id - unique back trip identifier from search results (third part)  \n    session_id - unique session id from the search that found this flight\n    \nIMPORTANT: Parse these values from search result string format:\nFORMAT: \"FARE_ID:THERE_TRIP_ID:BACK_TRIP_ID:FROM:TO:DEPARTURE:RETURN:PRICE:DURATION:SESSION_ID:NOTES\"\nSearch result: \"340000:120:121:VIE:BCN:2025-10-15:2025-10-15:123.42:17700000:abc123session:DIRECT_FLIGHT|\"\nSplit by \":\" and use:\n- Position 0 = fare_id = \"340000\"\n- Position 1 = there_trip_id = \"120\" \n- Position 2 = back_trip_id = \"121\"\n- Position 9 = session_id = \"abc123session\"\n\nWRONG: Using price (position 7) as fare_id\nRIGHT: Using position 0 as fare_id, position 9 as session_id\n\nReturns:\n    Detailed flight information including airline, aircraft, departure/arrival times, connections, etc.\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "detailArguments",
+        "required": [
+          "fare_id",
+          "there_trip_id",
+          "back_trip_id",
+          "session_id"
+        ],
+        "properties": {
+          "fare_id": {
+            "type": "string",
+            "title": "Fare Id"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "back_trip_id": {
+            "type": "string",
+            "title": "Back Trip Id"
+          },
+          "there_trip_id": {
+            "type": "string",
+            "title": "There Trip Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "detailOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "saveflight",
+      "description": "\nSaves a flight to temporary memory for later reference.\nArgs:\n    flight_id - unique flight identifier (fare_id from search results)\n    there_trip_id - outbound trip identifier\n    back_trip_id - return trip identifier  \n    session_id - unique session id from getsession tool\nReturns:\n    A string confirming the flight was saved or error message\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "saveflightArguments",
+        "required": [
+          "flight_id",
+          "there_trip_id",
+          "back_trip_id",
+          "session_id"
+        ],
+        "properties": {
+          "flight_id": {
+            "type": "string",
+            "title": "Flight Id"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "back_trip_id": {
+            "type": "string",
+            "title": "Back Trip Id"
+          },
+          "there_trip_id": {
+            "type": "string",
+            "title": "There Trip Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "saveflightOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "sendoffer",
+      "description": "\nSends a flight offer to customer via email using data from search results. NO need to call detail first - all required data is in search results.\n\nIMPORTANT: Before calling this tool, you MUST ask the user for their email address (intro_email_customer parameter).\nThe email is required to send the flight offer to the customer.\n\nParse parameters from search results:\nFORMAT: \"FARE_ID:THERE_TRIP_ID:BACK_TRIP_ID:FROM:TO:DEPARTURE:RETURN:PRICE:DURATION:SESSION_ID:NOTES\"\nExample: \"340000:120:121:VIE:BCN:2025-10-15:2025-10-15:123.42:17700000:abc123session:DIRECT_FLIGHT|\"\nExtract: flight_id=\"340000\", there_trip_id=\"120\", back_trip_id=\"121\", session_id=\"abc123session\"\n\nRequired user information:\n- intro_email_customer: Customer's email address (REQUIRED - ask user first)\n- request_from_client: Customer's name or identifier\n- intro_addressing_customer: How to address the customer (e.g., \"Vážený pán Novák\")\n",
+      "inputSchema": {
+        "type": "object",
+        "title": "sendofferArguments",
+        "required": [
+          "flight_id",
+          "there_trip_id",
+          "back_trip_id",
+          "session_id",
+          "request_from_client",
+          "intro_addressing_customer",
+          "intro_email_customer",
+          "intro_text",
+          "footer_agent_name",
+          "footer_agent_email",
+          "footer_agent_phone"
+        ],
+        "properties": {
+          "hotels": {
+            "type": "string",
+            "title": "Hotels",
+            "default": "[]"
+          },
+          "benefits": {
+            "type": "string",
+            "title": "Benefits",
+            "default": "[]"
+          },
+          "services": {
+            "type": "string",
+            "title": "Services",
+            "default": "[]"
+          },
+          "flight_id": {
+            "type": "string",
+            "title": "Flight Id"
+          },
+          "item_note": {
+            "type": "string",
+            "title": "Item Note",
+            "default": ""
+          },
+          "intro_text": {
+            "type": "string",
+            "title": "Intro Text"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "back_trip_id": {
+            "type": "string",
+            "title": "Back Trip Id"
+          },
+          "internal_note": {
+            "type": "string",
+            "title": "Internal Note",
+            "default": ""
+          },
+          "show_whatsapp": {
+            "type": "boolean",
+            "title": "Show Whatsapp",
+            "default": false
+          },
+          "there_trip_id": {
+            "type": "string",
+            "title": "There Trip Id"
+          },
+          "number_of_adults": {
+            "type": "integer",
+            "title": "Number Of Adults",
+            "default": 1
+          },
+          "number_of_youths": {
+            "type": "integer",
+            "title": "Number Of Youths",
+            "default": 0
+          },
+          "footer_agent_name": {
+            "type": "string",
+            "title": "Footer Agent Name"
+          },
+          "number_of_infants": {
+            "type": "integer",
+            "title": "Number Of Infants",
+            "default": 0
+          },
+          "accept_button_text": {
+            "type": "string",
+            "title": "Accept Button Text",
+            "default": "Chcem TO!"
+          },
+          "footer_agent_email": {
+            "type": "string",
+            "title": "Footer Agent Email"
+          },
+          "footer_agent_phone": {
+            "type": "string",
+            "title": "Footer Agent Phone"
+          },
+          "number_of_children": {
+            "type": "integer",
+            "title": "Number Of Children",
+            "default": 0
+          },
+          "request_from_client": {
+            "type": "string",
+            "title": "Request From Client"
+          },
+          "intro_email_customer": {
+            "type": "string",
+            "title": "Intro Email Customer"
+          },
+          "accepted_contact_form": {
+            "type": "boolean",
+            "title": "Accepted Contact Form",
+            "default": false
+          },
+          "calendar_widget_enabled": {
+            "type": "boolean",
+            "title": "Calendar Widget Enabled",
+            "default": false
+          },
+          "accepted_already_message": {
+            "type": "string",
+            "title": "Accepted Already Message",
+            "default": "Ponuka uz bola prijata"
+          },
+          "accepted_success_message": {
+            "type": "string",
+            "title": "Accepted Success Message",
+            "default": "Prijali sme vasu poziadavku, yes!"
+          },
+          "intro_addressing_customer": {
+            "type": "string",
+            "title": "Intro Addressing Customer"
+          },
+          "accepted_contact_form_without_bi": {
+            "type": "boolean",
+            "title": "Accepted Contact Form Without Bi",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "sendofferOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@pelicantravel/pelikan-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "pelikanBaseUrl",
+          "smartbusEmail",
+          "smartbusPassword"
+        ],
+        "properties": {
+          "pelikanApiKey": {
+            "type": "string"
+          },
+          "smartbusEmail": {
+            "type": "string"
+          },
+          "pelikanBaseUrl": {
+            "type": "string"
+          },
+          "pelikanTimeout": {
+            "type": "number",
+            "default": 60
+          },
+          "smartbusLoginUrl": {
+            "type": "string",
+            "default": "https://ponuky.pelikan.sk/api/login"
+          },
+          "smartbusOfferUrl": {
+            "type": "string",
+            "default": "https://ponuky.pelikan.sk/api/offer"
+          },
+          "smartbusPassword": {
+            "type": "string"
+          },
+          "pelikanDetailEndpoint": {
+            "type": "string"
+          },
+          "pelikanSearchEndpoint": {
+            "type": "string"
+          },
+          "pelikanSessionEndpoint": {
+            "type": "string"
+          },
+          "pelikanSaveflightEndpoint": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

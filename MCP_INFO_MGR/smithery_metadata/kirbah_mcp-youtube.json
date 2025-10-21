@@ -1,0 +1,350 @@
+{
+  "qualifiedName": "@kirbah/mcp-youtube",
+  "displayName": "YouTube Data Server",
+  "description": "Provide token-optimized, structured YouTube data to enhance your LLM applications. Access efficient tools for video search, detailed metadata retrieval, transcript fetching, channel analysis, and trend discovery. Reduce token consumption and improve performance with AI-tailored data formats.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@kirbah/mcp-youtube",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "getVideoDetails",
+      "description": "Get detailed information about multiple YouTube videos. Returns comprehensive data including video metadata, statistics, and content details. Use this when you need complete information about specific videos.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoIds"
+        ],
+        "properties": {
+          "videoIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Array of YouTube video IDs to get details for"
+          },
+          "includeTags": {
+            "type": "boolean",
+            "default": false,
+            "description": "Specify 'true' to include the video's 'tags' array in the response, which is useful for extracting niche keywords. The 'tags' are omitted by default to conserve tokens."
+          },
+          "descriptionDetail": {
+            "enum": [
+              "NONE",
+              "SNIPPET",
+              "LONG"
+            ],
+            "type": "string",
+            "default": "NONE",
+            "description": "Controls video description detail to manage token cost. Options: 'NONE' (default, no text), 'SNIPPET' (a brief preview for broad scans), 'LONG' (a 500-char text for deep analysis of specific targets)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "searchVideos",
+      "description": "Searches for videos based on a query string. Returns a list of videos matching the search criteria, including titles, descriptions, and metadata. Use this when you need to find videos related to specific topics or keywords.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "video",
+              "channel"
+            ],
+            "type": "string",
+            "description": "Type of content to search for (default: video)"
+          },
+          "order": {
+            "enum": [
+              "relevance",
+              "date",
+              "viewCount"
+            ],
+            "type": "string",
+            "description": "Sort order for results (default: relevance)"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Search query string to find videos"
+          },
+          "recency": {
+            "enum": [
+              "any",
+              "pastHour",
+              "pastDay",
+              "pastWeek",
+              "pastMonth",
+              "pastQuarter",
+              "pastYear"
+            ],
+            "type": "string",
+            "description": "Filter by recency. Possible values: 'any', 'pastHour', 'pastDay', 'pastWeek', 'pastMonth', 'pastQuarter', 'pastYear'."
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Restrict search to specific channel ID"
+          },
+          "maxResults": {
+            "type": "number",
+            "default": 10,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Maximum number of results to return (1-500, default: 10)"
+          },
+          "regionCode": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "description": "2-letter country code to restrict results"
+          },
+          "videoDuration": {
+            "enum": [
+              "any",
+              "short",
+              "medium",
+              "long"
+            ],
+            "type": "string",
+            "description": "Filter by video duration. 'any' (default): no duration filter. 'short': videos less than 4 minutes. 'medium': videos 4 to 20 minutes. 'long': videos longer than 20 minutes."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getTranscripts",
+      "description": "Retrieves specific, meaningful segments of a video's transcript. By default, it returns the intro 'hook' and the final 'outro' or call to action. It can also return the full transcript text. Use this to efficiently analyze a video's key messaging.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoIds"
+        ],
+        "properties": {
+          "lang": {
+            "type": "string",
+            "default": "en",
+            "description": "Language code for transcripts (e.g., 'en', 'ko', 'es'). Defaults to environment setting or 'en'"
+          },
+          "format": {
+            "enum": [
+              "full_text",
+              "key_segments"
+            ],
+            "type": "string",
+            "default": "key_segments",
+            "description": "The desired transcript format. 'full_text': Returns the entire transcript as a single string. 'key_segments': (Default) Returns only the video's intro hook and final call to action."
+          },
+          "videoIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Array of YouTube video IDs to get transcripts for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getVideoComments",
+      "description": "Retrieves comments for a YouTube video. Allows sorting, limiting results, and fetching a small number of replies per comment.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoId"
+        ],
+        "properties": {
+          "order": {
+            "enum": [
+              "relevance",
+              "time"
+            ],
+            "type": "string",
+            "default": "relevance",
+            "description": "Sort order for comments. Use 'relevance' (default) for most helpful or 'time' for newest."
+          },
+          "videoId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The 11-character ID of the YouTube video."
+          },
+          "maxReplies": {
+            "type": "number",
+            "default": 0,
+            "maximum": 5,
+            "minimum": 0,
+            "description": "Max replies per comment to return (0-5, default: 0). Use 0 for best performance."
+          },
+          "maxResults": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Max number of top-level comments to return (1-100, default: 20)."
+          },
+          "commentDetail": {
+            "enum": [
+              "SNIPPET",
+              "FULL"
+            ],
+            "type": "string",
+            "default": "SNIPPET",
+            "description": "Detail level for comment text. 'SNIPPET' (default, 200 chars) or 'FULL' (entire text)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getChannelStatistics",
+      "description": "Retrieves statistics for multiple channels. Returns detailed metrics including subscriber count, view count, video count, and channel creation date for each channel. Use this when you need to analyze the performance and reach of multiple YouTube channels.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channelIds"
+        ],
+        "properties": {
+          "channelIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "description": "Array of YouTube channel IDs to get statistics for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getChannelTopVideos",
+      "description": "Retrieves the top videos from a specific channel. Returns a list of the most viewed or popular videos from the channel, based on view count. Use this when you want to identify the most successful content from a channel.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "YouTube channel ID to get top videos from"
+          },
+          "maxResults": {
+            "type": "number",
+            "default": 10,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Maximum number of top videos to return (1-500, default: 10)"
+          },
+          "includeTags": {
+            "type": "boolean",
+            "default": false,
+            "description": "Specify 'true' to include the video's 'tags' array in the response, which is useful for extracting niche keywords. The 'tags' are omitted by default to conserve tokens."
+          },
+          "descriptionDetail": {
+            "enum": [
+              "NONE",
+              "SNIPPET",
+              "LONG"
+            ],
+            "type": "string",
+            "default": "NONE",
+            "description": "Controls video description detail to manage token cost. Options: 'NONE' (default, no text), 'SNIPPET' (a brief preview for broad scans), 'LONG' (a 500-char text for deep analysis of specific targets)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getTrendingVideos",
+      "description": "Retrieves trending videos based on region and category. Returns a list of videos that are currently popular in the specified region and category. Use this when you want to discover what's trending in specific areas or categories. To get available category IDs and their names, use the getVideoCategories tool first.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "categoryId": {
+            "type": "string",
+            "description": "YouTube category ID to filter trending videos by category. Use getVideoCategories tool to get available category IDs."
+          },
+          "maxResults": {
+            "type": "number",
+            "default": 10,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Maximum number of trending videos to return (1-500, default: 10)"
+          },
+          "regionCode": {
+            "type": "string",
+            "default": "US",
+            "maxLength": 2,
+            "minLength": 2,
+            "description": "Two-letter country code (e.g., 'US', 'GB', 'JP'). Defaults to 'US'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getVideoCategories",
+      "description": "Retrieves available video categories for a specific region. Returns a list of YouTube video categories with their IDs and titles that can be used for filtering trending videos or other category-specific operations. Different regions may have different available categories.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "regionCode": {
+            "type": "string",
+            "default": "US",
+            "maxLength": 2,
+            "minLength": 2,
+            "description": "Two-letter country code (e.g., 'US', 'GB', 'JP'). Defaults to 'US'"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@kirbah/mcp-youtube/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "youtubeApiKey"
+        ],
+        "properties": {
+          "youtubeApiKey": {
+            "type": "string",
+            "description": "YouTube Data API key for accessing the YouTube API."
+          },
+          "mdbMcpConnectionString": {
+            "type": "string",
+            "description": "MongoDB connection string to cache the data."
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "qualifiedName": "@kongyo2/eve-online-mcp",
+  "displayName": "EVE Online Market Data Server",
+  "description": "Provide real-time access to EVE Online market data including prices, orders, history, and statistics. Enable detailed market analysis and structure-specific order retrieval with support for authentication and pagination. Simplify integration with EVE Online's ESI API for dynamic market insights.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "get-market-prices",
+      "description": "Get market prices for all items in EVE Online",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-market-orders",
+      "description": "Get market orders from a specific region",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "region_id"
+        ],
+        "properties": {
+          "type_id": {
+            "type": "number",
+            "description": "Item type ID to filter orders"
+          },
+          "region_id": {
+            "type": "number",
+            "description": "Region ID to get market orders from"
+          },
+          "order_type": {
+            "enum": [
+              "buy",
+              "sell",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Type of orders to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-market-history",
+      "description": "Get market history for a specific item in a region",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "region_id",
+          "type_id"
+        ],
+        "properties": {
+          "type_id": {
+            "type": "number",
+            "description": "Item type ID to get history for"
+          },
+          "region_id": {
+            "type": "number",
+            "description": "Region ID to get market history from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-market-groups",
+      "description": "Get grouped market data for a region and type",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "region_id",
+          "type_id"
+        ],
+        "properties": {
+          "type_id": {
+            "type": "number",
+            "description": "Item type ID to get groups for"
+          },
+          "region_id": {
+            "type": "number",
+            "description": "Region ID to get market groups from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-structure-orders",
+      "description": "Get all market orders in a structure",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "structure_id"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Which page to query, starts at 1"
+          },
+          "structure_id": {
+            "type": "number",
+            "description": "Structure ID to get market orders from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-market-stats",
+      "description": "Get market statistics for a region",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "region_id"
+        ],
+        "properties": {
+          "region_id": {
+            "type": "number",
+            "description": "Region ID to get statistics from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-structure-type-orders",
+      "description": "Get all market orders for a specific type in a structure",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "structure_id",
+          "type_id"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Which page to query, starts at 1"
+          },
+          "type_id": {
+            "type": "number",
+            "description": "Item type ID to get orders for"
+          },
+          "structure_id": {
+            "type": "number",
+            "description": "Structure ID to get market orders from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-auth-url",
+      "description": "Get the authentication URL for EVE Online SSO",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "State parameter for OAuth2 flow"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "authenticate",
+      "description": "Exchange authorization code for access token",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Authorization code from EVE Online SSO"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "refresh-token",
+      "description": "Refresh an expired access token",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "refresh_token"
+        ],
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "description": "Refresh token from previous authentication"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kongyo2/eve-online-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,469 @@
+{
+  "qualifiedName": "@praveencs87/trello-mcp",
+  "displayName": "Trello MCP Server",
+  "description": "Enable AI assistants and automation tools to seamlessly manage your Trello boards, lists, cards, and labels through a standardized interface. Simplify Trello workflow management by integrating with any MCP-compatible client. Streamline project and task management with easy commands for creating, moving, and commenting on Trello items.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/trello.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "create-card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "listId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "listId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-boards",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-lists",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "boardId"
+        ],
+        "properties": {
+          "boardId": {
+            "type": "string",
+            "description": "ID of the Trello board to get lists from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-cards",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cards"
+        ],
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "listId"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "listId": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "move-card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId",
+          "listId"
+        ],
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "description": "ID of the card to move"
+          },
+          "listId": {
+            "type": "string",
+            "description": "ID of the destination list"
+          },
+          "position": {
+            "type": "string",
+            "description": "Position in the list (e.g. \"top\", \"bottom\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Comment text"
+          },
+          "cardId": {
+            "type": "string",
+            "description": "ID of the card to comment on"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-label",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "boardId",
+          "name",
+          "color"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the label"
+          },
+          "color": {
+            "enum": [
+              "yellow",
+              "purple",
+              "blue",
+              "red",
+              "green",
+              "orange",
+              "black",
+              "sky",
+              "pink",
+              "lime"
+            ],
+            "type": "string",
+            "description": "Color of the label"
+          },
+          "boardId": {
+            "type": "string",
+            "description": "ID of the board to create the label in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-label",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId",
+          "labelId"
+        ],
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "description": "ID of the card to add the label to"
+          },
+          "labelId": {
+            "type": "string",
+            "description": "ID of the label to add"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "move-cards",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cards"
+        ],
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "cardId",
+                "listId"
+              ],
+              "properties": {
+                "cardId": {
+                  "type": "string",
+                  "description": "ID of the card to move"
+                },
+                "listId": {
+                  "type": "string",
+                  "description": "ID of the destination list"
+                },
+                "position": {
+                  "type": "string",
+                  "description": "Position in the list (e.g. \"top\", \"bottom\")"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-comments",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "comments"
+        ],
+        "properties": {
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "cardId",
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "Comment text"
+                },
+                "cardId": {
+                  "type": "string",
+                  "description": "ID of the card to comment on"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "labels"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "boardId",
+                "name",
+                "color"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the label"
+                },
+                "color": {
+                  "enum": [
+                    "yellow",
+                    "purple",
+                    "blue",
+                    "red",
+                    "green",
+                    "orange",
+                    "black",
+                    "sky",
+                    "pink",
+                    "lime"
+                  ],
+                  "type": "string",
+                  "description": "Color of the label"
+                },
+                "boardId": {
+                  "type": "string",
+                  "description": "ID of the board to create the label in"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "cardId",
+                "labelId"
+              ],
+              "properties": {
+                "cardId": {
+                  "type": "string",
+                  "description": "ID of the card to add the label to"
+                },
+                "labelId": {
+                  "type": "string",
+                  "description": "ID of the label to add"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-tickets-by-list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of cards to return"
+          },
+          "listId": {
+            "type": "string",
+            "description": "ID of the list to get tickets from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "archive-card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId"
+        ],
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "description": "ID of the card to archive"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "archive-cards",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardIds"
+        ],
+        "properties": {
+          "cardIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs of the cards to archive"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-comments-by-user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "boardId",
+          "username"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of comments to return per card"
+          },
+          "boardId": {
+            "type": "string",
+            "description": "ID of the board to search for comments"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username to filter comments by"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@praveencs87/trello-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "trelloApiKey",
+          "trelloApiToken"
+        ],
+        "properties": {
+          "trelloApiKey": {
+            "type": "string",
+            "description": "Trello API Key"
+          },
+          "trelloApiToken": {
+            "type": "string",
+            "description": "Trello API Token"
+          }
+        }
+      }
+    }
+  ]
+}

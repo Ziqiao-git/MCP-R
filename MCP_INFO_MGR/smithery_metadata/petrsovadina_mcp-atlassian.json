@@ -1,0 +1,64 @@
+{
+  "qualifiedName": "@petrsovadina/mcp-atlassian",
+  "displayName": "Atlassian Integration Server",
+  "description": "Integrate your Atlassian products with ease. Access Confluence content and Jira tickets directly through the MCP interface, streamlining your workflow and enhancing productivity.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "confluence_search",
+      "description": "Search Confluence content using CQL",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Results limit (1-50)"
+          },
+          "query": {
+            "type": "string",
+            "description": "CQL query string"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@petrsovadina/mcp-atlassian/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "CONFLUENCE_URL",
+          "CONFLUENCE_USERNAME",
+          "CONFLUENCE_API_TOKEN"
+        ],
+        "properties": {
+          "CONFLUENCE_URL": {
+            "type": "string",
+            "description": "URL of your Confluence instance. Example: https://your-domain.atlassian.net/wiki"
+          },
+          "CONFLUENCE_USERNAME": {
+            "type": "string",
+            "description": "Username or email for Confluence authentication."
+          },
+          "CONFLUENCE_API_TOKEN": {
+            "type": "string",
+            "description": "API token for Confluence."
+          }
+        }
+      }
+    }
+  ]
+}

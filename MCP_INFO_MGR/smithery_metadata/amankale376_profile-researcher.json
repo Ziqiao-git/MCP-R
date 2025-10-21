@@ -1,0 +1,327 @@
+{
+  "qualifiedName": "@amankale376/profile-researcher",
+  "displayName": "LinkedIn Profile Data Mining Server",
+  "description": "Enable advanced LinkedIn profile search, extraction, and contact information enrichment through a powerful MCP server. Leverage AI-powered query expansion, smart filtering, and multiple data sources to obtain comprehensive and validated professional profiles. Export and manage data efficiently with built-in CSV support and persistent storage.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@amankale376/profile-researcher",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_linkedin_profiles",
+      "description": "Search for LinkedIn profiles based on keywords",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "keywords"
+        ],
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "description": "Keywords to search for (e.g., 'AI podcast host')"
+          },
+          "num_results": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": 20,
+            "description": "Number of results to return"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract_profile_data",
+      "description": "Extract detailed profile data from LinkedIn URLs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "urls"
+        ],
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of LinkedIn profile URLs to extract data from"
+          },
+          "include_contact_info": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include contact information via Apollo API"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mine_linkedin_data",
+      "description": "Comprehensive LinkedIn data mining: search, extract, and enrich profile data",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "keywords"
+        ],
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "description": "Keywords to search for"
+          },
+          "export_csv": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to export results to CSV"
+          },
+          "num_results": {
+            "type": "number",
+            "default": 20,
+            "description": "Number of profiles to process"
+          },
+          "csv_filename": {
+            "type": "string",
+            "description": "Custom CSV filename"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_contact_info",
+      "description": "Get contact information for a person using Apollo API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "person_name",
+          "company_name"
+        ],
+        "properties": {
+          "person_name": {
+            "type": "string",
+            "description": "Full name of the person"
+          },
+          "company_name": {
+            "type": "string",
+            "description": "Company name where the person works"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_to_csv",
+      "description": "Export all stored profile data to CSV file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "Custom filename for the CSV export"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_stored_profiles",
+      "description": "Retrieve all profiles stored in the database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_search_queries",
+      "description": "Generate additional search queries for LinkedIn profile mining using AI",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "main_query"
+        ],
+        "properties": {
+          "main_query": {
+            "type": "string",
+            "description": "Main search query to expand"
+          },
+          "num_queries": {
+            "type": "number",
+            "default": 3,
+            "description": "Number of additional queries to generate"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enrich_contact_info",
+      "description": "Enrich existing profiles with contact information using Apollo API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "profile_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific profile URLs to enrich (if not provided, enriches all stored profiles)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_profile_details",
+      "description": "Get detailed information for specific LinkedIn profiles",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "profile_urls"
+        ],
+        "properties": {
+          "profile_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of LinkedIn profile URLs to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_profiles_by_criteria",
+      "description": "Search stored profiles by specific criteria (company, job title, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "company": {
+            "type": "string",
+            "description": "Filter by company name"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "Search in name, description, or company"
+          },
+          "has_email": {
+            "type": "boolean",
+            "description": "Filter profiles that have email addresses"
+          },
+          "job_title": {
+            "type": "string",
+            "description": "Filter by job title"
+          },
+          "min_followers": {
+            "type": "number",
+            "description": "Minimum number of followers"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_search_statistics",
+      "description": "Get statistics about stored profiles and search performance",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "clear_database",
+      "description": "Clear all stored profile data from the database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "confirm"
+        ],
+        "properties": {
+          "confirm": {
+            "type": "boolean",
+            "description": "Confirmation flag - must be true to proceed with clearing"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@amankale376/profile-researcher/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "debug",
+          "apolloApiKey",
+          "nubelaApiKey",
+          "openaiApiKey",
+          "geminiApiKey",
+          "openrouterApiKey",
+          "ollamaBaseUrl"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "description": "Enable debug logging"
+          },
+          "apolloApiKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Apollo.io API key"
+          },
+          "geminiApiKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Google Gemini API key"
+          },
+          "nubelaApiKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Nubela Proxycurl API key"
+          },
+          "openaiApiKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "OpenAI API key"
+          },
+          "ollamaBaseUrl": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Ollama base URL"
+          },
+          "openrouterApiKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "OpenRouter API key"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

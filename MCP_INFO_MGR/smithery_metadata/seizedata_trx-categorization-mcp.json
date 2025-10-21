@@ -1,0 +1,245 @@
+{
+  "qualifiedName": "@seizedata/trx-categorization-mcp",
+  "displayName": "SeizeData DaZoom",
+  "description": "Categorize bank and card transactions automatically to streamline expense tracking. Reveal spending patterns and merchants with clear categories and summaries. Accelerate budgeting, reconciliation, and reporting with accurate, structured data.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@seizedata/trx-categorization-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "categorize-transactions-by-dazoom",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[씨즈데이터] DaZoom 통장 및 카드 거래내역 분석 툴",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "TransactionInput": {
+            "type": "object",
+            "title": "TransactionInput",
+            "required": [
+              "bankcard",
+              "inst_name",
+              "tran_type",
+              "print_content",
+              "inout_type"
+            ],
+            "properties": {
+              "branch": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Branch",
+                "default": ""
+              },
+              "bankcard": {
+                "type": "string",
+                "title": "Bankcard"
+              },
+              "tran_amt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tran Amt",
+                "default": "0"
+              },
+              "inst_name": {
+                "type": "string",
+                "title": "Inst Name"
+              },
+              "tran_date": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tran Date",
+                "default": ""
+              },
+              "tran_time": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tran Time",
+                "default": ""
+              },
+              "tran_type": {
+                "type": "string",
+                "title": "Tran Type"
+              },
+              "inout_type": {
+                "type": "string",
+                "title": "Inout Type"
+              },
+              "balance_amt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Balance Amt",
+                "default": "0"
+              },
+              "print_content": {
+                "type": "string",
+                "title": "Print Content"
+              }
+            },
+            "description": "거래내역 입력 자료구조\n\n- bankcard: 통장/카드 구분 (\"통장\", \"카드\" 중 하나)\n- inst_name: 은행명/카드사명 (예: 신한은행, 국민카드)\n- tran_date: 거래일자 (YYYYMMDD)\n- tran_time: 거래시각 (hhmmss)\n- tran_type: 거래유형 (통장/카드 구분이 카드의 경우는 공란)\n- print_content: 거래내용 (통장: 적요 / 카드: 가맹점명)\n- inout_type: 입출금 구분 (\"입금\", \"출금\" 중 하나)\n- tran_amt: 입출금액\n- balance_amt: 거래후잔액 (통장의 경우만 존재)\n- branch: 거래 지점 (통장의 경우만 존재)"
+          }
+        },
+        "required": [
+          "inputs"
+        ],
+        "properties": {
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/TransactionInput"
+            },
+            "title": "Inputs"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "TransactionCategoryOutput": {
+            "type": "object",
+            "title": "TransactionCategoryOutput",
+            "required": [
+              "bankcard",
+              "print_content",
+              "tran_amt",
+              "category",
+              "category_code1",
+              "category_code2",
+              "target_inst_name",
+              "capt_name",
+              "capt_branch",
+              "capt_round",
+              "capt_count"
+            ],
+            "properties": {
+              "bankcard": {
+                "type": "string",
+                "title": "Bankcard"
+              },
+              "category": {
+                "type": "string",
+                "title": "Category"
+              },
+              "tran_amt": {
+                "type": "string",
+                "title": "Tran Amt"
+              },
+              "capt_name": {
+                "type": "string",
+                "title": "Capt Name"
+              },
+              "tran_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tran Type",
+                "default": ""
+              },
+              "capt_count": {
+                "type": "string",
+                "title": "Capt Count"
+              },
+              "capt_round": {
+                "type": "string",
+                "title": "Capt Round"
+              },
+              "inout_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Inout Type",
+                "default": ""
+              },
+              "capt_branch": {
+                "type": "string",
+                "title": "Capt Branch"
+              },
+              "print_content": {
+                "type": "string",
+                "title": "Print Content"
+              },
+              "category_code1": {
+                "type": "string",
+                "title": "Category Code1"
+              },
+              "category_code2": {
+                "type": "string",
+                "title": "Category Code2"
+              },
+              "target_inst_name": {
+                "type": "string",
+                "title": "Target Inst Name"
+              }
+            },
+            "description": "거래내역 카테고리 출력 자료구조\n\n- bankcard: [입력값] 통장/카드 구분 (\"통장\", \"카드\" 중 하나)\n- tran_type: [입력값] 거래유형 (통장/카드 구분이 카드의 경우는 공란)\n- print_content: [입력값] 거래내용 (통장: 적요 / 카드: 가맹점명)\n- inout_type: [입력값] 입출금 구분 (\"입금\", \"출금\" 중 하나)\n- tran_amt: [입력값] 입출금액\n\n\n- category: 카테고리\n\n- category_code1: 카테고리코드 1\n- category_code2: 카테고리코드 2\n\n- target_inst_name: 대상기관명\n- capt_name: 성명 (추출값)\n- capt_branch: 지점 (추출값)\n- capt_round: 회차 (추출값)\n- capt_count: 건수 (추출값)"
+          }
+        },
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/TransactionCategoryOutput"
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@seizedata/trx-categorization-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

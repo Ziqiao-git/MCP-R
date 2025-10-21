@@ -1,0 +1,677 @@
+{
+  "qualifiedName": "@mcpdotdirect/starknet-mcp-server",
+  "displayName": "Starknet MCP Server",
+  "description": "A comprehensive Model Context Protocol (MCP) server for the Starknet blockchain. This server provides AI agents with the ability to interact with Starknet networks, query blockchain data, manage wallets, and interact with smart contracts.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/69035209-b55f-4ea0-b6e3-55d7c7d4d184.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "get_starknet_chain_info",
+      "description": "Get information about a Starknet network",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_supported_starknet_networks",
+      "description": "Get a list of supported Starknet networks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_eth_balance",
+      "description": "Get the ETH balance for a Starknet address or Starknet ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Starknet address or Starknet ID (with or without .stark)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_token_balance",
+      "description": "Get the token balance for a Starknet address or Starknet ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "ownerAddress"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "ownerAddress": {
+            "type": "string",
+            "description": "Owner's Starknet address or Starknet ID"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "Token contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_strk_balance",
+      "description": "Get the STRK token balance for a Starknet address or Starknet ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Starknet address or Starknet ID (with or without .stark)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_native_balances",
+      "description": "Get all native token balances (ETH and STRK) for a Starknet address or Starknet ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Starknet address or Starknet ID (with or without .stark)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "resolve_starknet_name",
+      "description": "Get the Starknet ID for an address",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Starknet address to lookup (must be a valid address, not a name)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "resolve_starknet_address",
+      "description": "Get the address for a Starknet ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Starknet ID to lookup (with or without .stark)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_profile",
+      "description": "Get the full Starknet ID profile for an address or Starknet ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Starknet address or Starknet ID to lookup"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_starknet_domain",
+      "description": "Check if a string is a valid Starknet ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Starknet ID to validate (with or without .stark)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_block",
+      "description": "Get information about a specific block",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "blockIdentifier": {
+            "type": "string",
+            "description": "Block number, hash, or 'latest'/'pending'. Defaults to 'latest'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_block_transactions",
+      "description": "Get transactions in a specific block",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "blockIdentifier": {
+            "type": "string",
+            "description": "Block number, hash, or 'latest'/'pending'. Defaults to 'latest'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_transaction",
+      "description": "Get details about a transaction",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "txHash"
+        ],
+        "properties": {
+          "txHash": {
+            "type": "string",
+            "description": "Transaction hash"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_transaction_receipt",
+      "description": "Get transaction receipt",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "txHash"
+        ],
+        "properties": {
+          "txHash": {
+            "type": "string",
+            "description": "Transaction hash"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "call_starknet_contract",
+      "description": "Call a read-only function on a contract",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "contractAddress",
+          "entrypoint"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "calldata": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Call data array (optional)"
+          },
+          "entrypoint": {
+            "type": "string",
+            "description": "Function name to call"
+          },
+          "resultTypes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "felt",
+                "uint256",
+                "address",
+                "string"
+              ],
+              "type": "string"
+            },
+            "description": "Expected return types for each result value (e.g., ['felt', 'uint256', 'address'])"
+          },
+          "contractAddress": {
+            "type": "string",
+            "description": "Contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_contract_class",
+      "description": "Get the class (ABI and other information) of a contract",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "contractAddress"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "contractAddress": {
+            "type": "string",
+            "description": "Contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_token_info",
+      "description": "Get information about a token",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "Token contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_starknet_nft_ownership",
+      "description": "Check if an address owns a specific NFT",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "tokenId",
+          "ownerAddress"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "tokenId": {
+            "type": "string",
+            "description": "Token ID to check"
+          },
+          "ownerAddress": {
+            "type": "string",
+            "description": "Owner's Starknet address or Starknet ID to check against"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "NFT contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_nft_balance",
+      "description": "Get the number of NFTs owned by an address for a specific collection",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "ownerAddress"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "ownerAddress": {
+            "type": "string",
+            "description": "Owner's Starknet address or Starknet ID"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "NFT contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_starknet_token_supply",
+      "description": "Get the total supply of a token",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "Token contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_starknet_transaction_status",
+      "description": "Check if a transaction is confirmed (finalized)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "txHash"
+        ],
+        "properties": {
+          "txHash": {
+            "type": "string",
+            "description": "Transaction hash"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_starknet_eth",
+      "description": "Transfer ETH from one account to another",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "privateKey",
+          "from",
+          "to",
+          "amount"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Recipient's Starknet address or Starknet ID"
+          },
+          "from": {
+            "type": "string",
+            "description": "Sender's Starknet address"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount to transfer in ETH (human readable format, not wei)"
+          },
+          "maxFee": {
+            "type": "string",
+            "description": "Maximum fee to pay (optional)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "privateKey": {
+            "type": "string",
+            "description": "Private key of the sender account (not stored, only used to sign the transaction)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_starknet_strk",
+      "description": "Transfer STRK from one account to another",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "privateKey",
+          "from",
+          "to",
+          "amount"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Recipient's Starknet address or Starknet ID"
+          },
+          "from": {
+            "type": "string",
+            "description": "Sender's Starknet address"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount to transfer in STRK (human readable format, not wei)"
+          },
+          "maxFee": {
+            "type": "string",
+            "description": "Maximum fee to pay (optional)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "privateKey": {
+            "type": "string",
+            "description": "Private key of the sender account (not stored, only used to sign the transaction)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_starknet_token",
+      "description": "Transfer ERC20 tokens from one account to another",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "privateKey",
+          "from",
+          "to",
+          "tokenAddress",
+          "amount"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Recipient's Starknet address or Starknet ID"
+          },
+          "from": {
+            "type": "string",
+            "description": "Sender's Starknet address"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount to transfer in token's standard units (human readable format, not in smallest unit)"
+          },
+          "maxFee": {
+            "type": "string",
+            "description": "Maximum fee to pay (optional)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "privateKey": {
+            "type": "string",
+            "description": "Private key of the sender account (not stored, only used to sign the transaction)"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "Token contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_starknet_contract",
+      "description": "Execute a contract call (write operation)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "privateKey",
+          "accountAddress",
+          "contractAddress",
+          "entrypoint"
+        ],
+        "properties": {
+          "maxFee": {
+            "type": "string",
+            "description": "Maximum fee to pay (optional)"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network name (e.g., 'mainnet', 'sepolia'). Defaults to Mainnet."
+          },
+          "calldata": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Call data array (optional)"
+          },
+          "entrypoint": {
+            "type": "string",
+            "description": "Function name to call"
+          },
+          "privateKey": {
+            "type": "string",
+            "description": "Private key of the sender account (not stored, only used to sign the transaction)"
+          },
+          "accountAddress": {
+            "type": "string",
+            "description": "Sender's Starknet address"
+          },
+          "contractAddress": {
+            "type": "string",
+            "description": "Contract address or Starknet ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@mcpdotdirect/starknet-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "qualifiedName": "@MetehanGZL/pokemcp",
+  "displayName": "Pokémon Information Server",
+  "description": "Provide detailed Pokémon data and information through a standardized MCP interface. Enable LLMs and applications to query and retrieve Pokémon-related content efficiently. Enhance your agents with rich, structured Pokémon knowledge.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "random_pokemon",
+      "description": "Rastgele bir Pokémon seç",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "random_pokemon_from_region",
+      "description": "Belirli bir bölgeden rastgele bir Pokémon seç",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "region"
+        ],
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Pokémon bölgesi (örn: kanto, johto, hoenn, vb.)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "random_pokemon_by_type",
+      "description": "Belirli bir türden rastgele bir Pokémon seç",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Pokémon türü (örn: ateş, su, çimen, vb.)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "pokemon_query",
+      "description": "Doğal dil ile Pokémon sorguları yap",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Pokémon hakkında doğal dil sorgusu"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "start_battle",
+      "description": "Start a battle between two Pokémon",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "playerPokemonId",
+          "opponentPokemonId"
+        ],
+        "properties": {
+          "playerPokemonId": {
+            "type": "number",
+            "description": "Player's Pokémon ID"
+          },
+          "opponentPokemonId": {
+            "type": "number",
+            "description": "Opponent's Pokémon ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "make_move",
+      "description": "Make a move in the current battle",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "moveIndex"
+        ],
+        "properties": {
+          "moveIndex": {
+            "type": "number",
+            "maximum": 3,
+            "minimum": 0,
+            "description": "Index of the move to use (0-3)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "use_item",
+      "description": "Use an item in battle",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "itemIndex"
+        ],
+        "properties": {
+          "itemIndex": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Index of the item to use"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@MetehanGZL/pokemcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

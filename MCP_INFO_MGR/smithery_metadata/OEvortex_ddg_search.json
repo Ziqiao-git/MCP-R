@@ -1,0 +1,141 @@
+{
+  "qualifiedName": "@OEvortex/ddg_search",
+  "displayName": "DuckDuckGo & Felo AI Search",
+  "description": "Provide fast, privacy-friendly web and AI-powered search capabilities with integrated content and metadata extraction. Enhance your AI assistants by enabling comprehensive web scraping without requiring API keys. Optimize performance with caching and secure usage through rate limiting and user agent rotation.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@OEvortex/ddg_search",
+  "security": null,
+  "tools": [
+    {
+      "name": "web-search",
+      "title": "Web Search",
+      "description": "Search the web using DuckDuckGo and return comprehensive results with titles, URLs, and snippets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number for pagination (default: 1)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The search query to find relevant web pages"
+          },
+          "numResults": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Number of results to return per page (default: 10, max: 20)"
+          }
+        }
+      }
+    },
+    {
+      "name": "fetch-url",
+      "title": "Fetch URL Content",
+      "description": "Fetch and extract the main content from any URL, with customizable extraction options for text, links, and images",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL to fetch content from (must be a valid HTTP/HTTPS URL)"
+          },
+          "maxLength": {
+            "type": "integer",
+            "default": 10000,
+            "maximum": 50000,
+            "minimum": 1000,
+            "description": "Maximum length of content to return in characters (default: 10000)"
+          },
+          "excludeTags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "HTML tags to exclude from extraction (default: script, style, etc.)"
+          },
+          "includeLinks": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include link text in the extracted content (default: true)"
+          },
+          "includeImages": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include image alt text in the extracted content (default: true)"
+          },
+          "extractMainContent": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to attempt to extract main content only, filtering out navigation and ads (default: true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "url-metadata",
+      "title": "URL Metadata Extractor",
+      "description": "Extract metadata from a URL including title, description, Open Graph data, and favicon information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL to extract metadata from (must be a valid HTTP/HTTPS URL)"
+          }
+        }
+      }
+    },
+    {
+      "name": "felo-search",
+      "title": "Felo AI Advanced Search",
+      "description": "Advanced AI-powered web search for technical intelligence. Retrieves up-to-date information including software releases, security advisories, migration guides, benchmarks, developer documentation, and community insights. Supports both standard and streaming responses.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "A detailed search query or prompt describing the technical information needed. Supports natural language and keyword-based queries for precise results."
+          },
+          "stream": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable streaming mode to receive incremental, real-time search results as they are discovered. Useful for monitoring live updates or large result sets. Default is false (returns full result at once)."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@OEvortex/ddg_search/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

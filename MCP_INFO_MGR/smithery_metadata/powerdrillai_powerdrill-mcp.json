@@ -1,0 +1,315 @@
+{
+  "qualifiedName": "@powerdrillai/powerdrill-mcp",
+  "displayName": "Powerdrill MCP Server",
+  "description": "Authenticate and interact with your Powerdrill datasets effortlessly. List datasets, get detailed information, and create jobs using natural language questions. Enhance your data analysis capabilities with seamless integration into your existing tools.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/powerdrill.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "mcp_powerdrill_list_datasets",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of datasets to return"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search for datasets by name"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "The number of items on a single page (default: 10)"
+          },
+          "pageNumber": {
+            "type": "number",
+            "description": "The page number to start listing (default: 1)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_get_dataset_overview",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "datasetId"
+        ],
+        "properties": {
+          "datasetId": {
+            "type": "string",
+            "description": "The ID of the dataset to get overview information for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_create_job",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question",
+          "dataset_id",
+          "session_id"
+        ],
+        "properties": {
+          "stream": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to stream the results (default: false)"
+          },
+          "job_mode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "The job mode (default: AUTO)"
+          },
+          "question": {
+            "type": "string",
+            "description": "The natural language question or prompt to analyze the data"
+          },
+          "dataset_id": {
+            "type": "string",
+            "description": "The ID of the dataset to analyze"
+          },
+          "session_id": {
+            "type": "string",
+            "description": "Session ID to group related jobs"
+          },
+          "datasource_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional array of specific data source IDs within the dataset to analyze"
+          },
+          "output_language": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "The language for the output (default: AUTO)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_create_session",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The session name, which can be up to 128 characters in length"
+          },
+          "agent_id": {
+            "enum": [
+              "DATA_ANALYSIS_AGENT"
+            ],
+            "type": "string",
+            "default": "DATA_ANALYSIS_AGENT",
+            "description": "The ID of the agent"
+          },
+          "job_mode": {
+            "enum": [
+              "AUTO",
+              "DATA_ANALYTICS"
+            ],
+            "type": "string",
+            "default": "AUTO",
+            "description": "Job mode for the session"
+          },
+          "output_language": {
+            "enum": [
+              "AUTO",
+              "EN",
+              "ES",
+              "AR",
+              "PT",
+              "ID",
+              "JA",
+              "RU",
+              "HI",
+              "FR",
+              "DE",
+              "VI",
+              "TR",
+              "PL",
+              "IT",
+              "KO",
+              "ZH-CN",
+              "ZH-TW"
+            ],
+            "type": "string",
+            "default": "AUTO",
+            "description": "The language in which the output is generated"
+          },
+          "max_contextual_job_history": {
+            "type": "number",
+            "default": 10,
+            "maximum": 10,
+            "minimum": 0,
+            "description": "The maximum number of recent jobs retained as context for the next job"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_list_data_sources",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "datasetId"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Filter data sources by status: synching, invalid, synched (comma-separated for multiple)"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "The number of items on a single page (default: 10)"
+          },
+          "datasetId": {
+            "type": "string",
+            "description": "The ID of the dataset to list data sources from"
+          },
+          "pageNumber": {
+            "type": "number",
+            "description": "The page number to start listing (default: 1)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_list_sessions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "Search for sessions by name"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "The number of items on a single page (default: 10)"
+          },
+          "pageNumber": {
+            "type": "number",
+            "description": "The page number to start listing (default: 1)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_create_dataset",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The dataset name, which can be up to 128 characters in length"
+          },
+          "description": {
+            "type": "string",
+            "description": "The dataset description, which can be up to 128 characters in length"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_create_data_source_from_local_file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataset_id",
+          "file_path"
+        ],
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "description": "Optional custom name for the file, defaults to the original filename"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "The local path to the file to upload"
+          },
+          "chunk_size": {
+            "type": "number",
+            "default": 5242880,
+            "description": "Size of each chunk in bytes, default is 5MB"
+          },
+          "dataset_id": {
+            "type": "string",
+            "description": "The ID of the dataset to create the data source in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mcp_powerdrill_delete_dataset",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "datasetId"
+        ],
+        "properties": {
+          "datasetId": {
+            "type": "string",
+            "description": "The ID of the dataset to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@powerdrillai/powerdrill-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "powerdrillUserId",
+          "powerdrillProjectApiKey"
+        ],
+        "properties": {
+          "powerdrillUserId": {
+            "type": "string",
+            "description": "Your Powerdrill User ID to authenticate with Powerdrill."
+          },
+          "powerdrillProjectApiKey": {
+            "type": "string",
+            "description": "Your Powerdrill Project API Key for secure access."
+          }
+        }
+      }
+    }
+  ]
+}

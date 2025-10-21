@@ -1,0 +1,767 @@
+{
+  "qualifiedName": "@cristianoaredes/mcp-mobile-server",
+  "displayName": "Flutter Mobile Workbench",
+  "description": "Accelerate Flutter mobile development with guided setup, smart device management, and streamlined run/build/test workflows. Handle Android and iOS simulators and emulators, capture logs and screenshots, and resolve common issues automatically. Ship confidently with release builds and built-in health checks.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/e8a5e542-0fe5-416d-87ad-29a3ddf22fec.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cristianoaredes/mcp-mobile-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "flutter_doctor",
+      "description": "Run Flutter doctor to check development environment setup",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "flutter_version",
+      "description": "Get Flutter SDK version information",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "flutter_list_devices",
+      "description": "List connected devices and emulators available for Flutter development",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "android_list_devices",
+      "description": "List connected Android devices and emulators (supports ADB fallback to native-run)",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "native_run_list_devices",
+      "description": "List connected devices using native-run (Android & iOS support)",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "platform": {
+            "enum": [
+              "android",
+              "ios"
+            ],
+            "type": "string",
+            "default": "android"
+          }
+        }
+      }
+    },
+    {
+      "name": "native_run_install_app",
+      "description": "Install app on device using native-run (works for Android APK & iOS app)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "appPath"
+        ],
+        "properties": {
+          "appPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "deviceId": {
+            "type": "string"
+          },
+          "platform": {
+            "enum": [
+              "android",
+              "ios"
+            ],
+            "type": "string",
+            "default": "android"
+          }
+        }
+      }
+    },
+    {
+      "name": "ios_list_simulators",
+      "description": "List available iOS simulators",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "android_list_emulators",
+      "description": "List available Android emulators",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "android_create_avd",
+      "description": "Create a new Android Virtual Device (AVD)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "systemImageId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "AVD name (alphanumeric and underscores only)"
+          },
+          "device": {
+            "type": "string",
+            "description": "Device definition (optional)"
+          },
+          "sdcard": {
+            "type": "string",
+            "description": "SD card size (e.g., 512M, 1G)"
+          },
+          "systemImageId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "System image package ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "android_start_emulator",
+      "description": "Start an Android emulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "avdName"
+        ],
+        "properties": {
+          "avdName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "AVD name to start"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "gpu": {
+                "enum": [
+                  "auto",
+                  "host",
+                  "swiftshader_indirect",
+                  "angle_indirect",
+                  "guest"
+                ],
+                "type": "string",
+                "description": "GPU acceleration mode"
+              },
+              "port": {
+                "type": "number",
+                "maximum": 5682,
+                "minimum": 5554,
+                "description": "Console port number"
+              },
+              "noWindow": {
+                "type": "boolean",
+                "description": "Run without UI window"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "android_stop_emulator",
+      "description": "Stop a running Android emulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "avdName"
+        ],
+        "properties": {
+          "avdName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "AVD name to stop"
+          }
+        }
+      }
+    },
+    {
+      "name": "ios_shutdown_simulator",
+      "description": "Shutdown an iOS simulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "udid"
+        ],
+        "properties": {
+          "udid": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Simulator UDID"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_launch_emulator",
+      "description": "Launch a Flutter emulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "emulatorId"
+        ],
+        "properties": {
+          "emulatorId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Emulator ID to launch"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_run",
+      "description": "Start a Flutter development session (hot reload enabled)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Working directory (Flutter project root)"
+          },
+          "flavor": {
+            "type": "string",
+            "description": "Build flavor"
+          },
+          "target": {
+            "type": "string",
+            "description": "Target dart file (e.g., lib/main.dart)"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Target device ID"
+          },
+          "debugPort": {
+            "type": "number",
+            "maximum": 65535,
+            "minimum": 1024,
+            "description": "Debug port number"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_build",
+      "description": "Build Flutter app for specific target platform",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd",
+          "target"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Working directory (Flutter project root)"
+          },
+          "flavor": {
+            "type": "string",
+            "description": "Build flavor"
+          },
+          "target": {
+            "enum": [
+              "apk",
+              "appbundle",
+              "ipa",
+              "ios",
+              "android",
+              "web",
+              "windows",
+              "macos",
+              "linux"
+            ],
+            "type": "string",
+            "description": "Build target platform"
+          },
+          "buildMode": {
+            "enum": [
+              "debug",
+              "profile",
+              "release"
+            ],
+            "type": "string",
+            "description": "Build mode"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_test",
+      "description": "Run Flutter tests with optional coverage",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Working directory (Flutter project root)"
+          },
+          "coverage": {
+            "type": "boolean",
+            "description": "Enable test coverage"
+          },
+          "testFile": {
+            "type": "string",
+            "description": "Specific test file to run (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_clean",
+      "description": "Clean Flutter build cache and generated files",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Working directory (Flutter project root)"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_pub_get",
+      "description": "Install Flutter project dependencies (pub get)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Working directory (Flutter project root)"
+          }
+        }
+      }
+    },
+    {
+      "name": "android_install_apk",
+      "description": "Install an APK file to an Android device or emulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "serial",
+          "apkPath"
+        ],
+        "properties": {
+          "serial": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Device serial number"
+          },
+          "apkPath": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Path to APK file"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "test": {
+                "type": "boolean",
+                "description": "Allow test APKs"
+              },
+              "replace": {
+                "type": "boolean",
+                "description": "Replace existing app if installed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "android_logcat",
+      "description": "Capture Android logcat output from device or emulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "serial"
+        ],
+        "properties": {
+          "clear": {
+            "type": "boolean",
+            "description": "Clear logcat buffer before capturing"
+          },
+          "lines": {
+            "type": "number",
+            "maximum": 10000,
+            "minimum": 1,
+            "description": "Number of log lines to capture"
+          },
+          "filter": {
+            "type": "string",
+            "description": "Log filter (e.g., *:E for errors only)"
+          },
+          "serial": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Device serial number"
+          }
+        }
+      }
+    },
+    {
+      "name": "android_screenshot",
+      "description": "Capture screenshot from Android device or emulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "serial",
+          "outputPath"
+        ],
+        "properties": {
+          "serial": {
+            "type": "string",
+            "description": "Device serial number (use android_devices_list to get available devices)"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "format": {
+                "enum": [
+                  "png",
+                  "raw"
+                ],
+                "type": "string",
+                "default": "png",
+                "description": "Screenshot format"
+              },
+              "display": {
+                "type": "number",
+                "description": "Display ID for multi-display devices"
+              }
+            }
+          },
+          "outputPath": {
+            "type": "string",
+            "description": "Local path where screenshot will be saved (e.g., ./screenshot.png)"
+          }
+        }
+      }
+    },
+    {
+      "name": "ios_boot_simulator",
+      "description": "Boot an iOS simulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "udid"
+        ],
+        "properties": {
+          "udid": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Simulator UDID"
+          }
+        }
+      }
+    },
+    {
+      "name": "ios_take_screenshot",
+      "description": "Take a screenshot of an iOS simulator",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "udid",
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Absolute path to save screenshot"
+          },
+          "udid": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Simulator UDID"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_dev_session",
+      "description": "Complete Flutter dev setup: check env, list devices, select best device, run with hot reload",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Working directory (Flutter project root)"
+          },
+          "target": {
+            "type": "string",
+            "description": "Target dart file (e.g., lib/main.dart)"
+          },
+          "preferPhysical": {
+            "type": "boolean",
+            "default": true,
+            "description": "Prefer physical device over emulator"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_test_suite",
+      "description": "Run complete test suite: unit tests, widget tests, integration tests with coverage report",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Working directory (Flutter project root)"
+          },
+          "coverage": {
+            "type": "boolean",
+            "default": true,
+            "description": "Generate coverage report"
+          },
+          "integrationTests": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include integration tests"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_release_build",
+      "description": "Build release versions for all platforms: APK, AAB, IPA with signing",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Working directory (Flutter project root)"
+          },
+          "obfuscate": {
+            "type": "boolean",
+            "default": true,
+            "description": "Obfuscate Dart code"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "apk",
+                "appbundle",
+                "ipa",
+                "ios"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "apk",
+              "appbundle"
+            ],
+            "description": "Platforms to build for"
+          }
+        }
+      }
+    },
+    {
+      "name": "mobile_device_manager",
+      "description": "Smart device management: list all, recommend best, auto-start if needed",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "list",
+              "recommend",
+              "ensure"
+            ],
+            "type": "string",
+            "default": "recommend",
+            "description": "Action to perform"
+          },
+          "platform": {
+            "enum": [
+              "android",
+              "ios",
+              "any"
+            ],
+            "type": "string",
+            "default": "any",
+            "description": "Target platform"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_fix_common_issues",
+      "description": "Auto-fix common issues: clean, pub get, pod install, gradle sync, invalidate caches",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cwd"
+        ],
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Working directory (Flutter project root)"
+          },
+          "deep": {
+            "type": "boolean",
+            "default": false,
+            "description": "Perform deep cleaning (slower but more thorough)"
+          }
+        }
+      }
+    },
+    {
+      "name": "flutter_setup_environment",
+      "description": "Complete Flutter SDK installation and environment setup with automatic path configuration",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "check",
+              "install",
+              "configure",
+              "full"
+            ],
+            "type": "string",
+            "default": "check",
+            "description": "Action to perform (check status, install Flutter, configure paths, or full setup)"
+          },
+          "channel": {
+            "enum": [
+              "stable",
+              "beta",
+              "dev",
+              "master"
+            ],
+            "type": "string",
+            "default": "stable",
+            "description": "Flutter channel to install"
+          },
+          "autoConfig": {
+            "type": "boolean",
+            "default": true,
+            "description": "Automatically configure shell environment"
+          },
+          "installPath": {
+            "type": "string",
+            "description": "Custom installation path (default: ~/development/flutter)"
+          }
+        }
+      }
+    },
+    {
+      "name": "android_sdk_setup",
+      "description": "Setup Android SDK and configure environment for Android development",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "check",
+              "install",
+              "configure"
+            ],
+            "type": "string",
+            "default": "check",
+            "description": "Action to perform"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "platform-tools",
+              "build-tools;34.0.0",
+              "platforms;android-34"
+            ],
+            "description": "SDK components to install (platform-tools, build-tools, platforms, etc.)"
+          }
+        }
+      }
+    },
+    {
+      "name": "health_check",
+      "description": "Check server health, tool availability and environment status",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "verbose": {
+            "type": "boolean",
+            "description": "Include detailed tool analysis and recommendations"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cristianoaredes/mcp-mobile-server/mcp",
+      "configSchema": {
+        "anyOf": [
+          {
+            "not": {}
+          },
+          {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          }
+        ],
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

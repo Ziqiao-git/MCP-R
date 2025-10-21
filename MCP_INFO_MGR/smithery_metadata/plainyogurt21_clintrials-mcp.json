@@ -1,0 +1,723 @@
+{
+  "qualifiedName": "@plainyogurt21/clintrials-mcp",
+  "displayName": "Clinical Trials Data Server",
+  "description": "Provide structured access to ClinicalTrials.gov data for searching, retrieving, and analyzing clinical trial information. Enable multi-parameter searches, detailed trial retrievals, and statistical analyses to support medical research and healthcare decision-making. Deliver robust error handling and flexible field selection to optimize data responses.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@plainyogurt21/clintrials-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_trials_by_condition",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Search clinical trials by medical condition(s).\n\nThis tool allows you to search for clinical trials based on a list of medical conditions.\n\nInput:\n  - `conditions`: A list of strings, where each string is a medical condition to search for.\n                  The search will find trials related to any of the specified conditions.\n                  Example: `['cancer', 'diabetes']`\n  - `max_studies`: The maximum number of studies to return. Defaults to 50.\n  - `fields`: A list of specific fields to return in the results. If not provided, returns\n              SEARCH_TOOL_DEFAULTS (9 essential fields: NCTId, BriefTitle, Acronym, Condition,\n              Phase, InterventionName, LeadSponsorName, OverallStatus, HasResults).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conditions"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return"
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Medical conditions to search for"
+          },
+          "max_studies": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of studies to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_trials_by_intervention",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Search clinical trials by intervention/treatment.\n\nThis tool allows you to search for clinical trials based on a list of interventions or treatments.\n\nInput:\n  - `interventions`: A list of strings, where each string is an intervention or treatment to search for.\n                     The search will find trials related to any of the specified interventions.\n                     Example: `['aspirin', 'chemotherapy']`\n  - `max_studies`: The maximum number of studies to return. Defaults to 50.\n  - `fields`: A list of specific fields to return in the results. If not provided, returns\n              SEARCH_TOOL_DEFAULTS (9 essential fields: NCTId, BriefTitle, Acronym, Condition,\n              Phase, InterventionName, LeadSponsorName, OverallStatus, HasResults).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "interventions"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return"
+          },
+          "max_studies": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of studies to return"
+          },
+          "interventions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Interventions/treatments to search for"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_trials_by_sponsor",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Search clinical trials by sponsor/organization.\n\nThis tool allows you to search for clinical trials based on a list of sponsor organizations.\n\nInput:\n  - `sponsors`: A list of strings, where each string is a sponsor organization to search for.\n                The search will find trials sponsored by any of the specified organizations.\n                Example: `['National Cancer Institute', 'Pfizer']`\n  - `max_studies`: The maximum number of studies to return. Defaults to 50.\n  - `fields`: A list of specific fields to return in the results. If not provided, returns\n              SEARCH_TOOL_DEFAULTS (9 essential fields: NCTId, BriefTitle, Acronym, Condition,\n              Phase, InterventionName, LeadSponsorName, OverallStatus, HasResults).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sponsors"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return"
+          },
+          "sponsors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Sponsor organizations to search for"
+          },
+          "max_studies": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of studies to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_trials_by_acronym",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Search clinical trials by study acronym.\n\nUses the Acronym field (protocolSection.identificationModule.acronym) to find\ntrials by their public short name. Example: 'TETON'. The API search is seeded\nwith the provided acronyms to narrow results, then results are filtered locally\nto ensure the acronym field matches the requested value(s).\n\nInput:\n  - `acronyms`: One or more acronyms to search for (e.g., ['TETON']).\n  - `max_studies`: Maximum number of studies to request from the API.\n  - `exact_match`: When true (default), matches acronyms exactly (case-insensitive).\n                   When false, matches if any provided acronym is contained within\n                   the study acronym (case-insensitive partial match).\n  - `fields`: A list of specific fields to return in the results. If not provided, returns\n              ACRONYM_SEARCH_DEFAULTS (8 fields optimized for acronym discovery: NCTId,\n              BriefTitle, Acronym, Condition, InterventionName, Phase, LeadSponsorName, HasResults).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "acronyms"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return"
+          },
+          "acronyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Trial acronyms to search for, e.g., ['TETON']"
+          },
+          "exact_match": {
+            "type": "boolean",
+            "default": true,
+            "description": "If true, match acronym exactly; if false, allow partial matches"
+          },
+          "max_studies": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of studies to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_trials_by_nct_ids",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieve specific clinical trials by NCT ID(s).\n\nThis tool allows you to retrieve the details of specific clinical trials by providing their NCT IDs.\n\nInput:\n  - `nct_ids`: A list of strings, where each string is an NCT ID to retrieve.\n               Example: `['NCT04280705', 'NCT04280718']`\n  - `fields`: A list of specific fields to return in the results. If not provided, returns\n              SEARCH_TOOL_DEFAULTS (9 essential fields: NCTId, BriefTitle, Acronym, Condition,\n              Phase, InterventionName, LeadSponsorName, OverallStatus, HasResults).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "nct_ids"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return"
+          },
+          "nct_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "NCT IDs to retrieve"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_trials_combined",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Search clinical trials using multiple criteria.\n\nThis tool allows you to perform a combined search using multiple criteria such as conditions, interventions, sponsors, and general terms.\n\nInput:\n  - `conditions`: A list of medical conditions to search for.\n  - `interventions`: A list of interventions or treatments to search for.\n  - `sponsors`: A list of sponsor organizations to search for.\n  - `terms`: A list of general search terms.\n  - `nct_ids`: A list of specific NCT IDs to include in the search.\n  - `max_studies`: The maximum number of studies to return. Defaults to 50.\n  - `fields`: A list of specific fields to return in the results. If not provided, returns\n              SEARCH_TOOL_DEFAULTS (9 essential fields: NCTId, BriefTitle, Acronym, Condition,\n              Phase, InterventionName, LeadSponsorName, OverallStatus, HasResults).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "terms": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "General search terms"
+          },
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return"
+          },
+          "nct_ids": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific NCT IDs to include"
+          },
+          "acronyms": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Study acronyms to search within titles/acronyms"
+          },
+          "sponsors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Sponsor organizations to search for"
+          },
+          "conditions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Medical conditions to search for"
+          },
+          "max_studies": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of studies to return"
+          },
+          "interventions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Interventions/treatments to search for"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_trial_details",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get comprehensive details for a single clinical trial.\n\nThis tool retrieves detailed information for a single clinical trial given its NCT ID.\n\nInput:\n  - `nct_id`: The NCT ID of the trial to retrieve.\n              Example: `'NCT04280705'`\n  - `fields`: A list of specific fields to return. If not provided, returns DETAIL_TOOL_DEFAULTS\n              (25 comprehensive fields covering: NCTId, BriefTitle, OfficialTitle, Acronym, Condition,\n              Keyword, Phase, OverallStatus, InterventionType, InterventionName, InterventionDescription,\n              ArmGroupLabel, ArmGroupType, ArmGroupDescription, EligibilityCriteria, MinimumAge, MaximumAge,\n              Sex, PrimaryOutcomeMeasure, SecondaryOutcomeMeasure, BriefSummary, LocationFacility,\n              LocationCountry, LeadSponsorName, CollaboratorName, HasResults).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "nct_id"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return"
+          },
+          "nct_id": {
+            "type": "string",
+            "description": "NCT ID of the trial to retrieve"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_trial_details_batched",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieve detailed clinical trial records in batches to reduce payload during discovery.\n\nAccepts a list of NCT IDs and fetches details in batches (default 10).\nPreserves the order of input NCT IDs in the returned list.\nUse this after search tools which return a minimal field set.\n\nInput:\n  - `nct_ids`: List of NCT IDs to retrieve in batches.\n  - `fields`: Specific fields to return. If not provided, returns DETAIL_TOOL_DEFAULTS\n              (25 comprehensive fields covering: NCTId, BriefTitle, OfficialTitle, Acronym, Condition,\n              Keyword, Phase, OverallStatus, InterventionType, InterventionName, InterventionDescription,\n              ArmGroupLabel, ArmGroupType, ArmGroupDescription, EligibilityCriteria, MinimumAge, MaximumAge,\n              Sex, PrimaryOutcomeMeasure, SecondaryOutcomeMeasure, BriefSummary, LocationFacility,\n              LocationCountry, LeadSponsorName, CollaboratorName, HasResults).\n  - `batch_size`: Number of trials to fetch per API call (default 10).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "nct_ids"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Specific fields to return for detailed view"
+          },
+          "nct_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "NCT IDs to retrieve in batches of 10"
+          },
+          "batch_size": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Batch size for each API call"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "analyze_trial_phases",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Analyze the distribution of trial phases for given search criteria.\n\nThis tool analyzes the distribution of clinical trial phases (e.g., Phase 1, Phase 2, Phase 3) \nfor a given set of search criteria.\n\nInput:\n  - `conditions`: A list of medical conditions to filter the analysis.\n  - `interventions`: A list of interventions to filter the analysis.\n  - `sponsors`: A list of sponsors to filter the analysis.\n  - `max_studies`: The maximum number of studies to include in the analysis. Defaults to 1000.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sponsors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Sponsors to analyze"
+          },
+          "conditions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Medical conditions to analyze"
+          },
+          "max_studies": {
+            "type": "integer",
+            "default": 1000,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of studies to analyze"
+          },
+          "interventions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Interventions to analyze"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_field_statistics",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get statistical information about field values.\n\nThis tool retrieves statistical information about the values of specified fields in the ClinicalTrials.gov database.\n\nInput:\n  - `field_names`: A list of field names to get statistics for.\n  - `field_types`: A list of field types to filter by.\n                   Example: `['ENUM', 'STRING']`",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "field_names": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Field names to get statistics for"
+          },
+          "field_types": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Field types to filter by (ENUM, STRING, DATE, INTEGER, NUMBER, BOOLEAN)"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_available_fields",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get organized list of available fields for customizing search results.\n\nThis tool provides a list of available fields that can be used to customize the results of other search tools.\nThe fields are organized into categories.\n\nInput:\n  - `category`: An optional string to specify a category of fields to return.\n                If not provided, all categories and default fields will be returned.\n                Example: `'conditions'`",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional: specific category to return (identification, status, conditions, design, interventions, arms, outcomes, eligibility, locations, sponsors, descriptions, contacts, results)"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_trials_nct_ids_only",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Lightweight search returning only NCT IDs and minimal metadata for discovery.\n\nThis tool performs a lightweight search that returns only the NCT IDs and minimal metadata \nfor the purpose of discovering relevant trials.\n\nInput:\n  - `conditions`: A list of medical conditions to search for.\n  - `interventions`: A list of interventions or treatments to search for.\n  - `sponsors`: A list of sponsor organizations to search for.\n  - `terms`: A list of general search terms.\n  - `max_studies`: The maximum number of studies to return. Defaults to 100.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "terms": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "General search terms"
+          },
+          "sponsors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Sponsor organizations to search for"
+          },
+          "conditions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Medical conditions to search for"
+          },
+          "max_studies": {
+            "type": "integer",
+            "default": 100,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of studies to return (optimized for discovery)"
+          },
+          "interventions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Interventions/treatments to search for"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@plainyogurt21/clintrials-mcp/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

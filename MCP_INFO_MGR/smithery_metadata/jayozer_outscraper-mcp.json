@@ -1,0 +1,171 @@
+{
+  "qualifiedName": "@jayozer/outscraper-mcp",
+  "displayName": "Outscraper Google Maps Data Extractor",
+  "description": "Provide reliable access to Google Maps business and place data extraction services, including detailed search and customer reviews. Enhance your data with enrichment options, multi-language support, and regional filtering to tailor results. Enable high-volume asynchronous processing for scalable data extraction workflows.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/outscraper.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@jayozer/outscraper-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "google_maps_search",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Search for businesses and places on Google Maps using Outscraper\n\nArgs:\n    query: Search query (e.g., 'restaurants brooklyn usa', 'hotels paris france')\n    limit: Number of results to return (default: 20, max: 400)  \n    language: Language code (default: 'en')\n    region: Country/region code (e.g., 'US', 'GB', 'DE')\n    drop_duplicates: Remove duplicate results (default: False)\n    enrichment: Additional services to run (e.g., ['domains_service', 'emails_validator_service'])\n\nReturns:\n    Formatted search results with business information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 20
+          },
+          "query": {
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "language": {
+            "type": "string",
+            "default": "en"
+          },
+          "enrichment": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "drop_duplicates": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "google_maps_reviews",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Extract reviews from Google Maps places using Outscraper\n\nArgs:\n    query: Place query, place ID, or business name (e.g., 'ChIJrc9T9fpYwokRdvjYRHT8nI4', 'Memphis Seoul brooklyn usa')\n    reviews_limit: Number of reviews to extract per place (default: 10, 0 for unlimited)\n    limit: Number of places to process (default: 1)\n    sort: Sort order for reviews ('most_relevant', 'newest', 'highest_rating', 'lowest_rating')\n    language: Language code (default: 'en')\n    region: Country/region code (e.g., 'US', 'GB', 'DE')\n    cutoff: Unix timestamp to get only reviews after this date\n\nReturns:\n    Formatted reviews data with place information and individual reviews",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "type": "string",
+            "default": "most_relevant"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 1
+          },
+          "query": {
+            "type": "string"
+          },
+          "cutoff": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "language": {
+            "type": "string",
+            "default": "en"
+          },
+          "reviews_limit": {
+            "type": "integer",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@jayozer/outscraper-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Outscraper API key. Get yours at https://app.outscraper.com/profile"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

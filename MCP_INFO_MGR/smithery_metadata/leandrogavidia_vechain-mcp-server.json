@@ -1,0 +1,515 @@
+{
+  "qualifiedName": "@leandrogavidia/vechain-mcp-server",
+  "displayName": "VeChain MCP Server",
+  "description": "Search VeChain documentation, query on-chain data, and fetch fee suggestions with direct links to relevant pages. Generate wallets and securely sign messages, certificates, and transactions. Accelerate development and operations with streamlined access to VeChain resources.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@leandrogavidia/vechain-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_address",
+      "title": "get_address",
+      "description": "Get the address of the wallet",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_chain",
+      "title": "get_chain",
+      "description": "Get the chain of the wallet",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sign_message",
+      "title": "sign_message",
+      "description": "Sign a message with the wallet",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_balance",
+      "title": "get_balance",
+      "description": "Get the balance of the wallet for native currency or a specific ERC20 token.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_token_info_by_ticker",
+      "title": "get_token_info_by_ticker",
+      "description": "Get information about a configured token (like contract address and decimals) by its ticker symbol.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ticker"
+        ],
+        "properties": {
+          "ticker": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "convert_to_base_units",
+      "title": "convert_to_base_units",
+      "description": "Convert a token amount from human-readable units to its smallest unit (e.g., wei).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "convert_from_base_units",
+      "title": "convert_from_base_units",
+      "description": "Convert a token amount from its smallest unit (e.g., wei) to human-readable units.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "pattern": "^\\d+$"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sign_typed_data_evm",
+      "title": "sign_typed_data_evm",
+      "description": "Sign an EIP-712 typed data structure (EVM)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domain",
+          "types",
+          "primaryType",
+          "message"
+        ],
+        "properties": {
+          "types": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "domain": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "message": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "primaryType": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_token_allowance_evm",
+      "title": "get_token_allowance_evm",
+      "description": "Get the allowance of an ERC20 token for a spender (returns amount in base units)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "owner",
+          "spender"
+        ],
+        "properties": {
+          "owner": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "spender": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_token",
+      "title": "send_token",
+      "description": "Send native currency or an ERC20 token to a recipient, in base units.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "recipient",
+          "amountInBaseUnits"
+        ],
+        "properties": {
+          "recipient": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "amountInBaseUnits": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "approve_token_evm",
+      "title": "approve_token_evm",
+      "description": "Approve an amount (specified in base units) of an ERC20 token for a spender",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "spender",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "pattern": "^\\d+$"
+          },
+          "spender": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "revoke_token_approval_evm",
+      "title": "revoke_token_approval_evm",
+      "description": "Revoke approval for an ERC20 token from a spender (sets allowance to 0)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "spender"
+        ],
+        "properties": {
+          "spender": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_documentation",
+      "title": "search_documentation",
+      "description": "Search across the documentation to find relevant information, code examples, API references, and guides. Use this tool when you need to answer questions about VeChain Docs, find specific documentation, understand how features work, or locate implementation details. The search returns contextual content with titles and direct links to the documentation pages.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_account",
+      "title": "get_account",
+      "description": "Get information about a VeChain account/contract by address. Optionally specify a revision (best | justified | finalized | block number | block ID).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^(0x)?[0-9a-fA-F]{40}$",
+            "description": "Account/contract address (20-byte hex, with or without 0x prefix)"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "enum": [
+                  "best",
+                  "justified",
+                  "finalized"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "description": "Block ID (hex) or block number as string"
+              }
+            ],
+            "default": "best",
+            "description": "Revision: best | justified | finalized | block number | block ID (hex). If omitted, best is used."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_transaction",
+      "title": "get_transaction",
+      "description": "Get a VeChain transaction by its ID. Optionally include pending txs (meta may be null), return raw hex, or pin to a specific head block.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{64}$",
+            "description": "Transaction ID (0x-prefixed 32-byte hex)"
+          },
+          "raw": {
+            "type": "boolean",
+            "description": "Include raw hex transaction in response. Default: false"
+          },
+          "head": {
+            "type": "string",
+            "description": "Head block ID to use; defaults to best if omitted"
+          },
+          "pending": {
+            "type": "boolean",
+            "description": "Include pending transactions (meta may be null). Default: false"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_block",
+      "title": "get_block",
+      "description": "Retrieve information about a VeChain block by its revision (block ID, number, or keywords: best | justified | finalized).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "raw": {
+            "type": "boolean",
+            "description": "Return RLP-encoded block instead of structured JSON (default: false)"
+          },
+          "expanded": {
+            "type": "boolean",
+            "description": "Return transactions expanded (objects) instead of just IDs (default: false)"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "enum": [
+                  "best",
+                  "justified",
+                  "finalized"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "description": "Block ID (hex) or block number as string"
+              }
+            ],
+            "default": "best",
+            "description": "Block revision: hex ID, block number, or keywords: best | justified | finalized"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_priority_fee",
+      "title": "get_priority_fee",
+      "description": "Fetch a suggested priority fee for including a transaction in the next blocks from VeChain mainnet.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_wallet",
+      "title": "create_wallet",
+      "description": "Generate a BIP-39 mnemonic (12/15/18/21/24 words) and derive the account-level secp256k1 key at path m/44'/818'/0'/0 (VET coin type = 818). By default, the private key is REDACTED in the response. Set includeSecret=true to include it (handle with care).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "wordlistSize": {
+            "enum": [
+              12,
+              15,
+              18,
+              21,
+              24
+            ],
+            "type": "number",
+            "description": "Length of the BIP-39 mnemonic wordlist. Default: 12"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sign_certificate",
+      "title": "sign_certificate",
+      "description": "Create and sign a canonical certificate. Includes purpose, payload, domain, timestamp, nonce, and expiresAt.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Scope or domain where it is valid"
+          },
+          "payload": {
+            "description": "Content to be attested (string or JSON)"
+          },
+          "purpose": {
+            "enum": [
+              "identification",
+              "attestation",
+              "verification"
+            ],
+            "type": "string",
+            "default": "identification"
+          },
+          "timestamp": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sign_raw_transaction",
+      "title": "sign_raw_transaction",
+      "description": "Decode and sign a raw transaction.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rawTransaction"
+        ],
+        "properties": {
+          "rawTransaction": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@leandrogavidia/vechain-mcp-server/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

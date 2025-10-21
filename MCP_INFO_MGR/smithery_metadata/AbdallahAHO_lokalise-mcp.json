@@ -1,0 +1,2533 @@
+{
+  "qualifiedName": "@AbdallahAHO/lokalise-mcp",
+  "displayName": "Lokalise MCP Server",
+  "description": "Connect AI assistants to Lokalise to manage translation projects, keys, and workflows through natural conversation. Automate localization tasks, monitor progress, and collaborate with your team without writing code. Streamline your translation management directly from your chat interface.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/lokalise.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@AbdallahAHO/lokalise-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "lokalise_list_key_comments",
+      "description": "Retrieves all comments for a specific translation key to understand discussion history and context. Required: projectId, keyId. Optional: limit (100), page. Use this to review translator questions, see implementation notes, or audit collaboration on a specific key. Returns: Paginated list of comments with author, timestamp, and content. Pairs with: lokalise_create_comments to continue discussions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyId"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Page number for pagination (default: 1)",
+            "exclusiveMinimum": 0
+          },
+          "keyId": {
+            "type": "number",
+            "description": "Key ID to list comments for"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 5000,
+            "minimum": 1,
+            "description": "Number of comments to return (1-5000, default: 100)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the key"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_project_comments",
+      "description": "Fetches all comments across an entire project for a comprehensive overview of team collaboration. Required: projectId. Optional: limit (100), page. Use this to identify keys with active discussions, audit communication patterns, or find unresolved questions. Returns: Comments grouped by key with context. Note: Can be data-intensive for large projects.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Page number for pagination (default: 1)",
+            "exclusiveMinimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 5000,
+            "minimum": 1,
+            "description": "Number of comments to return (1-5000, default: 100)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to list all comments for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_comment",
+      "description": "Gets full details of a single comment including complete text and metadata. Required: projectId, keyId, commentId. Use when comment text was truncated in list view or to get exact timestamps. Returns: Complete comment data with author details and creation time. Pairs with: lokalise_delete_comment for comment management.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyId",
+          "commentId"
+        ],
+        "properties": {
+          "keyId": {
+            "type": "number",
+            "description": "Key ID containing the comment"
+          },
+          "commentId": {
+            "type": "number",
+            "description": "Comment ID to get details for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the comment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_create_comments",
+      "description": "Adds one or more comments to a translation key for team collaboration. Required: projectId, keyId, comments array with 'comment' text. Use to ask translators questions, provide context, leave implementation notes, or flag issues. Supports bulk creation for efficiency. Returns: Created comments with IDs. Note: Comments are visible to all project members.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyId",
+          "comments"
+        ],
+        "properties": {
+          "keyId": {
+            "type": "number",
+            "description": "Key ID to attach comments to"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "comment"
+              ],
+              "properties": {
+                "comment": {
+                  "type": "string",
+                  "description": "The comment text"
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "description": "Array of comments to create"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to create comments in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_delete_comment",
+      "description": "Permanently removes a specific comment from a translation key. Required: projectId, keyId, commentId. Use to clean up resolved discussions, remove outdated information, or delete accidental comments. Returns: Confirmation of deletion. Warning: This action cannot be undone. Consider archiving important discussions elsewhere first.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyId",
+          "commentId"
+        ],
+        "properties": {
+          "keyId": {
+            "type": "number",
+            "description": "Key ID containing the comment"
+          },
+          "commentId": {
+            "type": "number",
+            "description": "Comment ID to delete"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the comment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_contributors",
+      "description": "Lists all team members in a project with their roles and permissions. Required: projectId. Optional: limit (100), page. Use to audit team access, check language assignments, or prepare permission changes. Returns: Contributors with email, role, admin status, and language permissions. Use before adding new members to avoid duplicates.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of contributors to return (1-100, default: 100)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to list contributors for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_contributor",
+      "description": "Retrieves detailed information about a specific team member's access and permissions. Required: projectId, contributorId. Use to verify exact permissions before updates, investigate access issues, or get complete language assignments. Returns: Full contributor profile including all language permissions and administrative rights.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contributorId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the contributor"
+          },
+          "contributorId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "Contributor ID to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_add_contributors",
+      "description": "Onboards one or more new team members to a project. Required: projectId, contributors array with email and permissions (admin_rights, is_reviewer, languages). Use for team expansion, granting translator access, or adding reviewers. Returns: Added contributors with assigned IDs. Note: Sends invitation emails automatically.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contributors"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to add contributors to"
+          },
+          "contributors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email",
+                "languages"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "fullname": {
+                  "type": "string"
+                },
+                "is_admin": {
+                  "type": "boolean",
+                  "description": "Deprecated: Use admin_rights instead"
+                },
+                "languages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "lang_iso"
+                    ],
+                    "properties": {
+                      "lang_iso": {
+                        "type": "string",
+                        "minLength": 2
+                      },
+                      "is_writable": {
+                        "type": "boolean"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                },
+                "is_reviewer": {
+                  "type": "boolean",
+                  "description": "Deprecated: Use admin_rights instead"
+                },
+                "admin_rights": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "upload",
+                      "activity",
+                      "download",
+                      "settings",
+                      "create_branches",
+                      "statistics",
+                      "keys",
+                      "screenshots",
+                      "glossary",
+                      "contributors",
+                      "languages",
+                      "tasks"
+                    ],
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_current_user",
+      "description": "Checks your own permissions and access level in a project. Required: projectId. Use to verify your administrative capabilities, check language access, or confirm reviewer status before attempting restricted operations. Returns: Your contributor profile with all permissions. Essential before permission-sensitive operations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to get current user's contributor profile"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_contributor",
+      "description": "Modifies a team member's role, permissions, or language access. Required: projectId, contributorId. Optional: admin_rights, is_reviewer, languages array. Use to promote/demote users, adjust language assignments, or fix permission issues. Returns: Updated contributor profile. Note: Cannot modify your own admin rights.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contributorId"
+        ],
+        "properties": {
+          "is_admin": {
+            "type": "boolean",
+            "description": "Deprecated: Use admin_rights instead"
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "lang_iso"
+              ],
+              "properties": {
+                "lang_iso": {
+                  "type": "string",
+                  "minLength": 2
+                },
+                "is_writable": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the contributor"
+          },
+          "is_reviewer": {
+            "type": "boolean",
+            "description": "Deprecated: Use admin_rights instead"
+          },
+          "admin_rights": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "upload",
+                "activity",
+                "download",
+                "settings",
+                "create_branches",
+                "statistics",
+                "keys",
+                "screenshots",
+                "glossary",
+                "contributors",
+                "languages",
+                "tasks"
+              ],
+              "type": "string"
+            }
+          },
+          "contributorId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "Contributor ID to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_remove_contributor",
+      "description": "Removes a team member from a project, revoking all access. Required: projectId, contributorId. Use for offboarding, security cleanup, or removing inactive members. Returns: Confirmation of removal. Warning: Immediate effect - contributor loses all project access. Consider permission downgrade instead for temporary changes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contributorId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the contributor"
+          },
+          "contributorId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "Contributor ID to remove"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_glossary_terms",
+      "description": "Retrieves paginated glossary terms that define translation rules for consistency. Required: projectId. Optional: limit (100), cursor for pagination. Use to discover defined terminology including brand names, technical terms, and forbidden words. Returns: Terms with properties (case-sensitive, translatable, forbidden) and translations. Essential before translating to prevent terminology errors.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 5000,
+            "minimum": 1,
+            "description": "Number of glossary terms to return (1-5000, default: 100)"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for pagination. Use nextCursor from previous response"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to list glossary terms for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_glossary_term",
+      "description": "Fetches complete details for a single glossary term by ID. Required: projectId, termId. Use to understand precise translation rules, check case-sensitivity requirements, or view all language translations for a term. Returns: Full term data including definition, properties, and language-specific translations. Critical for translator guidance.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "termId"
+        ],
+        "properties": {
+          "termId": {
+            "type": "number",
+            "description": "Glossary term ID to get details for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the glossary term"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_create_glossary_terms",
+      "description": "Adds new terminology rules to maintain translation consistency. Required: projectId, terms array with {term, definition}. Optional per term: case_sensitive, translatable, forbidden, translations by language. Use for brand names, technical jargon, or untranslatable terms. Returns: Created terms with IDs. Supports bulk creation up to 1000 terms.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "terms"
+        ],
+        "properties": {
+          "terms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "term",
+                "description",
+                "caseSensitive",
+                "translatable",
+                "forbidden"
+              ],
+              "properties": {
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Tags for categorizing the term (e.g., 'brand', 'technical', 'legal')"
+                },
+                "term": {
+                  "type": "string",
+                  "description": "The glossary term text (e.g., brand name, technical term)"
+                },
+                "forbidden": {
+                  "type": "boolean",
+                  "description": "Whether this term should be flagged as forbidden in translations"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description or definition of the term"
+                },
+                "translatable": {
+                  "type": "boolean",
+                  "description": "Whether the term can be translated or should remain unchanged"
+                },
+                "translations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "langId"
+                    ],
+                    "properties": {
+                      "langId": {
+                        "type": "number",
+                        "description": "Language ID for the translation (required)"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Description or context for the translation"
+                      },
+                      "translation": {
+                        "type": "string",
+                        "description": "The translated term in the specified language"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Translations of the term in different languages"
+                },
+                "caseSensitive": {
+                  "type": "boolean",
+                  "description": "Whether term matching should be case-sensitive"
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "description": "Array of glossary terms to create (supports bulk creation)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to create glossary terms in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_glossary_terms",
+      "description": "Modifies existing glossary definitions and properties. Required: projectId, terms array with {term_id} plus changes. Use to refine definitions, add language translations, or adjust rules (case-sensitivity, forbidden status). Returns: Updated terms. Supports bulk updates. Changes apply immediately to all future translations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "terms"
+        ],
+        "properties": {
+          "terms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "description": "The ID of the glossary term to update"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Updated tags"
+                },
+                "term": {
+                  "type": "string",
+                  "description": "Updated term text"
+                },
+                "forbidden": {
+                  "type": "boolean",
+                  "description": "Updated forbidden setting"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Updated description"
+                },
+                "translatable": {
+                  "type": "boolean",
+                  "description": "Updated translatable setting"
+                },
+                "translations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "langId"
+                    ],
+                    "properties": {
+                      "langId": {
+                        "type": "number",
+                        "description": "Language ID for the translation (required)"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Description or context for the translation"
+                      },
+                      "translation": {
+                        "type": "string",
+                        "description": "The translated term in the specified language"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Updated translations"
+                },
+                "caseSensitive": {
+                  "type": "boolean",
+                  "description": "Updated case sensitivity setting"
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "description": "Array of glossary terms to update (supports bulk updates)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the glossary terms"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_delete_glossary_terms",
+      "description": "Removes obsolete or incorrect glossary entries. Required: projectId, termIds array. Use to clean up outdated terminology, remove duplicates, or fix mistakes. Returns: Deletion confirmation. Warning: Removes all term translations and rules. Supports bulk deletion. Consider updating instead of deleting for audit trail.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "termIds"
+        ],
+        "properties": {
+          "termIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 1,
+            "description": "Array of glossary term IDs to delete (supports bulk deletion)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the glossary terms"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_keys",
+      "description": "Explores the project's content structure by listing translation keys. Required: projectId. Optional: limit (100), cursor, filterKeys array, filterPlatforms array, includeTranslations. Use to browse content organization, find specific keys, or audit platform coverage. Returns: Keys with metadata and optional translations. Supports cursor pagination for large projects. Start here to understand project content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of keys to return (1-5000, default: 100)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to list keys for"
+          },
+          "filterKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by specific key names"
+          },
+          "filterFilenames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by specific filenames (e.g., ['document.docx', 'strings.json'])"
+          },
+          "filterPlatforms": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "ios",
+                "android",
+                "web",
+                "other"
+              ],
+              "type": "string"
+            },
+            "description": "Filter by platforms (ios, android, web, other)"
+          },
+          "includeTranslations": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include translation data for each key"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_create_keys",
+      "description": "Adds new UI text or content to be translated (up to 1000 keys per request). Required: projectId, keys array with {key_name, platforms}. Optional per key: description, tags, translations. Use for new features, initial setup, or content expansion. Returns: Created keys with IDs and any errors. Tip: Include base language translations to speed up workflow. Pairs with: lokalise_list_keys to verify.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keys"
+        ],
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key_name",
+                "platforms"
+              ],
+              "properties": {
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Tags to organize the key"
+                },
+                "key_name": {
+                  "type": "string",
+                  "description": "Name of the key"
+                },
+                "platforms": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "ios",
+                      "android",
+                      "web",
+                      "other"
+                    ],
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "description": "Platforms this key belongs to (required)"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the translation key"
+                },
+                "translations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "language_iso",
+                      "translation"
+                    ],
+                    "properties": {
+                      "translation": {
+                        "type": "string",
+                        "description": "Translation text"
+                      },
+                      "language_iso": {
+                        "type": "string",
+                        "description": "Language ISO code"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Initial translations for the key"
+                }
+              },
+              "additionalProperties": false
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "description": "Array of key objects to create (1-1000 keys)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to create keys in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_key",
+      "description": "Deep-dives into a single content item to understand its complete state. Required: projectId, keyId. Use to investigate translation status, view all language versions, check metadata, or debug issues. Returns: Full key data including all translations, platforms, tags, comments, and history. Essential for detailed analysis or before making targeted updates.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyId"
+        ],
+        "properties": {
+          "keyId": {
+            "type": "number",
+            "description": "Key ID to get details for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the key"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_key",
+      "description": "Modifies key metadata to improve organization and translator context. Required: projectId, keyId. Optional: key_name, description, platforms, tags. Use to clarify meaning for translators, fix platform assignments, or reorganize content. Returns: Updated key. Note: This updates metadata only - use translation tools to modify actual text. Changes apply immediately.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyId",
+          "keyData"
+        ],
+        "properties": {
+          "keyId": {
+            "type": "number",
+            "description": "Key ID to update"
+          },
+          "keyData": {
+            "type": "object",
+            "properties": {
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "New tags for the key"
+              },
+              "platforms": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "ios",
+                    "android",
+                    "web",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                "description": "New platforms for the key"
+              },
+              "description": {
+                "type": "string",
+                "description": "New description"
+              }
+            },
+            "description": "Key data to update",
+            "additionalProperties": false
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the key"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_delete_key",
+      "description": "Permanently removes obsolete content and all its translations. Required: projectId, keyId. Use for removing deprecated features, cleaning typos in key names, or content no longer needed. Returns: Deletion confirmation. Warning: Irreversible - all translations lost. Consider archiving important content first. For multiple keys, use bulk delete.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyId"
+        ],
+        "properties": {
+          "keyId": {
+            "type": "number",
+            "description": "Key ID to delete"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the key"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_bulk_update_keys",
+      "description": "Efficiently modifies metadata for multiple keys in one operation. Required: projectId, keys array with {key_id} plus changes. Use for large-scale reorganization, batch platform updates, or systematic tagging. Returns: Updated keys and any errors. Performance: Processes up to 1000 keys per request. More efficient than individual updates for 3+ keys.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keys"
+        ],
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "keyId"
+              ],
+              "properties": {
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "New tags for the key"
+                },
+                "keyId": {
+                  "type": "number",
+                  "description": "Key ID to update"
+                },
+                "platforms": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "ios",
+                      "android",
+                      "web",
+                      "other"
+                    ],
+                    "type": "string"
+                  },
+                  "description": "New platforms for the key"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "New description"
+                }
+              },
+              "additionalProperties": false
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "description": "Array of key updates (1-1000 keys)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the keys"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_bulk_delete_keys",
+      "description": "Large-scale cleanup removing multiple obsolete keys permanently. Required: projectId, keyIds array. Use for removing deprecated feature sets, post-refactoring cleanup, or major content pruning. Returns: Deletion results. Critical Warning: Irreversible batch operation - all selected keys and translations permanently deleted. Always verify key list before execution.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyIds"
+        ],
+        "properties": {
+          "keyIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "description": "Array of key IDs to delete (1-1000 keys)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the keys"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_system_languages",
+      "description": "Discovers all languages available in Lokalise platform that can be added to projects. Optional: limit (100), page. Use to find supported languages before project setup, verify language codes, or check RTL/plural form support. Returns: Languages with ISO codes, native names, RTL status, plural forms. Essential before adding new target languages.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of languages to return (1-500, default: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_project_languages",
+      "description": "Shows which languages are currently being translated in a project. Required: projectId. Optional: includeProgress (shows completion %), limit, page. Use to audit translation coverage, identify incomplete languages, or prepare reports. Returns: Active languages with progress stats. Start here to understand project's localization scope.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to list languages for"
+          },
+          "includeProgress": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include translation progress percentages for each language"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_add_project_languages",
+      "description": "Starts translating into new languages by adding them to the project. Required: projectId, languages array with {lang_iso}. Optional per language: custom_iso, custom_name, custom_plural_forms. Use when expanding to new markets or adding regional variants. Returns: Added languages with IDs. Tip: Check system languages first for valid ISO codes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "languages"
+        ],
+        "properties": {
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "lang_iso"
+              ],
+              "properties": {
+                "lang_iso": {
+                  "type": "string",
+                  "description": "Language ISO code (e.g., 'en', 'fr', 'de')"
+                },
+                "custom_iso": {
+                  "type": "string",
+                  "description": "Custom ISO code"
+                },
+                "custom_name": {
+                  "type": "string",
+                  "description": "Custom language name"
+                },
+                "custom_plural_forms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Custom plural forms"
+                }
+              },
+              "additionalProperties": false
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "description": "Array of language objects to add (1-100 languages)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to add languages to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_language",
+      "description": "Examines detailed settings for a specific project language. Required: projectId, languageId. Use to verify plural rules, check RTL configuration, or understand custom settings. Returns: Complete language configuration including ISO codes, plural forms, and writing direction. Important for languages with complex grammar rules.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "languageId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the language"
+          },
+          "languageId": {
+            "type": "number",
+            "description": "Language ID to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_language",
+      "description": "Modifies language settings within a project. Required: projectId, languageId, languageData object. Optional in data: lang_iso, lang_name, plural_forms. Use to fix incorrect configurations, customize language names, or adjust plural rules. Returns: Updated language settings. Changes affect how translations are handled.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "languageId",
+          "languageData"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the language"
+          },
+          "languageId": {
+            "type": "number",
+            "description": "Language ID to update"
+          },
+          "languageData": {
+            "type": "object",
+            "properties": {
+              "lang_iso": {
+                "type": "string",
+                "description": "Updated language ISO code"
+              },
+              "lang_name": {
+                "type": "string",
+                "description": "Updated language name"
+              },
+              "plural_forms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Updated plural forms"
+              }
+            },
+            "description": "Language data to update",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_remove_language",
+      "description": "Drops support for a language by removing it from the project. Required: projectId, languageId. Use when discontinuing localization for a market or cleaning up test languages. Returns: Removal confirmation. Critical Warning: Permanently deletes ALL translations for this language. Export translations first if needed.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "languageId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the language"
+          },
+          "languageId": {
+            "type": "number",
+            "description": "Language ID to remove"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_projects",
+      "description": "Portfolio overview showing all accessible localization projects. Optional: limit (100), page, includeStats (adds progress/QA data). Use as entry point to discover projects, assess translation health, or find specific project IDs. Returns: Projects with names, IDs, base language, stats. Start here before diving into specific projects.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of projects to return (1-500, default: 100)"
+          },
+          "includeStats": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include detailed project statistics"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_project",
+      "description": "Deep analysis of a single project's health and configuration. Required: projectId. Optional: includeLanguages (completion rates), includeKeysSummary (content stats). Use for project audits, progress reports, or understanding structure. Returns: Complete project metadata, team info, language progress, key statistics. Essential for project status assessment.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to get details for"
+          },
+          "includeLanguages": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include detailed language information and completion rates"
+          },
+          "includeKeysSummary": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include summary of keys (total, translated, missing)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_create_project",
+      "description": "Initializes a new localization project for an app or service. Required: name. Optional: description, base_lang_iso (default 'en'). Use when starting localization for new products or creating test environments. Returns: Project ID and access details. Next steps: Add languages, upload keys, invite team members.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the project to create"
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "lang_iso"
+              ],
+              "properties": {
+                "lang_iso": {
+                  "type": "string",
+                  "description": "Language ISO code to initialize in the project"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Initial project languages. If provided, should include base_lang_iso when base language is not 'en'"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description for the project"
+          },
+          "base_lang_iso": {
+            "type": "string",
+            "default": "en",
+            "description": "Base language ISO code (default: 'en')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_project",
+      "description": "Modifies project settings and metadata. Required: projectId, projectData object. Optional in data: name, description. Use to rename projects, update descriptions, or fix project information. Returns: Updated project details. Note: Only changes metadata - use other tools for content/language changes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "projectData"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to update"
+          },
+          "projectData": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Updated project name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Updated project description"
+              }
+            },
+            "description": "Project data to update",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_delete_project",
+      "description": "Permanently destroys a project and ALL its data. Required: projectId. Use for removing test projects or discontinued products. Returns: Deletion confirmation. CRITICAL WARNING: Irreversible - deletes all keys, translations, history, and team assignments. Export data first if needed. Consider emptying instead.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_empty_project",
+      "description": "Resets project content while preserving settings and team. Required: projectId. Use for major refactoring, starting fresh, or clearing test data. Returns: Operation confirmation. Effect: Removes all keys and translations but keeps languages, team, and project configuration. Safer alternative to deletion.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to empty"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_queued_processes",
+      "description": "Lists all background/async processes in a Lokalise project with status tracking. Required: projectId. Optional: limit (100), page. Use to monitor file uploads, downloads, bulk operations, or troubleshoot process issues. Returns: Processes with status, progress, and completion estimates.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "description": "Page number for pagination (default: 1)",
+            "exclusiveMinimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of processes to return (1-100, default: 100)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID to list queued processes for (supports branch notation: projectId:branchName)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_queued_process",
+      "description": "Gets detailed status and information about a specific async process (upload, download, etc.). Required: projectId, processId. Use to check process completion, diagnose failures, or get detailed progress information. Returns: Complete process details with logs and status history.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "processId"
+        ],
+        "properties": {
+          "processId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Process ID to get details for (unique string identifier)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID containing the process"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_tasks",
+      "description": "Monitors ongoing translation work and deadlines across the project. Required: projectId. Optional: filterTitle, filterStatuses array, limit (50), page. Use to track workload, find overdue tasks, or check assignment status. Returns: Tasks with assignees, progress, due dates, and language scope. Essential for project management and workflow monitoring.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of tasks to return (1-500, default: 100)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to list tasks for"
+          },
+          "filterTitle": {
+            "type": "string",
+            "description": "Filter tasks by title"
+          },
+          "filterStatuses": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "new",
+                "in_progress",
+                "completed",
+                "closed",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            "description": "Filter by task statuses (new, in_progress, completed, closed, cancelled)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_create_task",
+      "description": "Initiates a new batch of translation or review work. Required: projectId, title, languages array. Optional: description, due_date, assignees (applies to all languages), type (translation/review), keys scope. Use to assign work to translators, set deadlines, or organize sprints. Returns: Created task with ID and assignments. Tip: Use assignees for simple same-user-all-languages setup.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "title"
+        ],
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Array of key IDs to include in this task. Only provide if you want to limit the task to specific keys. Leave empty to include all project keys"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Task title (required)"
+          },
+          "due_date": {
+            "type": "string",
+            "description": "Due date in ISO format (YYYY-MM-DD HH:MM:SS)"
+          },
+          "assignees": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "User IDs to assign to ALL languages in the task. This is a convenience parameter - if specified, these users will be assigned to every language in the task. Use this OR specify users/groups per language, not both"
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "language_iso"
+              ],
+              "properties": {
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "User IDs assigned to this language. Either 'users' or 'groups' must be specified, unless using top-level 'assignees'"
+                },
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Group IDs assigned to this language. Either 'users' or 'groups' must be specified, unless using top-level 'assignees'"
+                },
+                "language_iso": {
+                  "type": "string",
+                  "description": "Language ISO code"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Languages with specific user/group assignments. Each language MUST have either 'users' or 'groups' specified, unless you use the top-level 'assignees' parameter"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to create task in"
+          },
+          "task_type": {
+            "enum": [
+              "translation",
+              "review",
+              "automatic_translation",
+              "lqa_by_ai"
+            ],
+            "type": "string",
+            "default": "translation",
+            "description": "Type of task: 'translation' (human translation work), 'review' (quality review by editors), 'automatic_translation' (AI-powered machine translation with human review), 'lqa_by_ai' (AI-powered linguistic quality assurance). Choose based on workflow needs - translation for new content, review for quality control, automatic_translation for speed with oversight, lqa_by_ai for AI translation with quality checks"
+          },
+          "description": {
+            "type": "string",
+            "description": "Task description"
+          },
+          "closing_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags that close the task when applied"
+          },
+          "parent_task_id": {
+            "type": "number",
+            "description": "Parent task ID for subtasks"
+          },
+          "auto_close_task": {
+            "type": "boolean",
+            "description": "Auto-close task when all languages completed"
+          },
+          "auto_close_items": {
+            "type": "boolean",
+            "description": "Auto-close items when completed"
+          },
+          "source_language_iso": {
+            "type": "string",
+            "description": "Source language ISO code"
+          },
+          "auto_close_languages": {
+            "type": "boolean",
+            "description": "Auto-close languages when completed"
+          },
+          "do_lock_translations": {
+            "type": "boolean",
+            "description": "Lock translations when task is created"
+          },
+          "custom_translation_status_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Custom translation status IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_task",
+      "description": "Investigates a specific work assignment in detail. Required: projectId, taskId. Use to check task progress, view assignee workload, or debug workflow issues. Returns: Complete task data including all assignments, completion percentages, settings, and history. Pairs with: lokalise_update_task for modifications.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "number",
+            "description": "Task ID to get details for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the task"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_task",
+      "description": "Modifies an active work assignment. Required: projectId, taskId. Optional: title, description, due_date, language assignments, settings. Use to extend deadlines, reassign work, or update scope. Returns: Updated task details. Note: Cannot change task type after creation. Changes notify assignees automatically.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "taskId",
+          "taskData"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "number",
+            "description": "Task ID to update"
+          },
+          "taskData": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Updated task title"
+              },
+              "due_date": {
+                "type": "string",
+                "description": "Updated due date in ISO format"
+              },
+              "languages": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "language_iso"
+                  ],
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "description": "User IDs assigned to this language. Either 'users' or 'groups' must be specified, unless using top-level 'assignees'"
+                    },
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "description": "Group IDs assigned to this language. Either 'users' or 'groups' must be specified, unless using top-level 'assignees'"
+                    },
+                    "language_iso": {
+                      "type": "string",
+                      "description": "Language ISO code"
+                    },
+                    "close_language": {
+                      "type": "boolean",
+                      "description": "Close this language assignment"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "description": "Updated language assignments"
+              },
+              "close_task": {
+                "type": "boolean",
+                "description": "Close the entire task"
+              },
+              "description": {
+                "type": "string",
+                "description": "Updated task description"
+              },
+              "closing_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tags that close the task when applied"
+              },
+              "auto_close_task": {
+                "type": "boolean",
+                "description": "Auto-close task when all languages completed"
+              },
+              "auto_close_items": {
+                "type": "boolean",
+                "description": "Auto-close items when completed"
+              },
+              "auto_close_languages": {
+                "type": "boolean",
+                "description": "Auto-close languages when completed"
+              },
+              "do_lock_translations": {
+                "type": "boolean",
+                "description": "Lock translations"
+              }
+            },
+            "description": "Task data to update",
+            "additionalProperties": false
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the task"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_delete_task",
+      "description": "Cancels a work assignment, removing it from assignee queues. Required: projectId, taskId. Use to cancel mistaken tasks, clean completed work, or remove test assignments. Returns: Deletion confirmation. Note: Only removes the assignment - keys and translations remain unchanged. Cannot be undone.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "number",
+            "description": "Task ID to delete"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the task"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_team_users",
+      "description": "Lists all users in a Lokalise team with pagination support. Required: teamId. Optional: limit (100), page. Use to audit team composition, check access levels, or prepare team changes. Returns: Users with roles, permissions, and activity status.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Page number for pagination (default: 1)",
+            "exclusiveMinimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of users to return (1-100, default: 100)"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team ID to list users for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_team_user",
+      "description": "Gets detailed information about a specific user in a team. Required: teamId, userId. Use to verify user permissions, check role assignments, or investigate access issues. Returns: Complete user profile with all team permissions and administrative rights.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "userId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user"
+          },
+          "userId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User ID to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_team_user",
+      "description": "Updates a team user's role (owner, admin, member, or biller). Required: teamId, userId, role. Use to manage permissions, promote/demote, or adjust access levels. Returns: Updated user profile with new role and permissions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "userId",
+          "role"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "owner",
+              "admin",
+              "member",
+              "biller"
+            ],
+            "type": "string",
+            "description": "New role for the user"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user"
+          },
+          "userId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User ID to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_delete_team_user",
+      "description": "Removes a user from a Lokalise team. Required: teamId, userId. Use to remove members, clean up permissions, or manage team structure. Returns: Success message with user details.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "userId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user"
+          },
+          "userId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_translations",
+      "description": "Low-level inspection of actual translated text across languages. Required: projectId. Optional: limit (100), cursor, filterLangId, filterIsReviewed, filterQaIssues. Use for quality audits, finding untranslated content, or checking specific language progress. Returns: Translation entries with content, status, QA flags. Note: Different from keys - this shows actual text.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 5000,
+            "minimum": 1,
+            "description": "Number of translations to return (1-5000, default: 100)"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for pagination (from previous response)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to list translations for"
+          },
+          "filterLangId": {
+            "type": "number",
+            "description": "Filter by language ID (numeric, not ISO code)"
+          },
+          "filterQaIssues": {
+            "type": "string",
+            "description": "Filter by QA issues (comma-separated: spelling_and_grammar,inconsistent_placeholders,etc.)"
+          },
+          "filterIsReviewed": {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "type": "string",
+            "description": "Filter by review status (0=not reviewed, 1=reviewed)"
+          },
+          "filterUnverified": {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "type": "string",
+            "description": "Filter by verification status (0=verified, 1=unverified)"
+          },
+          "disableReferences": {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "type": "string",
+            "description": "Disable reference information in response"
+          },
+          "filterActiveTaskId": {
+            "type": "number",
+            "description": "Filter by active task ID"
+          },
+          "filterUntranslated": {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "type": "string",
+            "description": "Filter by translation status (1=show only untranslated)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_translation",
+      "description": "Examines a single piece of translated text in detail. Required: projectId, translationId. Use to check exact wording, review status, modification history, or investigate QA issues. Returns: Complete translation data including content, reviewer info, timestamps, and quality flags. Essential for translation debugging.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "translationId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the translation"
+          },
+          "translationId": {
+            "type": "number",
+            "description": "Translation ID to get details for"
+          },
+          "disableReferences": {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "type": "string",
+            "description": "Disable reference information in response"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_translation",
+      "description": "Modifies actual translated text or its review status. Required: projectId, translationId. Optional: translation (new text), is_reviewed, is_unverified. Use to fix typos, approve translations, or mark problematic content. Returns: Updated translation. Note: Changes visible immediately to all users.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "translationId",
+          "translationData"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the translation"
+          },
+          "translationId": {
+            "type": "number",
+            "description": "Translation ID to update"
+          },
+          "translationData": {
+            "type": "object",
+            "required": [
+              "translation"
+            ],
+            "properties": {
+              "isReviewed": {
+                "type": "boolean",
+                "description": "Mark translation as reviewed"
+              },
+              "translation": {
+                "type": "string",
+                "description": "The updated translation text"
+              },
+              "isUnverified": {
+                "type": "boolean",
+                "description": "Mark translation as unverified (fuzzy)"
+              },
+              "customTranslationStatusIds": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "description": "Array of custom translation status IDs (numeric)"
+              }
+            },
+            "description": "Translation data to update",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_bulk_update_translations",
+      "description": "Efficiently processes batch translation corrections or approvals. Required: projectId, updates array (up to 100). Each update needs translation_id plus changes. Use for mass approvals, systematic corrections, or importing reviewed content. Returns: Success/error per translation. Performance: ~5 updates/second with automatic rate limiting and retries.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "updates"
+        ],
+        "properties": {
+          "updates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "translationId",
+                "translationData"
+              ],
+              "properties": {
+                "translationId": {
+                  "type": "number",
+                  "description": "Translation ID to update"
+                },
+                "translationData": {
+                  "type": "object",
+                  "required": [
+                    "translation"
+                  ],
+                  "properties": {
+                    "isReviewed": {
+                      "type": "boolean",
+                      "description": "Mark translation as reviewed"
+                    },
+                    "translation": {
+                      "type": "string",
+                      "description": "The updated translation text"
+                    },
+                    "isUnverified": {
+                      "type": "boolean",
+                      "description": "Mark translation as unverified (fuzzy)"
+                    },
+                    "customTranslationStatusIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "description": "Array of custom translation status IDs (numeric)"
+                    }
+                  },
+                  "description": "Translation data to update",
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "description": "Array of translation updates (min 1, max 100). Each update includes translationId and translationData"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID containing the translations"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_list_usergroups",
+      "description": "Lists all user groups in a Lokalise team with pagination support. Required: teamId. Optional: limit (100), page. Use to audit team organization, check group structure, or prepare group management operations. Returns: User groups with names, member counts, permissions, and language assignments. Essential for understanding team hierarchy.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Page number for pagination (default: 1)",
+            "exclusiveMinimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of user groups to return (1-100, default: 100)"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team ID to list user groups for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_get_usergroup",
+      "description": "Gets detailed information about a specific user group including members, permissions, and project assignments. Required: teamId, groupId. Use to audit group configuration, verify member access, or understand permission structure. Returns: Complete group profile with admin rights, language permissions, and assigned projects/members.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "groupId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user group"
+          },
+          "groupId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User group ID to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_create_usergroup",
+      "description": "Creates a new user group in a Lokalise team for organized permission management. Required: teamId, name, isReviewer, isAdmin. Optional: adminRights, languages, projects, members. Use to establish role-based access control, organize team permissions, or set up project-specific groups. Returns: Created group with assigned ID and configuration.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "name",
+          "isReviewer",
+          "isAdmin"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the user group"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team ID to create user group in"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Whether group members are admins"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "description": "Initial members to add to the group"
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "description": "Initial projects to assign to the group"
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "langId"
+              ],
+              "properties": {
+                "langId": {
+                  "type": "number",
+                  "description": "Language ID"
+                },
+                "isWritable": {
+                  "type": "boolean",
+                  "description": "Whether language is writable"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Language permissions for the group"
+          },
+          "isReviewer": {
+            "type": "boolean",
+            "description": "Whether group members are reviewers"
+          },
+          "adminRights": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "upload",
+                "activity",
+                "download",
+                "settings",
+                "create_branches",
+                "statistics",
+                "keys",
+                "screenshots",
+                "glossary",
+                "contributors",
+                "languages",
+                "tasks"
+              ],
+              "type": "string"
+            },
+            "description": "Admin rights for the group if isAdmin is true"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_update_usergroup",
+      "description": "Updates a user group's properties including permissions and assignments. Required: teamId, groupId, name, isReviewer, isAdmin. Optional: adminRights, languages. Use to adjust group permissions, modify access levels, or reorganize team structure. Returns: Updated group configuration. Note: Cannot modify projects/members here - use dedicated tools.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "groupId",
+          "name",
+          "isReviewer",
+          "isAdmin"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the group"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user group"
+          },
+          "groupId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User group ID to update"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Whether group members are admins"
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "langId"
+              ],
+              "properties": {
+                "langId": {
+                  "type": "number",
+                  "description": "Language ID"
+                },
+                "isWritable": {
+                  "type": "boolean",
+                  "description": "Whether language is writable"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Language permissions for the group"
+          },
+          "isReviewer": {
+            "type": "boolean",
+            "description": "Whether group members are reviewers"
+          },
+          "adminRights": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "upload",
+                "activity",
+                "download",
+                "settings",
+                "create_branches",
+                "statistics",
+                "keys",
+                "screenshots",
+                "glossary",
+                "contributors",
+                "languages",
+                "tasks"
+              ],
+              "type": "string"
+            },
+            "description": "Admin rights for the group if isAdmin is true"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_delete_usergroup",
+      "description": "Deletes a user group from a Lokalise team, removing all associated permissions. Required: teamId, groupId. Use for cleanup, removing obsolete groups, or restructuring team organization. Returns: Deletion confirmation. Warning: Removes all group assignments - members lose group-based permissions immediately.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "groupId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user group"
+          },
+          "groupId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User group ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_add_members_to_group",
+      "description": "Adds users to a user group, granting them group-based permissions and project access. Required: teamId, groupId, userIds array. Use to onboard team members, assign role-based access, or batch permission updates. Returns: Operation confirmation. Members immediately gain group permissions and project access.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "groupId",
+          "userIds"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user group"
+          },
+          "groupId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User group ID"
+          },
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "minItems": 1,
+            "description": "User IDs to add to the group"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_remove_members_from_group",
+      "description": "Removes users from a user group, revoking group-based permissions and project access. Required: teamId, groupId, userIds array. Use for role changes, offboarding, or permission cleanup. Returns: Operation confirmation. Warning: Immediate effect - users lose group permissions and project access.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "groupId",
+          "userIds"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user group"
+          },
+          "groupId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User group ID"
+          },
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "minItems": 1,
+            "description": "User IDs to remove from the group"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_add_projects_to_group",
+      "description": "Adds projects to a user group, granting all group members access to specified projects. Required: teamId, groupId, projectIds array. Use to expand group project scope, onboard projects to existing teams, or batch project assignments. Returns: Operation confirmation. All group members gain immediate project access.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "groupId",
+          "projectIds"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user group"
+          },
+          "groupId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User group ID"
+          },
+          "projectIds": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "minItems": 1,
+            "description": "Project IDs to add to the group"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lokalise_remove_projects_from_group",
+      "description": "Removes projects from a user group, revoking group member access to specified projects. Required: teamId, groupId, projectIds array. Use to limit project scope, offboard projects, or restructure access. Returns: Operation confirmation. Warning: All group members lose immediate project access.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "teamId",
+          "groupId",
+          "projectIds"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "Team ID containing the user group"
+          },
+          "groupId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "User group ID"
+          },
+          "projectIds": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "minItems": 1,
+            "description": "Project IDs to remove from the group"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@AbdallahAHO/lokalise-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "LOKALISE_API_KEY"
+        ],
+        "properties": {
+          "debug_mode": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug_mode mode"
+          },
+          "LOKALISE_API_KEY": {
+            "type": "string",
+            "description": "Your Lokalise API token"
+          },
+          "LOKALISE_API_HOSTNAME": {
+            "type": "string",
+            "default": "https://api.lokalise.com/api2/",
+            "description": "Custom Lokalise API endpoint"
+          }
+        }
+      }
+    }
+  ]
+}

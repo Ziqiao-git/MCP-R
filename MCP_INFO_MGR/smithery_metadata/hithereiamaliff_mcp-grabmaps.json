@@ -1,0 +1,278 @@
+{
+  "qualifiedName": "@hithereiamaliff/mcp-grabmaps",
+  "displayName": "GrabMaps MCP Server",
+  "description": "Provide seamless access to GrabMaps geocoding and routing services across 8 countries in Southeast Asia through a standardized MCP interface. Enable AI models and applications to perform place searches, reverse geocoding, route calculations, and place detail retrieval efficiently. Simplify integration with GrabMaps data via AWS Location Service without requiring direct map rendering capabilities.\n\nAvailable coverage countries for GrabMaps usage:\n\n- 🇲🇾 Malaysia\n- 🇸🇬 Singapore\n- 🇹🇭 Thailand\n- 🇲🇲 Myanmar\n- 🇰🇭 Cambodia\n- 🇻🇳 Vietnam\n- 🇵🇭 Philippines\n- 🇮🇩 Indonesia\n\nNote: this MCP server is NOT officially affiliated with Grab, GrabMaps, or AWS Location Service.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/grabmaps.grab.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/mcp-grabmaps",
+  "security": null,
+  "tools": [
+    {
+      "name": "searchPlaceIndexForText",
+      "description": "Search for places using text query.\n\nIMPORTANT INSTRUCTION FOR AI MODELS: \n1. GrabMaps ONLY supports eight countries in Southeast Asia: Malaysia (MYS), Singapore (SGP), Thailand (THA), Myanmar (MMR), Cambodia (KHM), Vietnam (VNM), Philippines (PHL), and Indonesia (IDN). Searches outside these countries will not return accurate results.\n\n2. AI models MUST analyze the user's query to determine the country and ALWAYS include the appropriate country code in the request.\nFor example:\n- If user asks about \"City Square Mall\", determine it's in Singapore and use country: \"SGP\"\n- If user asks about \"Songklanagarind Hospital\", determine it's in Thailand and use country: \"THA\"\nThis is CRITICAL for returning accurate search results.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query text"
+          },
+          "country": {
+            "type": "string",
+            "description": "REQUIRED: Three-letter ISO country code (e.g., \"SGP\" for Singapore, \"MYS\" for Malaysia, \"THA\" for Thailand). AI MODELS MUST ALWAYS INCLUDE THIS PARAMETER."
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code"
+          },
+          "maxResults": {
+            "type": "number",
+            "description": "Maximum results to return"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "searchPlaceIndexForPosition",
+      "description": "Search for places by coordinates (reverse geocoding). Note: GrabMaps ONLY supports eight countries in Southeast Asia: Malaysia (MYS), Singapore (SGP), Thailand (THA), Myanmar (MMR), Cambodia (KHM), Vietnam (VNM), Philippines (PHL), and Indonesia (IDN). Searches outside these countries will not return accurate results.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "longitude",
+          "latitude"
+        ],
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Language code"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude coordinate"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude coordinate"
+          },
+          "maxResults": {
+            "type": "number",
+            "description": "Maximum results to return"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "searchPlaceIndexForSuggestions",
+      "description": "Get place suggestions based on partial text input.\n\nIMPORTANT INSTRUCTION FOR AI MODELS: \n1. GrabMaps ONLY supports eight countries in Southeast Asia: Malaysia (MYS), Singapore (SGP), Thailand (THA), Myanmar (MMR), Cambodia (KHM), Vietnam (VNM), Philippines (PHL), and Indonesia (IDN). Searches outside these countries will not return accurate results.\n\n2. AI models MUST analyze the user's query to determine the country and ALWAYS include the appropriate country code in the request.\nFor example:\n- If user asks about \"City Square Mall\", determine it's in Singapore and use country: \"SGP\"\n- If user asks about \"Songklanagarind Hospital\", determine it's in Thailand and use country: \"THA\"\nThis is CRITICAL for returning accurate search results.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query text"
+          },
+          "country": {
+            "type": "string",
+            "description": "REQUIRED: Three-letter ISO country code (e.g., \"SGP\" for Singapore, \"MYS\" for Malaysia, \"THA\" for Thailand). AI MODELS MUST ALWAYS INCLUDE THIS PARAMETER."
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code"
+          },
+          "maxResults": {
+            "type": "number",
+            "description": "Maximum results to return"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getPlace",
+      "description": "Get place details by place ID. Note: GrabMaps ONLY supports eight countries in Southeast Asia: Malaysia (MYS), Singapore (SGP), Thailand (THA), Myanmar (MMR), Cambodia (KHM), Vietnam (VNM), Philippines (PHL), and Indonesia (IDN).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "placeId"
+        ],
+        "properties": {
+          "placeId": {
+            "type": "string",
+            "description": "ID of the place to retrieve"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "calculateRoute",
+      "description": "Calculate a route between two points",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "origin",
+          "destination"
+        ],
+        "properties": {
+          "origin": {
+            "type": "object",
+            "required": [
+              "longitude",
+              "latitude"
+            ],
+            "properties": {
+              "latitude": {
+                "type": "number"
+              },
+              "longitude": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "travelMode": {
+            "enum": [
+              "Car",
+              "Truck",
+              "Walking",
+              "Bicycle",
+              "Motorcycle"
+            ],
+            "type": "string"
+          },
+          "destination": {
+            "type": "object",
+            "required": [
+              "longitude",
+              "latitude"
+            ],
+            "properties": {
+              "latitude": {
+                "type": "number"
+              },
+              "longitude": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "distanceUnit": {
+            "enum": [
+              "Kilometers",
+              "Miles"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "calculateRouteMatrix",
+      "description": "Calculates a route matrix between multiple origins and destinations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "departurePositions",
+          "destinationPositions"
+        ],
+        "properties": {
+          "travelMode": {
+            "enum": [
+              "Car",
+              "Truck",
+              "Walking",
+              "Bicycle",
+              "Motorcycle"
+            ],
+            "type": "string"
+          },
+          "distanceUnit": {
+            "enum": [
+              "Kilometers",
+              "Miles"
+            ],
+            "type": "string"
+          },
+          "departureTime": {
+            "type": "string"
+          },
+          "departurePositions": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "destinationPositions": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/mcp-grabmaps/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "grabMapsApiKey",
+          "awsAccessKeyId",
+          "awsSecretAccessKey"
+        ],
+        "properties": {
+          "awsRegion": {
+            "type": "string",
+            "description": "AWS Region (default: ap-southeast-5)"
+          },
+          "awsAccessKeyId": {
+            "type": "string",
+            "description": "AWS Access Key ID"
+          },
+          "grabMapsApiKey": {
+            "type": "string",
+            "description": "GrabMaps API key"
+          },
+          "awsSecretAccessKey": {
+            "type": "string",
+            "description": "AWS Secret Access Key"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

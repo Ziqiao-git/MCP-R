@@ -1,0 +1,212 @@
+{
+  "qualifiedName": "@githru/githru-mcp-v1",
+  "displayName": "Githru Insights",
+  "description": "# Githru MCP Server\n\n<p align=\"center\">\n  <strong>A powerful Model Context Protocol (MCP) server that provides advanced Git repository analysis and visualization tools designed to enhance team collaboration.</strong>\n</p>\n\n---\n\n## 🚀 Overview\n\nThe **Githru MCP Server** extends Claude’s capabilities through the **Model Context Protocol (MCP)** — enabling real-time access to Git analytics, PR insights, and repository visualization.\n\nThis MCP server is deployed on **[smithery.ai](https://smithery.ai)** and can be used directly from Claude’s MCP integration feature.\n\n---\n\n## 🧩 Prerequisites\n\nBefore you begin, make sure you have:\n\n- **Claude Desktop App** (with MCP support)  \n  👉 [Download here](https://claude.ai/download)\n- Access to the deployed **Githru MCP Server** on `smithery.ai`\n\n---\n\n## ⚙️ Setup in Claude\n\n1. **Find the JSON configuration**\n   - When you visit the [Githru MCP Server page on Smithery.ai](https://smithery.ai/server/@githru/githru-mcp-v1),  \n     click **“Connect → JSON”** to view the configuration details for our MCP server.\n\n2. **Insert the Githru MCP configuration**\n   - Claude Desktop reads MCP server settings from the `claude_desktop_config.json` file.  \n     You need to modify the `args` path inside your local configuration file.\n\n   **File locations:**\n   - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`\n   - **Windows:** `%APPDATA%\\Claude\\claude_desktop_config.json`\n\n   ```json\n   {\n      \"mcpServers\": {\n        \"githru-mcp-v1\": {\n          \"command\": \"npx\",\n          \"args\": [\n            \"-y\",\n            \"@smithery/cli@latest\",\n            \"run\",\n            \"@githru/githru-mcp-v1\",\n            \"--key\",\n            \"YOUR_API_KEY\",\n            \"--profile\",\n            \"PROFILE\"\n          ],\n          \"env\": {\n            \"GITHUB_TOKEN\": \"YOUR_GITHUB_TOKEN\"\n          }\n        }\n      }\n    }\n   ```\n> 🧠 Tip: Replace the URL above with your actual Smithery MCP endpoint if it differs.\n\n3. Save and reconnecting\n  - After saving, Claude will automatically connect to your Githru MCP instance.\n  - so reconnect Claude\n\n---\n\n## 🧠 About Model Context Protocol (MCP)\n\nMCP is an open standard that lets Claude connect to external data and services safely and dynamically.\nYour Githru MCP Server acts as a “bridge” — providing contextual Git insights directly within the Claude chat interface.\n\nFor more on MCP:\n👉 (https://modelcontextprotocol.io)[https://modelcontextprotocol.io]\n\n---\n\n## 📄 License\n\nThis project is licensed under the MIT License.\n\n---\n\n## 🤝 Contributing\n\nWe welcome contributions!\nIf you’d like to improve the Githru MCP Server, please open a PR or file an issue on [GitHub](https://github.com/githru/githru-vscode-ext).",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@githru/githru-mcp-v1",
+  "security": null,
+  "tools": [
+    {
+      "name": "contributor_recommender",
+      "title": "Code Contributor Recommender",
+      "description": "Recommends contributors who have contributed most to specific files/branches/PR areas by aggregating recent contribution data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "repoPath"
+        ],
+        "properties": {
+          "pr": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "PR-based recommendation (PR number)"
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "File/directory path array (supports glob patterns)"
+          },
+          "since": {
+            "type": "string",
+            "description": "Analysis period start (default 90 days, 30d/ISO date etc.)"
+          },
+          "until": {
+            "type": "string",
+            "description": "Analysis period end (current if unspecified)"
+          },
+          "branch": {
+            "type": "string",
+            "description": "Branch-based recommendation (default: main)"
+          },
+          "locale": {
+            "enum": [
+              "en",
+              "ko"
+            ],
+            "type": "string",
+            "default": "en",
+            "description": "Response language (en: English, ko: Korean)"
+          },
+          "isChart": {
+            "type": "boolean",
+            "default": false,
+            "description": "Generate interactive chart visualization (true: HTML chart display, false: JSON data)"
+          },
+          "repoPath": {
+            "type": "string",
+            "description": "GitHub repository path (e.g: owner/repo or https://github.com/owner/repo)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "feature_impact_analyzer",
+      "title": "Feature Integration Impact Analyzer",
+      "description": "Takes a GitHub repository URL, Pull Request number, and authentication token as input.\n        Analyzes the PR’s commits and changed files to compute impact metrics — scale, dispersion,\n        chaos, isolation, lag, and coupling — and outputs a detailed HTML report highlighting\n        long-tail file path outliers.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "repoUrl",
+          "prNumber"
+        ],
+        "properties": {
+          "locale": {
+            "enum": [
+              "en",
+              "ko"
+            ],
+            "type": "string",
+            "default": "en",
+            "description": "Response language (en: English, ko: Korean)"
+          },
+          "isChart": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return HTML chart (true) or JSON (false, default)"
+          },
+          "repoUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full URL of GitHub repository to analyze (e.g. https://github.com/owner/repo)"
+          },
+          "prNumber": {
+            "type": "integer",
+            "description": "Pull Request number to analyze",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "author_work_pattern",
+      "title": "Author별 작업량/변경유형 분석기",
+      "description": "특정 author의 기간 내 작업량(Commits/LOC/Churn)과 커밋 타입(feat/fix/refactor/...) 분포를 Octokit으로 계산합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "repoPath",
+          "author"
+        ],
+        "properties": {
+          "chart": {
+            "type": "boolean",
+            "default": false,
+            "description": "HTML 차트 리포트 반환 여부"
+          },
+          "since": {
+            "type": "string",
+            "description": "시작 시점 (예: \"2025-09-01\" 또는 \"30d\")"
+          },
+          "until": {
+            "type": "string",
+            "description": "종료 시점 (미지정 시 현재)"
+          },
+          "author": {
+            "type": "string",
+            "description": "로그인/이름/이메일 일부"
+          },
+          "branch": {
+            "type": "string",
+            "description": "브랜치/커밋 SHA (기본: 기본 브랜치)"
+          },
+          "locale": {
+            "enum": [
+              "en",
+              "ko"
+            ],
+            "type": "string",
+            "default": "en",
+            "description": "응답 언어"
+          },
+          "repoPath": {
+            "type": "string",
+            "description": "GitHub repository path (owner/repo 또는 GitHub URL)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "render_storyline_ui",
+      "title": "Render Storyline UI",
+      "description": "Generate storyline visualization using FolderActivityFlow component with CSMDict data",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "repo"
+        ],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "GitHub repository in format 'owner/repo'"
+          },
+          "locale": {
+            "enum": [
+              "en",
+              "ko"
+            ],
+            "type": "string",
+            "default": "en",
+            "description": "Response language"
+          },
+          "baseBranchName": {
+            "type": "string",
+            "description": "Base branch name (default: main)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@githru/githru-mcp-v1/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

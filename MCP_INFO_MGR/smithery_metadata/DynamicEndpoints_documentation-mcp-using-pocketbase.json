@@ -1,0 +1,172 @@
+{
+  "qualifiedName": "@DynamicEndpoints/documentation-mcp-using-pocketbase",
+  "displayName": "Pocketbase Document Extractor",
+  "description": "Extract content from Microsoft Learn and GitHub URLs and store it in PocketBase for easy retrieval and search. Manage documents with tools for extraction, listing, searching, retrieval, and deletion. Benefit from real-time server statistics, dynamic tool management, and multi-transport support including STDIO and HTTP.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/documentation-mcp-using-pocketbase",
+  "security": null,
+  "tools": [
+    {
+      "name": "extract_document",
+      "description": "Extract document content from Microsoft Learn or GitHub URL and store in PocketBase",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Microsoft Learn or GitHub URL to extract content from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_documents",
+      "description": "List stored documents from PocketBase with pagination",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number for pagination (default: 1)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of documents to return (default: 20, max: 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_documents",
+      "description": "Search documents by title or content using full-text search",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return (default: 50)"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Search query to find documents (searches title and content)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_document",
+      "description": "Get a specific document by ID with full content",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Document ID to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_document",
+      "description": "Delete a document from PocketBase by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Document ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ensure_collection",
+      "description": "Check if the documents collection exists and create it if needed",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "collection_info",
+      "description": "Get detailed information about the documents collection including statistics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/documentation-mcp-using-pocketbase/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "pocketbaseUrl",
+          "pocketbaseEmail",
+          "pocketbasePassword"
+        ],
+        "properties": {
+          "pocketbaseUrl": {
+            "type": "string",
+            "default": "https://your-pocketbase.com",
+            "description": "PocketBase server URL"
+          },
+          "pocketbaseEmail": {
+            "type": "string",
+            "description": "PocketBase admin email"
+          },
+          "defaultCollection": {
+            "type": "string",
+            "default": "documents",
+            "description": "Collection name for documents"
+          },
+          "pocketbasePassword": {
+            "type": "string",
+            "description": "PocketBase admin password"
+          }
+        }
+      }
+    }
+  ]
+}

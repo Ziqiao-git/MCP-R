@@ -1,0 +1,156 @@
+{
+  "qualifiedName": "@bitscorp-mcp/mcp-adjust",
+  "displayName": "Adjust Reporting Server",
+  "description": "Access your Adjust data seamlessly from any MCP client. Query reports, metrics, and performance data on-demand to gain insights into your campaigns. Perfect for quick lookups like install numbers for specific campaigns.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/platformatic.dev.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "adjust-reporting",
+      "description": "Adjust reporting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "date": {
+            "type": "string",
+            "default": "2025-10-13",
+            "description": "Date for the report in YYYY-MM-DD format"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Comma-separated list of metrics/dimensions to sort by (use - for descending)"
+          },
+          "metrics": {
+            "type": "string",
+            "default": "installs,sessions,revenue",
+            "description": "Comma-separated list of metrics to include"
+          },
+          "currency": {
+            "type": "string",
+            "default": "USD",
+            "description": "Currency used for conversion of money related metrics"
+          },
+          "dimensions": {
+            "type": "string",
+            "description": "Comma-separated values to group by (e.g., day,country,network). Options include: hour, day, week, month, year, quarter, os_name, device_type, app, app_token, store_id, store_type, currency, currency_code, network, campaign, campaign_network, campaign_id_network, adgroup, adgroup_network, adgroup_id_network, creative, country, country_code, region, partner_name, partner_id, channel, platform"
+          },
+          "utc_offset": {
+            "type": "string",
+            "description": "Timezone used in the report (e.g., +01:00)"
+          },
+          "date_period": {
+            "type": "string",
+            "description": "Date period (e.g., this_month, yesterday, 2023-01-01:2023-01-31, -10d:-3d)"
+          },
+          "format_dates": {
+            "type": "boolean",
+            "description": "If false, date dimensions are returned in ISO format"
+          },
+          "reattributed": {
+            "enum": [
+              "all",
+              "false",
+              "true"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Filter for reattributed users"
+          },
+          "ad_spend_mode": {
+            "enum": [
+              "adjust",
+              "network",
+              "mixed"
+            ],
+            "type": "string",
+            "description": "Determines the ad spend source applied in calculations"
+          },
+          "cohort_maturity": {
+            "enum": [
+              "immature",
+              "mature"
+            ],
+            "type": "string",
+            "description": "Display values for immature or only mature cohorts"
+          },
+          "attribution_type": {
+            "enum": [
+              "click",
+              "impression",
+              "all"
+            ],
+            "type": "string",
+            "default": "click",
+            "description": "Type of engagement the attribution awards"
+          },
+          "attribution_source": {
+            "enum": [
+              "first",
+              "dynamic"
+            ],
+            "type": "string",
+            "default": "dynamic",
+            "description": "Whether in-app activity is assigned to install source or divided"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "adjust-standard-report",
+      "description": "Get a standard Adjust report with common metrics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "app_tokens": {
+            "type": "string",
+            "default": "",
+            "description": "Comma-separated list of app tokens to include"
+          },
+          "date_range": {
+            "type": "string",
+            "default": "last_7_days",
+            "description": "Date range (e.g., 2023-01-01:2023-01-31, yesterday, last_7_days, this_month)"
+          },
+          "report_type": {
+            "enum": [
+              "performance",
+              "retention",
+              "cohort",
+              "revenue"
+            ],
+            "type": "string",
+            "default": "performance",
+            "description": "Type of standard report to generate"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@bitscorp-mcp/mcp-adjust/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Adjust API Key."
+          }
+        }
+      }
+    }
+  ]
+}

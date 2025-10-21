@@ -1,0 +1,226 @@
+{
+  "qualifiedName": "@coinranking/coinranking-mcp",
+  "displayName": "Coinranking",
+  "description": "Provide real-time and historical cryptocurrency data, market statistics, and exchange information to enhance your applications with up-to-date crypto insights. Enable advanced search and detailed coin comparisons to support informed decision-making. Simplify integration with easy API key configuration and ready-to-use prompts for market analysis.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/coinranking.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@coinranking/coinranking-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "configure_api_key",
+      "description": "Configure your Coinranking API key for this session. Get your key at https://account.coinranking.com/dashboard",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "api_key"
+        ],
+        "properties": {
+          "api_key": {
+            "type": "string",
+            "description": "Your Coinranking API key"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_coins",
+      "description": "Get cryptocurrencies with prices, market caps, 24h volume, change %, rank, sparklines, and links - includes market totals",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "string",
+            "description": "Comma-separated list of tags to filter (e.g., defi, stablecoin, nft)"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of coins to return (default: 50, max: 5000)"
+          },
+          "uuids": {
+            "type": "string",
+            "description": "Comma-separated list of coin UUIDs to filter"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Offset for pagination (default: 0)"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search query for coin name or symbol"
+          },
+          "orderBy": {
+            "type": "string",
+            "description": "Order results by: marketCap, price, listedAt, change, or circulatingSupply (default: marketCap)"
+          },
+          "symbols": {
+            "type": "string",
+            "description": "Comma-separated list of coin symbols to filter"
+          },
+          "timePeriod": {
+            "type": "string",
+            "description": "Time period for price change: 1h, 3h, 12h, 24h, 7d, 30d, 3m, 1y, 3y, 5y (default: 24h)"
+          },
+          "orderDirection": {
+            "type": "string",
+            "description": "Order direction: desc or asc (default: desc)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_coin",
+      "description": "Get comprehensive coin data: price, market cap, volume, supply details, all-time high, description, links, and social media",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "uuid"
+        ],
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "The UUID of the coin (e.g., 'Qwsogvtv82FCd' for Bitcoin)"
+          },
+          "timePeriod": {
+            "type": "string",
+            "description": "Time period for price change: 1h, 3h, 12h, 24h, 7d, 30d, 3m, 1y, 3y, 5y (default: 24h)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_price_history",
+      "description": "Get timestamped price history for charting - returns price points and change % over time periods (1h to 5y)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "uuid"
+        ],
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "The UUID of the coin"
+          },
+          "timePeriod": {
+            "type": "string",
+            "description": "Time period: 1h, 3h, 12h, 24h, 7d, 30d, 3m, 1y, 3y, 5y (default: 24h)"
+          }
+        }
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search for coins, exchanges, or markets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query for coins, exchanges, or markets"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_global_stats",
+      "description": "Get global market overview: total market cap, 24h volume, total coins/exchanges, Bitcoin dominance, and market trends",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "referenceCurrencyUuid": {
+            "type": "string",
+            "description": "UUID of reference currency (default: USD)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_exchanges",
+      "description": "Get exchanges with 24h volume, number of markets, rank, market share % - requires Pro API key",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Number of exchanges to return (default: 50)"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Offset for pagination (default: 0)"
+          },
+          "orderBy": {
+            "type": "string",
+            "description": "Order by: 24hVolume, numberOfMarkets, or lastTickerCreatedAt (default: 24hVolume)"
+          },
+          "orderDirection": {
+            "type": "string",
+            "description": "Order direction: desc or asc (default: desc)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_reference_currencies",
+      "description": "Get currencies for displaying crypto prices - includes fiat (USD, EUR), cryptocurrencies (BTC, ETH), and denominators (Satoshi, Wei)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_categories",
+      "description": "Get cryptocurrency categories with market analytics - includes market cap, volume, performance metrics, and coin counts for categories like DeFi, AI Agents, Layer-1, Meme Coins, etc.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_trending_coins",
+      "description": "Get top 10 trending cryptocurrencies based on searches, social mentions, and market activity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_coin_price",
+      "description": "Get just the current price of a coin - lightweight alternative to get_coin for price-only queries",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "uuid"
+        ],
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "The UUID of the coin"
+          },
+          "referenceCurrencyUuid": {
+            "type": "string",
+            "description": "UUID of reference currency (default: USD)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@coinranking/coinranking-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Coinranking API key (optional - can also configure via tool)"
+          }
+        }
+      }
+    }
+  ]
+}

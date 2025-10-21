@@ -1,0 +1,221 @@
+{
+  "qualifiedName": "@https-eduardo/clockify-mcp-server",
+  "displayName": "Clockify Time Entry Manager",
+  "description": "Manage your Clockify time entries effortlessly by sending prompts to an LLM. Add, view, and control your time tracking directly through AI-powered interactions. Simplify your time management workflow with seamless integration to Clockify.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@https-eduardo/clockify-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "create-time-entry",
+      "description": "Register a new time entry of a task or break in a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "description",
+          "start",
+          "end"
+        ],
+        "properties": {
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The end of the time entry"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The start of the time entry"
+          },
+          "billable": {
+            "type": "boolean",
+            "default": true,
+            "description": "If the task is billable or not"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The id of the project associated with this time entry"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the time entry"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The id of the workspace that gonna be saved the time entry"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-projects",
+      "description": "Get workspace projects id and name, the projects can be associated with time entries",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "string",
+            "description": "The ID of the workspace that you need to get the projects from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-time-entries",
+      "description": "Get registered time entries from a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "userId"
+        ],
+        "properties": {
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End time of the entry to search for"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start time of the entry to search for"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The id of the user that gonna have the entries searched, default is the current user id"
+          },
+          "project": {
+            "type": "string",
+            "description": "The id of the project to search for entries"
+          },
+          "description": {
+            "type": "string",
+            "description": "The time entry description to search for"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The id of the workspace that gonna search for the entries"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-current-user",
+      "description": "Get the current user id and name, to search for entries is required to have the user id",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get-workspaces",
+      "description": "Get user available workspaces id and name, a workspace is required to manage time entries",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "delete-time-entry",
+      "description": "Delete a specific time entry from a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "timeEntryId"
+        ],
+        "properties": {
+          "timeEntryId": {
+            "type": "string",
+            "description": "The id of the time entry to be deleted"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The id of the workspace where the time entry is located"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "edit-time-entry",
+      "description": "Edit an existing time entry in a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "timeEntryId"
+        ],
+        "properties": {
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The end of the time entry"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The start of the time entry"
+          },
+          "billable": {
+            "type": "boolean",
+            "description": "If the task is billable or not"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The id of the project associated with this time entry"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the time entry"
+          },
+          "timeEntryId": {
+            "type": "string",
+            "description": "The id of the time entry to be edited"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The id of the workspace where the time entry is located"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@https-eduardo/clockify-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "clockifyApiToken"
+        ],
+        "properties": {
+          "clockifyApiToken": {
+            "type": "string",
+            "description": "Clockify API Token"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

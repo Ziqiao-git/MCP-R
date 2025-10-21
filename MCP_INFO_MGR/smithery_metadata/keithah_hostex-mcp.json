@@ -1,0 +1,733 @@
+{
+  "qualifiedName": "@keithah/hostex-mcp",
+  "displayName": "Hostex Property Management",
+  "description": "Manage your Hostex vacation rentals—properties, reservations, availability, listings, and guest messaging—from one place. Automate tasks like blocking dates, updating prices, sending guest messages, and handling reviews and lock codes. Search and filter data fast, create direct bookings, and keep calendars and custom fields in sync.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/a70dbc68-ad07-453f-bdc1-ce45f4d72be9.jpeg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@keithah/hostex-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "hostex_list_properties",
+      "description": "List properties from your Hostex account. Returns property details including ID, title, address, channels, and location coordinates.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Filter by specific property ID"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum results to return, max 100 (default: 20)"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Starting point for results (default: 0)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_room_types",
+      "description": "List room types from your Hostex account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Max results, max 100 (default: 20)"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Starting point (default: 0)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_reservations",
+      "description": "List and search reservations with filters like status, dates, property ID, etc.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "wait_accept",
+              "wait_pay",
+              "accepted",
+              "cancelled",
+              "denied",
+              "timeout"
+            ],
+            "type": "string"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Sort field (default: booked_at)"
+          },
+          "property_id": {
+            "type": "number"
+          },
+          "reservation_code": {
+            "type": "string"
+          },
+          "end_check_in_date": {
+            "type": "string",
+            "description": "YYYY-MM-DD format"
+          },
+          "end_check_out_date": {
+            "type": "string",
+            "description": "YYYY-MM-DD format"
+          },
+          "start_check_in_date": {
+            "type": "string",
+            "description": "YYYY-MM-DD format"
+          },
+          "start_check_out_date": {
+            "type": "string",
+            "description": "YYYY-MM-DD format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_create_reservation",
+      "description": "Create a direct booking reservation in Hostex",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "property_id",
+          "custom_channel_id",
+          "check_in_date",
+          "check_out_date",
+          "guest_name",
+          "currency",
+          "rate_amount",
+          "commission_amount",
+          "received_amount",
+          "income_method_id"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "remarks": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code (e.g., USD)"
+          },
+          "guest_name": {
+            "type": "string",
+            "description": "Primary guest name"
+          },
+          "property_id": {
+            "type": "string",
+            "description": "Property ID"
+          },
+          "rate_amount": {
+            "type": "number",
+            "description": "Total rate amount in cents"
+          },
+          "check_in_date": {
+            "type": "string",
+            "description": "Check-in date (YYYY-MM-DD)"
+          },
+          "check_out_date": {
+            "type": "string",
+            "description": "Check-out date (YYYY-MM-DD)"
+          },
+          "received_amount": {
+            "type": "number",
+            "description": "Amount received in cents"
+          },
+          "income_method_id": {
+            "type": "number",
+            "description": "Income method ID"
+          },
+          "number_of_guests": {
+            "type": "number"
+          },
+          "commission_amount": {
+            "type": "number",
+            "description": "Commission amount in cents"
+          },
+          "custom_channel_id": {
+            "type": "number",
+            "description": "Custom channel ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_cancel_reservation",
+      "description": "Cancel a direct booking reservation (channel bookings not supported)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "reservation_code"
+        ],
+        "properties": {
+          "reservation_code": {
+            "type": "string",
+            "description": "Reservation code to cancel"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_update_lock_code",
+      "description": "Update the lock code for a stay",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "stay_code",
+          "lock_code"
+        ],
+        "properties": {
+          "lock_code": {
+            "type": "string",
+            "description": "New lock code"
+          },
+          "stay_code": {
+            "type": "string",
+            "description": "Stay code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_get_custom_fields",
+      "description": "Get custom fields for a stay",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "stay_code"
+        ],
+        "properties": {
+          "stay_code": {
+            "type": "string",
+            "description": "Stay code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_update_custom_fields",
+      "description": "Update custom fields for a stay. Custom fields can be used in automated messages using {{cf.field_name}} syntax.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "stay_code",
+          "custom_fields"
+        ],
+        "properties": {
+          "stay_code": {
+            "type": "string",
+            "description": "Stay code"
+          },
+          "custom_fields": {
+            "type": "object",
+            "description": "Custom fields as key-value pairs",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_availabilities",
+      "description": "Query property availability for date ranges",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "property_ids",
+          "start_date",
+          "end_date"
+        ],
+        "properties": {
+          "end_date": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          "property_ids": {
+            "type": "string",
+            "description": "Comma-separated property IDs (max 100)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_update_availabilities",
+      "description": "Update property availability status for specific dates or date ranges",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "property_ids",
+          "available"
+        ],
+        "properties": {
+          "dates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific dates array (alternative to date range)"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "available": {
+            "type": "boolean",
+            "description": "Availability status"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          "property_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Array of property IDs to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_conversations",
+      "description": "List guest conversations and inquiries",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_get_conversation",
+      "description": "Get conversation details including all messages",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "conversation_id"
+        ],
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "description": "Conversation ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_send_message",
+      "description": "Send a text or image message to a guest",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "conversation_id"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Text message content"
+          },
+          "jpeg_base64": {
+            "type": "string",
+            "description": "Base64 encoded JPEG image"
+          },
+          "conversation_id": {
+            "type": "string",
+            "description": "Conversation ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_reviews",
+      "description": "Query reviews with filters",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "property_id": {
+            "type": "number"
+          },
+          "review_status": {
+            "type": "string"
+          },
+          "reservation_code": {
+            "type": "string"
+          },
+          "end_check_out_date": {
+            "type": "string",
+            "description": "YYYY-MM-DD format"
+          },
+          "start_check_out_date": {
+            "type": "string",
+            "description": "YYYY-MM-DD format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_create_review",
+      "description": "Create a review or reply for a reservation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "reservation_code"
+        ],
+        "properties": {
+          "reservation_code": {
+            "type": "string",
+            "description": "Reservation code"
+          },
+          "host_review_score": {
+            "type": "number",
+            "description": "Rating score (0-5)"
+          },
+          "host_reply_content": {
+            "type": "string",
+            "description": "Reply to guest review"
+          },
+          "host_review_content": {
+            "type": "string",
+            "description": "Review comment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_post_guest_review",
+      "description": "Post a comprehensive guest review with category ratings (requires login via email/password config). This posts reviews as they appear on the Hostex web app.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "reservation_order_code",
+          "content",
+          "recommend",
+          "overall_rating",
+          "cleanliness",
+          "respect_of_house_rules",
+          "communication"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Review text content"
+          },
+          "recommend": {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "type": "string",
+            "description": "Would recommend: 1 = yes, 0 = no"
+          },
+          "cleanliness": {
+            "enum": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "type": "string",
+            "description": "Cleanliness rating (1-5)"
+          },
+          "communication": {
+            "enum": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "type": "string",
+            "description": "Communication rating (1-5)"
+          },
+          "overall_rating": {
+            "enum": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "type": "string",
+            "description": "Overall rating (1-5)"
+          },
+          "cleanliness_content": {
+            "type": "string",
+            "description": "Additional cleanliness comments"
+          },
+          "communication_content": {
+            "type": "string",
+            "description": "Additional communication comments"
+          },
+          "reservation_order_code": {
+            "type": "string",
+            "description": "Reservation order code (e.g., 0-ABC123-xyz)"
+          },
+          "respect_of_house_rules": {
+            "enum": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "type": "string",
+            "description": "Respect of house rules rating (1-5)"
+          },
+          "respect_house_rules_content": {
+            "type": "string",
+            "description": "Additional house rules comments"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_webhooks",
+      "description": "List configured webhooks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_create_webhook",
+      "description": "Create a new webhook",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Webhook URL endpoint"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_delete_webhook",
+      "description": "Delete a webhook (only manageable ones)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "webhook_id"
+        ],
+        "properties": {
+          "webhook_id": {
+            "type": "number",
+            "description": "Webhook ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_get_listing_calendar",
+      "description": "Get calendar information for multiple listings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "start_date",
+          "end_date",
+          "listings"
+        ],
+        "properties": {
+          "end_date": {
+            "type": "string",
+            "description": "Calendar end date (YYYY-MM-DD)"
+          },
+          "listings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "channel_type",
+                "listing_id"
+              ],
+              "properties": {
+                "listing_id": {
+                  "type": "string"
+                },
+                "channel_type": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Calendar start date (YYYY-MM-DD)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_update_listing_prices",
+      "description": "Update listing prices for channel listings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channel_type",
+          "listing_id",
+          "prices"
+        ],
+        "properties": {
+          "prices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "date",
+                "price"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "listing_id": {
+            "type": "string",
+            "description": "Channel listing ID"
+          },
+          "channel_type": {
+            "type": "string",
+            "description": "Channel type (e.g., airbnb)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_custom_channels",
+      "description": "Get custom channels from Custom Options Page",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hostex_list_income_methods",
+      "description": "Get income methods from Custom Options Page",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@keithah/hostex-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "accessToken"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Hostex account email (optional, required for review posting)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Hostex account password (optional, required for review posting)"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Your Hostex API access token"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

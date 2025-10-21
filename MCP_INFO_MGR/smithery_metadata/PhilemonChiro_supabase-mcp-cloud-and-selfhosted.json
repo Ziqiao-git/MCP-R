@@ -1,0 +1,1781 @@
+{
+  "qualifiedName": "@PhilemonChiro/supabase-mcp-cloud-and-selfhosted",
+  "displayName": "supabase-mcp-cloud-selfhosted",
+  "description": "Manage your Supabase projects with rich schema introspection, guided table changes, and safe SQL execution. Monitor performance, connections, locks, replication, and storage to quickly surface slow queries and bloat. Configure RLS, roles, grants, auth, realtime, and migrations, and generate TypeScript types for your apps.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@PhilemonChiro/supabase-mcp-cloud-and-selfhosted",
+  "security": null,
+  "tools": [
+    {
+      "name": "inspect_schema",
+      "description": "Comprehensive schema inspection with tables, columns, constraints, and indexes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name to inspect"
+          },
+          "include_columns": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include column information"
+          },
+          "include_indexes": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include indexes"
+          },
+          "include_constraints": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include constraints"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name to inspect"
+          },
+          "include_columns": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include column information"
+          },
+          "include_indexes": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include indexes"
+          },
+          "include_constraints": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include constraints"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_table_schema",
+      "description": "Get detailed schema information for a specific table",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_indexes",
+      "description": "List all indexes with size and usage information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_constraints",
+      "description": "List all constraints (PK, FK, CHECK, UNIQUE)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_views",
+      "description": "List all views in the database",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_materialized_views",
+      "description": "List all materialized views in the database",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_schemas",
+      "description": "List all schemas in the database",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_sequences",
+      "description": "List all sequences in the database",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "execute_sql",
+      "description": "Executes raw SQL queries",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SQL query to execute"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SQL query to execute"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_tables",
+      "description": "Lists all tables in specified schemas",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schemas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Schema names to list tables from"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schemas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Schema names to list tables from"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_extensions",
+      "description": "Lists all database extensions",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_database_stats",
+      "description": "Shows database and top table sizes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_database_connections",
+      "description": "Shows active connection counts by database",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "check_health",
+      "description": "Verify your database connection is working",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_slow_queries",
+      "description": "Get slow queries from pg_stat_statements",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of queries to return"
+          },
+          "min_duration_ms": {
+            "type": "number",
+            "default": 1000,
+            "description": "Minimum duration in milliseconds"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of queries to return"
+          },
+          "min_duration_ms": {
+            "type": "number",
+            "default": 1000,
+            "description": "Minimum duration in milliseconds"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_table_sizes",
+      "description": "Get size information for all tables",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Number of tables to return"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Number of tables to return"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_index_usage",
+      "description": "Get index usage statistics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "unused_only": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show only unused indexes"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "unused_only": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show only unused indexes"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_active_queries",
+      "description": "List currently running queries",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "include_idle": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include idle connections"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "include_idle": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include idle connections"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_cache_stats",
+      "description": "Get cache hit ratio and statistics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_locks",
+      "description": "List active database locks",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_rls_policies",
+      "description": "List Row Level Security policies",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "enable_rls",
+      "description": "Enable Row Level Security on a table",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": true,
+            "description": "Force RLS for all roles"
+          },
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": true,
+            "description": "Force RLS for all roles"
+          },
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "disable_rls",
+      "description": "Disable Row Level Security on a table",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_rls_status",
+      "description": "Get RLS status for all tables",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_auth_users",
+      "description": "List auth users (id, email, created_at)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_auth_user",
+      "description": "Get auth user by id or email",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID (UUID)"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID (UUID)"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_auth_user",
+      "description": "Create auth user (stub)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_auth_user",
+      "description": "Update auth user (stub)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID (UUID)"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID (UUID)"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_auth_user",
+      "description": "Delete auth user (stub)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID (UUID)"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID (UUID)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_roles",
+      "description": "List all database roles and their attributes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_grants",
+      "description": "List permissions/grants for roles on database objects",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "role_name": {
+            "type": "string",
+            "description": "Optional: filter by role name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "role_name": {
+            "type": "string",
+            "description": "Optional: filter by role name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_role_membership",
+      "description": "Get role membership and inheritance information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "role_name"
+        ],
+        "properties": {
+          "role_name": {
+            "type": "string",
+            "description": "Role name to check"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "role_name"
+        ],
+        "properties": {
+          "role_name": {
+            "type": "string",
+            "description": "Role name to check"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_functions",
+      "description": "List all database functions",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_triggers",
+      "description": "List all database triggers",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional: filter by table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_function_definition",
+      "description": "Get function source code",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "function_name"
+        ],
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "function_name": {
+            "type": "string",
+            "description": "Function name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "function_name"
+        ],
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "function_name": {
+            "type": "string",
+            "description": "Function name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_realtime_publications",
+      "description": "List realtime publications",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "enable_realtime",
+      "description": "Enable realtime on a table",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "disable_realtime",
+      "description": "Disable realtime on a table",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_storage_buckets",
+      "description": "List storage buckets",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_storage_objects",
+      "description": "List storage objects in a bucket",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bucket_id"
+        ],
+        "properties": {
+          "bucket_id": {
+            "type": "string",
+            "description": "Bucket ID or name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "bucket_id"
+        ],
+        "properties": {
+          "bucket_id": {
+            "type": "string",
+            "description": "Bucket ID or name"
+          }
+        }
+      }
+    },
+    {
+      "name": "apply_migration",
+      "description": "Applies a migration (for DDL operations)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "version"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Migration version identifier"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "version"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Migration version identifier"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_migrations",
+      "description": "Lists all database migrations",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "generate_typescript_types",
+      "description": "Generates TypeScript types from schema",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_logs",
+      "description": "Gets logs by service type (api, postgres, auth, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "description": "Service type (api, postgres, auth, realtime, storage)"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "description": "Service type (api, postgres, auth, realtime, storage)"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_docs",
+      "description": "Search Supabase documentation using GraphQL",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        }
+      }
+    },
+    {
+      "name": "verify_jwt_secret",
+      "description": "Verify presence of SUPABASE_AUTH_JWT_SECRET env var",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_vacuum_stats",
+      "description": "Get last vacuum and analyze times for tables",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_table_bloat",
+      "description": "Detect table bloat and wasted space",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "min_bloat_pct": {
+            "type": "number",
+            "default": 20,
+            "description": "Minimum bloat percentage to report"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "min_bloat_pct": {
+            "type": "number",
+            "default": 20,
+            "description": "Minimum bloat percentage to report"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_index_bloat",
+      "description": "Detect index bloat and recommend REINDEX",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_long_transactions",
+      "description": "Get long-running transactions that may be holding locks",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "min_duration_seconds": {
+            "type": "number",
+            "default": 60,
+            "description": "Minimum transaction duration in seconds"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "min_duration_seconds": {
+            "type": "number",
+            "default": 60,
+            "description": "Minimum transaction duration in seconds"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_autovacuum_settings",
+      "description": "Get autovacuum configuration for tables",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_postgres_settings",
+      "description": "Get PostgreSQL configuration parameters",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "setting_filter": {
+            "type": "string",
+            "description": "Filter settings by name (e.g., 'max_connections', 'shared_buffers')"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "setting_filter": {
+            "type": "string",
+            "description": "Filter settings by name (e.g., 'max_connections', 'shared_buffers')"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_wal_status",
+      "description": "Get Write-Ahead Log status and statistics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_replication_status",
+      "description": "Get replication slots and lag information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_checkpoint_stats",
+      "description": "Get checkpoint timing and performance statistics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_disk_io_stats",
+      "description": "Get disk I/O statistics per table",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Number of tables to return"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Number of tables to return"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_database_age",
+      "description": "Get database age to monitor transaction ID wraparound risk",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_table_statistics",
+      "description": "Get row count estimates, last vacuum/analyze times, and table age",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          }
+        }
+      }
+    },
+    {
+      "name": "execute_migration",
+      "description": "Execute database migration with automatic transaction management and rollback on errors",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "Migration SQL to execute (can include multiple statements separated by semicolons)"
+          },
+          "dry_run": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, validate SQL without executing"
+          },
+          "migration_name": {
+            "type": "string",
+            "description": "Name/description of the migration for tracking"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "Migration SQL to execute (can include multiple statements separated by semicolons)"
+          },
+          "dry_run": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, validate SQL without executing"
+          },
+          "migration_name": {
+            "type": "string",
+            "description": "Name/description of the migration for tracking"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_table",
+      "description": "Create a new table with automatic best practices (id, timestamps, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name",
+          "columns"
+        ],
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "unique": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "default": {
+                  "type": "string"
+                },
+                "nullable": {
+                  "type": "boolean",
+                  "default": true
+                }
+              }
+            },
+            "description": "Array of column definitions"
+          },
+          "table_name": {
+            "type": "string",
+            "description": "Name of the table to create"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "add_timestamps": {
+            "type": "boolean",
+            "default": true,
+            "description": "Automatically add created_at and updated_at columns"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "table_name",
+          "columns"
+        ],
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "unique": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "default": {
+                  "type": "string"
+                },
+                "nullable": {
+                  "type": "boolean",
+                  "default": true
+                }
+              }
+            },
+            "description": "Array of column definitions"
+          },
+          "table_name": {
+            "type": "string",
+            "description": "Name of the table to create"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema name"
+          },
+          "add_timestamps": {
+            "type": "boolean",
+            "default": true,
+            "description": "Automatically add created_at and updated_at columns"
+          }
+        }
+      }
+    },
+    {
+      "name": "alter_table",
+      "description": "Alter an existing table (add column, drop column, rename, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name",
+          "operation"
+        ],
+        "properties": {
+          "new_name": {
+            "type": "string",
+            "description": "New name (for rename_column)"
+          },
+          "nullable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether column is nullable"
+          },
+          "operation": {
+            "enum": [
+              "add_column",
+              "drop_column",
+              "rename_column",
+              "alter_column"
+            ],
+            "type": "string",
+            "description": "Type of alteration"
+          },
+          "table_name": {
+            "type": "string",
+            "description": "Name of the table to alter"
+          },
+          "column_name": {
+            "type": "string",
+            "description": "Column name"
+          },
+          "column_type": {
+            "type": "string",
+            "description": "Column type (for add_column)"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public"
+          },
+          "default_value": {
+            "type": "string",
+            "description": "Default value"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "table_name",
+          "operation"
+        ],
+        "properties": {
+          "new_name": {
+            "type": "string",
+            "description": "New name (for rename_column)"
+          },
+          "nullable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether column is nullable"
+          },
+          "operation": {
+            "enum": [
+              "add_column",
+              "drop_column",
+              "rename_column",
+              "alter_column"
+            ],
+            "type": "string",
+            "description": "Type of alteration"
+          },
+          "table_name": {
+            "type": "string",
+            "description": "Name of the table to alter"
+          },
+          "column_name": {
+            "type": "string",
+            "description": "Column name"
+          },
+          "column_type": {
+            "type": "string",
+            "description": "Column type (for add_column)"
+          },
+          "schema_name": {
+            "type": "string",
+            "default": "public"
+          },
+          "default_value": {
+            "type": "string",
+            "description": "Default value"
+          }
+        }
+      }
+    },
+    {
+      "name": "rollback_migration",
+      "description": "Rollback the last applied migration (requires down migration SQL)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "down_sql"
+        ],
+        "properties": {
+          "down_sql": {
+            "type": "string",
+            "description": "SQL to rollback the migration (e.g., DROP TABLE, ALTER TABLE DROP COLUMN)"
+          },
+          "migration_name": {
+            "type": "string",
+            "description": "Optional: specific migration name to rollback"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "down_sql"
+        ],
+        "properties": {
+          "down_sql": {
+            "type": "string",
+            "description": "SQL to rollback the migration (e.g., DROP TABLE, ALTER TABLE DROP COLUMN)"
+          },
+          "migration_name": {
+            "type": "string",
+            "description": "Optional: specific migration name to rollback"
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_migration",
+      "description": "Validate migration SQL syntax without executing (dry-run)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SQL to validate"
+          }
+        }
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SQL to validate"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@PhilemonChiro/supabase-mcp-cloud-and-selfhosted/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "SUPABASE_URL",
+          "DATABASE_URL",
+          "SUPABASE_ANON_KEY",
+          "SUPABASE_SERVICE_KEY"
+        ],
+        "properties": {
+          "DATABASE_URL": {
+            "type": "string",
+            "description": "PostgreSQL connection string"
+          },
+          "SUPABASE_URL": {
+            "type": "string",
+            "description": "Your Supabase project URL (cloud or self-hosted)"
+          },
+          "SUPABASE_ANON_KEY": {
+            "type": "string",
+            "description": "Public anonymous key for API access"
+          },
+          "SUPABASE_SERVICE_KEY": {
+            "type": "string",
+            "description": "Service role key for admin operations (keep this secret)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

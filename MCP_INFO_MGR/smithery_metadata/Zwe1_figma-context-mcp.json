@@ -1,0 +1,108 @@
+{
+  "qualifiedName": "@Zwe1/figma-context-mcp",
+  "displayName": "Framelink Figma MCP Server",
+  "description": "Give your coding agent access to your Figma data. Implement designs in any framework in one-shot. Enhance your AI-powered coding tools with seamless Figma integration for more accurate and relevant design implementations.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.framelink.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_figma_data",
+      "description": "When the nodeId cannot be obtained, obtain the layout information about the entire Figma file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileKey"
+        ],
+        "properties": {
+          "depth": {
+            "type": "number",
+            "description": "How many levels deep to traverse the node tree, only use if explicitly requested by the user"
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The ID of the node to fetch, often found as URL parameter node-id=<nodeId>, always use if provided"
+          },
+          "fileKey": {
+            "type": "string",
+            "description": "The key of the Figma file to fetch, often found in a provided URL like figma.com/(file|design)/<fileKey>/..."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "download_figma_images",
+      "description": "Download SVG and PNG images used in a Figma file based on the IDs of image or icon nodes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileKey",
+          "nodes",
+          "localPath"
+        ],
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "nodeId",
+                "fileName"
+              ],
+              "properties": {
+                "nodeId": {
+                  "type": "string",
+                  "description": "The ID of the Figma image node to fetch, formatted as 1234:5678"
+                },
+                "fileName": {
+                  "type": "string",
+                  "description": "The local name for saving the fetched file"
+                },
+                "imageRef": {
+                  "type": "string",
+                  "description": "If a node has an imageRef fill, you must include this variable. Leave blank when downloading Vector SVG images."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "The nodes to fetch as images"
+          },
+          "fileKey": {
+            "type": "string",
+            "description": "The key of the Figma file containing the node"
+          },
+          "localPath": {
+            "type": "string",
+            "description": "The absolute path to the directory where images are stored in the project. If the directory does not exist, it will be created. The format of this path should respect the directory format of the operating system you are running on. Don't use any special character escaping in the path name either."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Zwe1/figma-context-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "figmaApiKey"
+        ],
+        "properties": {
+          "figmaApiKey": {
+            "type": "string",
+            "description": "Your Figma API Key used to access the Figma API."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "qualifiedName": "@big-omega/mem0-mcp",
+  "displayName": "Mem0 Memory Server",
+  "description": "Store and search user-specific memories to maintain context and enable informed decision-making based on past interactions. Seamlessly integrate memory capabilities into your AI tools with a simple and intuitive API. Enhance your agents with relevance-scored memory retrieval for improved contextual awareness.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/app.mem0.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "add-memory",
+      "description": "Add a new memory. This method is called everytime the user informs anything about themselves, their preferences, or anything that has any relevent information whcih can be useful in the future conversation. This can also be called when the user asks you to remember something.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "content",
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User ID for memory storage. If not provided explicitly, use a generic user ID like, 'mem0-mcp-user'"
+          },
+          "content": {
+            "type": "string",
+            "description": "The content to store in memory"
+          }
+        }
+      }
+    },
+    {
+      "name": "search-memories",
+      "description": "Search through stored memories. This method is called ANYTIME the user asks anything.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query",
+          "userId"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query. This is the query that the user has asked for. Example: 'What did I tell you about the weather last week?' or 'What did I tell you about my friend John?'"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID for memory storage. If not provided explicitly, use a generic user ID like, 'mem0-mcp-user'"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-process-tree",
+      "description": "Get the current process tree from the environment. This is similar to running `ps -eaf --forest` in a Linux environment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "execute-command",
+      "description": "Execute a shell command and return the output.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "The command to execute"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@big-omega/mem0-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "mem0ApiKey"
+        ],
+        "properties": {
+          "mem0ApiKey": {
+            "type": "string",
+            "description": "Mem0 API key"
+          }
+        }
+      }
+    }
+  ]
+}

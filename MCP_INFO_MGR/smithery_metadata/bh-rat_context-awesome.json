@@ -1,0 +1,89 @@
+{
+  "qualifiedName": "@bh-rat/context-awesome",
+  "displayName": "Context Awesome",
+  "description": "Provide your AI agents with instant access to the best curated resources from over 8,500 awesome lists and more than 1 million items. Discover relevant sections and retrieve high-quality references for deep research, learning, and knowledge work. Enhance your agents' ability to find vetted tools and libraries across a wide range of topics efficiently.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.context-awesome.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@bh-rat/context-awesome",
+  "security": null,
+  "tools": [
+    {
+      "name": "find_awesome_section",
+      "title": "Find Awesome List Section",
+      "description": "Discovers sections/categories across awesome lists matching a search query and returns matching sections from awesome lists.\n\nYou MUST call this function before 'get_awesome_items' to discover available sections UNLESS the user explicitly provides a githubRepo or listId.\n\nSelection Process:\n1. Analyze the query to understand what type of resources the user is looking for\n2. Return the most relevant matches based on:\n   - Name similarity to the query and the awesome lists section\n   - Category/section relevance of the awesome lists \n   - Number of items in the section\n   - Confidence score\n\nResponse Format:\n- Returns matching sections of the awesome lists with metadata\n- Includes repository information, item counts, and confidence score\n- Use the githubRepo or listId with relevant sections from results for get_awesome_items\n\nFor ambiguous queries, multiple relevant sections will be returned for the user to choose from.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum sections to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search terms for finding sections across awesome lists"
+          },
+          "confidence": {
+            "type": "number",
+            "default": 0.3,
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Minimum confidence score (0-1)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_awesome_items",
+      "title": "Get Awesome List Items",
+      "description": "Retrieves items from a specific awesome list or section with token limiting. You must call 'find_awesome_section' first to discover available sections, UNLESS the user explicitly provides a githubRepo or listId.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "listId": {
+            "type": "string",
+            "description": "UUID of the list (from find_awesome_section results)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Pagination offset for retrieving more items"
+          },
+          "tokens": {
+            "type": "number",
+            "description": "Maximum number of tokens to return (default: 10000). Higher values provide more items but consume more tokens."
+          },
+          "section": {
+            "type": "string",
+            "description": "Category/section name to filter"
+          },
+          "githubRepo": {
+            "type": "string",
+            "description": "GitHub repo path (e.g., 'sindresorhus/awesome') from find_awesome_section results"
+          },
+          "subcategory": {
+            "type": "string",
+            "description": "Subcategory to filter"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@bh-rat/context-awesome/mcp",
+      "configSchema": {}
+    }
+  ]
+}

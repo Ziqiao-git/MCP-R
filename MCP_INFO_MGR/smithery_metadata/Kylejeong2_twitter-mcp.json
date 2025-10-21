@@ -1,0 +1,126 @@
+{
+  "qualifiedName": "@Kylejeong2/twitter-mcp",
+  "displayName": "Twitter Automation Server",
+  "description": "Automate Twitter interactions by posting tweets, replying, and searching tweets with structured results. Maintain persistent browser sessions to preserve login state and avoid repeated authentications. Manage browser context IDs for seamless session continuity across requests.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Kylejeong2/twitter-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "twitter_post",
+      "description": "Post a tweet to Twitter",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Tweet text to post"
+          },
+          "replyToUrl": {
+            "type": "string",
+            "description": "URL of tweet to reply to (optional)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "twitter_search",
+      "description": "Search for tweets on Twitter",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "count": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of search results to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query to find tweets"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_context_id",
+      "description": "Get the current Browserbase context ID for persistent sessions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_context_id",
+      "description": "Set the context ID for persistent sessions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "contextId"
+        ],
+        "properties": {
+          "contextId": {
+            "type": "string",
+            "description": "The context ID to set"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Kylejeong2/twitter-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "browserbaseApiKey",
+          "browserbaseProjectId",
+          "openaiApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "contextId": {
+            "type": "string",
+            "description": "Browserbase context ID for persistent sessions to maintain login state (falls back to env BROWSERBASE_CONTEXT_ID)"
+          },
+          "openaiApiKey": {
+            "type": "string",
+            "description": "OpenAI API key for AI actions (falls back to env OPENAI_API_KEY)"
+          },
+          "browserbaseApiKey": {
+            "type": "string",
+            "description": "Browserbase API key (falls back to env BROWSERBASE_API_KEY)"
+          },
+          "browserbaseProjectId": {
+            "type": "string",
+            "description": "Browserbase project ID (falls back to env BROWSERBASE_PROJECT_ID)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

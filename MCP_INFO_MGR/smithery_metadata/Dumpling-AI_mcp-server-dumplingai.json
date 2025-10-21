@@ -1,0 +1,1159 @@
+{
+  "qualifiedName": "@Dumpling-AI/mcp-server-dumplingai",
+  "displayName": "Dumpling AI MCP Server",
+  "description": "Integrate powerful data scraping, content processing, and AI capabilities into your applications. Leverage a wide range of tools for document conversion, web scraping, and knowledge management to enhance your workflows. Execute code securely and access various data APIs to enrich your projects with real-time information.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.dumplingai.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-youtube-transcript",
+      "description": "Extract transcripts from YouTube videos with optional parameters for timestamps and language preferences.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoUrl"
+        ],
+        "properties": {
+          "videoUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the YouTube video"
+          },
+          "includeTimestamps": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include timestamps"
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "description": "Preferred language code"
+          },
+          "timestampsToCombine": {
+            "type": "number",
+            "description": "Number of timestamps to combine"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search",
+      "description": "Perform Google web searches with customizable parameters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country code (e.g., 'us')"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code (e.g., 'en')"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location name"
+          },
+          "dateRange": {
+            "enum": [
+              "anyTime",
+              "pastHour",
+              "pastDay",
+              "pastWeek",
+              "pastMonth",
+              "pastYear"
+            ],
+            "type": "string",
+            "description": "Time range filter"
+          },
+          "scrapeOptions": {
+            "type": "object",
+            "properties": {
+              "format": {
+                "enum": [
+                  "markdown",
+                  "html",
+                  "screenshot"
+                ],
+                "type": "string"
+              },
+              "cleaned": {
+                "type": "boolean"
+              }
+            },
+            "description": "Scraping options",
+            "additionalProperties": false
+          },
+          "scrapeResults": {
+            "type": "boolean",
+            "description": "Whether to scrape results"
+          },
+          "numResultsToScrape": {
+            "type": "number",
+            "description": "Number of results to scrape"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-autocomplete",
+      "description": "Retrieve Google autocomplete suggestions for a query.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country code (e.g., 'us')"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code (e.g., 'en')"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location name"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-maps",
+      "description": "Search Google Maps for locations and businesses.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "cid": {
+            "type": "string",
+            "description": "Google Maps CID"
+          },
+          "page": {
+            "type": "number",
+            "description": "Page number"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "placeId": {
+            "type": "string",
+            "description": "Google Place ID"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code (e.g., 'en')"
+          },
+          "gpsPositionZoom": {
+            "type": "string",
+            "description": "GPS coordinates with zoom (e.g., 'lat,long,zoom')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-places",
+      "description": "Search for places with detailed business information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country code (e.g., 'us')"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code (e.g., 'en')"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location name"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-news",
+      "description": "Search for news articles across multiple sources.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country code (e.g., 'us')"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code (e.g., 'en')"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location name"
+          },
+          "dateRange": {
+            "enum": [
+              "anyTime",
+              "pastHour",
+              "pastDay",
+              "pastWeek",
+              "pastMonth",
+              "pastYear"
+            ],
+            "type": "string",
+            "description": "Time range filter"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-google-reviews",
+      "description": "Retrieve Google reviews for businesses or places.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "cid": {
+            "type": "string",
+            "description": "Google Maps CID"
+          },
+          "sortBy": {
+            "enum": [
+              "relevant",
+              "newest",
+              "highest_rating",
+              "lowest_rating"
+            ],
+            "type": "string",
+            "default": "relevant",
+            "description": "Sort order"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "Business name or search term"
+          },
+          "placeId": {
+            "type": "string",
+            "description": "Google Place ID"
+          },
+          "reviews": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of reviews to fetch"
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Language code (e.g., 'en')"
+          },
+          "location": {
+            "type": "string",
+            "default": "London,England,United Kingdom",
+            "description": "Location context"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scrape",
+      "description": "Extract and parse content from any web page.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to scrape"
+          },
+          "format": {
+            "enum": [
+              "markdown",
+              "html",
+              "screenshot"
+            ],
+            "type": "string",
+            "description": "Output format"
+          },
+          "cleaned": {
+            "type": "boolean",
+            "description": "Whether to clean content"
+          },
+          "renderJs": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to render JavaScript"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "crawl",
+      "description": "Recursively crawl websites and extract content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Starting URL"
+          },
+          "depth": {
+            "type": "number",
+            "default": 2,
+            "description": "Maximum depth"
+          },
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum number of pages to crawl"
+          },
+          "format": {
+            "enum": [
+              "markdown",
+              "text",
+              "raw"
+            ],
+            "type": "string",
+            "default": "markdown",
+            "description": "Output format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract",
+      "description": "Extract structured data from web pages using AI-powered instructions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url",
+          "schema"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to extract from"
+          },
+          "schema": {
+            "type": "object",
+            "description": "Schema defining the data to extract",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "screenshot",
+      "description": "Capture screenshots of web pages with customizable settings.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to capture"
+          },
+          "wait": {
+            "type": "number",
+            "default": 0,
+            "maximum": 5000,
+            "minimum": 0,
+            "description": "Wait time in ms before capture"
+          },
+          "width": {
+            "type": "number",
+            "description": "Viewport width"
+          },
+          "format": {
+            "enum": [
+              "png",
+              "jpeg"
+            ],
+            "type": "string",
+            "description": "Image format"
+          },
+          "height": {
+            "type": "number",
+            "description": "Viewport height"
+          },
+          "quality": {
+            "type": "number",
+            "description": "Image quality (1-100)"
+          },
+          "fullPage": {
+            "type": "boolean",
+            "description": "Capture full page"
+          },
+          "renderJs": {
+            "type": "boolean",
+            "description": "Render JavaScript"
+          },
+          "autoScroll": {
+            "type": "boolean",
+            "description": "Auto-scroll page"
+          },
+          "clipRectangle": {
+            "type": "object",
+            "required": [
+              "top",
+              "left",
+              "width",
+              "height"
+            ],
+            "properties": {
+              "top": {
+                "type": "number"
+              },
+              "left": {
+                "type": "number"
+              },
+              "width": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              }
+            },
+            "description": "Area to clip",
+            "additionalProperties": false
+          },
+          "deviceScaleFactor": {
+            "type": "number",
+            "description": "Device scale factor"
+          },
+          "blockCookieBanners": {
+            "type": "boolean",
+            "default": true,
+            "description": "Block cookie banners"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "doc-to-text",
+      "description": "Convert various document formats to plain text.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "file"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "URL or base64-encoded file content"
+          },
+          "pages": {
+            "type": "string",
+            "description": "Pages to process (e.g., '1, 2-5')"
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "convert-to-pdf",
+      "description": "Convert various file formats to PDF.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "file"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "URL or base64-encoded file content"
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "merge-pdfs",
+      "description": "Combine multiple PDF files into a single document.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "files"
+        ],
+        "properties": {
+          "pdfa": {
+            "enum": [
+              "PDF/A-1b",
+              "PDF/A-2b",
+              "PDF/A-3b"
+            ],
+            "type": "string",
+            "description": "PDF/A compliance"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of URLs or base64-encoded PDFs"
+          },
+          "pdfua": {
+            "type": "boolean",
+            "description": "PDF/UA compliance"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "Title": {
+                "type": "string"
+              },
+              "Author": {
+                "type": "string"
+              },
+              "Subject": {
+                "type": "string"
+              },
+              "Keywords": {
+                "type": "string"
+              }
+            },
+            "description": "Metadata for merged PDF",
+            "additionalProperties": false
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          },
+          "requestSource": {
+            "type": "string",
+            "description": "Request source"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "trim-video",
+      "description": "Trim videos to a specific duration.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoUrl",
+          "startTimestamp",
+          "endTimestamp"
+        ],
+        "properties": {
+          "videoUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the video"
+          },
+          "endTimestamp": {
+            "type": "string",
+            "description": "End time in HH:MM:SS"
+          },
+          "startTimestamp": {
+            "type": "string",
+            "description": "Start time in HH:MM:SS"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract-document",
+      "description": "Extract structured data from documents based on a prompt.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "files",
+          "prompt"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of URLs or base64-encoded documents"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Extraction prompt"
+          },
+          "jsonMode": {
+            "type": "boolean",
+            "description": "Return in JSON format"
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract-image",
+      "description": "Extract structured data from images based on a prompt.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "images",
+          "prompt"
+        ],
+        "properties": {
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of URLs or base64-encoded images"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Extraction prompt"
+          },
+          "jsonMode": {
+            "type": "boolean",
+            "description": "Return in JSON format"
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract-audio",
+      "description": "Extract structured data from audio files based on a prompt.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "audio",
+          "prompt"
+        ],
+        "properties": {
+          "audio": {
+            "type": "string",
+            "description": "URL or base64-encoded audio"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Extraction prompt"
+          },
+          "jsonMode": {
+            "type": "boolean",
+            "description": "Return in JSON format"
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract-video",
+      "description": "Extract structured data from videos based on a prompt.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "video",
+          "prompt"
+        ],
+        "properties": {
+          "video": {
+            "type": "string",
+            "description": "URL or base64-encoded video"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Extraction prompt"
+          },
+          "jsonMode": {
+            "type": "boolean",
+            "description": "Return in JSON format"
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "read-pdf-metadata",
+      "description": "Extract metadata from PDF files.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of URLs or base64-encoded PDFs"
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          },
+          "requestSource": {
+            "type": "string",
+            "description": "Request source"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "write-pdf-metadata",
+      "description": "Write metadata to PDF files.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMethod",
+          "files",
+          "metadata"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of URLs or base64-encoded PDFs"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "Title": {
+                "type": "string"
+              },
+              "Author": {
+                "type": "string"
+              },
+              "Creator": {
+                "type": "string"
+              },
+              "Subject": {
+                "type": "string"
+              },
+              "Keywords": {
+                "type": "string"
+              },
+              "Producer": {
+                "type": "string"
+              }
+            },
+            "description": "Metadata to write",
+            "additionalProperties": false
+          },
+          "inputMethod": {
+            "enum": [
+              "url",
+              "base64"
+            ],
+            "type": "string",
+            "description": "Input method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate-agent-completion",
+      "description": "Generate AI text completions with customizable parameters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messages",
+          "agentId"
+        ],
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "Agent ID"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "content"
+              ],
+              "properties": {
+                "role": {
+                  "enum": [
+                    "user",
+                    "assistant"
+                  ],
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of messages"
+          },
+          "threadId": {
+            "type": "string",
+            "description": "Thread ID for conversation history"
+          },
+          "parseJson": {
+            "type": "boolean",
+            "description": "Parse response as JSON"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-knowledge-base",
+      "description": "Search a knowledge base for relevant information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "knowledgeBaseId",
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "resultCount": {
+            "type": "number",
+            "default": 5,
+            "description": "Number of results"
+          },
+          "knowledgeBaseId": {
+            "type": "string",
+            "description": "Knowledge base ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-to-knowledge-base",
+      "description": "Add new text resources to a knowledge base.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "knowledgeBaseId",
+          "name",
+          "content"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Resource name"
+          },
+          "content": {
+            "type": "string",
+            "description": "Text content to add"
+          },
+          "knowledgeBaseId": {
+            "type": "string",
+            "description": "Knowledge base ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate-ai-image",
+      "description": "Generate AI images from text prompts.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "properties": {
+              "seed": {
+                "type": "number",
+                "description": "Random seed"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Text prompt"
+              },
+              "guidance": {
+                "type": "number",
+                "description": "Guidance scale"
+              },
+              "num_outputs": {
+                "type": "number",
+                "description": "Number of images"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "Aspect ratio"
+              },
+              "output_format": {
+                "type": "string",
+                "description": "Output format"
+              },
+              "output_quality": {
+                "type": "number",
+                "description": "Output quality"
+              },
+              "num_inference_steps": {
+                "type": "number",
+                "description": "Inference steps"
+              }
+            },
+            "description": "Model-specific parameters",
+            "additionalProperties": false
+          },
+          "model": {
+            "type": "string",
+            "description": "Model to use for generation"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "run-js-code",
+      "description": "Execute JavaScript code in a sandbox.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "JavaScript code"
+          },
+          "memory": {
+            "type": "number",
+            "description": "Memory allocation in MB"
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Execution timeout in ms"
+          },
+          "commands": {
+            "type": "string",
+            "description": "NPM install commands"
+          },
+          "parseJson": {
+            "type": "boolean",
+            "description": "Parse output as JSON"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "run-python-code",
+      "description": "Execute Python code in a sandbox.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Python code"
+          },
+          "memory": {
+            "type": "number",
+            "description": "Memory allocation in MB"
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Execution timeout in ms"
+          },
+          "commands": {
+            "type": "string",
+            "description": "Pip install commands"
+          },
+          "parseJson": {
+            "type": "boolean",
+            "description": "Parse output as JSON"
+          },
+          "saveOutputFiles": {
+            "type": "boolean",
+            "description": "Save output files"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Dumpling-AI/mcp-server-dumplingai/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "dumplingApiKey"
+        ],
+        "properties": {
+          "dumplingApiKey": {
+            "type": "string",
+            "description": "Your Dumpling AI API key for authentication."
+          }
+        }
+      }
+    }
+  ]
+}

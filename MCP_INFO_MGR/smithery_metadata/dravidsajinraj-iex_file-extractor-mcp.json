@@ -1,0 +1,145 @@
+{
+  "qualifiedName": "@dravidsajinraj-iex/file-extractor-mcp",
+  "displayName": "File Extractor Service",
+  "description": "Extract content and metadata from various file formats including PDF, DOC, DOCX, PPTX, CSV, and XLSX. Support both URL downloads and direct file uploads with integrated search and pagination for spreadsheets. Automatically handle Google Drive and other supported cloud storage URLs for seamless file access.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@dravidsajinraj-iex/file-extractor-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "extract_metadata",
+      "description": "Extract metadata information from a file by URL including source, file_url, file_name, format, size, and other file properties",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "file_url"
+        ],
+        "properties": {
+          "file_url": {
+            "type": "string",
+            "description": "Public URL of the file to extract metadata from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract_file_content",
+      "description": "Extract content from PDF, DOC, DOCX, CSV, or XLSX files with optional pagination and search for spreadsheets",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "source",
+          "file_name",
+          "format"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "maximum": 1000,
+            "description": "Number of rows to return (for CSV/XLSX only, ignored for PDF/DOC)"
+          },
+          "format": {
+            "enum": [
+              "pdf",
+              "doc",
+              "docx",
+              "csv",
+              "xlsx",
+              "pptx",
+              "xls",
+              "ppt"
+            ],
+            "type": "string",
+            "description": "File format"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of rows to skip (for CSV/XLSX only, ignored for PDF/DOC)"
+          },
+          "source": {
+            "enum": [
+              "url",
+              "upload"
+            ],
+            "type": "string",
+            "description": "Source type: URL or local upload"
+          },
+          "file_url": {
+            "type": "string",
+            "description": "Public URL of the file (required if source is 'url')"
+          },
+          "file_data": {
+            "type": "string",
+            "description": "Base64 encoded file data (required if source is 'upload')"
+          },
+          "file_name": {
+            "type": "string",
+            "description": "Original filename with extension"
+          },
+          "sheet_name": {
+            "type": "string",
+            "description": "Specific sheet name for XLSX files (optional, defaults to first sheet)"
+          },
+          "search_type": {
+            "enum": [
+              "full_text",
+              "exact_match",
+              "regex"
+            ],
+            "type": "string",
+            "default": "full_text",
+            "description": "Type of search to perform in CSV/XLSX files (default: 'full_text')"
+          },
+          "search_query": {
+            "type": "string",
+            "description": "Search query to filter rows in CSV/XLSX files (only applicable for spreadsheet formats)"
+          },
+          "case_sensitive": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether search should be case sensitive for CSV/XLSX files (default: false)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@dravidsajinraj-iex/file-extractor-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "maxFileSize": {
+            "type": "number",
+            "default": 5242880,
+            "description": "Maximum file size in bytes (5MB)"
+          },
+          "networkTimeout": {
+            "type": "number",
+            "default": 30000,
+            "description": "Network timeout in milliseconds"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

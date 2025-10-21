@@ -1,0 +1,90 @@
+{
+  "qualifiedName": "@kamath/graphing-calculator",
+  "displayName": "Graphing Calculator",
+  "description": "Provide interactive graphing calculator capabilities to your agents, enabling them to plot and analyze mathematical functions visually. Enhance your applications with dynamic graphing tools that support complex calculations and visual data representation. Empower users to explore mathematical concepts through intuitive graphical interfaces.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@kamath/graphing-calculator",
+  "security": null,
+  "tools": [
+    {
+      "name": "graph",
+      "description": "Create an interactive function graph using Desmos API. ONLY USE THIS FOR GRAPHING 2D FUNCTIONS. DO NOT INPUT VARIABLE NAMES THAT ARE NOT X OR Y.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "functions"
+        ],
+        "properties": {
+          "xMax": {
+            "type": "number",
+            "description": "Maximum x value for the viewport"
+          },
+          "xMin": {
+            "type": "number",
+            "description": "Minimum x value for the viewport"
+          },
+          "yMax": {
+            "type": "number",
+            "description": "Maximum y value for the viewport"
+          },
+          "yMin": {
+            "type": "number",
+            "description": "Minimum y value for the viewport"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title for the graph"
+          },
+          "showGrid": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show grid lines"
+          },
+          "functions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "description": "Array of mathematical functions to graph as LaTeX (e.g., ['y=x^2', 'y=\\sin(x)'])"
+          },
+          "showKeypad": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show the on-screen keypad"
+          },
+          "showExpressions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show the expressions list"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@kamath/graphing-calculator/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,635 @@
+{
+  "qualifiedName": "@gannonh/memento-mcp",
+  "displayName": "Memento",
+  "description": "Enhance your LLM applications with a scalable knowledge graph memory system. Utilize semantic search and temporal awareness to manage and retrieve information effectively, ensuring your agents have persistent and contextual memory capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "create_entities",
+      "description": "Create multiple new entities in your Memento MCP knowledge graph memory system",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "entities"
+        ],
+        "properties": {
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "entityType",
+                "observations"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Optional entity ID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The name of the entity"
+                },
+                "validTo": {
+                  "type": "number",
+                  "description": "Optional validity end timestamp"
+                },
+                "version": {
+                  "type": "number",
+                  "description": "Optional entity version"
+                },
+                "changedBy": {
+                  "type": "string",
+                  "description": "Optional user/system identifier"
+                },
+                "createdAt": {
+                  "type": "number",
+                  "description": "Optional creation timestamp"
+                },
+                "updatedAt": {
+                  "type": "number",
+                  "description": "Optional update timestamp"
+                },
+                "validFrom": {
+                  "type": "number",
+                  "description": "Optional validity start timestamp"
+                },
+                "entityType": {
+                  "type": "string",
+                  "description": "The type of the entity"
+                },
+                "observations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "An array of observation contents associated with the entity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "create_relations",
+      "description": "Create multiple new relations between entities in your Memento MCP knowledge graph memory. Relations should be in active voice",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "relations"
+        ],
+        "properties": {
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to",
+                "relationType"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Optional relation ID"
+                },
+                "to": {
+                  "type": "string",
+                  "description": "The name of the entity where the relation ends"
+                },
+                "from": {
+                  "type": "string",
+                  "description": "The name of the entity where the relation starts"
+                },
+                "validTo": {
+                  "type": "number",
+                  "description": "Optional validity end timestamp"
+                },
+                "version": {
+                  "type": "number",
+                  "description": "Optional relation version"
+                },
+                "metadata": {
+                  "type": "object",
+                  "description": "Optional metadata about the relation (source, timestamps, tags, etc.)",
+                  "additionalProperties": true
+                },
+                "strength": {
+                  "type": "number",
+                  "description": "Optional strength of relation (0.0 to 1.0)"
+                },
+                "changedBy": {
+                  "type": "string",
+                  "description": "Optional user/system identifier"
+                },
+                "createdAt": {
+                  "type": "number",
+                  "description": "Optional creation timestamp"
+                },
+                "updatedAt": {
+                  "type": "number",
+                  "description": "Optional update timestamp"
+                },
+                "validFrom": {
+                  "type": "number",
+                  "description": "Optional validity start timestamp"
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Optional confidence level in relation accuracy (0.0 to 1.0)"
+                },
+                "relationType": {
+                  "type": "string",
+                  "description": "The type of the relation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "add_observations",
+      "description": "Add new observations to existing entities in your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "observations"
+        ],
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "description": "Default metadata for all observations",
+            "additionalProperties": true
+          },
+          "strength": {
+            "type": "number",
+            "description": "Default strength value (0.0 to 1.0) for all observations"
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Default confidence level (0.0 to 1.0) for all observations"
+          },
+          "observations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "entityName",
+                "contents"
+              ],
+              "properties": {
+                "contents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "An array of observation contents to add"
+                },
+                "metadata": {
+                  "type": "object",
+                  "description": "Metadata for this specific observation",
+                  "additionalProperties": true
+                },
+                "strength": {
+                  "type": "number",
+                  "description": "Strength value (0.0 to 1.0) for this specific observation"
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Confidence level (0.0 to 1.0) for this specific observation"
+                },
+                "entityName": {
+                  "type": "string",
+                  "description": "The name of the entity to add the observations to"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_entities",
+      "description": "Delete multiple entities and their associated relations from your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "entityNames"
+        ],
+        "properties": {
+          "entityNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of entity names to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_observations",
+      "description": "Delete specific observations from entities in your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "deletions"
+        ],
+        "properties": {
+          "deletions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "entityName",
+                "observations"
+              ],
+              "properties": {
+                "entityName": {
+                  "type": "string",
+                  "description": "The name of the entity containing the observations"
+                },
+                "observations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "An array of observations to delete"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_relations",
+      "description": "Delete multiple relations from your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "relations"
+        ],
+        "properties": {
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to",
+                "relationType"
+              ],
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "The name of the entity where the relation ends"
+                },
+                "from": {
+                  "type": "string",
+                  "description": "The name of the entity where the relation starts"
+                },
+                "relationType": {
+                  "type": "string",
+                  "description": "The type of the relation"
+                }
+              }
+            },
+            "description": "An array of relations to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_relation",
+      "description": "Get a specific relation with its enhanced properties from your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "relationType"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "The name of the entity where the relation ends"
+          },
+          "from": {
+            "type": "string",
+            "description": "The name of the entity where the relation starts"
+          },
+          "relationType": {
+            "type": "string",
+            "description": "The type of the relation"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_relation",
+      "description": "Update an existing relation with enhanced properties in your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "relation"
+        ],
+        "properties": {
+          "relation": {
+            "type": "object",
+            "required": [
+              "from",
+              "to",
+              "relationType"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Optional relation ID"
+              },
+              "to": {
+                "type": "string",
+                "description": "The name of the entity where the relation ends"
+              },
+              "from": {
+                "type": "string",
+                "description": "The name of the entity where the relation starts"
+              },
+              "validTo": {
+                "type": "number",
+                "description": "Optional validity end timestamp"
+              },
+              "version": {
+                "type": "number",
+                "description": "Optional relation version"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "Optional metadata about the relation (source, timestamps, tags, etc.)",
+                "additionalProperties": true
+              },
+              "strength": {
+                "type": "number",
+                "description": "Optional strength of relation (0.0 to 1.0)"
+              },
+              "changedBy": {
+                "type": "string",
+                "description": "Optional user/system identifier"
+              },
+              "createdAt": {
+                "type": "number",
+                "description": "Optional creation timestamp"
+              },
+              "updatedAt": {
+                "type": "number",
+                "description": "Optional update timestamp"
+              },
+              "validFrom": {
+                "type": "number",
+                "description": "Optional validity start timestamp"
+              },
+              "confidence": {
+                "type": "number",
+                "description": "Optional confidence level in relation accuracy (0.0 to 1.0)"
+              },
+              "relationType": {
+                "type": "string",
+                "description": "The type of the relation"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "read_graph",
+      "description": "Read the entire Memento MCP knowledge graph memory system",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "random_string": {
+            "type": "string",
+            "description": "Dummy parameter for no-parameter tools"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_nodes",
+      "description": "Search for nodes in your Memento MCP knowledge graph memory based on a query",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query to match against entity names, types, and observation content"
+          }
+        }
+      }
+    },
+    {
+      "name": "open_nodes",
+      "description": "Open specific nodes in your Memento MCP knowledge graph memory by their names",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "names"
+        ],
+        "properties": {
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of entity names to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "semantic_search",
+      "description": "Search for entities semantically using vector embeddings and similarity in your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return (default: 10)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The text query to search for semantically"
+          },
+          "entity_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter results by entity types"
+          },
+          "hybrid_search": {
+            "type": "boolean",
+            "description": "Whether to combine keyword and semantic search (default: true)"
+          },
+          "min_similarity": {
+            "type": "number",
+            "description": "Minimum similarity threshold from 0.0 to 1.0 (default: 0.6)"
+          },
+          "semantic_weight": {
+            "type": "number",
+            "description": "Weight of semantic results in hybrid search from 0.0 to 1.0 (default: 0.6)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_entity_embedding",
+      "description": "Get the vector embedding for a specific entity from your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "entity_name"
+        ],
+        "properties": {
+          "entity_name": {
+            "type": "string",
+            "description": "The name of the entity to get the embedding for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_entity_history",
+      "description": "Get the version history of an entity from your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "entityName"
+        ],
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "The name of the entity to retrieve history for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_relation_history",
+      "description": "Get the version history of a relation from your Memento MCP knowledge graph memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "relationType"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "The name of the entity where the relation ends"
+          },
+          "from": {
+            "type": "string",
+            "description": "The name of the entity where the relation starts"
+          },
+          "relationType": {
+            "type": "string",
+            "description": "The type of the relation"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_graph_at_time",
+      "description": "Get your Memento MCP knowledge graph memory as it existed at a specific point in time",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "timestamp"
+        ],
+        "properties": {
+          "timestamp": {
+            "type": "number",
+            "description": "The timestamp (in milliseconds since epoch) to query the graph at"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_decayed_graph",
+      "description": "Get your Memento MCP knowledge graph memory with confidence values decayed based on time",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "decay_factor": {
+            "type": "number",
+            "description": "Optional decay factor override (normally calculated from half-life)"
+          },
+          "reference_time": {
+            "type": "number",
+            "description": "Optional reference timestamp (in milliseconds since epoch) for decay calculation"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@gannonh/memento-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "neo4jUri",
+          "neo4jUsername",
+          "neo4jPassword",
+          "neo4jDatabase",
+          "openAiApiKey"
+        ],
+        "properties": {
+          "neo4jUri": {
+            "type": "string",
+            "default": "bolt://127.0.0.1:7687",
+            "description": "Neo4j connection URI"
+          },
+          "openAiApiKey": {
+            "type": "string",
+            "default": "your-openai-api-key",
+            "description": "OpenAI API key for embeddings"
+          },
+          "neo4jDatabase": {
+            "type": "string",
+            "default": "neo4j",
+            "description": "Neo4j database name"
+          },
+          "neo4jPassword": {
+            "type": "string",
+            "default": "memento_password",
+            "description": "Neo4j password"
+          },
+          "neo4jUsername": {
+            "type": "string",
+            "default": "neo4j",
+            "description": "Neo4j username"
+          }
+        }
+      }
+    }
+  ]
+}

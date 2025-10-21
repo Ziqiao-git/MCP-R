@@ -1,0 +1,220 @@
+{
+  "qualifiedName": "@AudienseCo/mcp-audiense-insights",
+  "displayName": "Audiense Insights",
+  "description": "Extract marketing insights and audience analysis from Audiense reports.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.audiense.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-reports",
+      "description": "Retrieves the list of Audiense insights reports owned by the authenticated user.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-report-info",
+      "description": "Retrieves detailed information about a specific intelligence report, including its status, segmentation type, audience size, segments, and access links.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "report_id"
+        ],
+        "properties": {
+          "report_id": {
+            "type": "string",
+            "description": "The ID of the intelligence report."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-audience-insights",
+      "description": "Retrieves aggregated insights for a given audience ID, providing statistical distributions across various attributes.\n    Available insights include demographics (e.g., gender, age, country), behavioral traits (e.g., active hours, platform usage), psychographics (e.g., personality traits, interests), and socioeconomic factors (e.g., income, education status).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "audience_insights_id"
+        ],
+        "properties": {
+          "insights": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of insight names to filter."
+          },
+          "audience_insights_id": {
+            "type": "string",
+            "description": "The ID of the audience insights."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-baselines",
+      "description": "Retrieves available baselines, optionally filtered by country.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "ISO country code to filter by."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-categories",
+      "description": "Retrieves the list of available affinity categories that can be used as the categories parameter in the compare-audience-influencers tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare-audience-influencers",
+      "description": "Compares the influencers of an audience with a baseline audience. The baseline is determined as follows: \n    If the selection was the full audience and a single country represents more than 50% of the audience, that country is used as the baseline.\n    Otherwise, the Global baseline is applied. If the selection was a specific segment, the full audience is used as the baseline.\n    Each influencer comparison includes: \n        - Affinity (%) - The level of alignment between the influencer and the audience. Baseline Affinity (%)\n        - The influencer’s affinity within the baseline audience. Uniqueness Score\n        - A measure of how distinct the influencer is within the selected audience compared to the baseline.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "audience_influencers_id",
+          "baseline_audience_influencers_id"
+        ],
+        "properties": {
+          "count": {
+            "type": "number",
+            "description": "Number of items per page (default: 200)."
+          },
+          "cursor": {
+            "type": "number",
+            "description": "Cursor for pagination."
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter influencers by country ISO codes."
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter influencers by categories."
+          },
+          "bio_keyword": {
+            "type": "string",
+            "description": "Keyword to filter influencers by their biography."
+          },
+          "entity_type": {
+            "enum": [
+              "person",
+              "brand"
+            ],
+            "type": "string",
+            "description": "Filter by entity type (person or brand)."
+          },
+          "followers_max": {
+            "type": "number",
+            "description": "Maximum number of followers."
+          },
+          "followers_min": {
+            "type": "number",
+            "description": "Minimum number of followers."
+          },
+          "audience_influencers_id": {
+            "type": "string",
+            "description": "The ID of the audience influencers."
+          },
+          "baseline_audience_influencers_id": {
+            "type": "string",
+            "description": "The ID of the baseline audience influencers."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-audience-content",
+      "description": "Retrieves audience content engagement details for a given audience.\n\nThis tool provides a detailed breakdown of the content an audience interacts with, including:\n- **Liked Content**: Popular posts, top domains, top emojis, top hashtags, top links, top media, and a word cloud.\n- **Shared Content**: Content that the audience shares, categorized similarly to liked content.\n- **Influential Content**: Content from influential accounts that impact the audience, with similar categorization.\n\nEach category contains:\n- **popularPost**: List of the most engaged posts.\n- **topDomains**: Most mentioned domains.\n- **topEmojis**: Most used emojis.\n- **topHashtags**: Most used hashtags.\n- **topLinks**: Most shared links.\n- **topMedia**: Media types shared and samples.\n- **wordcloud**: Frequently used words.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "audience_content_id"
+        ],
+        "properties": {
+          "audience_content_id": {
+            "type": "string",
+            "description": "The ID of the audience content to retrieve."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "report-summary",
+      "description": "Generates a comprehensive summary of an Audiense report, including segment details, top insights, and influencers.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "report_id"
+        ],
+        "properties": {
+          "report_id": {
+            "type": "string",
+            "description": "The ID of the intelligence report to summarize."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@AudienseCo/mcp-audiense-insights/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "audienseClientId",
+          "audienseClientSecret"
+        ],
+        "properties": {
+          "audienseClientId": {
+            "type": "string",
+            "description": "Client ID for the Audiense API."
+          },
+          "twitterBearerToken": {
+            "type": "string",
+            "description": "Bearer Token for the Twitter API (optional)."
+          },
+          "audienseClientSecret": {
+            "type": "string",
+            "description": "Client Secret for the Audiense API."
+          }
+        }
+      }
+    }
+  ]
+}

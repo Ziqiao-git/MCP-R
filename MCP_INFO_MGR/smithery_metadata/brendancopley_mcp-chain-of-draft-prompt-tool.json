@@ -1,0 +1,247 @@
+{
+  "qualifiedName": "@brendancopley/mcp-chain-of-draft-prompt-tool",
+  "displayName": "MCP Chain of Draft (CoD) Prompt Tool",
+  "description": "MCP Chain of Draft (CoD) Prompt Tool is a BYOLLM MCP (Model Context Protocol) tool that transforms your prompt using another LLM, applying CoD or CoT reasoning techniques, before delivering the final result. CoD is a novel paradigm that allows LLMs to generate minimalistic yet informative intermediate reasoning outputs while solving tasks, significantly reducing token usage while maintaining accuracy. For fast setup -> scroll ↓  click \"Connect\"! --------------------------------------------------------------------------------------------- DO NOT be daunted by all the configurations—you can simply scroll down and hit “Connect” to get started effortlessly.\n",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "chain_of_draft_solve",
+      "description": "Solve a reasoning problem using Chain of Draft approach",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Domain for context (math, logic, code, common-sense, etc.)"
+          },
+          "problem": {
+            "type": "string",
+            "description": "The problem to solve"
+          },
+          "approach": {
+            "type": "string",
+            "description": "Force 'CoD' or 'CoT' approach"
+          },
+          "enforce_format": {
+            "type": "boolean",
+            "description": "Whether to enforce the word limit"
+          },
+          "max_words_per_step": {
+            "type": "number",
+            "description": "Maximum words per reasoning step"
+          },
+          "adaptive_word_limit": {
+            "type": "boolean",
+            "description": "Adjust word limits based on complexity"
+          }
+        }
+      }
+    },
+    {
+      "name": "math_solve",
+      "description": "Solve a math problem using Chain of Draft reasoning",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "The math problem to solve"
+          },
+          "approach": {
+            "type": "string",
+            "description": "Force 'CoD' or 'CoT' approach"
+          },
+          "max_words_per_step": {
+            "type": "number",
+            "description": "Maximum words per reasoning step"
+          }
+        }
+      }
+    },
+    {
+      "name": "code_solve",
+      "description": "Solve a coding problem using Chain of Draft reasoning",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "The coding problem to solve"
+          },
+          "approach": {
+            "type": "string",
+            "description": "Force 'CoD' or 'CoT' approach"
+          },
+          "max_words_per_step": {
+            "type": "number",
+            "description": "Maximum words per reasoning step"
+          }
+        }
+      }
+    },
+    {
+      "name": "logic_solve",
+      "description": "Solve a logic problem using Chain of Draft reasoning",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "The logic problem to solve"
+          },
+          "approach": {
+            "type": "string",
+            "description": "Force 'CoD' or 'CoT' approach"
+          },
+          "max_words_per_step": {
+            "type": "number",
+            "description": "Maximum words per reasoning step"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_performance_stats",
+      "description": "Get performance statistics for CoD vs CoT approaches",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Filter for specific domain"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_token_reduction",
+      "description": "Get token reduction statistics for CoD vs CoT",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "analyze_problem_complexity",
+      "description": "Analyze the complexity of a problem",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Problem domain"
+          },
+          "problem": {
+            "type": "string",
+            "description": "The problem to analyze"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@brendancopley/mcp-chain-of-draft-prompt-tool/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "LLM_MODEL": {
+            "type": "string",
+            "default": "claude-3-7-sonnet-latest",
+            "description": "Default model to use (provider-specific)"
+          },
+          "COD_DB_URL": {
+            "type": "string",
+            "default": "sqlite:///cod_analytics.db",
+            "description": "URL for Chain of Draft analytics database"
+          },
+          "LLM_PROVIDER": {
+            "type": "string",
+            "default": "anthropic",
+            "description": "Choose which provider to use - 'anthropic', 'openai', 'mistral', or 'ollama'"
+          },
+          "COD_MAX_TOKENS": {
+            "type": "string",
+            "default": "500",
+            "description": "Maximum tokens for Chain of Draft"
+          },
+          "ENFORCE_FORMAT": {
+            "type": "string",
+            "default": "true",
+            "description": "Whether to enforce format in Chain of Draft"
+          },
+          "OPENAI_API_KEY": {
+            "type": "string",
+            "description": "API key for OpenAI models"
+          },
+          "COD_EXAMPLES_DB": {
+            "type": "string",
+            "default": "cod_examples.db",
+            "description": "Path to Chain of Draft examples database"
+          },
+          "MISTRAL_API_KEY": {
+            "type": "string",
+            "description": "API key for Mistral AI models"
+          },
+          "OLLAMA_BASE_URL": {
+            "type": "string",
+            "default": "http://localhost:11434",
+            "description": "Base URL for Ollama local deployment"
+          },
+          "OPENAI_BASE_URL": {
+            "type": "string",
+            "default": "https://api.openai.com",
+            "description": "Base URL for OpenAI API"
+          },
+          "ANTHROPIC_API_KEY": {
+            "type": "string",
+            "description": "API key for Anthropic Claude models"
+          },
+          "COD_DEFAULT_MODEL": {
+            "type": "string",
+            "default": "claude-3-7-sonnet-latest",
+            "description": "Default model for Chain of Draft"
+          },
+          "ANTHROPIC_BASE_URL": {
+            "type": "string",
+            "default": "https://api.anthropic.com",
+            "description": "Base URL for Anthropic API"
+          },
+          "ADAPTIVE_WORD_LIMIT": {
+            "type": "string",
+            "default": "true",
+            "description": "Whether to use adaptive word limit in Chain of Draft"
+          },
+          "COD_MAX_WORDS_PER_STEP": {
+            "type": "string",
+            "default": "5",
+            "description": "Maximum words per step in Chain of Draft"
+          }
+        }
+      }
+    }
+  ]
+}

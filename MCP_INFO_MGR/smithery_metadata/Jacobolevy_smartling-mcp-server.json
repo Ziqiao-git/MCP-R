@@ -1,0 +1,2341 @@
+{
+  "qualifiedName": "@Jacobolevy/smartling-mcp-server",
+  "displayName": "Smartling",
+  "description": "Provide seamless integration with Smartling translation services to manage projects, files, jobs, and translation strings efficiently. Enhance your localization workflows with AI-powered insights, cost optimization, and auto-debugging features. Enable reliable and secure translation management directly from your MCP-compatible applications.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smartling.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Jacobolevy/smartling-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "smartling_get_projects",
+      "description": "Get all projects for a Smartling account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "The Smartling account ID (optional if set in environment)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_upload_file",
+      "description": "Upload a file to Smartling for translation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileContent",
+          "fileUri",
+          "fileType"
+        ],
+        "properties": {
+          "fileUri": {
+            "type": "string",
+            "description": "The unique file URI"
+          },
+          "fileType": {
+            "type": "string",
+            "description": "The file type (json, xml, csv, properties, etc.)"
+          },
+          "authorize": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to authorize the content for translation"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "fileContent": {
+            "type": "string",
+            "description": "The file content (base64 encoded)"
+          },
+          "localeIdsToAuthorize": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific locales to authorize for translation"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_file_status",
+      "description": "Get the translation status of a file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri"
+        ],
+        "properties": {
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_download_file",
+      "description": "Download a translated file from Smartling",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri",
+          "locale"
+        ],
+        "properties": {
+          "locale": {
+            "type": "string",
+            "description": "The target locale to download"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "retrievalType": {
+            "enum": [
+              "published",
+              "pending",
+              "pseudo",
+              "contextMatchingInstrumented"
+            ],
+            "type": "string",
+            "default": "published",
+            "description": "Type of content to retrieve"
+          },
+          "includeOriginalStrings": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include original strings for incomplete translations"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_delete_file",
+      "description": "Delete a file from Smartling",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri"
+        ],
+        "properties": {
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI to delete"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_file_search_strings",
+      "description": "Search for strings in translation files",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "searchText"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific file URIs to search in"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "Optional: specific locale to search in"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "searchText": {
+            "type": "string",
+            "description": "Text to search for"
+          },
+          "includeTimestamps": {
+            "type": "boolean",
+            "description": "Include timestamp information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_translations_by_locale",
+      "description": "Get translations for a string by locale",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "hashcode",
+          "localeId"
+        ],
+        "properties": {
+          "hashcode": {
+            "type": "string",
+            "description": "The unique hashcode of the string"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_recently_localized",
+      "description": "Get recently localized strings for a specific locale",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "localeId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific file URIs to check"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_project_files",
+      "description": "Get list of all files in a Smartling project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_file_source_strings",
+      "description": "Get all source strings from a specific file in a Smartling project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of items to skip (for pagination)"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "includeInactive": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include inactive strings (default: true)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_file_strings_list",
+      "description": "List file strings via Files API (preferred for source keys)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Pagination offset"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_create_job",
+      "description": "Create a new translation job in Smartling",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobName",
+          "targetLocaleIds"
+        ],
+        "properties": {
+          "dueDate": {
+            "type": "string",
+            "description": "Due date in ISO format (YYYY-MM-DDTHH:MM:SSZ)"
+          },
+          "jobName": {
+            "type": "string",
+            "description": "Name for the translation job"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "callbackUrl": {
+            "type": "string",
+            "description": "Optional webhook URL for job completion callback"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional job description"
+          },
+          "callbackMethod": {
+            "enum": [
+              "GET",
+              "POST"
+            ],
+            "type": "string",
+            "default": "POST",
+            "description": "HTTP method for callback"
+          },
+          "targetLocaleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Target locale IDs for translation"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_jobs",
+      "description": "Get all jobs for a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "AWAITING_AUTHORIZATION",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELLED"
+            ],
+            "type": "string",
+            "description": "Filter by job status"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_job",
+      "description": "Get details for a specific job",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_add_files_to_job",
+      "description": "Add files to an existing job",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId",
+          "fileUris"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of file URIs to add to the job"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_remove_files_from_job",
+      "description": "Remove files from an existing job",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId",
+          "fileUris"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of file URIs to remove from the job"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_authorize_job",
+      "description": "Authorize a job for translation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_cancel_job",
+      "description": "Cancel a job",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional reason for cancellation"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_job_progress",
+      "description": "Get detailed translation progress for a specific job, including progress by locale",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID (translationJobUid)"
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific locale IDs to get progress for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_run_quality_check",
+      "description": "Run quality checks on translation content",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific file URIs to check"
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific locale IDs to check"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "checkTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific check types (tag_consistency, glossary_compliance, spelling_check, etc.)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_quality_results",
+      "description": "Get quality check results for a specific file and locale",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri",
+          "localeId"
+        ],
+        "properties": {
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_quality_check_types",
+      "description": "Get available quality check types",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_available_tags",
+      "description": "Get all available tags in a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_add_string_tags",
+      "description": "Add tags to specific strings in a file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri",
+          "stringHashcodes",
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tags to add to the strings"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI containing the strings"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "stringHashcodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of string hashcodes to tag"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_remove_string_tags",
+      "description": "Remove tags from specific strings in a file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUri",
+          "stringHashcodes",
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tags to remove from the strings"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "The file URI containing the strings"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "stringHashcodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of string hashcodes to remove tags from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_strings_by_tag",
+      "description": "Get all strings that have specific tags",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tags to search for"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "Optional: specific file URI to search in"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_debug_tags_search",
+      "description": "Debug tool for tag searching - provides detailed information about tags and string filtering",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tags to search for"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "Optional: specific file URI to search in"
+          },
+          "debugMode": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable detailed debugging information"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_glossaries",
+      "description": "Get all glossaries for an account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "The account ID (optional if set in environment)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_create_glossary",
+      "description": "Create a new glossary",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountId",
+          "name",
+          "localeIds"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the glossary"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "The account ID"
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of locale IDs for the glossary"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description for the glossary"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_glossary_terms",
+      "description": "Get terms from a specific glossary",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountId",
+          "glossaryId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "Optional: filter by specific locale"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "The account ID"
+          },
+          "glossaryId": {
+            "type": "string",
+            "description": "The glossary ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_add_glossary_term",
+      "description": "Add a term to a glossary",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountId",
+          "glossaryId",
+          "term",
+          "translation",
+          "localeId"
+        ],
+        "properties": {
+          "term": {
+            "type": "string",
+            "description": "The source term"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID for the translation"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "The account ID"
+          },
+          "glossaryId": {
+            "type": "string",
+            "description": "The glossary ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description for the term"
+          },
+          "translation": {
+            "type": "string",
+            "description": "The translated term"
+          },
+          "partOfSpeech": {
+            "type": "string",
+            "description": "Optional part of speech"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_delete_glossary_term",
+      "description": "Delete a term from a glossary",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "glossaryId",
+          "termId"
+        ],
+        "properties": {
+          "termId": {
+            "type": "string",
+            "description": "The term ID to delete"
+          },
+          "glossaryId": {
+            "type": "string",
+            "description": "The glossary ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_webhooks",
+      "description": "Get all webhooks for a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_create_webhook",
+      "description": "Create a new webhook for a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "name",
+          "url",
+          "events"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The webhook URL"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the webhook"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of events to subscribe to"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description for the webhook"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_delete_webhook",
+      "description": "Delete a webhook from a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "webhookId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "webhookId": {
+            "type": "string",
+            "description": "The webhook ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_search_strings",
+      "description": "Search strings by text with optional filters. If no specific fileUri provided, searches across all files in the project.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "searchText"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Pagination limit"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Pagination offset"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "Optional: specific file URI to search in"
+          },
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: multiple fileUri filters"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "Optional locale filter"
+          },
+          "maxFiles": {
+            "type": "number",
+            "description": "Maximum number of files to search when searching across all files (default: all files)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "searchText": {
+            "type": "string",
+            "description": "Text to search for"
+          },
+          "includeTimestamps": {
+            "type": "boolean",
+            "description": "Include timestamps"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_string_details",
+      "description": "Get string details by hashcode",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "hashcode"
+        ],
+        "properties": {
+          "hashcode": {
+            "type": "string",
+            "description": "The string hashcode"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_workflow_steps",
+      "description": "Get workflow steps for a job and locale",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId",
+          "localeId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_assign_workflow_step",
+      "description": "Assign a workflow step to a specific user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId",
+          "stepUid",
+          "assigneeUid"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "stepUid": {
+            "type": "string",
+            "description": "The workflow step UID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "assigneeUid": {
+            "type": "string",
+            "description": "The UID of the user to assign the step to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_string_translations",
+      "description": "Get translations for a specific string across multiple locales",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "hashcode"
+        ],
+        "properties": {
+          "hashcode": {
+            "type": "string",
+            "description": "The unique hashcode of the string"
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific locale IDs to get translations for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_search_strings_advanced",
+      "description": "Advanced search for strings with multiple filters and sorting options. If no specific fileUri provided, searches across all files in the project.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "searchText"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: filter by tags"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of results to skip (for pagination)"
+          },
+          "fileUri": {
+            "type": "string",
+            "description": "Optional: specific file URI to search in"
+          },
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific file URIs to search in"
+          },
+          "localeId": {
+            "type": "string",
+            "description": "Optional: specific locale to search in"
+          },
+          "maxFiles": {
+            "type": "number",
+            "description": "Maximum number of files to search when searching across all files (default: all files)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "searchText": {
+            "type": "string",
+            "description": "Text to search for in strings"
+          },
+          "includeTimestamps": {
+            "type": "boolean",
+            "description": "Include timestamp information"
+          },
+          "translationStatus": {
+            "enum": [
+              "PENDING",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "EXCLUDED"
+            ],
+            "type": "string",
+            "description": "Optional: filter by translation status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_translation_progress",
+      "description": "Get translation progress summary for a project or specific files",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific file URIs to check progress for"
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific locales to check progress for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_find_hashcodes_for_keys",
+      "description": "Find hashcodes for a list of key names using exact Apps Script logic - searches across all files in the project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "keyNames"
+        ],
+        "properties": {
+          "keyNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of key names to search for (e.g., [\"auto-renew-mobile.network_issue.toast\", \"auto-renew-mobile.cta\"])"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_strings_by_translation_status",
+      "description": "Get strings by translation status (e.g., PENDING, AWAITING_AUTHORIZATION)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "translationStatus"
+        ],
+        "properties": {
+          "localeId": {
+            "type": "string",
+            "description": "Optional: specific locale to check"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "createdBefore": {
+            "type": "string",
+            "description": "Optional: ISO date string to filter strings created before this date"
+          },
+          "translationStatus": {
+            "type": "string",
+            "description": "Translation status to filter by (PENDING, AWAITING_AUTHORIZATION, etc.)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_upload_context",
+      "description": "Upload visual context (image/screenshot) to help translators. Use imageUrl for URLs (Figma, etc), filePath for local files up to 20MB (images), 512MB (videos), or fileContent for base64 (limited by MCP).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contextType",
+          "contextName"
+        ],
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "description": "Local file path (for individual use - supports up to 20MB images, 512MB videos)"
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "Image URL (preferred for team workflows - supports Figma URLs, etc)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "contextName": {
+            "type": "string",
+            "description": "Descriptive name for the context"
+          },
+          "contextType": {
+            "enum": [
+              "image",
+              "video",
+              "html"
+            ],
+            "type": "string",
+            "description": "Type of context"
+          },
+          "fileContent": {
+            "type": "string",
+            "description": "File content (base64 encoded) - fallback for small files only"
+          },
+          "autoOptimize": {
+            "type": "boolean",
+            "description": "Auto-optimize large images (future feature)"
+          },
+          "contextDescription": {
+            "type": "string",
+            "description": "Optional description of the context"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_context",
+      "description": "Get details of a specific context",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contextUid"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "contextUid": {
+            "type": "string",
+            "description": "The context UID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_list_contexts",
+      "description": "List all contexts in the project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of results to skip for pagination"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_bind_context_to_string",
+      "description": "Associate visual context with specific translation strings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contextUid",
+          "stringHashcodes"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "contextUid": {
+            "type": "string",
+            "description": "The context UID"
+          },
+          "coordinates": {
+            "type": "object",
+            "required": [
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "X coordinate"
+              },
+              "y": {
+                "type": "number",
+                "description": "Y coordinate"
+              },
+              "width": {
+                "type": "number",
+                "description": "Width of the area"
+              },
+              "height": {
+                "type": "number",
+                "description": "Height of the area"
+              }
+            },
+            "description": "Optional coordinates where the string appears in the context",
+            "additionalProperties": false
+          },
+          "stringHashcodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of string hashcodes to bind"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_delete_context",
+      "description": "Delete a context from the project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contextUid"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "contextUid": {
+            "type": "string",
+            "description": "The context UID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_project_locales",
+      "description": "Get all locales configured in the project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_add_locale_to_project",
+      "description": "Add a new locale to the project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "localeId"
+        ],
+        "properties": {
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID (e.g., \"es-MX\", \"zh-TW\")"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "workflowUid": {
+            "type": "string",
+            "description": "Optional workflow UID to use for this locale"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_locale_details",
+      "description": "Get details of a specific locale in the project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "localeId"
+        ],
+        "properties": {
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_remove_locale_from_project",
+      "description": "Remove a locale from the project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "localeId"
+        ],
+        "properties": {
+          "localeId": {
+            "type": "string",
+            "description": "The locale ID to remove"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_supported_locales",
+      "description": "Get list of all locales supported by Smartling",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_project_summary_report",
+      "description": "Get project summary report with general metrics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "dateRange": {
+            "type": "object",
+            "required": [
+              "start",
+              "end"
+            ],
+            "properties": {
+              "end": {
+                "type": "string",
+                "description": "End date (ISO format)"
+              },
+              "start": {
+                "type": "string",
+                "description": "Start date (ISO format)"
+              }
+            },
+            "description": "Optional: date range filter",
+            "additionalProperties": false
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: filter by specific locales"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_job_progress_report",
+      "description": "Get detailed progress report for a specific job",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The job ID"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "includeProgress": {
+            "type": "boolean",
+            "description": "Include progress percentages"
+          },
+          "includeWordCounts": {
+            "type": "boolean",
+            "description": "Include word count statistics"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_cost_estimate",
+      "description": "Get cost estimate for translation content",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileUris",
+          "targetLocaleIds"
+        ],
+        "properties": {
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of file URIs to estimate"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "workflowUid": {
+            "type": "string",
+            "description": "Optional specific workflow UID"
+          },
+          "targetLocaleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Target locale IDs for translation"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_translation_velocity_report",
+      "description": "Get translation velocity report by period",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "period"
+        ],
+        "properties": {
+          "period": {
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ],
+            "type": "string",
+            "description": "Report period"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Optional: end date (ISO format)"
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: filter by specific locales"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Optional: start date (ISO format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_word_count_report",
+      "description": "Get detailed word count report",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "fileUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: filter by specific files"
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: filter by specific locales"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "includeInProgressContent": {
+            "type": "boolean",
+            "description": "Include content in progress"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_quality_score_report",
+      "description": "Get quality score report for translations",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "dateRange": {
+            "type": "object",
+            "required": [
+              "start",
+              "end"
+            ],
+            "properties": {
+              "end": {
+                "type": "string",
+                "description": "End date (ISO format)"
+              },
+              "start": {
+                "type": "string",
+                "description": "Start date (ISO format)"
+              }
+            },
+            "description": "Optional: date range filter",
+            "additionalProperties": false
+          },
+          "localeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: filter by specific locales"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The project ID"
+          },
+          "includeDetails": {
+            "type": "boolean",
+            "description": "Include detailed quality check information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_machine_translate_text",
+      "description": "Translate text content using machine translation. Split long text into sentence-based chunks to preserve meaning and context - avoid breaking mid-sentence or splitting related content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text_items_to_translate",
+          "target_locale"
+        ],
+        "properties": {
+          "source_locale": {
+            "type": "string",
+            "description": "Source language locale code (2 or 5 letters, e.g., \"it\" or \"it-IT\", dash separator only). Auto-detected if omitted."
+          },
+          "target_locale": {
+            "type": "string",
+            "description": "Target language locale code (2 or 5 letters, e.g., \"en\" or \"en-US\", dash separator only)"
+          },
+          "text_items_to_translate": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "source_text"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Unique identifier for the text item"
+                },
+                "source_text": {
+                  "type": "string",
+                  "description": "Text to be translated. If text is too long, split it into smaller chunks."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of text items to translate"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_machine_translate_file",
+      "description": "Translate file content using machine translation. Auto-detects source language if source_locale not provided.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "file_content",
+          "file_name",
+          "mime_type",
+          "target_locale"
+        ],
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "description": "Original filename for context"
+          },
+          "mime_type": {
+            "type": "string",
+            "description": "MIME type of the file"
+          },
+          "file_content": {
+            "type": "string",
+            "description": "File content encoded as base64 string"
+          },
+          "source_locale": {
+            "type": "string",
+            "description": "Source language locale code (2 or 5 letters, e.g., \"it\" or \"it-IT\", dash separator only). Auto-detected if omitted."
+          },
+          "target_locale": {
+            "type": "string",
+            "description": "Target language locale code (2 or 5 letters, e.g., \"en\" or \"en-US\", dash separator only)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_search_translation_memory",
+      "description": "Search translation memory for similar translations in a Smartling project. Useful for finding existing translations that match or are similar to source text.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id",
+          "locale_id",
+          "search"
+        ],
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "The source text to search for in translation memory"
+          },
+          "locale_id": {
+            "type": "string",
+            "description": "The target locale identifier (e.g., \"es-ES\", \"fr-FR\") to search translations for"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The unique identifier of the Smartling project to search translation memory within"
+          },
+          "minimum_score": {
+            "type": "number",
+            "default": 0.1,
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Minimum similarity score threshold (0.0 to 1.0). Higher values return more exact matches. Defaults to 0.1"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_list_style_guides",
+      "description": "List style guides from the current Smartling account. Style guides are collections of rules about content formatting, writing tone, and style to ensure consistent translations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the style guide to filter by. If not provided, all style guides will be listed."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_style_guide",
+      "description": "Get specific style guide by its unique identifier. Style guides contain rules about content formatting, writing tone, and style preferences.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "style_guide_uid"
+        ],
+        "properties": {
+          "style_guide_uid": {
+            "type": "string",
+            "description": "Unique identifier of the style guide to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_list_linguistic_packages",
+      "description": "List all linguistic packages from the current Smartling account. Linguistic packages are collections of translation resources including glossaries and style guides.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_linguistic_package",
+      "description": "Get specific linguistic package by its unique identifier. Linguistic packages contain settings that determine which linguistic assets (glossaries, style guides) are provided to translators.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "linguistic_package_uid"
+        ],
+        "properties": {
+          "linguistic_package_uid": {
+            "type": "string",
+            "description": "UID of the linguistic package to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_add_strings_to_job",
+      "description": "Add strings to an existing Smartling job by their hashcodes. Provides granular string-level control over job content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id",
+          "job_uid",
+          "hashcodes"
+        ],
+        "properties": {
+          "job_uid": {
+            "type": "string",
+            "description": "The unique identifier of the job to add strings to"
+          },
+          "hashcodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of string hashcodes to add to the job"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The unique identifier of the Smartling project"
+          },
+          "move_enabled": {
+            "type": "boolean",
+            "description": "Whether to move strings from other jobs if they already exist elsewhere. Default is false"
+          },
+          "target_locale_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of target locale IDs to add strings for. If not provided, strings will be added for all job target locales"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_remove_strings_from_job",
+      "description": "Remove strings from an existing Smartling job by their hashcodes. Useful for cleaning up job content before authorization.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_id",
+          "job_uid",
+          "hashcodes"
+        ],
+        "properties": {
+          "job_uid": {
+            "type": "string",
+            "description": "The unique identifier of the job to remove strings from"
+          },
+          "hashcodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of string hashcodes to remove from the job"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "The unique identifier of the Smartling project"
+          },
+          "target_locale_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of target locale IDs to remove strings for. If not provided, strings will be removed for all job target locales"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_list_projects_advanced",
+      "description": "List projects from the current Smartling account with advanced filtering. Supports filtering by name, project type, and archived status.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "include_archived": {
+            "type": "boolean",
+            "description": "Whether to include archived projects in the list. If not provided, only active projects will be listed."
+          },
+          "project_type_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of project type codes to filter by. If not provided, all project types will be listed."
+          },
+          "project_name_filter": {
+            "type": "string",
+            "description": "Name of the project to filter by. If not provided, all projects will be listed."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_get_project_details",
+      "description": "Get detailed information about a specific project by its UID. Includes comprehensive project configuration and metadata.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_uid"
+        ],
+        "properties": {
+          "project_uid": {
+            "type": "string",
+            "description": "The unique identifier of the Smartling project to retrieve details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smartling_match_glossary_terms",
+      "description": "Match terms within specific glossaries against source and translation text. Useful for finding specific terms in source and translated strings for quality assurance.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "glossary_uids",
+          "source_locale_id",
+          "translation_locale_id",
+          "source_text_to_match",
+          "translation_text_to_match"
+        ],
+        "properties": {
+          "glossary_uids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of glossary UIDs to search within"
+          },
+          "source_locale_id": {
+            "type": "string",
+            "description": "Source locale ID for the terms to match"
+          },
+          "source_text_to_match": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "text"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Unique identifier for the text item"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Source text to be matched. If the text is too long, then split it into smaller chunks."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Source text to match against glossary terms"
+          },
+          "translation_locale_id": {
+            "type": "string",
+            "description": "Target locale ID for the terms to match"
+          },
+          "mt_optimized_terms_only": {
+            "type": "boolean",
+            "description": "Whether to include only MT-optimized terms. If not specified then MT-optimized only terms will be included."
+          },
+          "translation_text_to_match": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "text"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Unique identifier for the text item"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Translated text to be matched. If you need to only find terms in source string then leave this empty but still pass the key."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Translation text to match against glossary terms. For source-only matching, pass empty text but preserve keys"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Jacobolevy/smartling-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "SMARTLING_USER_IDENTIFIER",
+          "SMARTLING_USER_SECRET",
+          "SMARTLING_MCP_TOKEN"
+        ],
+        "properties": {
+          "OPENAI_API_KEY": {
+            "type": "string",
+            "description": "OpenAI API key for AI-powered features (optional but recommended)"
+          },
+          "SMARTLING_BASE_URL": {
+            "type": "string",
+            "default": "https://api.smartling.com",
+            "description": "Smartling API base URL"
+          },
+          "SMARTLING_MCP_TOKEN": {
+            "type": "string",
+            "description": "Smartling MCP Server token for premium features (machine translation, translation memory, style guides)"
+          },
+          "SMARTLING_ACCOUNT_ID": {
+            "type": "string",
+            "description": "Default Smartling Account ID (optional but recommended)"
+          },
+          "SMARTLING_USER_SECRET": {
+            "type": "string",
+            "description": "Smartling User Secret for API authentication"
+          },
+          "SMARTLING_USER_IDENTIFIER": {
+            "type": "string",
+            "description": "Smartling User Identifier for API authentication"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

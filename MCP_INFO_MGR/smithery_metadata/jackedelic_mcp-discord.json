@@ -1,0 +1,507 @@
+{
+  "qualifiedName": "@jackedelic/mcp-discord",
+  "displayName": "Discord Integration Server",
+  "description": "Enable AI assistants to interact seamlessly with Discord by managing servers, channels, messages, reactions, and webhooks. Send and read messages, create and delete channels or forum posts, and handle webhooks to automate Discord workflows. Simplify Discord bot operations through a standardized MCP interface.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@jackedelic/mcp-discord",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "discord_create_category",
+      "description": "Creates a new category in a Discord server.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "guildId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "guildId": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_edit_category",
+      "description": "Edits an existing Discord category (name and position).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number"
+          },
+          "categoryId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_delete_category",
+      "description": "Deletes a Discord category by ID.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_login",
+      "description": "Logs in to Discord using the configured token",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_send",
+      "description": "Sends a message to a specified Discord text channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_get_forum_channels",
+      "description": "Lists all forum channels in a specified Discord server (guild)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "guildId"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_create_forum_post",
+      "description": "Creates a new post in a Discord forum channel with optional tags",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "forumChannelId",
+          "title",
+          "content"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "forumChannelId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_get_forum_post",
+      "description": "Retrieves details about a forum post including its messages",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "threadId"
+        ],
+        "properties": {
+          "threadId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_reply_to_forum",
+      "description": "Adds a reply to an existing forum post or thread",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "threadId",
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_create_text_channel",
+      "description": "Creates a new text channel in a Discord server with an optional topic",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "guildId",
+          "channelName"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string"
+          },
+          "guildId": {
+            "type": "string"
+          },
+          "channelName": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_delete_channel",
+      "description": "Deletes a Discord channel with an optional reason",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_read_messages",
+      "description": "Retrieves messages from a Discord text channel with a configurable limit",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1
+          },
+          "channelId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_get_server_info",
+      "description": "Retrieves detailed information about a Discord server including channels and member count",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "guildId"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_add_reaction",
+      "description": "Adds an emoji reaction to a specific Discord message",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId",
+          "emoji"
+        ],
+        "properties": {
+          "emoji": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_add_multiple_reactions",
+      "description": "Adds multiple emoji reactions to a Discord message at once",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId",
+          "emojis"
+        ],
+        "properties": {
+          "emojis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_remove_reaction",
+      "description": "Removes a specific emoji reaction from a Discord message",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId",
+          "emoji"
+        ],
+        "properties": {
+          "emoji": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_delete_forum_post",
+      "description": "Deletes a forum post or thread with an optional reason",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "threadId"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_delete_message",
+      "description": "Deletes a specific message from a Discord text channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_create_webhook",
+      "description": "Creates a new webhook for a Discord channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_send_webhook_message",
+      "description": "Sends a message to a Discord channel using a webhook",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "webhookId",
+          "webhookToken",
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "avatarURL": {
+            "type": "string"
+          },
+          "webhookId": {
+            "type": "string"
+          },
+          "webhookToken": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_edit_webhook",
+      "description": "Edits an existing webhook for a Discord channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "webhookId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "webhookId": {
+            "type": "string"
+          },
+          "webhookToken": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "discord_delete_webhook",
+      "description": "Deletes an existing webhook for a Discord channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "webhookId"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "webhookId": {
+            "type": "string"
+          },
+          "webhookToken": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@jackedelic/mcp-discord/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "discordToken"
+        ],
+        "properties": {
+          "discordToken": {
+            "type": "string",
+            "description": "Discord bot token. Obtain this from the Discord Developer Portal."
+          }
+        }
+      }
+    }
+  ]
+}

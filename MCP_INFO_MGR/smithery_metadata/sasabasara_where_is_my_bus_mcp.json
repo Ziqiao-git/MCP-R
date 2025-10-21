@@ -1,0 +1,291 @@
+{
+  "qualifiedName": "@sasabasara/where_is_my_bus_mcp",
+  "displayName": "Where's my bus? NYC MTA Bus",
+  "description": "Get real-time NYC bus arrivals, live vehicle locations, and service alerts. Plan trips between any two locations and explore nearby stops and routes. Check system status and current time to stay on schedule.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/43b58dba-b090-42fa-945e-ec8845a03289.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@sasabasara/where_is_my_bus_mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "find_my_bus",
+      "description": "Find real-time bus arrivals near any location in NYC. Returns next buses with walking times, minutes until arrival, and active service alerts. Use this for 'when is my bus coming?' queries.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "location"
+        ],
+        "properties": {
+          "route": {
+            "type": "string",
+            "description": "NYC bus route (format: letter+numbers, e.g., 'B68'=Brooklyn, 'M15'=Manhattan, 'Q32'=Queens, 'Bx1'=Bronx)"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Address, landmark (e.g., 'Times Square', 'Brooklyn Bridge', '123 Main St'), or 'current location'"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "lat",
+                  "lon"
+                ],
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lon": {
+                    "type": "number"
+                  }
+                },
+                "description": "GPS coordinates",
+                "additionalProperties": false
+              }
+            ]
+          },
+          "radius_ft": {
+            "type": "number",
+            "default": 1640,
+            "description": "Search radius in feet (1640ft ≈ 5 NYC blocks ≈ 0.31 miles ≈ 500 meters)"
+          },
+          "max_results": {
+            "type": "number",
+            "default": 3,
+            "description": "Maximum number of stops to check"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "plan_trip",
+      "description": "Plan optimal bus routes between two NYC locations. Returns step-by-step directions, travel times, and transfer points. Use for 'how do I get from A to B?' queries.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "to": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Destination (address, landmark, or coordinates)"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "lat",
+                  "lon"
+                ],
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lon": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Starting location (address, landmark, or coordinates)"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "lat",
+                  "lon"
+                ],
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lon": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "departure_time": {
+            "type": "string",
+            "description": "Departure time: 'now', '3:30 PM', '15:30', 'in 20 minutes', or 'YYYY-MM-DD HH:MM'"
+          },
+          "route_preferences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Preferred bus routes to prioritize, e.g., ['M15', 'B68', 'Q32']"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "track_bus",
+      "description": "Track live GPS positions of buses on a specific NYC route. Shows vehicle locations, directions, operational status, and any active service alerts. Use for 'where are the X buses right now?' queries.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "route"
+        ],
+        "properties": {
+          "route": {
+            "type": "string",
+            "maxLength": 6,
+            "minLength": 2,
+            "description": "NYC bus route (e.g., 'B68', 'M15', 'Q32', 'Bx1', 'S53'). Format: borough letter + route number"
+          },
+          "direction": {
+            "enum": [
+              "uptown",
+              "downtown",
+              "manhattan",
+              "brooklyn",
+              "queens",
+              "bronx"
+            ],
+            "type": "string",
+            "description": "Direction filter"
+          },
+          "near_location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "lat",
+                  "lon"
+                ],
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lon": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "description": "Show buses near this location"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nearby_transit",
+      "description": "Discover all bus stops and routes near a location with optional real-time arrivals and service alerts. Great for exploring transit options in an area.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "location"
+        ],
+        "properties": {
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Location to search around"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "lat",
+                  "lon"
+                ],
+                "properties": {
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lon": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "radius_ft": {
+            "type": "number",
+            "default": 1640,
+            "description": "Search radius in feet"
+          },
+          "include_arrivals": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include real-time arrival data"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transit_status",
+      "description": "Check MTA system time and overall service status. Useful for debugging and system health.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "include_time": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include current MTA system time"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@sasabasara/where_is_my_bus_mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "MTA_KEY"
+        ],
+        "properties": {
+          "HOST": {
+            "type": "string",
+            "default": "0.0.0.0",
+            "description": "Server host"
+          },
+          "PORT": {
+            "type": "number",
+            "default": 3000,
+            "description": "Server port"
+          },
+          "MTA_KEY": {
+            "type": "string",
+            "description": "Your MTA Bus Time API key"
+          },
+          "GEOCODE_KEY": {
+            "type": "string",
+            "description": "Optional geocoding service API key for address resolution"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,2677 @@
+{
+  "qualifiedName": "@mario-andreschak/mcp-abap-abap-adt-api",
+  "displayName": "ABAP-ADT-API MCP-Server",
+  "description": "1:1 wrapping of abap-adt-api into a MCP server.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "login",
+      "description": "Authenticate with ABAP system",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "logout",
+      "description": "Terminate ABAP session",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "dropSession",
+      "description": "Clear local session cache",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "transportInfo",
+      "description": "Get transport information for an object source",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objSourceUrl"
+        ],
+        "properties": {
+          "devClass": {
+            "type": "string",
+            "optional": true,
+            "description": "Development class"
+          },
+          "operation": {
+            "type": "string",
+            "optional": true,
+            "description": "Transport operation"
+          },
+          "objSourceUrl": {
+            "type": "string",
+            "description": "URL of the object source"
+          }
+        }
+      }
+    },
+    {
+      "name": "createTransport",
+      "description": "Create a new transport request",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objSourceUrl",
+          "REQUEST_TEXT",
+          "DEVCLASS"
+        ],
+        "properties": {
+          "DEVCLASS": {
+            "type": "string",
+            "description": "Development class"
+          },
+          "REQUEST_TEXT": {
+            "type": "string",
+            "description": "Description of the transport request"
+          },
+          "objSourceUrl": {
+            "type": "string",
+            "description": "URL of the object source"
+          },
+          "transportLayer": {
+            "type": "string",
+            "optional": true,
+            "description": "Transport layer"
+          }
+        }
+      }
+    },
+    {
+      "name": "hasTransportConfig",
+      "description": "Check if transport configuration exists",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "transportConfigurations",
+      "description": "Retrieves transport configurations.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "getTransportConfiguration",
+      "description": "Retrieves a specific transport configuration.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the transport configuration."
+          }
+        }
+      }
+    },
+    {
+      "name": "setTransportsConfig",
+      "description": "Sets transport configurations.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "uri",
+          "etag",
+          "config"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "The URI for the transport configuration."
+          },
+          "etag": {
+            "type": "string",
+            "description": "The ETag for the transport configuration."
+          },
+          "config": {
+            "type": "string",
+            "description": "The transport configuration."
+          }
+        }
+      }
+    },
+    {
+      "name": "createTransportsConfig",
+      "description": "Creates transport configurations.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "userTransports",
+      "description": "Retrieves transports for a user.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The user."
+          },
+          "targets": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to include target systems."
+          }
+        }
+      }
+    },
+    {
+      "name": "transportsByConfig",
+      "description": "Retrieves transports by configuration.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "configUri"
+        ],
+        "properties": {
+          "targets": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to include target systems."
+          },
+          "configUri": {
+            "type": "string",
+            "description": "The configuration URI."
+          }
+        }
+      }
+    },
+    {
+      "name": "transportDelete",
+      "description": "Deletes a transport.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "transportNumber"
+        ],
+        "properties": {
+          "transportNumber": {
+            "type": "string",
+            "description": "The transport number."
+          }
+        }
+      }
+    },
+    {
+      "name": "transportRelease",
+      "description": "Releases a transport.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "transportNumber"
+        ],
+        "properties": {
+          "IgnoreATC": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to ignore ATC checks."
+          },
+          "ignoreLocks": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to ignore locks."
+          },
+          "transportNumber": {
+            "type": "string",
+            "description": "The transport number."
+          }
+        }
+      }
+    },
+    {
+      "name": "transportSetOwner",
+      "description": "Sets the owner of a transport.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "transportNumber",
+          "targetuser"
+        ],
+        "properties": {
+          "targetuser": {
+            "type": "string",
+            "description": "The target user."
+          },
+          "transportNumber": {
+            "type": "string",
+            "description": "The transport number."
+          }
+        }
+      }
+    },
+    {
+      "name": "transportAddUser",
+      "description": "Adds a user to a transport.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "transportNumber",
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The user to add."
+          },
+          "transportNumber": {
+            "type": "string",
+            "description": "The transport number."
+          }
+        }
+      }
+    },
+    {
+      "name": "systemUsers",
+      "description": "Retrieves a list of system users.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "transportReference",
+      "description": "Retrieves a transport reference.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "pgmid",
+          "obj_wbtype",
+          "obj_name"
+        ],
+        "properties": {
+          "pgmid": {
+            "type": "string",
+            "description": "The program ID."
+          },
+          "obj_name": {
+            "type": "string",
+            "description": "The object name."
+          },
+          "tr_number": {
+            "type": "string",
+            "optional": true,
+            "description": "The transport number."
+          },
+          "obj_wbtype": {
+            "type": "string",
+            "description": "The object type."
+          }
+        }
+      }
+    },
+    {
+      "name": "objectStructure",
+      "description": "Get object structure details",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUrl"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "optional": true,
+            "description": "Version of the object"
+          },
+          "objectUrl": {
+            "type": "string",
+            "description": "URL of the object"
+          }
+        }
+      }
+    },
+    {
+      "name": "searchObject",
+      "description": "Search for objects",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "max": {
+            "type": "number",
+            "optional": true,
+            "description": "Maximum number of results"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query string"
+          },
+          "objType": {
+            "type": "string",
+            "optional": true,
+            "description": "Object type filter"
+          }
+        }
+      }
+    },
+    {
+      "name": "findObjectPath",
+      "description": "Find path for an object",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUrl"
+        ],
+        "properties": {
+          "objectUrl": {
+            "type": "string",
+            "description": "URL of the object to find path for"
+          }
+        }
+      }
+    },
+    {
+      "name": "objectTypes",
+      "description": "Retrieves object types.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "reentranceTicket",
+      "description": "Retrieves a reentrance ticket.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "classIncludes",
+      "description": "Get class includes structure",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "clas"
+        ],
+        "properties": {
+          "clas": {
+            "type": "string",
+            "description": "The class name"
+          }
+        }
+      }
+    },
+    {
+      "name": "classComponents",
+      "description": "List class components",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the class"
+          }
+        }
+      }
+    },
+    {
+      "name": "createTestInclude",
+      "description": "Create test include for class",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "clas",
+          "lockHandle"
+        ],
+        "properties": {
+          "clas": {
+            "type": "string",
+            "description": "The class name"
+          },
+          "transport": {
+            "type": "string",
+            "optional": true,
+            "description": "The transport number"
+          },
+          "lockHandle": {
+            "type": "string",
+            "description": "The lock handle"
+          }
+        }
+      }
+    },
+    {
+      "name": "syntaxCheckCode",
+      "description": "Perform ABAP syntax check with source code",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "optional": true
+          },
+          "code": {
+            "type": "string"
+          },
+          "mainUrl": {
+            "type": "string",
+            "optional": true
+          },
+          "version": {
+            "type": "string",
+            "optional": true
+          },
+          "mainProgram": {
+            "type": "string",
+            "optional": true
+          }
+        }
+      }
+    },
+    {
+      "name": "syntaxCheckCdsUrl",
+      "description": "Perform ABAP syntax check with CDS URL",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "cdsUrl"
+        ],
+        "properties": {
+          "cdsUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "codeCompletion",
+      "description": "Get code completion suggestions",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sourceUrl",
+          "source",
+          "line",
+          "column"
+        ],
+        "properties": {
+          "line": {
+            "type": "number"
+          },
+          "column": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "findDefinition",
+      "description": "Find symbol definition",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url",
+          "source",
+          "line",
+          "startCol",
+          "endCol"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "line": {
+            "type": "number"
+          },
+          "endCol": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string"
+          },
+          "startCol": {
+            "type": "number"
+          },
+          "mainProgram": {
+            "type": "string",
+            "optional": true
+          },
+          "implementation": {
+            "type": "boolean",
+            "optional": true
+          }
+        }
+      }
+    },
+    {
+      "name": "usageReferences",
+      "description": "Find symbol references",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "line": {
+            "type": "number",
+            "optional": true
+          },
+          "column": {
+            "type": "number",
+            "optional": true
+          }
+        }
+      }
+    },
+    {
+      "name": "syntaxCheckTypes",
+      "description": "Retrieves syntax check types.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "codeCompletionFull",
+      "description": "Performs full code completion.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sourceUrl",
+          "source",
+          "line",
+          "column",
+          "patternKey"
+        ],
+        "properties": {
+          "line": {
+            "type": "number"
+          },
+          "column": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          },
+          "patternKey": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "runClass",
+      "description": "Runs a class.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "className"
+        ],
+        "properties": {
+          "className": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "codeCompletionElement",
+      "description": "Retrieves code completion element information.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sourceUrl",
+          "source",
+          "line",
+          "column"
+        ],
+        "properties": {
+          "line": {
+            "type": "number"
+          },
+          "column": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "usageReferenceSnippets",
+      "description": "Retrieves usage reference snippets.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "references"
+        ],
+        "properties": {
+          "references": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    {
+      "name": "fixProposals",
+      "description": "Retrieves fix proposals.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url",
+          "source",
+          "line",
+          "column"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "line": {
+            "type": "number"
+          },
+          "column": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "fixEdits",
+      "description": "Applies fix edits.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "proposal",
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "fragmentMappings",
+      "description": "Retrieves fragment mappings.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url",
+          "type",
+          "name"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "abapDocumentation",
+      "description": "Retrieves ABAP documentation.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUri",
+          "body",
+          "line",
+          "column"
+        ],
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "line": {
+            "type": "number"
+          },
+          "column": {
+            "type": "number"
+          },
+          "language": {
+            "type": "string",
+            "optional": true
+          },
+          "objectUri": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "lock",
+      "description": "Lock an object",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUrl"
+        ],
+        "properties": {
+          "objectUrl": {
+            "type": "string",
+            "description": "URL of the object to lock"
+          },
+          "accessMode": {
+            "type": "string",
+            "optional": true,
+            "description": "Access mode for the lock"
+          }
+        }
+      }
+    },
+    {
+      "name": "unLock",
+      "description": "Unlock an object",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUrl",
+          "lockHandle"
+        ],
+        "properties": {
+          "objectUrl": {
+            "type": "string",
+            "description": "URL of the object to unlock"
+          },
+          "lockHandle": {
+            "type": "string",
+            "description": "Lock handle obtained from previous lock operation"
+          }
+        }
+      }
+    },
+    {
+      "name": "getObjectSource",
+      "description": "Retrieves source code for ABAP objects",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectSourceUrl"
+        ],
+        "properties": {
+          "options": {
+            "type": "string"
+          },
+          "objectSourceUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "setObjectSource",
+      "description": "Sets source code for ABAP objects",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectSourceUrl",
+          "source",
+          "lockHandle"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "transport": {
+            "type": "string"
+          },
+          "lockHandle": {
+            "type": "string"
+          },
+          "objectSourceUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteObject",
+      "description": "Deletes an ABAP object from the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUrl",
+          "lockHandle"
+        ],
+        "properties": {
+          "objectUrl": {
+            "type": "string",
+            "description": "URL of the object to delete"
+          },
+          "transport": {
+            "type": "string",
+            "optional": true,
+            "description": "Transport request number"
+          },
+          "lockHandle": {
+            "type": "string",
+            "description": "Lock handle for the object"
+          }
+        }
+      }
+    },
+    {
+      "name": "activateObjects",
+      "description": "Activate ABAP objects using object references",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objects"
+        ],
+        "properties": {
+          "objects": {
+            "type": "string",
+            "description": "JSON array of objects to activate. Each object must have adtcore:uri, adtcore:type, adtcore:name, and adtcore:parentUri properties"
+          },
+          "preauditRequested": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to perform pre-audit checks"
+          }
+        }
+      }
+    },
+    {
+      "name": "activateByName",
+      "description": "Activate an ABAP object using name and URL",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectName",
+          "objectUrl"
+        ],
+        "properties": {
+          "objectUrl": {
+            "type": "string",
+            "description": "URL of the object"
+          },
+          "objectName": {
+            "type": "string",
+            "description": "Name of the object"
+          },
+          "mainInclude": {
+            "type": "string",
+            "optional": true,
+            "description": "Main include context"
+          },
+          "preauditRequested": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to perform pre-audit checks"
+          }
+        }
+      }
+    },
+    {
+      "name": "inactiveObjects",
+      "description": "Get list of inactive objects",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "objectRegistrationInfo",
+      "description": "Get registration information for an ABAP object",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUrl"
+        ],
+        "properties": {
+          "objectUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "validateNewObject",
+      "description": "Validate parameters for a new ABAP object",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "options"
+        ],
+        "properties": {
+          "options": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "createObject",
+      "description": "Create a new ABAP object",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objtype",
+          "name",
+          "parentName",
+          "description",
+          "parentPath"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "objtype": {
+            "type": "string"
+          },
+          "transport": {
+            "type": "string",
+            "optional": true
+          },
+          "parentName": {
+            "type": "string"
+          },
+          "parentPath": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "responsible": {
+            "type": "string",
+            "optional": true
+          }
+        }
+      }
+    },
+    {
+      "name": "nodeContents",
+      "description": "Retrieves the contents of a node in the ABAP repository tree.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "parent_type"
+        ],
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "optional": true,
+            "description": "The user name."
+          },
+          "parent_name": {
+            "type": "string",
+            "optional": true,
+            "description": "The name of the parent node."
+          },
+          "parent_type": {
+            "type": "string",
+            "description": "The type of the parent node."
+          },
+          "parentnodes": {
+            "type": "array",
+            "optional": true,
+            "description": "An array of parent node IDs."
+          },
+          "rebuild_tree": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to rebuild the tree."
+          },
+          "parent_tech_name": {
+            "type": "string",
+            "optional": true,
+            "description": "The technical name of the parent node."
+          }
+        }
+      }
+    },
+    {
+      "name": "mainPrograms",
+      "description": "Retrieves the main programs for a given include.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "includeUrl"
+        ],
+        "properties": {
+          "includeUrl": {
+            "type": "string",
+            "description": "The URL of the include."
+          }
+        }
+      }
+    },
+    {
+      "name": "featureDetails",
+      "description": "Retrieves details for a given feature.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the feature."
+          }
+        }
+      }
+    },
+    {
+      "name": "collectionFeatureDetails",
+      "description": "Retrieves details for a given collection feature.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the collection feature."
+          }
+        }
+      }
+    },
+    {
+      "name": "findCollectionByUrl",
+      "description": "Finds a collection by its URL.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the collection."
+          }
+        }
+      }
+    },
+    {
+      "name": "loadTypes",
+      "description": "Loads object types.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "adtDiscovery",
+      "description": "Performs ADT discovery.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "adtCoreDiscovery",
+      "description": "Performs ADT core discovery.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "adtCompatibiliyGraph",
+      "description": "Retrieves the ADT compatibility graph.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "unitTestRun",
+      "description": "Runs unit tests.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the object to test."
+          },
+          "flags": {
+            "type": "string",
+            "optional": true,
+            "description": "Flags for the unit test run."
+          }
+        }
+      }
+    },
+    {
+      "name": "unitTestEvaluation",
+      "description": "Evaluates unit test results.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "clas"
+        ],
+        "properties": {
+          "clas": {
+            "type": "string",
+            "description": "The class to evaluate."
+          },
+          "flags": {
+            "type": "string",
+            "optional": true,
+            "description": "Flags for the unit test evaluation."
+          }
+        }
+      }
+    },
+    {
+      "name": "unitTestOccurrenceMarkers",
+      "description": "Retrieves unit test occurrence markers.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url",
+          "source"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the object."
+          },
+          "source": {
+            "type": "string",
+            "description": "The source code."
+          }
+        }
+      }
+    },
+    {
+      "name": "createTestInclude",
+      "description": "Creates a test include for a class.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "clas",
+          "lockHandle"
+        ],
+        "properties": {
+          "clas": {
+            "type": "string",
+            "description": "The class name."
+          },
+          "transport": {
+            "type": "string",
+            "optional": true,
+            "description": "The transport."
+          },
+          "lockHandle": {
+            "type": "string",
+            "description": "The lock handle."
+          }
+        }
+      }
+    },
+    {
+      "name": "prettyPrinterSetting",
+      "description": "Retrieves the pretty printer settings.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "setPrettyPrinterSetting",
+      "description": "Sets the pretty printer settings.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "indent",
+          "style"
+        ],
+        "properties": {
+          "style": {
+            "type": "string",
+            "description": "The pretty printer style."
+          },
+          "indent": {
+            "type": "boolean",
+            "description": "Whether to indent the code."
+          }
+        }
+      }
+    },
+    {
+      "name": "prettyPrinter",
+      "description": "Formats ABAP code using the pretty printer.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "The ABAP source code to format."
+          }
+        }
+      }
+    },
+    {
+      "name": "gitRepos",
+      "description": "Retrieves a list of Git repositories.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "gitExternalRepoInfo",
+      "description": "Retrieves information about an external Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repourl"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "repourl": {
+            "type": "string",
+            "description": "The URL of the repository."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          }
+        }
+      }
+    },
+    {
+      "name": "gitCreateRepo",
+      "description": "Creates a new Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "packageName",
+          "repourl"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "branch": {
+            "type": "string",
+            "optional": true,
+            "description": "The branch name."
+          },
+          "repourl": {
+            "type": "string",
+            "description": "The URL of the repository."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          },
+          "transport": {
+            "type": "string",
+            "optional": true,
+            "description": "The transport."
+          },
+          "packageName": {
+            "type": "string",
+            "description": "The name of the package."
+          }
+        }
+      }
+    },
+    {
+      "name": "gitPullRepo",
+      "description": "Pulls changes from a Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repoId"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "branch": {
+            "type": "string",
+            "optional": true,
+            "description": "The branch name."
+          },
+          "repoId": {
+            "type": "string",
+            "description": "The ID of the repository."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          },
+          "transport": {
+            "type": "string",
+            "optional": true,
+            "description": "The transport."
+          }
+        }
+      }
+    },
+    {
+      "name": "gitUnlinkRepo",
+      "description": "Unlinks a Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repoId"
+        ],
+        "properties": {
+          "repoId": {
+            "type": "string",
+            "description": "The ID of the repository."
+          }
+        }
+      }
+    },
+    {
+      "name": "stageRepo",
+      "description": "Stages changes in a Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repo"
+        ],
+        "properties": {
+          "repo": {
+            "type": "object",
+            "description": "The Git repository object."
+          },
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          }
+        }
+      }
+    },
+    {
+      "name": "pushRepo",
+      "description": "Pushes changes to a Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repo",
+          "staging"
+        ],
+        "properties": {
+          "repo": {
+            "type": "object",
+            "description": "The Git repository object."
+          },
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "staging": {
+            "type": "object",
+            "description": "The staging information object."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          }
+        }
+      }
+    },
+    {
+      "name": "checkRepo",
+      "description": "Checks a Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repo"
+        ],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "The Git repository."
+          },
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          }
+        }
+      }
+    },
+    {
+      "name": "remoteRepoInfo",
+      "description": "Retrieves information about a remote Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repo"
+        ],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "The Git repository."
+          },
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          }
+        }
+      }
+    },
+    {
+      "name": "switchRepoBranch",
+      "description": "Switches the branch of a Git repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repo",
+          "branch"
+        ],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "The Git repository."
+          },
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The username."
+          },
+          "branch": {
+            "type": "string",
+            "description": "The branch name."
+          },
+          "create": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to create the branch if it doesn't exist."
+          },
+          "password": {
+            "type": "string",
+            "optional": true,
+            "description": "The password."
+          }
+        }
+      }
+    },
+    {
+      "name": "annotationDefinitions",
+      "description": "Retrieves annotation definitions.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "ddicElement",
+      "description": "Retrieves information about a DDIC element.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path to the DDIC element."
+          },
+          "getExtensionViews": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to get extension views."
+          },
+          "getSecondaryObjects": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to get secondary objects."
+          },
+          "getTargetForAssociation": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to get the target for association."
+          }
+        }
+      }
+    },
+    {
+      "name": "ddicRepositoryAccess",
+      "description": "Accesses the DDIC repository.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path to the DDIC element."
+          }
+        }
+      }
+    },
+    {
+      "name": "packageSearchHelp",
+      "description": "Performs a package search help.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "optional": true,
+            "description": "The package name."
+          },
+          "type": {
+            "type": "string",
+            "description": "The package value help type."
+          }
+        }
+      }
+    },
+    {
+      "name": "publishServiceBinding",
+      "description": "Publishes a service binding.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "version"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the service binding."
+          },
+          "version": {
+            "type": "string",
+            "description": "The version of the service binding."
+          }
+        }
+      }
+    },
+    {
+      "name": "unPublishServiceBinding",
+      "description": "Unpublishes a service binding.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "version"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the service binding."
+          },
+          "version": {
+            "type": "string",
+            "description": "The version of the service binding."
+          }
+        }
+      }
+    },
+    {
+      "name": "bindingDetails",
+      "description": "Retrieves details of a service binding.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "binding"
+        ],
+        "properties": {
+          "index": {
+            "type": "number",
+            "optional": true,
+            "description": "The index of the service binding."
+          },
+          "binding": {
+            "type": "object",
+            "description": "The service binding."
+          }
+        }
+      }
+    },
+    {
+      "name": "tableContents",
+      "description": "Retrieves the contents of an ABAP table.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ddicEntityName"
+        ],
+        "properties": {
+          "decode": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to decode the data."
+          },
+          "sqlQuery": {
+            "type": "string",
+            "optional": true,
+            "description": "An optional SQL query to filter the data."
+          },
+          "rowNumber": {
+            "type": "number",
+            "optional": true,
+            "description": "The maximum number of rows to retrieve."
+          },
+          "ddicEntityName": {
+            "type": "string",
+            "description": "The name of the DDIC entity (table or view)."
+          }
+        }
+      }
+    },
+    {
+      "name": "runQuery",
+      "description": "Runs a SQL query on the target system.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sqlQuery"
+        ],
+        "properties": {
+          "decode": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to decode the data."
+          },
+          "sqlQuery": {
+            "type": "string",
+            "description": "The SQL query to execute."
+          },
+          "rowNumber": {
+            "type": "number",
+            "optional": true,
+            "description": "The maximum number of rows to retrieve."
+          }
+        }
+      }
+    },
+    {
+      "name": "feeds",
+      "description": "Retrieves a list of feeds.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "dumps",
+      "description": "Retrieves a list of dumps.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "optional": true,
+            "description": "An optional query string to filter the dumps."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerListeners",
+      "description": "Retrieves a list of debugger listeners.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "debuggingMode",
+          "terminalId",
+          "ideId",
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The user."
+          },
+          "ideId": {
+            "type": "string",
+            "description": "The IDE ID."
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "The terminal ID."
+          },
+          "checkConflict": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to check for conflicts."
+          },
+          "debuggingMode": {
+            "type": "string",
+            "description": "The debugging mode."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerListen",
+      "description": "Listens for debugging events.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "debuggingMode",
+          "terminalId",
+          "ideId",
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The user."
+          },
+          "ideId": {
+            "type": "string",
+            "description": "The IDE ID."
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "The terminal ID."
+          },
+          "checkConflict": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to check for conflicts."
+          },
+          "debuggingMode": {
+            "type": "string",
+            "description": "The debugging mode."
+          },
+          "isNotifiedOnConflict": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to be notified on conflict."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerDeleteListener",
+      "description": "Stops a debug listener.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "debuggingMode",
+          "terminalId",
+          "ideId",
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The user."
+          },
+          "ideId": {
+            "type": "string",
+            "description": "The IDE ID."
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "The terminal ID."
+          },
+          "debuggingMode": {
+            "type": "string",
+            "description": "The debugging mode."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerSetBreakpoints",
+      "description": "Sets breakpoints.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "debuggingMode",
+          "terminalId",
+          "ideId",
+          "clientId",
+          "breakpoints",
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The user."
+          },
+          "ideId": {
+            "type": "string",
+            "description": "The IDE ID."
+          },
+          "scope": {
+            "type": "string",
+            "optional": true,
+            "description": "The debugger scope."
+          },
+          "clientId": {
+            "type": "string",
+            "description": "The client ID."
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "The terminal ID."
+          },
+          "breakpoints": {
+            "type": "array",
+            "description": "An array of breakpoints."
+          },
+          "deactivated": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to deactivate the breakpoints."
+          },
+          "syncScupeUrl": {
+            "type": "string",
+            "optional": true,
+            "description": "The URL for scope synchronization."
+          },
+          "debuggingMode": {
+            "type": "string",
+            "description": "The debugging mode."
+          },
+          "systemDebugging": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to enable system debugging."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerDeleteBreakpoints",
+      "description": "Deletes breakpoints.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "breakpoint",
+          "debuggingMode",
+          "terminalId",
+          "ideId",
+          "requestUser"
+        ],
+        "properties": {
+          "ideId": {
+            "type": "string",
+            "description": "The IDE ID."
+          },
+          "scope": {
+            "type": "string",
+            "optional": true,
+            "description": "The debugger scope."
+          },
+          "breakpoint": {
+            "type": "object",
+            "description": "The breakpoint to delete."
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "The terminal ID."
+          },
+          "requestUser": {
+            "type": "string",
+            "description": "The requesting user."
+          },
+          "debuggingMode": {
+            "type": "string",
+            "description": "The debugging mode."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerAttach",
+      "description": "Attaches the debugger.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "debuggingMode",
+          "debuggeeId",
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The user."
+          },
+          "debuggeeId": {
+            "type": "string",
+            "description": "The ID of the debuggee."
+          },
+          "debuggingMode": {
+            "type": "string",
+            "description": "The debugging mode."
+          },
+          "dynproDebugging": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to enable Dynpro debugging."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerSaveSettings",
+      "description": "Saves debugger settings.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "settings"
+        ],
+        "properties": {
+          "settings": {
+            "type": "string",
+            "description": "The debugger settings."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerStackTrace",
+      "description": "Retrieves the debugger stack trace.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "semanticURIs": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to use semantic URIs."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerVariables",
+      "description": "Retrieves debugger variables.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "parents"
+        ],
+        "properties": {
+          "parents": {
+            "type": "array",
+            "description": "An array of parent variable names."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerChildVariables",
+      "description": "Retrieves child variables of a debugger variable.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "parent": {
+            "type": "array",
+            "optional": true,
+            "description": "The parent variable name."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerStep",
+      "description": "Performs a debugger step.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "steptype"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "optional": true,
+            "description": "The URL for step types \"stepRunToLine\" or \"stepJumpToLine\"."
+          },
+          "steptype": {
+            "type": "string",
+            "description": "The type of step to perform."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerGoToStack",
+      "description": "Navigates to a specific stack entry in the debugger.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "urlOrPosition"
+        ],
+        "properties": {
+          "urlOrPosition": {
+            "type": "string",
+            "description": "The URL or position of the stack entry."
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggerSetVariableValue",
+      "description": "Sets the value of a debugger variable.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "variableName",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The new value of the variable."
+          },
+          "variableName": {
+            "type": "string",
+            "description": "The name of the variable."
+          }
+        }
+      }
+    },
+    {
+      "name": "renameEvaluate",
+      "description": "Evaluates a rename refactoring.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "uri",
+          "line",
+          "startColumn",
+          "endColumn"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "The URI of the object to rename."
+          },
+          "line": {
+            "type": "number",
+            "description": "The line number."
+          },
+          "endColumn": {
+            "type": "number",
+            "description": "The ending column."
+          },
+          "startColumn": {
+            "type": "number",
+            "description": "The starting column."
+          }
+        }
+      }
+    },
+    {
+      "name": "renamePreview",
+      "description": "Previews a rename refactoring.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "renameRefactoring"
+        ],
+        "properties": {
+          "transport": {
+            "type": "string",
+            "optional": true,
+            "description": "The transport."
+          },
+          "renameRefactoring": {
+            "type": "object",
+            "description": "The rename refactoring proposal."
+          }
+        }
+      }
+    },
+    {
+      "name": "renameExecute",
+      "description": "Executes a rename refactoring.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "refactoring"
+        ],
+        "properties": {
+          "refactoring": {
+            "type": "object",
+            "description": "The rename refactoring."
+          }
+        }
+      }
+    },
+    {
+      "name": "atcCustomizing",
+      "description": "Retrieves ATC customizing information.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "atcCheckVariant",
+      "description": "Retrieves information about an ATC check variant.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "variant"
+        ],
+        "properties": {
+          "variant": {
+            "type": "string",
+            "description": "The name of the ATC check variant."
+          }
+        }
+      }
+    },
+    {
+      "name": "createAtcRun",
+      "description": "Creates an ATC run.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "variant",
+          "mainUrl"
+        ],
+        "properties": {
+          "mainUrl": {
+            "type": "string",
+            "description": "The main URL for the ATC run."
+          },
+          "variant": {
+            "type": "string",
+            "description": "The name of the ATC check variant."
+          },
+          "maxResults": {
+            "type": "number",
+            "optional": true,
+            "description": "The maximum number of results to retrieve."
+          }
+        }
+      }
+    },
+    {
+      "name": "atcWorklists",
+      "description": "Retrieves ATC worklists.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "runResultId"
+        ],
+        "properties": {
+          "timestamp": {
+            "type": "number",
+            "optional": true,
+            "description": "The timestamp."
+          },
+          "runResultId": {
+            "type": "string",
+            "description": "The ID of the ATC run result."
+          },
+          "usedObjectSet": {
+            "type": "string",
+            "optional": true,
+            "description": "The used object set."
+          },
+          "includeExempted": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to include exempted findings."
+          }
+        }
+      }
+    },
+    {
+      "name": "atcUsers",
+      "description": "Retrieves a list of ATC users.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "atcExemptProposal",
+      "description": "Retrieves an ATC exemption proposal.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "markerId"
+        ],
+        "properties": {
+          "markerId": {
+            "type": "string",
+            "description": "The ID of the marker."
+          }
+        }
+      }
+    },
+    {
+      "name": "atcRequestExemption",
+      "description": "Requests an ATC exemption.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "proposal"
+        ],
+        "properties": {
+          "proposal": {
+            "type": "object",
+            "description": "The ATC exemption proposal."
+          }
+        }
+      }
+    },
+    {
+      "name": "isProposalMessage",
+      "description": "Checks if a given object is a proposal message.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "proposal"
+        ],
+        "properties": {
+          "proposal": {
+            "type": "object",
+            "description": "The ATC exemption proposal."
+          }
+        }
+      }
+    },
+    {
+      "name": "atcContactUri",
+      "description": "Retrieves the contact URI for an ATC finding.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "findingUri"
+        ],
+        "properties": {
+          "findingUri": {
+            "type": "string",
+            "description": "The URI of the ATC finding."
+          }
+        }
+      }
+    },
+    {
+      "name": "atcChangeContact",
+      "description": "Changes the contact for an ATC finding.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "itemUri",
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "The ID of the user."
+          },
+          "itemUri": {
+            "type": "string",
+            "description": "The URI of the item."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesList",
+      "description": "Retrieves a list of traces.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The user."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesListRequests",
+      "description": "Retrieves a list of trace requests.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "string",
+            "optional": true,
+            "description": "The user."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesHitList",
+      "description": "Retrieves the hit list for a trace.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the trace."
+          },
+          "withSystemEvents": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to include system events."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesDbAccess",
+      "description": "Retrieves database access information for a trace.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the trace."
+          },
+          "withSystemEvents": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to include system events."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesStatements",
+      "description": "Retrieves statements for a trace.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the trace."
+          },
+          "options": {
+            "type": "string",
+            "optional": true,
+            "description": "Options for retrieving statements."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesSetParameters",
+      "description": "Sets trace parameters.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "parameters"
+        ],
+        "properties": {
+          "parameters": {
+            "type": "string",
+            "description": "The trace parameters."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesCreateConfiguration",
+      "description": "Creates a trace configuration.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "config"
+        ],
+        "properties": {
+          "config": {
+            "type": "string",
+            "description": "The trace configuration."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesDeleteConfiguration",
+      "description": "Deletes a trace configuration.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the trace configuration."
+          }
+        }
+      }
+    },
+    {
+      "name": "tracesDelete",
+      "description": "Deletes a trace.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the trace."
+          }
+        }
+      }
+    },
+    {
+      "name": "extractMethodEvaluate",
+      "description": "Evaluates an extract method refactoring.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "uri",
+          "range"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "The URI of the object."
+          },
+          "range": {
+            "type": "string",
+            "description": "The range to extract."
+          }
+        }
+      }
+    },
+    {
+      "name": "extractMethodPreview",
+      "description": "Previews an extract method refactoring.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "proposal"
+        ],
+        "properties": {
+          "proposal": {
+            "type": "string",
+            "description": "The extract method proposal."
+          }
+        }
+      }
+    },
+    {
+      "name": "extractMethodExecute",
+      "description": "Executes an extract method refactoring.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "refactoring"
+        ],
+        "properties": {
+          "refactoring": {
+            "type": "string",
+            "description": "The refactoring object."
+          }
+        }
+      }
+    },
+    {
+      "name": "revisions",
+      "description": "Retrieves revisions for an object.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "objectUrl"
+        ],
+        "properties": {
+          "objectUrl": {
+            "type": "string",
+            "description": "The URL of the object."
+          },
+          "clsInclude": {
+            "type": "string",
+            "optional": true,
+            "description": "The class include."
+          }
+        }
+      }
+    },
+    {
+      "name": "healthcheck",
+      "description": "Check server health and connectivity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@mario-andreschak/mcp-abap-abap-adt-api/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "sapUrl",
+          "sapUser",
+          "sapPassword"
+        ],
+        "properties": {
+          "sapUrl": {
+            "type": "string",
+            "description": "URL of the SAP server."
+          },
+          "sapUser": {
+            "type": "string",
+            "description": "SAP username."
+          },
+          "sapClient": {
+            "type": "string",
+            "default": "",
+            "description": "SAP client number. Optional."
+          },
+          "sapLanguage": {
+            "type": "string",
+            "default": "",
+            "description": "SAP language code. Optional."
+          },
+          "sapPassword": {
+            "type": "string",
+            "description": "SAP password."
+          },
+          "nodeTlsRejectUnauthorized": {
+            "type": "boolean",
+            "default": true,
+            "description": "Set to false to ignore self-signed certificates. Optional."
+          }
+        }
+      }
+    }
+  ]
+}

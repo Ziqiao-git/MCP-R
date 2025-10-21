@@ -1,0 +1,105 @@
+{
+  "qualifiedName": "@ninjasproxy/ninjaproxy-mcp-server",
+  "displayName": "NinjaProxy MCP Server",
+  "description": "Manage and access your static proxy IPs from NinjaProxy. Retrieve your proxy IPs, get specific proxies by index, and obtain ready-to-use proxy configurations for HTTP requests. Simplify proxy management and integration for your applications.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/95a68ef2-8b99-46ee-ae02-d56df910d352.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ninjasproxy/ninjaproxy-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "set_api_key",
+      "description": "Set the API key for accessing the NinjaProxy service",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "api_key"
+        ],
+        "properties": {
+          "api_key": {
+            "type": "string",
+            "description": "Your NinjaProxy API key"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_my_proxies",
+      "description": "Get your assigned static proxy IPs",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "enum": [
+              "simple",
+              "detailed"
+            ],
+            "type": "string",
+            "default": "detailed",
+            "description": "Return format - simple (just addresses) or detailed (with credentials)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_proxy_by_index",
+      "description": "Get a specific proxy from your list by index (0-based)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "index"
+        ],
+        "properties": {
+          "index": {
+            "type": "number",
+            "description": "Index of the proxy to retrieve (0-based)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_proxy_config",
+      "description": "Get proxy configuration for making HTTP requests",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Target URL for the request (for examples)"
+          },
+          "index": {
+            "type": "number",
+            "description": "Index of proxy to configure (alternative to proxy_address)"
+          },
+          "proxy_address": {
+            "type": "string",
+            "description": "Specific proxy address to configure (format: ip:port)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ninjasproxy/ninjaproxy-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "NINJAPROXY_API_KEY"
+        ],
+        "properties": {
+          "NINJAPROXY_API_KEY": {
+            "type": "string",
+            "description": "Your NinjaProxy API key from ninjaproxy.com"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "qualifiedName": "@Handwriting-OCR/handwriting-ocr-mcp-server",
+  "displayName": "Handwriting OCR",
+  "description": "Integrate your applications with the Handwriting OCR service to effortlessly upload documents, check their processing status, and retrieve OCR results in Markdown format. Enhance your workflows by automating text extraction from images and PDFs with ease.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.handwritingocr.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "upload_document",
+      "description": "Upload a document to Handwriting OCR API for transcription",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Path to the document (PDF, JPG, PNG, etc.)"
+          },
+          "prompt_id": {
+            "type": "string",
+            "description": "Prompt ID (requires Enterprise subscription, will be ignored)"
+          },
+          "delete_after": {
+            "type": "integer",
+            "description": "Seconds until auto-deletion (optional)"
+          },
+          "extractor_id": {
+            "type": "string",
+            "description": "Extractor ID (required if action is extractor, will be ignored)"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_status",
+      "description": "Check the status of a document",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Document ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_text",
+      "description": "Retrieve the transcribed text from a document",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Document ID"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Handwriting-OCR/handwriting-ocr-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiToken"
+        ],
+        "properties": {
+          "apiToken": {
+            "type": "string",
+            "description": "Your Handwriting OCR API token"
+          }
+        }
+      }
+    }
+  ]
+}

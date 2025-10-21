@@ -1,0 +1,235 @@
+{
+  "qualifiedName": "@bielacki/igdb-mcp-server",
+  "displayName": "IGDB",
+  "description": "Explore and discover video games from the Internet Game Database. Search titles, view detailed info on platforms, ratings, studios, and media, and track trending or upcoming releases. Run advanced queries to surface exactly what you need.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/4abfc1d6-e822-4cdb-95c4-6a8d64806afb.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@bielacki/igdb-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_games",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "Search Games",
+      "description": "Search for games in the IGDB database",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 10,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "Search term for finding games"
+          },
+          "fields": {
+            "type": "string",
+            "title": "Fields",
+            "default": "name,rating,rating_count,first_release_date,platforms.name",
+            "description": "Comma-separated list of fields to return"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_game_details",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "Get Game Details",
+      "description": "Retrieve detailed information about a specific game from IGDB",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "game_id"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": "id,slug,name,rating,rating_count,hypes,first_release_date,platforms.name,genres.name,status,cover.url,summary,involved_companies.company.name,involved_companies.developer,involved_companies.publisher",
+            "description": "Comma-separated list of fields to return"
+          },
+          "game_id": {
+            "type": "integer",
+            "title": "Game Id",
+            "description": "The IGDB ID of the game"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_most_anticipated_games",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "Get Most Anticipated Games",
+      "description": "Fetch upcoming games sorted by hype count, filtered for future or TBA releases",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 25,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "fields": {
+            "type": "string",
+            "title": "Fields",
+            "default": "id,slug,name,hypes,first_release_date,platforms.name,genres.name,status",
+            "description": "Comma-separated list of fields to return"
+          },
+          "min_hypes": {
+            "type": "integer",
+            "title": "Min Hypes",
+            "default": 25,
+            "minimum": 0,
+            "description": "Minimum number of hypes required"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "custom_query",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "Custom IGDB Query",
+      "description": "Run a custom Apicalypse query against any IGDB API endpoint",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpoint",
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "The Apicalypse query string"
+          },
+          "endpoint": {
+            "type": "string",
+            "title": "Endpoint",
+            "description": "The API endpoint to query (e.g., 'games', 'companies', 'platforms', 'people', 'characters')"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@bielacki/igdb-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "Settings",
+        "required": [
+          "IGDB_CLIENT_ID",
+          "IGDB_CLIENT_SECRET"
+        ],
+        "properties": {
+          "IGDB_CLIENT_ID": {
+            "type": "string",
+            "title": "Igdb Client Id",
+            "description": "Your IGDB Client ID. Get it from https://dev.twitch.tv/console"
+          },
+          "IGDB_CLIENT_SECRET": {
+            "type": "string",
+            "title": "Igdb Client Secret",
+            "description": "Your IGDB Client Secret. Get it from https://dev.twitch.tv/console"
+          }
+        },
+        "description": "Configuration for IGDB MCP Server.",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

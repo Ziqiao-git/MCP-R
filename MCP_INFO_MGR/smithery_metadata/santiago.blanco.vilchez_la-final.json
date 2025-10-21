@@ -1,0 +1,331 @@
+{
+  "qualifiedName": "@santiago.blanco.vilchez/la-final",
+  "displayName": "Tenant Onboarding & Templates",
+  "description": "Create tenants and populate them with document templates in minutes. Authenticate once to manage onboarding tasks and template updates. Extend workflows with custom requests to external services.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@santiago.blanco.vilchez/la-final",
+  "security": null,
+  "tools": [
+    {
+      "name": "add-template",
+      "_meta": {},
+      "title": "Add Template (Seed)",
+      "annotations": {
+        "title": "Add Template (Seed)",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Add a new template with sections to an existing tenant via the seed-template endpoint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accessToken",
+          "tenantId",
+          "serviceTypeName",
+          "serviceTypeDescription",
+          "templateName",
+          "sections"
+        ],
+        "properties": {
+          "sections": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "items"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "label"
+                        ],
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "isRequired": {
+                            "type": "boolean"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "minItems": 1
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "minItems": 1
+              }
+            ],
+            "description": "Sections array or JSON string describing sections and items"
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "Tenant identifier (UUID)"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "JWT access token from admin user"
+          },
+          "templateName": {
+            "type": "string",
+            "description": "Template name"
+          },
+          "serviceTypeName": {
+            "type": "string",
+            "description": "Service type name"
+          },
+          "serviceTypeDescription": {
+            "type": "string",
+            "description": "Service type description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "auth-login",
+      "_meta": {},
+      "title": "Authentication Login",
+      "annotations": {
+        "title": "Authentication Login",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Authenticate user via the login endpoint and get JWT access token",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-tenant",
+      "_meta": {},
+      "title": "Create Tenant (Bootstrap)",
+      "annotations": {
+        "title": "Create Tenant (Bootstrap)",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Create a new tenant via the bootstrap endpoint with tenant, service type, admin user, and document sections",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accessToken",
+          "name",
+          "url",
+          "serviceTypeName",
+          "serviceTypeDescription",
+          "templateName",
+          "email",
+          "password",
+          "firstName",
+          "lastName",
+          "sections"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Tenant URL or slug"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tenant name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Admin user email"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number (default: +1-555-0100)"
+          },
+          "address": {
+            "type": "string",
+            "description": "Address (default: 123 Main St)"
+          },
+          "logoUrl": {
+            "type": "string",
+            "description": "Logo URL (default: https://platform.clara.care/logo.svg)"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Admin last name"
+          },
+          "password": {
+            "type": "string",
+            "description": "Admin user password"
+          },
+          "sections": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "items"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "label"
+                        ],
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "isRequired": {
+                            "type": "boolean"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "minItems": 1
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "minItems": 1
+              }
+            ],
+            "description": "Sections array or JSON string describing sections and items"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Admin first name"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "JWT access token from login"
+          },
+          "templateName": {
+            "type": "string",
+            "description": "Template name (e.g., '2024 Onboarding Checklist')"
+          },
+          "serviceTypeName": {
+            "type": "string",
+            "description": "Service type name (e.g., 'Tax Advisor')"
+          },
+          "serviceTypeDescription": {
+            "type": "string",
+            "description": "Service type description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "http-request",
+      "_meta": {},
+      "title": "HTTP Request",
+      "annotations": {
+        "title": "HTTP Request",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Make HTTP requests to external APIs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "method",
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URL to make the request to"
+          },
+          "body": {
+            "type": "string",
+            "description": "Request body as JSON string"
+          },
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE"
+            ],
+            "type": "string",
+            "description": "HTTP method"
+          },
+          "headers": {
+            "type": "object",
+            "description": "HTTP headers",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@santiago.blanco.vilchez/la-final/mcp",
+      "configSchema": {}
+    }
+  ]
+}

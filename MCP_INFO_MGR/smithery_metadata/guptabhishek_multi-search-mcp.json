@@ -1,0 +1,83 @@
+{
+  "qualifiedName": "@guptabhishek/multi-search-mcp",
+  "displayName": "Multi-Provider Web Search Server",
+  "description": "Provide unified web search capabilities by leveraging multiple search providers with automatic fallback to maximize your search quota. Perform searches across Google, Tavily, DuckDuckGo, and Brave with standardized results through a single MCP tool. Easily configure and integrate into your AI workflows to enhance search automation.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Performs a web search using multiple providers (google, tavily, duckduckgo, brave).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query."
+          },
+          "provider": {
+            "enum": [
+              "google",
+              "tavily",
+              "duckduckgo",
+              "brave"
+            ],
+            "type": "string",
+            "description": "Optional: Specify a provider directly (google, tavily, duckduckgo, brave). If omitted, uses priority fallback."
+          },
+          "num_results": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Number of results desired (default: 10)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@guptabhishek/multi-search-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "googleCx": {
+            "type": "string",
+            "description": "Google Custom Search Engine ID"
+          },
+          "braveApiKey": {
+            "type": "string",
+            "description": "Brave Search API key"
+          },
+          "googleApiKey": {
+            "type": "string",
+            "description": "Google API key"
+          },
+          "tavilyApiKey": {
+            "type": "string",
+            "description": "Tavily API key"
+          },
+          "searchStrategy": {
+            "type": "string",
+            "default": "random",
+            "description": "Search strategy: priority or random"
+          },
+          "searchProviders": {
+            "type": "string",
+            "description": "Comma-separated list of providers (tavily,google,duckduckgo,brave)"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,318 @@
+{
+  "qualifiedName": "@ttpears/mcp-mysql",
+  "displayName": "MySQL Explorer",
+  "description": "An intelligent MySQL MCP Server with expert data analytics capabilities and comprehensive caching. Goes beyond basic querying to provide in-depth database analysis, relationship mapping, and user behavior insights with high-performance caching system.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ttpears/mcp-mysql",
+  "security": null,
+  "tools": [
+    {
+      "name": "mysql_query",
+      "description": "Execute a read-only SQL query against MySQL databases. Supports SELECT, SHOW, DESCRIBE, and EXPLAIN statements.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Optional host name to connect to (defaults to \"default\" host)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The SQL query to execute (read-only operations only). Use database.table syntax for cross-database queries."
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional array of parameters for prepared statement"
+          },
+          "database": {
+            "type": "string",
+            "description": "Optional database name to connect to for this query"
+          }
+        }
+      }
+    },
+    {
+      "name": "mysql_schema",
+      "description": "Get comprehensive schema information including tables, relationships, constraints, and data patterns.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Optional host name to connect to (defaults to \"default\" host)"
+          },
+          "table": {
+            "type": "string",
+            "description": "Optional table name to get specific table analysis (use database.table for cross-database)"
+          },
+          "database": {
+            "type": "string",
+            "description": "Database name to analyze (if not specified, analyzes current/default database)"
+          },
+          "sample_size": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of sample rows to analyze (max 1000)"
+          },
+          "include_sample_data": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include sample data and value distributions"
+          },
+          "include_relationships": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include foreign key relationships and table connections"
+          }
+        }
+      }
+    },
+    {
+      "name": "mysql_analyze_tables",
+      "description": "Analyze table relationships and suggest optimal query patterns for user behavior analysis.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tables"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Optional host name to connect to (defaults to \"default\" host)"
+          },
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of table names to analyze for relationships"
+          },
+          "analysis_type": {
+            "enum": [
+              "relationships",
+              "user_behavior",
+              "data_flow"
+            ],
+            "type": "string",
+            "default": "relationships",
+            "description": "Type of analysis to perform"
+          }
+        }
+      }
+    },
+    {
+      "name": "mysql_inventory",
+      "description": "Get comprehensive inventory of all configured MySQL hosts and their accessible databases.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Get inventory for specific host only (omit for all hosts)"
+          },
+          "refresh": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force refresh of host inventory by re-scanning all hosts"
+          }
+        }
+      }
+    },
+    {
+      "name": "mysql_cross_host_query",
+      "description": "Execute queries across multiple MySQL hosts and combine results for comprehensive analysis.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "queries"
+        ],
+        "properties": {
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "host",
+                "query"
+              ],
+              "properties": {
+                "host": {
+                  "type": "string",
+                  "description": "Host name to execute query on"
+                },
+                "alias": {
+                  "type": "string",
+                  "description": "Alias for this query result (optional)"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "SQL query to execute"
+                },
+                "database": {
+                  "type": "string",
+                  "description": "Database name (optional)"
+                }
+              }
+            },
+            "description": "Array of queries to execute across different hosts"
+          },
+          "analysis_focus": {
+            "enum": [
+              "performance",
+              "data_consistency",
+              "user_behavior",
+              "business_metrics"
+            ],
+            "type": "string",
+            "default": "data_consistency",
+            "description": "Focus area for cross-host analysis"
+          },
+          "combine_strategy": {
+            "enum": [
+              "separate",
+              "union",
+              "comparison",
+              "correlation"
+            ],
+            "type": "string",
+            "default": "separate",
+            "description": "How to combine results: separate (individual results), union (merge similar data), comparison (side-by-side), correlation (find relationships)"
+          }
+        }
+      }
+    },
+    {
+      "name": "mysql_discover_analytics",
+      "description": "Intelligently discover and analyze database structure with expert data analytics insights. Use summary mode first for large servers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Optional host name to connect to (defaults to \"default\" host)"
+          },
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number for pagination (1-based, default: 1)"
+          },
+          "databases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of databases to analyze (if not specified, discovers all accessible databases)"
+          },
+          "page_size": {
+            "type": "number",
+            "default": 5,
+            "maximum": 10,
+            "minimum": 1,
+            "description": "Number of databases to analyze per page (default: 5, max: 10)"
+          },
+          "focus_area": {
+            "enum": [
+              "user_behavior",
+              "sales_analytics",
+              "engagement",
+              "general"
+            ],
+            "type": "string",
+            "default": "general",
+            "description": "Analytics focus area to guide discovery"
+          },
+          "detail_level": {
+            "enum": [
+              "summary",
+              "detailed",
+              "full"
+            ],
+            "type": "string",
+            "default": "summary",
+            "description": "Level of detail: summary (overview only), detailed (without sample data), full (everything)"
+          },
+          "max_tables_per_db": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of tables to analyze per database (default: 20)"
+          },
+          "sample_data_limit": {
+            "type": "number",
+            "default": 3,
+            "maximum": 10,
+            "minimum": 0,
+            "description": "Maximum sample rows per table (default: 3, max: 10)"
+          },
+          "cross_database_analysis": {
+            "type": "boolean",
+            "default": true,
+            "description": "Analyze relationships across databases"
+          },
+          "include_recommendations": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include expert analytics recommendations and queries"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ttpears/mcp-mysql/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "MYSQL_PASSWORD"
+        ],
+        "properties": {
+          "MYSQL_SSL": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable SSL connection (default host)"
+          },
+          "MYSQL_HOST": {
+            "type": "string",
+            "default": "localhost",
+            "description": "MySQL server hostname (default host)"
+          },
+          "MYSQL_PORT": {
+            "type": "number",
+            "default": 3306,
+            "description": "MySQL server port (default host)"
+          },
+          "MYSQL_USER": {
+            "type": "string",
+            "default": "root",
+            "description": "MySQL username (default host)"
+          },
+          "MYSQL_DATABASE": {
+            "type": "string",
+            "description": "Default database name (optional)"
+          },
+          "MYSQL_PASSWORD": {
+            "type": "string",
+            "description": "MySQL password (required for default host)"
+          },
+          "MCP_MYSQL_CACHE_ENABLED": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable intelligent caching system"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

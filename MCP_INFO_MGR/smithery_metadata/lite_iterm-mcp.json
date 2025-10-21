@@ -1,0 +1,80 @@
+{
+  "qualifiedName": "@lite/iterm-mcp",
+  "displayName": "iTerm MCP",
+  "description": "Access your iTerm session and control terminal commands seamlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/glama.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "write_to_terminal",
+      "description": "Writes text to the active iTerm terminal - often used to run a command in the terminal",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "The command to run or text to write to the terminal"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_terminal_output",
+      "description": "Reads the output from the active iTerm terminal",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "linesOfOutput"
+        ],
+        "properties": {
+          "linesOfOutput": {
+            "type": "number",
+            "description": "The number of lines of output to read."
+          }
+        }
+      }
+    },
+    {
+      "name": "send_control_character",
+      "description": "Sends a control character to the active iTerm terminal (e.g., Control-C)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "letter"
+        ],
+        "properties": {
+          "letter": {
+            "type": "string",
+            "description": "The letter corresponding to the control character (e.g., 'C' for Control-C)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@lite/iterm-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "nodeVersion"
+        ],
+        "properties": {
+          "nodeVersion": {
+            "type": "string",
+            "description": "Ensure Node version 18 or greater is installed."
+          }
+        }
+      }
+    }
+  ]
+}

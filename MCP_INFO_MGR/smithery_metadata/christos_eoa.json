@@ -1,0 +1,206 @@
+{
+  "qualifiedName": "@christos/eoa",
+  "displayName": "Zuplo",
+  "description": "Retrieve insurance profiles on demand to enrich customer workflows. Access up-to-date account details securely and quickly. Simplify profile lookups across your systems.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@christos/eoa",
+  "security": null,
+  "tools": [
+    {
+      "name": "retrieveInsProfile",
+      "description": "Authenticate using headers:\n- AUSER: Username\n- APASSWORD: Password\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "total": {
+                "type": "boolean",
+                "description": "If true, includes total count of results in the response."
+              },
+              "filter": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "vat": {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^\\d{9}$",
+                    "description": "Greek VAT number (ΑΦΜ), exactly 9 digits."
+                  },
+                  "gemi": {
+                    "type": "string",
+                    "description": "GE.MI. (ΓΕ.ΜΗ.) registration number."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Company or agent name; partial matches allowed."
+                  },
+                  "pageno": {
+                    "type": "integer",
+                    "maximum": 9007199254740991,
+                    "minimum": -9007199254740991,
+                    "description": "Page number for pagination."
+                  },
+                  "keetype": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "ΑΣΦΑΛ. ΔΙΑΜΕΣΟΛΑΒΗΤΩΝ [ΔΕΥΤΕΡ. ΔΡΑΣΤΗΡΙΟΤΗΤΑ]",
+                        "ΑΣΦΑΛΙΣΤΙΚΟΣ ΠΡΑΚΤΟΡΑΣ",
+                        "ΕΤ. ΑΣΦΑΛ. ΠΡΑΚΤΟΡΩΝ",
+                        "ΕΤ. ΑΣΦΑΛ. ΣΥΜΒΟΥΛΩΝ",
+                        "ΕΤ. ΜΕΣΙΤΩΝ ΑΣΦΑΛΕΙΩΝ",
+                        "ΕΤ. ΣΥΝΤΟΝΙΣΤΩΝ ΑΣΦΑΛ. ΣΥΜΒΟΥΛΩΝ",
+                        "ΕΤΑΙΡΕΙΑ ΣΥΝΤΟΝΙΣΤΩΝ ΑΣΦΑΛΙΣΤΙΚΩΝ ΠΡΑΚΤΟΡΩΝ",
+                        "ΜΕΣΙΤΗΣ ΑΣΦΑΛΙΣΕΩΝ/ΑΝΤΑΣΦΑΛΙΣΕΩΝ",
+                        "ΣΥΜΒΟΥΛΟΣ",
+                        "ΣΥΝΤΟΝΙΣΤΗΣ ΑΣΦΑΛ. ΠΡΑΚΤΟΡΩΝ"
+                      ]
+                    },
+                    "description": "Insurance intermediary category value(s)."
+                  },
+                  "licenced": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "0",
+                        "1",
+                        "2"
+                      ],
+                      "description": "\"0\": Active, \"1\": Expired, \"2\": No info"
+                    },
+                    "description": "License status."
+                  },
+                  "pagesize": {
+                    "type": "integer",
+                    "maximum": 9007199254740991,
+                    "minimum": -9007199254740991,
+                    "description": "Page size for pagination."
+                  },
+                  "legaltype": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "One of the defined legal form IDs."
+                    },
+                    "description": "Legal form ID(s) of the business. Accepts multiple values."
+                  },
+                  "latitudeTo": {
+                    "type": "number",
+                    "description": "Maximum latitude of the bounding box."
+                  },
+                  "longitudeTo": {
+                    "type": "number",
+                    "description": "Maximum longitude of the bounding box."
+                  },
+                  "latitudeFrom": {
+                    "type": "number",
+                    "description": "Minimum latitude of the bounding box."
+                  },
+                  "mainactivity": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "0",
+                        "1",
+                        "2"
+                      ],
+                      "description": "\"0\": Any, \"1\": Main, \"2\": Secondary"
+                    },
+                    "description": "Whether insurance work is the main activity."
+                  },
+                  "longitudeFrom": {
+                    "type": "number",
+                    "description": "Minimum longitude of the bounding box."
+                  }
+                },
+                "description": "Optional filters combined with logical AND.",
+                "additionalProperties": {}
+              },
+              "ordering": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of sortable field names. Use \"-field\" for descending order."
+              },
+              "responseTypes": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "rt_main": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "profileType",
+                            "latitude",
+                            "longitude",
+                            "userid",
+                            "agency",
+                            "agentName",
+                            "agentPictureBase64",
+                            "servicesJson",
+                            "agencyName",
+                            "agencyLogoBase64",
+                            "geminumber",
+                            "vatnumber",
+                            "gemiTradeName",
+                            "gemiTradeTitle",
+                            "gemiLegalType",
+                            "gemiLegalTypeDes",
+                            "gemiStatus",
+                            "gemiStatusDes",
+                            "gemiIncorporationDate",
+                            "gemiBusinessAddress",
+                            "gemiPhoneNumber",
+                            "gemiOfficer",
+                            "gemiOfficerTitle",
+                            "gemiMainKad",
+                            "gemiMainKadDes",
+                            "aadeIncorporationType",
+                            "aadeIncorporationStatus",
+                            "aadeProfessionalStatus",
+                            "keeeRegistrationClass",
+                            "keeeLicenceNumber",
+                            "keeeLicenceIssuance",
+                            "keeeLicenceExpiration",
+                            "lastUpdate"
+                          ]
+                        },
+                        "description": "Optional list of field names to include; if omitted or empty, all fields are returned."
+                      }
+                    },
+                    "additionalProperties": {}
+                  }
+                },
+                "description": "Only the rt_main response type is supported.",
+                "additionalProperties": {}
+              }
+            },
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@christos/eoa/mcp",
+      "configSchema": {}
+    }
+  ]
+}

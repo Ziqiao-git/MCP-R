@@ -1,0 +1,116 @@
+{
+  "qualifiedName": "paypal",
+  "displayName": "PayPal",
+  "description": "Create and share PayPal invoice links in seconds. View your recent transactions with key details. Streamline payments and keep your cash flow organized.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/paypal.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/paypal",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_invoice",
+      "description": "Creates PayPal Invoice Link",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "business_name",
+          "business_email",
+          "product_name",
+          "amount_value",
+          "amount_currency_code"
+        ],
+        "properties": {
+          "tax": {
+            "type": "string",
+            "default": "0",
+            "description": "Sales Tax Percentage value that has to be applied for the invoice total amount, if user provides 8% set the value as 8"
+          },
+          "discount": {
+            "type": "string",
+            "default": "0",
+            "description": "Discount Percentage value that has to be applied for the invoice total amount, if user provides 8% set the value as 8"
+          },
+          "due_date": {
+            "type": "string",
+            "description": "Due date for the invoice should be in YYYY-MM-DD format only, for example 2018-11-30, if not provided set it for 30 days"
+          },
+          "amount_value": {
+            "type": "number",
+            "description": "Amount for which invoice has to be created",
+            "exclusiveMinimum": 0
+          },
+          "product_name": {
+            "type": "string",
+            "description": "Product Name for which invoice has to be created"
+          },
+          "business_name": {
+            "type": "string",
+            "description": "Company Name of the invoicer for which invoice has to be created, do not use example names, ask user for the specific name."
+          },
+          "business_email": {
+            "type": "string",
+            "description": "Company Email of the invoicer for which invoice has to be created, do not use example emails, ask user for the specific email."
+          },
+          "note_from_seller": {
+            "type": "string",
+            "description": "note to customer from invoicer regarding the purchase or payment"
+          },
+          "amount_currency_code": {
+            "type": "string",
+            "description": "3 character currency code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_transactions",
+      "description": "Fetches details of your PayPal Transactions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Filters the transactions in the response by an end date and time. start_date should be specified in ISO8601 date and time format, example dates: 1996-12-19T16:39:57-08:00, 1985-04-12T23:20:50.52Z, 1990-12-31T23:59:60Z. Seconds are required. Fractional seconds are optional. The maximum supported range is 31 days."
+          },
+          "page_size": {
+            "type": "number",
+            "default": 10
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Filters the transactions in the response by a start date and time. start_date should be specified in ISO8601 date and time format, example dates: 1996-12-19T16:39:57-08:00, 1985-04-12T23:20:50.52Z, 1990-12-31T23:59:60Z. Seconds are required. Fractional seconds are optional."
+          },
+          "transaction_id": {
+            "type": "string",
+            "description": "The ID of the transaction to retrieve."
+          },
+          "transaction_status": {
+            "enum": [
+              "D",
+              "P",
+              "S",
+              "V"
+            ],
+            "type": "string",
+            "description": "The transaction_status accepts the following 4 values: D - represents denied transactions, P - represents pending transactions, S - represents successful transactions, V - represents transactions that were reversed."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/paypal/mcp",
+      "configSchema": {}
+    }
+  ]
+}

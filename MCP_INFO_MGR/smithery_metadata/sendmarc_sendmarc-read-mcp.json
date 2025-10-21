@@ -1,0 +1,688 @@
+{
+  "qualifiedName": "@sendmarc/sendmarc-read-mcp",
+  "displayName": "Sendmarc Read-Only Reporting Server",
+  "description": "Provide secure, read-only access to Sendmarc account and domain reporting data for dashboards and insights. Enable users to list accounts, domains, users, and retrieve detailed domain and DMARC-related settings without risk of modification. Facilitate easy integration with Smithery for scalable and safe data consumption.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/83ed60e6-7bb3-42df-b21a-66204715b208.webp",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@sendmarc/sendmarc-read-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "status",
+      "description": "Returns a status message indicating the server is connected and ready.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_usage_guide",
+      "description": "\n      Returns comprehensive usage guidelines and best practices for using this MCP efficiently.\n      This tool provides workflow recommendations to prevent token overflow and optimize performance.\n      Call this tool first when working with large datasets or statistics endpoints.\n      The guide is maintained by the team in usage-guide.json for easy updates.\n      No parameters required.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_accounts",
+      "description": "\n      List up to 10 Sendmarc accounts accessible with the current API key.\n      Returns an array of up to 10 account objects, each with uuid, name, email, and status fields.\n      Use this to enumerate all accounts you have access to for reporting or selection.\n      Optional parameter:\n        - limit (number): The maximum number of accounts to return (default 10, max 100).\n      Example input: { limit: 5 }\n      Example output:\n      {\n        accounts: [\n          { uuid: \"...\", name: \"Acme Corp\", email: \"admin@acme.com\", status: \"active\" },\n          ...\n        ]\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_domains",
+      "description": "\n      List all domains for a specific account.\n      Returns an array of domain objects, each with uuid, domain_name, and status fields.\n      Use this to enumerate all domains under an account for reporting or selection.\n      Parameters:\n        - accountUuid (string): The UUID of the account to list domains for.\n      Example input: { accountUuid: \"...\" }\n      Example output:\n      [\n        { uuid: \"...\", domain_name: \"example.com\", status: \"active\" },\n        ...\n      ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid"
+        ],
+        "properties": {
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account to list domains for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_account",
+      "description": "\n      Get details for a specific Sendmarc account.\n      Returns an object with an 'account' key containing the account object (uuid, name, email, status, and other metadata fields).\n      Use this to audit or report on a particular account's configuration and status.\n      Parameters:\n        - accountUuid (string): The UUID of the account to fetch.\n      Example input: { accountUuid: \"...\" }\n      Example output:\n      {\n        \"account\": {\n          \"uuid\": \"...\",\n          \"name\": \"Acme Corp\",\n          \"email\": \"admin@acme.com\",\n          \"status\": \"active\"\n          // ... other fields ...\n        }\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid"
+        ],
+        "properties": {
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_users",
+      "description": "\n      List all users in a specific Sendmarc account.\n      Returns an array of user objects, each with uuid, name, email, and roles.\n      Use this to enumerate all users under an account for reporting or access review.\n      Parameters:\n        - accountUuid (string): The UUID of the account to list users for.\n      Example input: { accountUuid: \"...\" }\n      Example output:\n      [\n        { uuid: \"...\", name: \"Jane Doe\", email: \"jane@example.com\", roles: [ ... ] },\n        ...\n      ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid"
+        ],
+        "properties": {
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account to list users for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user",
+      "description": "\n      Get details for a specific user in a Sendmarc account.\n      Returns a user object with uuid, name, email, roles, and other metadata fields.\n      Use this to audit or report on a particular user's access and configuration.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - userUuid (string): The UUID of the user.\n      Example input: { accountUuid: \"...\", userUuid: \"...\" }\n      Example output:\n      {\n        uuid: \"...\",\n        name: \"Jane Doe\",\n        email: \"jane@example.com\",\n        roles: [ ... ],\n        ...\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "userUuid"
+        ],
+        "properties": {
+          "userUuid": {
+            "type": "string",
+            "description": "The UUID of the user"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_dmarc_settings",
+      "description": "\n      Get DMARC settings for a specific domain in a Sendmarc account.\n      Returns a DMARC settings object with policy, subdomain policy, reporting addresses, and alignment settings.\n      Use this to audit or report on DMARC configuration for compliance.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\" }\n      Example output:\n      {\n        policy: \"reject\",\n        subdomain_policy: \"none\",\n        aggregate_report_recipient_emails: [\"admin@example.com\"],\n        ...\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_spf_settings",
+      "description": "\n      Get SPF settings for a specific domain in a Sendmarc account.\n      Returns an SPF settings object with directives, modifiers, and optimization details.\n      Use this to audit or report on SPF configuration for compliance.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\" }\n      Example output:\n      {\n        directives: [ ... ],\n        modifiers: [ ... ],\n        all_mechanism_qualifier: \"~\",\n        ...\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_dkim_keys",
+      "description": "\n      Get all DKIM public keys for a specific domain in a Sendmarc account.\n      Returns an array of DKIM public key objects, each with uuid, selector, value, and metadata fields.\n      Use this to audit or report on DKIM key configuration for a domain.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\" }\n      Example output:\n      [\n        { uuid: \"...\", selector: \"default\", value: \"...\", ... },\n        ...\n      ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_dkim_key",
+      "description": "\n      Get a specific DKIM public key for a domain in a Sendmarc account.\n      Returns a DKIM public key object with selector, value, and metadata fields.\n      Use this to audit or report on a particular DKIM key for a domain.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - dkimKeyUuid (string): The UUID of the DKIM public key.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\", dkimKeyUuid: \"...\" }\n      Example output:\n      { uuid: \"...\", selector: \"default\", value: \"...\", ... }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid",
+          "dkimKeyUuid"
+        ],
+        "properties": {
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          },
+          "dkimKeyUuid": {
+            "type": "string",
+            "description": "The UUID of the DKIM public key"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_bimi_selectors",
+      "description": "\n      Get all BIMI selectors for a specific domain in a Sendmarc account.\n      Returns an array of BIMI selector objects, each with uuid, selector, value, and metadata fields.\n      Use this to audit or report on BIMI configuration for a domain.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\" }\n      Example output:\n      [\n        { uuid: \"...\", selector: \"default\", value: \"...\", ... },\n        ...\n      ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_bimi_selector",
+      "description": "\n      Get a specific BIMI selector for a domain in a Sendmarc account.\n      Returns a BIMI selector object with selector, value, and metadata fields.\n      Use this to audit or report on a particular BIMI selector for a domain.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - bimiSelectorUuid (string): The UUID of the BIMI selector.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\", bimiSelectorUuid: \"...\" }\n      Example output:\n      { uuid: \"...\", selector: \"default\", value: \"...\", ... }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid",
+          "bimiSelectorUuid"
+        ],
+        "properties": {
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          },
+          "bimiSelectorUuid": {
+            "type": "string",
+            "description": "The UUID of the BIMI selector"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sts_settings",
+      "description": "\n      Get TLS & STS settings for a specific domain in a Sendmarc account.\n      Returns an STS settings object with enabled, managed, level, mx_servers, and policy fields.\n      Use this to audit or report on TLS/STS configuration for compliance.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\" }\n      Example output:\n      {\n        enabled: true,\n        managed: false,\n        level: \"testing\",\n        mx_servers: [\"example.com\"],\n        policy: \"...\",\n        ...\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_ip_statistics",
+      "description": "\n      Get IP addresses statistics for a specific domain in a Sendmarc account with pagination and filtering.\n      Returns an array of statistics objects for each IP address, including threat levels, incidents, and categories.\n      Use this to analyze DMARC/IP activity for a domain over a date range.\n      IMPORTANT: Call 'get_usage_guide' first for workflow best practices. This tool supports pagination to prevent token overflow. Use limit and offset for large datasets.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - from (string, optional): Start date (YYYY-MM-DD).\n        - to (string, optional): End date (YYYY-MM-DD).\n        - category (string, optional): Filter by category ('unknown', 'uncategorised', 'authorised compliant', 'authorised non-compliant', 'forwarder', 'unauthorised', 'suspicious').\n        - threatLevel (string, optional): Filter by threat level ('low', 'medium', 'high').\n        - isBlacklisted (boolean, optional): Filter by blacklist status (true/false).\n        - limit (number, optional): Maximum number of records to return (default 20, max 100).\n        - offset (number, optional): Starting position for pagination (default 0).\n        - sortBy (string, optional): Field to sort by (e.g., 'total_incidents', 'threat_level').\n        - sortOrder (string, optional): Sort order ('asc' or 'desc', default 'desc').\n      Example input: { accountUuid: \"...\", domainUuid: \"...\", limit: 20, sortBy: \"total_incidents\" }\n      Example output:\n      [ { source_ip: \"1.2.3.4\", total_incidents: 10, threat_level: \"high\", ... }, ... ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "from": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum records to return"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Starting position for pagination"
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Field to sort by"
+          },
+          "category": {
+            "enum": [
+              "unknown",
+              "uncategorised",
+              "authorised compliant",
+              "authorised non-compliant",
+              "forwarder",
+              "unauthorised",
+              "suspicious"
+            ],
+            "type": "string",
+            "description": "Category filter"
+          },
+          "sortOrder": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "desc",
+            "description": "Sort order"
+          },
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          },
+          "threatLevel": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "type": "string",
+            "description": "Threat level filter"
+          },
+          "isBlacklisted": {
+            "type": "boolean",
+            "description": "Filter by blacklist status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_ip_statistics_summary",
+      "description": "\n      Get a condensed summary of IP addresses statistics for a specific domain in a Sendmarc account.\n      Returns a summary object with total counts, top sources, and threat analysis.\n      Use this when you need an overview without detailed data, preventing token overflow.\n      This is perfect for getting quick insights before drilling down with get_ip_statistics.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - from (string, optional): Start date (YYYY-MM-DD).\n        - to (string, optional): End date (YYYY-MM-DD).\n        - category (string, optional): Filter by category ('unknown', 'uncategorised', 'authorised compliant', 'authorised non-compliant', 'forwarder', 'unauthorised', 'suspicious').\n        - threatLevel (string, optional): Filter by threat level ('low', 'medium', 'high').\n        - isBlacklisted (boolean, optional): Filter by blacklist status (true/false).\n        - topCount (number, optional): Number of top sources to include (default 10, max 20).\n      Example input: { accountUuid: \"...\", domainUuid: \"...\", topCount: 5 }\n      Example output:\n      {\n        total_ips: 41,\n        total_incidents: 2156,\n        top_sources: [{ source_ip: \"1.2.3.4\", total_incidents: 100, ... }],\n        threat_summary: { by_threat_level: { high: 5, medium: 10, low: 26 }, by_category: { ... } }\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "from": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          "category": {
+            "enum": [
+              "unknown",
+              "uncategorised",
+              "authorised compliant",
+              "authorised non-compliant",
+              "forwarder",
+              "unauthorised",
+              "suspicious"
+            ],
+            "type": "string",
+            "description": "Category filter"
+          },
+          "topCount": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Number of top sources to include"
+          },
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          },
+          "threatLevel": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "type": "string",
+            "description": "Threat level filter"
+          },
+          "isBlacklisted": {
+            "type": "boolean",
+            "description": "Filter by blacklist status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_domain_overview",
+      "description": "\n      🎯 PRIMARY TOOL FOR DOMAIN SECURITY ANALYSIS 🎯\n      \n      Get comprehensive data for a domain including DMARC settings, SPF settings, and IP statistics.\n      \n      ⚠️  IMPORTANT: Use THIS tool (not 'get_domain') for security analysis, threat assessment, and SE workflows.\n      \n      This tool efficiently gathers ALL the key data needed for domain analysis in a single call:\n      - Domain metadata (UUID, name, status, DKIM keys, etc.)\n      - DMARC configuration and policy settings\n      - SPF configuration and DNS lookup analysis  \n      - Top IP sender statistics with threat and authentication data\n      \n      AUTOMATIC DATE HANDLING: If no date range is specified, automatically pulls last month's data.\n      If no data exists in the last month, falls back to all available data.\n      \n      The agent can then apply business logic, risk assessment, and generate insights based on the raw data.\n      Perfect for presales analysis, security assessments, and domain health checks.\n      \n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - from (string, optional): Start date for IP statistics (YYYY-MM-DD).\n        - to (string, optional): End date for IP statistics (YYYY-MM-DD).\n        - limitIpSources (number, optional): Number of top IP sources to include (default 20, max 100).\n      \n      Example input: { accountUuid: \"...\", domainUuid: \"...\", from: \"2024-01-01\", to: \"2024-01-31\" }\n      \n      Returns raw API data that agents can analyze using the Sendmarc SE methodology.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "End date for IP statistics (YYYY-MM-DD)"
+          },
+          "from": {
+            "type": "string",
+            "description": "Start date for IP statistics (YYYY-MM-DD)"
+          },
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          },
+          "limitIpSources": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of top IP sources to include"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_senders_statistics",
+      "description": "\n      Get timeline statistics for all senders on a domain in a Sendmarc account with pagination.\n      Returns an array of sender statistics objects, each with incidents, threat levels, and timeline data.\n      Use this to analyze sender activity and compliance for a domain over a date range.\n      IMPORTANT: Call 'get_usage_guide' first for workflow best practices. This tool supports pagination to prevent token overflow for large datasets.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - from (string, optional): Start date (YYYY-MM-DD).\n        - to (string, optional): End date (YYYY-MM-DD).\n        - category (string, optional): Filter by category.\n        - limit (number, optional): Maximum number of records to return (default 20, max 50).\n        - offset (number, optional): Starting position for pagination (default 0).\n      Example input: { accountUuid: \"...\", domainUuid: \"...\", limit: 15 }\n      Example output:\n      [ { uuid: \"...\", organisation: \"...\", timeline: [ ... ], ... }, ... ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "from": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum records to return"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Starting position for pagination"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category filter"
+          },
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sender_statistics",
+      "description": "\n      Get timeline statistics for a specific sender on a domain in a Sendmarc account.\n      Returns a sender statistics object with incidents, threat levels, and timeline data.\n      Use this to analyze a particular sender's activity and compliance over a date range.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - sender (string): The UUID of the sender.\n        - from (string, optional): Start date (YYYY-MM-DD).\n        - to (string, optional): End date (YYYY-MM-DD).\n        - category (string, optional): Filter by category.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\", sender: \"...\", from: \"2024-01-01\", to: \"2024-01-31\" }\n      Example output:\n      { uuid: \"...\", organisation: \"...\", timeline: [ ... ], ... }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid",
+          "sender"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "from": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          "sender": {
+            "type": "string",
+            "description": "The UUID of the sender"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category filter"
+          },
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_aggregate_report_records",
+      "description": "\n      Get aggregate report records for a specific IP address (source) for a domain in a Sendmarc account.\n      Returns an array of aggregate report record objects for the IP address.\n      Use this to analyze DMARC aggregate report data for a source IP over a date range.\n      Parameters:\n        - accountUuid (string): The UUID of the account.\n        - domainUuid (string): The UUID of the domain.\n        - source (string): The UUID of the IP address (source).\n        - from (string, optional): Start date (YYYY-MM-DD).\n        - to (string, optional): End date (YYYY-MM-DD).\n        - category (string, optional): Filter by category.\n      Example input: { accountUuid: \"...\", domainUuid: \"...\", source: \"...\", from: \"2024-01-01\", to: \"2024-01-31\" }\n      Example output:\n      [ { rid: 123, organisation: \"...\", count: 10, ... }, ... ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accountUuid",
+          "domainUuid",
+          "source"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "from": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          "source": {
+            "type": "string",
+            "description": "The UUID of the IP address (source)"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category filter"
+          },
+          "domainUuid": {
+            "type": "string",
+            "description": "The UUID of the domain"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "The UUID of the account"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user_identifiers",
+      "description": "\n      Get the current authenticated user identifiers (user UUID, account UUID, partner UUID).\n      Returns an object with user_uuid, account_uuid, and partner_uuid fields.\n      Use this to determine the identity and context of the current API key.\n      No parameters required.\n      Example output:\n      { user_uuid: \"...\", account_uuid: \"...\", partner_uuid: \"...\" }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_domains",
+      "description": "\n      Search for domains by name, with optional exact match and additional fields.\n      This tool allows you to search for domains across all accounts using a query string.\n      You can specify whether the search should be exact, and request additional fields (appends) or related objects (relationships) in the results.\n      Parameters:\n        - query (string, required): The domain name or partial name to search for.\n        - exact (boolean, optional): If true, only exact matches will be returned.\n        - appends (array of string, optional): Additional fields to include, such as 'is_dmarc_setup_verified' or 'package_name'.\n        - relationships (array of string, optional): Related objects to include, such as 'dmarcSettings', 'spfSettings', 'account', or 'account.partner'.\n      Example input: { query: \"example.com\", exact: true, appends: [\"is_dmarc_setup_verified\"], relationships: [\"dmarcSettings\"] }\n      Example output:\n      [\n        { uuid: \"...\", domain_name: \"example.com\", is_dmarc_setup_verified: true, dmarc_settings: { ... }, ... },\n        ...\n      ]\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "exact": {
+            "type": "boolean",
+            "description": "If true, only exact matches will be returned."
+          },
+          "query": {
+            "type": "string",
+            "description": "The domain name or partial name to search for."
+          },
+          "appends": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "is_dmarc_setup_verified",
+                "package_name"
+              ],
+              "type": "string",
+              "description": "Additional field to include"
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "dmarcSettings",
+                "spfSettings",
+                "account",
+                "account.partner"
+              ],
+              "type": "string",
+              "description": "Related object to include"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@sendmarc/sendmarc-read-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "SENDMARC_API_KEY"
+        ],
+        "properties": {
+          "SENDMARC_API_KEY": {
+            "type": "string",
+            "description": "Your Sendmarc API key (required)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "qualifiedName": "@parallel/tasks",
+  "displayName": "Parallel Tasks",
+  "description": "Execute Parallel.ai Tasks in Parallel for extremely powerful data enrichment from the web",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/7957531a-8c72-4755-921f-5330ceefbf5a.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@parallel/tasks",
+  "security": null,
+  "tools": [
+    {
+      "name": "createMultitask",
+      "title": "Create Multitask Group",
+      "description": "Creates a new task group for batch processing. Responds with a URL in format https://task-mcp.parallel.ai/{taskGroupId} that can immediately be shared with the user for viewing, results will be streamed in here.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inputs",
+          "output_type"
+        ],
+        "properties": {
+          "inputs": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri",
+                "description": "URL that returns a JSON array of input objects"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Array of input objects"
+              }
+            ],
+            "example": [
+              {
+                "website": "https://apple.com",
+                "company_name": "Apple"
+              },
+              {
+                "website": "https://microsoft.com",
+                "company_name": "Microsoft"
+              }
+            ],
+            "description": "Either a JSON array of input objects, or a URL that returns a JSON array of input objects"
+          },
+          "processor": {
+            "enum": [
+              "lite",
+              "base",
+              "core",
+              "pro",
+              "ultra"
+            ],
+            "type": "string",
+            "description": "Parallel.ai processor to use. If not specified, will be auto-suggested based on task requirements"
+          },
+          "output_type": {
+            "enum": [
+              "text",
+              "json"
+            ],
+            "type": "string",
+            "description": "Type of output expected from tasks"
+          },
+          "webhook_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/webhook",
+            "description": "URL to POST to when all tasks are completed"
+          },
+          "output_schema": {
+            "type": "object",
+            "example": {
+              "type": "object",
+              "properties": {
+                "ceo": {
+                  "type": "string"
+                },
+                "industry": {
+                  "type": "string"
+                },
+                "company_name": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "JSON schema for structured output (only used when output_type is 'json'). Please note that things like minimumItems or format aren't supported"
+          },
+          "output_description": {
+            "type": "string",
+            "example": "Extract company information including CEO, industry, and revenue",
+            "description": "Description of the desired output format or content"
+          }
+        }
+      }
+    },
+    {
+      "name": "getTaskGroupResultsMarkdown",
+      "title": "Get Task Group Results as Markdown",
+      "description": "Get Task Group Results as Markdown",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "taskGroupId"
+        ],
+        "properties": {
+          "taskGroupId": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@parallel/tasks/mcp",
+      "configSchema": {}
+    }
+  ]
+}

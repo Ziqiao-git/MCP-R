@@ -1,0 +1,77 @@
+{
+  "qualifiedName": "@andylee20014/mcp-replicate-flux",
+  "displayName": "Replicate FLUX Image Generator",
+  "description": "Generate images using advanced AI models and store them securely in the cloud. Easily create custom prompts and retrieve accessible image URLs for your projects.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/mcp.freeaigen.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "generate-image",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prompt",
+          "filename"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@andylee20014/mcp-replicate-flux/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "replicateApiToken",
+          "storageEndpoint",
+          "storageAccessKey",
+          "storageSecretKey",
+          "storageBucket",
+          "storageDomain"
+        ],
+        "properties": {
+          "storageBucket": {
+            "type": "string",
+            "description": "Bucket name for storing the generated images"
+          },
+          "storageDomain": {
+            "type": "string",
+            "description": "Domain for accessing images from the storage"
+          },
+          "storageEndpoint": {
+            "type": "string",
+            "description": "Endpoint URL for the S3 compatible storage (e.g., Cloudflare R2)"
+          },
+          "storageAccessKey": {
+            "type": "string",
+            "description": "Access key for S3 storage"
+          },
+          "storageSecretKey": {
+            "type": "string",
+            "description": "Secret key for S3 storage"
+          },
+          "replicateApiToken": {
+            "type": "string",
+            "description": "Token to authenticate with Replicate API"
+          }
+        }
+      }
+    }
+  ]
+}

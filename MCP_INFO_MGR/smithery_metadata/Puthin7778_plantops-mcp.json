@@ -1,0 +1,131 @@
+{
+  "qualifiedName": "@Puthin7778/plantops-mcp",
+  "displayName": "Plantops GraphQL Explorer",
+  "description": "Explore and query the Plantops GraphQL API with schema introspection, field discovery, and mutation browsing. Inspect complex types and arguments to craft accurate requests. Run queries directly to validate responses and speed up integration.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Puthin7778/plantops-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "listFields",
+      "description": "List all top-level GraphQL query fields with descriptions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "listMutations",
+      "description": "List all top-level GraphQL mutation fields with descriptions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "describeField",
+      "description": "Return the argument schema and return type for a top-level field. IMPORTANT: This does not show sub-fields of complex types. To discover the fields of a complex return type (e.g., 'Users'), use the 'introspectType' tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fieldName"
+        ],
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "description": "Name of the top-level field to describe."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "describeComplexField",
+      "description": "Describes a top-level query or mutation field, its arguments, and its immediate sub-fields if it returns a complex object.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fieldName"
+        ],
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "description": "Name of the top-level field to describe."
+          },
+          "operationType": {
+            "enum": [
+              "query",
+              "mutation"
+            ],
+            "type": "string",
+            "default": "query",
+            "description": "The type of operation: 'query' or 'mutation'. Defaults to 'query'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "introspectType",
+      "description": "Discover the available fields for a complex GraphQL object type. Use this when a type name is returned from another tool (like 'describeField') and you need to know its internal structure.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "typeName"
+        ],
+        "properties": {
+          "typeName": {
+            "type": "string",
+            "description": "The name of the complex type to inspect (e.g., 'Users', 'UsersResult')."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "executeQuery",
+      "description": "Execute a GraphQL query string (and optional variables) and return JSON.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "GraphQL query string."
+          },
+          "variables": {
+            "type": "object",
+            "description": "Optional GraphQL variables object.",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Puthin7778/plantops-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

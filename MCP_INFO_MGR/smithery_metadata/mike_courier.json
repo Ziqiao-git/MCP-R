@@ -1,0 +1,949 @@
+{
+  "qualifiedName": "@mike/courier",
+  "displayName": "Courier MCP",
+  "description": "Send and orchestrate cross-channel notifications with templates or custom messages. Manage audiences, lists, brands, user profiles, subscriptions, and push tokens, and trigger automations. Track delivery, statuses, and rendered message content.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/6ee3fc1e-7c7f-409d-87cb-c3369f3349e4.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@mike/courier",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_audience",
+      "description": "Get an audience by its ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "audience_id"
+        ],
+        "properties": {
+          "audience_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_audience_members",
+      "description": "List members of an audience by its ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "audience_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "audience_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_audiences",
+      "description": "List all audiences associated with the authorization token",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "cursor": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_jwt_for_user",
+      "description": "Generate a JWT authentication token for a user.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "write:user-tokens",
+              "inbox:read:messages",
+              "inbox:write:events",
+              "read:preferences",
+              "write:preferences",
+              "read:brands"
+            ]
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "string",
+            "default": "1h"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "invoke_automation_template",
+      "description": "Invoke an automation run from an automation template.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "template_id"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "brand": {
+            "type": "string"
+          },
+          "profile": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "template": {
+            "type": "string"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "template_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_brand",
+      "description": "Create a new brand.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "inapp": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "colors": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            },
+            "additionalProperties": false
+          },
+          "snippets": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_brand",
+      "description": "Fetch a specific brand by brand ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "brand_id"
+        ],
+        "properties": {
+          "brand_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_brands",
+      "description": "Get the list of brands.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "cursor": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "courier_installation_guide",
+      "description": "Courier SDK and Platform Installation Guide",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "platform"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The unique identifier for the user."
+          },
+          "platform": {
+            "enum": [
+              "nodejs",
+              "python",
+              "react",
+              "ios",
+              "android",
+              "flutter",
+              "react native"
+            ],
+            "type": "string",
+            "description": "The platform you are using to integrate Courier. Supported values: nodejs, python, react, ios, android, flutter, react native."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_lists",
+      "description": "Returns all of the lists, with the ability to filter based on a pattern.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_list",
+      "description": "Returns a list based on the list ID provided.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list_id"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "max_retries": {
+            "type": "number"
+          },
+          "timeout_in_seconds": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_list_subscribers",
+      "description": "Get the list's subscriptions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "list_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_list",
+      "description": "Upsert a list by list ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list_id",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "list_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "subscribe_user_to_list",
+      "description": "Subscribe a user to an existing list (note: if the List does not exist, it will be automatically created).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list_id",
+          "user_id"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "notifications": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "unsubscribe_user_from_list",
+      "description": "Delete a subscription to a list by list ID and user ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list_id",
+          "user_id"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_messages",
+      "description": "Fetch the statuses of messages you've previously sent.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "tag": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "list": {
+            "type": "string"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "string"
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "messageId": {
+            "type": "string"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "notification": {
+            "type": "string"
+          },
+          "enqueued_after": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_message",
+      "description": "Fetch the status of a message you've previously sent.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message_id"
+        ],
+        "properties": {
+          "message_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_message_content",
+      "description": "Fetch the rendered content of a message you've previously sent.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message_id"
+        ],
+        "properties": {
+          "message_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_notifications",
+      "description": "List notifications. Optionally filter by cursor, limit, or draft status.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "draft": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "max_retries": {
+            "type": "number"
+          },
+          "timeout_in_seconds": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_notification_content",
+      "description": "Get the content of a notification by its ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "notification_id"
+        ],
+        "properties": {
+          "max_retries": {
+            "type": "number"
+          },
+          "notification_id": {
+            "type": "string"
+          },
+          "timeout_in_seconds": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_notification_draft_content",
+      "description": "Get the draft content of a notification by its ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "notification_id"
+        ],
+        "properties": {
+          "max_retries": {
+            "type": "number"
+          },
+          "notification_id": {
+            "type": "string"
+          },
+          "timeout_in_seconds": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user_profile_by_id",
+      "description": "Get a user profile by their ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_or_merge_user",
+      "description": "Create or merge a user profile by user ID. Merges supplied values with an existing profile or creates a new one.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "profile": {
+            "type": "object",
+            "default": {},
+            "additionalProperties": {}
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user_list_subscriptions",
+      "description": "Get the list subscriptions for a user by their ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "request": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number"
+              },
+              "cursor": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "subscribe_user_to_lists",
+      "description": "Subscribe a user to one or more lists. If the list does not exist, it will be created.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id",
+          "lists"
+        ],
+        "properties": {
+          "lists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "listId"
+              ],
+              "properties": {
+                "listId": {
+                  "type": "string"
+                },
+                "preferences": {}
+              },
+              "additionalProperties": false
+            }
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_user_list_subscriptions",
+      "description": "Delete all list subscriptions for a user by their ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_message",
+      "description": "Send a message to a user with Courier using title and body (no template)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id",
+          "title",
+          "body",
+          "channels"
+        ],
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "method": {
+            "enum": [
+              "all",
+              "single"
+            ],
+            "type": "string",
+            "default": "all"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_message_template",
+      "description": "Send a message to a user with Courier using a template",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id",
+          "template"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_message_to_list",
+      "description": "Send a message to a list with Courier using title and body (no template)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list_id",
+          "title",
+          "body",
+          "channels"
+        ],
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "method": {
+            "enum": [
+              "all",
+              "single"
+            ],
+            "type": "string",
+            "default": "all"
+          },
+          "list_id": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_message_to_list_template",
+      "description": "Send a message to a list with Courier using a template",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "list_id",
+          "template",
+          "channels"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "method": {
+            "enum": [
+              "all",
+              "single"
+            ],
+            "type": "string",
+            "default": "all"
+          },
+          "list_id": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "template": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_user_push_tokens",
+      "description": "List all push tokens for a given user.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user_push_token",
+      "description": "Get a specific push token for a given user.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id",
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "enum": [
+              "firebase-fcm",
+              "apn",
+              "expo",
+              "onesignal"
+            ],
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_or_replace_user_push_token",
+      "description": "Create or replace a specific push token for a given user.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id",
+          "token",
+          "provider_key"
+        ],
+        "properties": {
+          "body": {},
+          "token": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "provider_key": {
+            "enum": [
+              "firebase-fcm",
+              "apn",
+              "expo",
+              "onesignal"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@mike/courier/mcp",
+      "configSchema": {}
+    }
+  ]
+}

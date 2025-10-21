@@ -1,0 +1,98 @@
+{
+  "qualifiedName": "@markchiang/agent-press",
+  "displayName": "agent-press",
+  "description": "GeneOnline Agent Press MCP Server",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/701c4d52-3518-40cc-8ffe-40122b30c3e7.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@markchiang/agent-press",
+  "security": null,
+  "tools": [
+    {
+      "name": "news_company",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Fetch recent company headlines for a given stock symbol.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 25
+          },
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date",
+            "default": null
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider",
+            "default": null
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@markchiang/agent-press/mcp",
+      "configSchema": {}
+    }
+  ]
+}

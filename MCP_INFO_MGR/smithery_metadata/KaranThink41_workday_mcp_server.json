@@ -1,0 +1,208 @@
+{
+  "qualifiedName": "@KaranThink41/workday_mcp_server",
+  "displayName": "Workday MCP Server",
+  "description": "Enable seamless integration of Workday data and services with language models through a standardized protocol. Facilitate dynamic access to Workday resources, tools, and prompts to enhance automation and contextual understanding. Streamline workflows by bridging Workday's enterprise capabilities with AI-driven applications.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "workday_get_employees",
+      "description": "Get a list of employees from Workday.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number (optional)"
+          },
+          "page_size": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of employees per page (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "workday_get_eligible_leave_balance",
+      "description": "Get the eligible absence types and leave balance for an employee from Workday.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "worker_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum number of absence types to return"
+          },
+          "worker_id": {
+            "type": "string",
+            "description": "The Workday worker ID of the employee (e.g., cc19e2bfeac21006b0b576e5d0840000)"
+          },
+          "effective_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$",
+            "description": "Effective date to check leave balance for (ISO format)"
+          }
+        }
+      }
+    },
+    {
+      "name": "workday_submit_leave_request",
+      "description": "Submit a time off request for an employee in Workday.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "worker_id",
+          "days"
+        ],
+        "properties": {
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "date",
+                "timeOffType"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Leave request ID"
+                },
+                "end": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[.\\d{3}]*Z$",
+                  "description": "End date and time of the leave (ISO format)"
+                },
+                "date": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[.\\d{3}]*Z$",
+                  "description": "Date of the leave request (ISO format)"
+                },
+                "start": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[.\\d{3}]*Z$",
+                  "description": "Start date and time of the leave (ISO format)"
+                },
+                "reason": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Reason ID for the leave request"
+                    }
+                  }
+                },
+                "comment": {
+                  "type": "string",
+                  "description": "Optional comment for the leave request"
+                },
+                "position": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Position ID"
+                    },
+                    "descriptor": {
+                      "type": "string",
+                      "description": "Position description"
+                    }
+                  }
+                },
+                "descriptor": {
+                  "type": "string",
+                  "description": "Leave request description"
+                },
+                "timeOffType": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Time off type ID"
+                    },
+                    "descriptor": {
+                      "type": "string",
+                      "description": "Time off type description"
+                    }
+                  }
+                },
+                "dailyQuantity": {
+                  "type": "string",
+                  "description": "The amount of leave requested for the day"
+                }
+              }
+            },
+            "description": "Array of leave request days"
+          },
+          "worker_id": {
+            "type": "string",
+            "description": "The Workday worker ID of the employee (e.g., cc19e2bfeac21006b1600d7ade6a0000)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@KaranThink41/workday_mcp_server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "workdayClientId",
+          "workdayClientSecret",
+          "workdayRefreshToken",
+          "workdayTenant",
+          "workdayUrl",
+          "workdayAcessToken"
+        ],
+        "properties": {
+          "workdayUrl": {
+            "type": "string",
+            "description": "URL for your Workday API"
+          },
+          "workdayTenant": {
+            "type": "string",
+            "description": "Tenant ID for your Workday application"
+          },
+          "workdayClientId": {
+            "type": "string",
+            "description": "Client ID for your Workday application"
+          },
+          "workdayAcessToken": {
+            "type": "string",
+            "description": "Access Token for your Workday API"
+          },
+          "workdayClientSecret": {
+            "type": "string",
+            "description": "Client Secret for your Workday application"
+          },
+          "workdayRefreshToken": {
+            "type": "string",
+            "description": "Refresh Token for your Workday application"
+          }
+        }
+      }
+    }
+  ]
+}

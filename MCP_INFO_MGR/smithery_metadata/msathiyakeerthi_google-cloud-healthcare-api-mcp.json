@@ -1,0 +1,490 @@
+{
+  "qualifiedName": "@msathiyakeerthi/google-cloud-healthcare-api-mcp",
+  "displayName": "Google Cloud Healthcare API Server",
+  "description": "Provide healthcare data access and querying capabilities by integrating with Google Cloud Healthcare FHIR APIs and public medical research databases. Enable seamless retrieval of patient records, clinical data, and research articles through a secure and authenticated MCP interface. Enhance healthcare applications with real-time clinical insights and research information.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/cloud.google.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "find_patient",
+      "description": "Search for a patient by demographics",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "lastName"
+        ],
+        "properties": {
+          "gender": {
+            "enum": [
+              "male",
+              "female",
+              "other",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "description": "YYYY-MM-DD format"
+          },
+          "firstName": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_patient_observations",
+      "description": "Get observations (vitals, labs) for a patient",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "LOINC or SNOMED code"
+          },
+          "dateTo": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "status": {
+            "enum": [
+              "registered",
+              "preliminary",
+              "final",
+              "amended",
+              "corrected",
+              "cancelled"
+            ],
+            "type": "string"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_patient_conditions",
+      "description": "Get medical conditions/diagnoses for a patient",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "active",
+              "inactive",
+              "resolved"
+            ],
+            "type": "string"
+          },
+          "onsetDate": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_patient_medications",
+      "description": "Get medication orders for a patient",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "active",
+              "completed",
+              "stopped",
+              "on-hold"
+            ],
+            "type": "string"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_patient_encounters",
+      "description": "Get healthcare encounters/visits for a patient",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "dateTo": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "arrived",
+              "in-progress",
+              "finished",
+              "cancelled"
+            ],
+            "type": "string"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_patient_allergies",
+      "description": "Get allergies and intolerances for a patient",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "allergy",
+              "intolerance"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "inactive",
+              "resolved"
+            ],
+            "type": "string"
+          },
+          "category": {
+            "enum": [
+              "food",
+              "medication",
+              "environment",
+              "biologic"
+            ],
+            "type": "string"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_patient_procedures",
+      "description": "Get procedures performed on a patient",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "dateTo": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "status": {
+            "enum": [
+              "preparation",
+              "in-progress",
+              "completed",
+              "entered-in-error"
+            ],
+            "type": "string"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_patient_careplans",
+      "description": "Get care plans for a patient",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "dateTo": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "active",
+              "suspended",
+              "completed",
+              "cancelled"
+            ],
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_vital_signs",
+      "description": "Get patient's vital signs history",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "patientId": {
+            "type": "string"
+          },
+          "timeframe": {
+            "type": "string",
+            "description": "e.g., 3m, 6m, 1y, all"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_lab_results",
+      "description": "Get patient's lab results",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "e.g., CBC, METABOLIC, LIPIDS, ALL"
+          },
+          "patientId": {
+            "type": "string"
+          },
+          "timeframe": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_medications_history",
+      "description": "Get patient's medication history including changes",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "patientId": {
+            "type": "string"
+          },
+          "includeDiscontinued": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_appointments",
+      "description": "Get patient's Appointments",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patientId"
+        ],
+        "properties": {
+          "dateTo": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "patientId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "search-pubmed",
+      "description": "Search PubMed for medical literature",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "maxResults": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    {
+      "name": "search-trials",
+      "description": "Search ClinicalTrials.gov for relevant studies",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "condition"
+        ],
+        "properties": {
+          "location": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-drug-info",
+      "description": "Get Drug details by a generic name",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "genericName"
+        ],
+        "properties": {
+          "genericName": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@msathiyakeerthi/google-cloud-healthcare-api-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "FIREBASE_API_KEY",
+          "FIREBASE_AUTH_DOMAIN",
+          "FIREBASE_PROJECT_ID",
+          "FIREBASE_STORAGE_BUCKET",
+          "FIREBASE_MESSAGING_SENDER_ID",
+          "FIREBASE_APP_ID",
+          "FIREBASE_MEASUREMENT_ID",
+          "FIREBASE_AUTH_CALLBACK_PORT",
+          "FHIR_BASE_URL",
+          "PUBMED_API_KEY",
+          "CLINICAL_TRIALS_API_KEY",
+          "FDA_API_KEY"
+        ],
+        "properties": {
+          "FDA_API_KEY": {
+            "type": "string",
+            "default": "dummy",
+            "description": "FDA API key"
+          },
+          "FHIR_BASE_URL": {
+            "type": "string",
+            "default": "http://localhost:8080/fhir",
+            "description": "FHIR Gateway base URL"
+          },
+          "PUBMED_API_KEY": {
+            "type": "string",
+            "default": "dummy",
+            "description": "PubMed API key"
+          },
+          "FIREBASE_APP_ID": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Firebase App ID"
+          },
+          "FIREBASE_API_KEY": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Firebase API key"
+          },
+          "FIREBASE_PROJECT_ID": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Firebase Project ID"
+          },
+          "FIREBASE_AUTH_DOMAIN": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Firebase Auth Domain"
+          },
+          "CLINICAL_TRIALS_API_KEY": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Clinical Trials API key"
+          },
+          "FIREBASE_MEASUREMENT_ID": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Firebase Measurement ID"
+          },
+          "FIREBASE_STORAGE_BUCKET": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Firebase Storage Bucket"
+          },
+          "FIREBASE_AUTH_CALLBACK_PORT": {
+            "type": "string",
+            "default": "3456",
+            "description": "Port for Firebase Auth callback"
+          },
+          "FIREBASE_MESSAGING_SENDER_ID": {
+            "type": "string",
+            "default": "dummy",
+            "description": "Firebase Messaging Sender ID"
+          }
+        }
+      }
+    }
+  ]
+}

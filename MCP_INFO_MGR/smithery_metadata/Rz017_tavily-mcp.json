@@ -1,0 +1,156 @@
+{
+  "qualifiedName": "@Rz017/tavily-mcp",
+  "displayName": "Tavily MCP Server",
+  "description": "Enable real-time web search and intelligent data extraction within your AI assistant by integrating Tavily's advanced search and extraction tools. Seamlessly access up-to-date web information with sophisticated filtering and domain-specific capabilities. Enhance your AI workflows with powerful web data retrieval and processing features.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/tavily.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "tavily-search",
+      "description": "A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine. Returns relevant web content with customizable parameters for result count, content type, and domain filtering. Ideal for gathering current information, news, and detailed web content analysis.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "days": {
+            "type": "number",
+            "default": 3,
+            "description": "The number of days back from the current date to include in the search results. This specifies the time frame of data to be retrieved. Please note that this feature is only available when using the 'news' search topic"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "topic": {
+            "enum": [
+              "general",
+              "news"
+            ],
+            "type": "string",
+            "default": "general",
+            "description": "The category of the search. This will determine which of our agents will be used for the search"
+          },
+          "time_range": {
+            "enum": [
+              "day",
+              "week",
+              "month",
+              "year",
+              "d",
+              "w",
+              "m",
+              "y"
+            ],
+            "type": "string",
+            "description": "The time range back from the current date to include in the search results. This feature is available for both 'general' and 'news' search topics"
+          },
+          "max_results": {
+            "type": "number",
+            "default": 10,
+            "maximum": 20,
+            "minimum": 5,
+            "description": "The maximum number of search results to return"
+          },
+          "search_depth": {
+            "enum": [
+              "basic",
+              "advanced"
+            ],
+            "type": "string",
+            "default": "basic",
+            "description": "The depth of the search. It can be 'basic' or 'advanced'"
+          },
+          "include_images": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include a list of query-related images in the response"
+          },
+          "exclude_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "List of domains to specifically exclude, if the user asks to exclude a domain set this to the domain of the site"
+          },
+          "include_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "A list of domains to specifically include in the search results, if the user asks to search on specific sites set this to the domain of the site"
+          },
+          "include_raw_content": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include the cleaned and parsed HTML content of each search result"
+          },
+          "include_image_descriptions": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include a list of query-related images and their descriptions in the response"
+          }
+        }
+      }
+    },
+    {
+      "name": "tavily-extract",
+      "description": "A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "urls"
+        ],
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of URLs to extract content from"
+          },
+          "extract_depth": {
+            "enum": [
+              "basic",
+              "advanced"
+            ],
+            "type": "string",
+            "default": "basic",
+            "description": "Depth of extraction - 'basic' or 'advanced', if usrls are linkedin use 'advanced' or if explicitly told to use advanced"
+          },
+          "include_images": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include a list of images extracted from the urls in the response"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Rz017/tavily-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "tavilyApiKey"
+        ],
+        "properties": {
+          "tavilyApiKey": {
+            "type": "string",
+            "description": "The API key for the Tavily MCP server."
+          }
+        }
+      }
+    }
+  ]
+}

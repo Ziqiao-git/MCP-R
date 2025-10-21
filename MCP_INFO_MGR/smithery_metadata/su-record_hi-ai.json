@@ -1,0 +1,1013 @@
+{
+  "qualifiedName": "@su-record/hi-ai",
+  "displayName": "Hi-AI",
+  "description": "Simplify AI development with a conversational assistant that remembers your context and helps you manage complex tasks effortlessly. Use natural language to interact with a suite of 29 modular tools for problem analysis, memory management, browser automation, code quality, planning, and time utilities. Start your AI-powered development journey with a simple greeting and let Hi-AI handle the rest.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@su-record/hi-ai",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_current_time",
+      "description": "IMPORTANT: This tool should be automatically called when users ask \"지금 몇시\", \"현재 시간\", \"몇시야\", \"what time\", \"current time\", \"time now\", \"what's the time\" or similar questions. Get current time",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "format": {
+            "enum": [
+              "iso",
+              "local",
+              "utc",
+              "timestamp",
+              "human"
+            ],
+            "type": "string",
+            "description": "Time format"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone (e.g., America/New_York, Asia/Seoul)"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_symbol",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"함수 찾아\", \"클래스 어디\", \"변수 위치\", \"find function\", \"where is class\", \"locate symbol\" or similar keywords. Find symbol definitions using semantic analysis",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbolName",
+          "projectPath"
+        ],
+        "properties": {
+          "symbolName": {
+            "type": "string",
+            "description": "Name of the symbol to find"
+          },
+          "symbolType": {
+            "enum": [
+              "all",
+              "function",
+              "class",
+              "interface",
+              "variable",
+              "type"
+            ],
+            "type": "string",
+            "description": "Type of symbol to search for"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Project directory path"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_references",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"어디서 사용\", \"참조 찾기\", \"사용처\", \"find usages\", \"show references\", \"where used\" or similar keywords. Find all references to a symbol",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbolName",
+          "projectPath"
+        ],
+        "properties": {
+          "line": {
+            "type": "number",
+            "description": "Line number of the symbol definition"
+          },
+          "filePath": {
+            "type": "string",
+            "description": "File path where the symbol is defined"
+          },
+          "symbolName": {
+            "type": "string",
+            "description": "Name of the symbol to find references for"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Project directory path"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_thinking_chain",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"생각 과정\", \"사고 흐름\", \"연쇄적으로\", \"thinking process\", \"chain of thought\", \"reasoning chain\" or similar keywords. Create sequential thinking chain",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "steps": {
+            "type": "number",
+            "description": "Number of thinking steps"
+          },
+          "topic": {
+            "type": "string",
+            "description": "Topic to think about"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_problem",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"문제 분석\", \"어떻게 접근\", \"분석해줘\", \"analyze this\", \"how to approach\", \"break this down\" or similar keywords. Break down complex problem into structured steps",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Problem domain"
+          },
+          "problem": {
+            "type": "string",
+            "description": "Problem to analyze"
+          }
+        }
+      }
+    },
+    {
+      "name": "step_by_step_analysis",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"단계별\", \"차근차근\", \"하나씩\", \"step by step\", \"one by one\", \"gradually\" or similar keywords. Perform detailed step-by-step analysis",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Task to analyze step by step"
+          },
+          "context": {
+            "type": "string",
+            "description": "Additional context for the task"
+          },
+          "detailLevel": {
+            "enum": [
+              "basic",
+              "detailed",
+              "comprehensive"
+            ],
+            "type": "string",
+            "description": "Level of detail"
+          }
+        }
+      }
+    },
+    {
+      "name": "break_down_problem",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"나눠서\", \"단계별로\", \"세분화\", \"break down\", \"divide\", \"split into parts\" or similar keywords. Break complex problems into sub-problems",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "Complex problem to break down"
+          },
+          "approach": {
+            "enum": [
+              "sequential",
+              "hierarchical",
+              "dependency-based"
+            ],
+            "type": "string",
+            "description": "Breakdown approach"
+          },
+          "maxDepth": {
+            "type": "number",
+            "description": "Maximum breakdown depth"
+          }
+        }
+      }
+    },
+    {
+      "name": "think_aloud_process",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"생각해봐\", \"고민해봐\", \"어떻게 생각해\", \"think about it\", \"let me think\", \"reasoning\" or similar keywords. Generate think-aloud reasoning process",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "scenario"
+        ],
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "description": "Scenario or problem to think through"
+          },
+          "verbosity": {
+            "enum": [
+              "concise",
+              "moderate",
+              "verbose"
+            ],
+            "type": "string",
+            "description": "Verbosity level"
+          },
+          "perspective": {
+            "enum": [
+              "analytical",
+              "creative",
+              "systematic",
+              "critical"
+            ],
+            "type": "string",
+            "description": "Thinking perspective"
+          }
+        }
+      }
+    },
+    {
+      "name": "format_as_plan",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"계획으로\", \"정리해줘\", \"체크리스트\", \"format as plan\", \"make a plan\", \"organize this\", \"checklist\" or similar keywords. Format content into clear plans",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Content to format as a plan"
+          },
+          "priority": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "type": "string",
+            "description": "Default priority level"
+          },
+          "includeCheckboxes": {
+            "type": "boolean",
+            "description": "Include checkboxes for tracking progress"
+          },
+          "includeTimeEstimates": {
+            "type": "boolean",
+            "description": "Include time estimates for each step"
+          }
+        }
+      }
+    },
+    {
+      "name": "monitor_console_logs",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"콘솔 로그\", \"에러 확인\", \"로그 봐줘\", \"console\", \"check logs\", \"debug output\", \"console errors\" or similar keywords. Monitor browser console",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to monitor"
+          },
+          "duration": {
+            "type": "number",
+            "description": "Monitoring duration in seconds"
+          },
+          "logLevel": {
+            "enum": [
+              "all",
+              "error",
+              "warn",
+              "info",
+              "debug"
+            ],
+            "type": "string",
+            "description": "Log level to capture"
+          }
+        }
+      }
+    },
+    {
+      "name": "inspect_network_requests",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"네트워크\", \"API 호출\", \"요청 확인\", \"network\", \"API calls\", \"check requests\", \"network traffic\" or similar keywords. Inspect network requests",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to inspect"
+          },
+          "filterType": {
+            "enum": [
+              "all",
+              "xhr",
+              "fetch",
+              "websocket",
+              "failed"
+            ],
+            "type": "string",
+            "description": "Request type filter"
+          },
+          "includeHeaders": {
+            "type": "boolean",
+            "description": "Include request/response headers"
+          }
+        }
+      }
+    },
+    {
+      "name": "save_memory",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"기억해\", \"remember\", \"저장해\", \"save this\", \"keep this\", \"memorize\" or similar keywords. Save information to long-term memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "key",
+          "value"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Memory key/identifier"
+          },
+          "value": {
+            "type": "string",
+            "description": "Information to save"
+          },
+          "category": {
+            "enum": [
+              "project",
+              "personal",
+              "code",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Memory category"
+          }
+        }
+      }
+    },
+    {
+      "name": "recall_memory",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"떠올려\", \"기억나\", \"recall\", \"remember what\", \"what was\", \"remind me\" or similar keywords. Retrieve information from memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Memory key to retrieve"
+          },
+          "category": {
+            "type": "string",
+            "description": "Memory category to search in"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_memories",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"뭐 있었지\", \"저장된 거\", \"목록\", \"what did I save\", \"list memories\", \"show saved\" or ask about stored items. List all stored memories",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of results"
+          },
+          "category": {
+            "type": "string",
+            "description": "Filter by category"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_memory",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"잊어\", \"삭제해\", \"지워\", \"forget this\", \"delete memory\", \"remove\", \"erase\" or similar keywords. Delete specific memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Memory key to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_memories",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"찾아\", \"검색\", \"기억 중에\", \"search memory\", \"find in memories\", \"look for\" or similar keywords. Search memories by content",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category to search in"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_memory",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"수정해\", \"업데이트\", \"바꿔\", \"update memory\", \"change\", \"modify\", \"edit memory\" or similar keywords. Update existing memory",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "key",
+          "value"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Memory key to update"
+          },
+          "value": {
+            "type": "string",
+            "description": "New value"
+          },
+          "append": {
+            "type": "boolean",
+            "description": "Append to existing value"
+          }
+        }
+      }
+    },
+    {
+      "name": "auto_save_context",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"커밋\", \"commit\", \"저장\", \"save\", \"checkpoint\", \"backup\" or similar keywords. Automatically save current context",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "urgency",
+          "contextType"
+        ],
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "Brief summary of current context"
+          },
+          "urgency": {
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "type": "string",
+            "description": "Urgency level"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Current session identifier"
+          },
+          "contextType": {
+            "enum": [
+              "progress",
+              "decisions",
+              "code-snippets",
+              "debugging",
+              "planning"
+            ],
+            "type": "string",
+            "description": "Type of context to save"
+          }
+        }
+      }
+    },
+    {
+      "name": "restore_session_context",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"복원\", \"이전 상태\", \"되돌려\", \"restore\", \"go back\", \"previous state\", \"revert\" or similar keywords. Restore previous session context",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Session ID to restore"
+          },
+          "filterType": {
+            "enum": [
+              "all",
+              "progress",
+              "decisions",
+              "code-snippets",
+              "debugging",
+              "planning"
+            ],
+            "type": "string",
+            "description": "Filter context by type"
+          },
+          "restoreLevel": {
+            "enum": [
+              "essential",
+              "detailed",
+              "complete"
+            ],
+            "type": "string",
+            "description": "Level of detail to restore"
+          }
+        }
+      }
+    },
+    {
+      "name": "prioritize_memory",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"중요한 거\", \"우선순위\", \"prioritize\", \"important ones\", \"what matters\", \"priority\" or similar keywords. Prioritize memories by importance",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "currentTask"
+        ],
+        "properties": {
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Current blockers or issues"
+          },
+          "nextSteps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Planned next steps"
+          },
+          "codeChanges": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Important code changes"
+          },
+          "currentTask": {
+            "type": "string",
+            "description": "Current task description"
+          },
+          "criticalDecisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of critical decisions made"
+          }
+        }
+      }
+    },
+    {
+      "name": "start_session",
+      "description": "IMPORTANT: This tool should be automatically called when users greet with \"하이아이\", \"hi-ai\", \"안녕\", \"hello\", or similar greetings. It loads project context, previous memories, and restores the last session state to continue work seamlessly.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "greeting": {
+            "type": "string",
+            "description": "Greeting message that triggered this action (e.g., \"하이아이\", \"hi-ai\")"
+          },
+          "loadGuides": {
+            "type": "boolean",
+            "description": "Load applicable coding guides (default: true)"
+          },
+          "loadMemory": {
+            "type": "boolean",
+            "description": "Load relevant project memories (default: true)"
+          },
+          "restoreContext": {
+            "type": "boolean",
+            "description": "Restore previous session context (default: true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_coding_guide",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"가이드\", \"규칙\", \"컨벤션\", \"guide\", \"rules\", \"convention\", \"standards\", \"best practices\" or similar keywords. Get coding guide",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Guide name to retrieve"
+          },
+          "category": {
+            "type": "string",
+            "description": "Guide category"
+          }
+        }
+      }
+    },
+    {
+      "name": "apply_quality_rules",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"규칙 적용\", \"표준 적용\", \"apply rules\", \"apply standards\", \"follow conventions\", \"적용해\" or similar keywords. Apply quality rules",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "naming",
+              "structure",
+              "typescript",
+              "react",
+              "accessibility",
+              "all"
+            ],
+            "type": "string",
+            "description": "Application scope"
+          },
+          "language": {
+            "enum": [
+              "javascript",
+              "typescript",
+              "react",
+              "vue",
+              "general"
+            ],
+            "type": "string",
+            "description": "Programming language context"
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_code_quality",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"품질\", \"리뷰\", \"검사\", \"quality\", \"review code\", \"check quality\", \"validate\", \"코드 리뷰\" or similar keywords. Validate code quality",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to validate"
+          },
+          "type": {
+            "enum": [
+              "component",
+              "function",
+              "hook",
+              "utility",
+              "general"
+            ],
+            "type": "string",
+            "description": "Code type"
+          },
+          "strict": {
+            "type": "boolean",
+            "description": "Apply strict validation rules"
+          },
+          "metrics": {
+            "enum": [
+              "complexity",
+              "coupling",
+              "cohesion",
+              "maintainability",
+              "performance",
+              "all"
+            ],
+            "type": "string",
+            "description": "Specific metrics to check"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_complexity",
+      "description": "IMPORTANT: This tool should be automatically called when users mention \"복잡도\", \"복잡한지\", \"complexity\", \"how complex\", \"is it complex\", \"difficulty level\" or similar keywords. Analyze code complexity",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to analyze"
+          },
+          "metrics": {
+            "enum": [
+              "cyclomatic",
+              "cognitive",
+              "halstead",
+              "all"
+            ],
+            "type": "string",
+            "description": "Metrics to calculate"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_coupling_cohesion",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"결합도\", \"응집도\", \"coupling\", \"cohesion\", \"dependencies check\", \"module structure\" or similar keywords. Check coupling and cohesion",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to analyze"
+          },
+          "type": {
+            "enum": [
+              "class",
+              "module",
+              "function",
+              "component"
+            ],
+            "type": "string",
+            "description": "Code type"
+          },
+          "checkDependencies": {
+            "type": "boolean",
+            "description": "Analyze dependencies"
+          }
+        }
+      }
+    },
+    {
+      "name": "suggest_improvements",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"개선\", \"더 좋게\", \"리팩토링\", \"improve\", \"make better\", \"refactor\", \"optimize\", \"enhance code\" or similar keywords. Suggest improvements",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to analyze"
+          },
+          "focus": {
+            "enum": [
+              "performance",
+              "readability",
+              "maintainability",
+              "accessibility",
+              "type-safety"
+            ],
+            "type": "string",
+            "description": "Focus area"
+          },
+          "priority": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ],
+            "type": "string",
+            "description": "Priority level"
+          }
+        }
+      }
+    },
+    {
+      "name": "generate_prd",
+      "description": "IMPORTANT: This tool should be automatically called when users mention \"PRD\", \"요구사항 문서\", \"제품 요구사항\", \"product requirements\", \"requirements document\", \"spec document\" or similar terms. Generate Product Requirements Document",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "productName",
+          "productVision"
+        ],
+        "properties": {
+          "constraints": {
+            "type": "string",
+            "description": "Technical/business constraints"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Name of the product/feature"
+          },
+          "productVision": {
+            "type": "string",
+            "description": "High-level vision and goals"
+          },
+          "targetAudience": {
+            "type": "string",
+            "description": "Target users and stakeholders"
+          },
+          "businessObjectives": {
+            "type": "string",
+            "description": "Business goals and success metrics"
+          },
+          "functionalRequirements": {
+            "type": "string",
+            "description": "Key features and functionality"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_user_stories",
+      "description": "IMPORTANT: This tool should be automatically called when users mention \"스토리\", \"사용자 스토리\", \"user story\", \"user stories\", \"as a user\" or similar terms. Generate user stories from requirements",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "features"
+        ],
+        "properties": {
+          "features": {
+            "type": "string",
+            "description": "List of features or requirements to convert to user stories"
+          },
+          "priority": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "type": "string",
+            "description": "Default priority level"
+          },
+          "userTypes": {
+            "type": "string",
+            "description": "Types of users (e.g., admin, customer, guest)"
+          },
+          "includeAcceptanceCriteria": {
+            "type": "boolean",
+            "description": "Include acceptance criteria for each story"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_requirements",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"요구사항 분석\", \"필요한 것들\", \"requirements analysis\", \"what we need\", \"analyze requirements\", \"필수 기능\" or similar keywords. Analyze project requirements",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "requirements"
+        ],
+        "properties": {
+          "constraints": {
+            "type": "string",
+            "description": "Project constraints (timeline, budget, technical)"
+          },
+          "requirements": {
+            "type": "string",
+            "description": "List of requirements to analyze"
+          },
+          "stakeholders": {
+            "type": "string",
+            "description": "Project stakeholders (e.g., users, admins, developers)"
+          },
+          "analysisMethod": {
+            "enum": [
+              "moscow",
+              "kano",
+              "value-effort"
+            ],
+            "type": "string",
+            "default": "moscow",
+            "description": "Analysis method"
+          }
+        }
+      }
+    },
+    {
+      "name": "feature_roadmap",
+      "description": "IMPORTANT: This tool should be automatically called when users say \"로드맵\", \"일정\", \"계획표\", \"roadmap\", \"timeline\", \"project plan\", \"development schedule\" or similar keywords. Generate development roadmap",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectName",
+          "features"
+        ],
+        "properties": {
+          "approach": {
+            "enum": [
+              "mvp-first",
+              "phased-rollout",
+              "big-bang"
+            ],
+            "type": "string",
+            "default": "mvp-first",
+            "description": "Development approach"
+          },
+          "features": {
+            "type": "string",
+            "description": "List of features to include in roadmap"
+          },
+          "teamSize": {
+            "type": "number",
+            "description": "Development team size"
+          },
+          "timeframe": {
+            "enum": [
+              "3-months",
+              "6-months",
+              "12-months",
+              "custom"
+            ],
+            "type": "string",
+            "description": "Project timeframe"
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project"
+          }
+        }
+      }
+    },
+    {
+      "name": "enhance_prompt",
+      "description": "IMPORTANT: This tool should be automatically called when requests are vague, too short (under 20 chars), or when users say \"구체적으로\", \"자세히\", \"명확하게\", \"더 구체적으로\", \"be specific\", \"more detail\", \"clarify\", \"elaborate\" or similar keywords. Transform vague requests",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Original prompt to enhance"
+          },
+          "context": {
+            "type": "string",
+            "description": "Additional context or project information"
+          },
+          "enhancement_type": {
+            "enum": [
+              "clarity",
+              "specificity",
+              "context",
+              "all"
+            ],
+            "type": "string",
+            "description": "Type of enhancement (default: all)"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_prompt",
+      "description": "IMPORTANT: This tool should be automatically called when users ask \"프롬프트 분석\", \"평가\", \"점수\", \"얼마나 좋은지\", \"analyze prompt\", \"rate this\", \"score\", \"how good\", \"prompt quality\" or similar keywords. Analyze prompt quality",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Prompt to analyze"
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific criteria to evaluate (default: all)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@su-record/hi-ai/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

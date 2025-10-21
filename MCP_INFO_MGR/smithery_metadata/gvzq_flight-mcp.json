@@ -1,0 +1,333 @@
+{
+  "qualifiedName": "@gvzq/flight-mcp",
+  "displayName": "Flight Search MCP Server",
+  "description": "\nReal-Time Flight Data Access\nConnect to liveflight pricing and availability. Access comprehensive flight data from multiple sources with live pricing updates. \n\nMultiple Search Types\nFind the most affordable flights between any airports. View flight prices across entire months for flexible travel planning. Search for direct flights only, eliminating layovers. Discover trending flight routes from specific airports. Filter flights within specific budget ranges. Get detailed pricing for specific weeks. Compare costs across different months. Find flights to nearby destinations for better deals.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/d0710be9-8de5-4f9a-981f-d4eecf7e50fb.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@gvzq/flight-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_flights",
+      "description": "Search for flights between cities or airports. Provide city names or IATA codes (e.g., 'Austin', 'LAX') and departure date. City names often work better than airport codes. For round-trip flights, always provide a return_date. For one-way flights, omit the return_date parameter.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "origin",
+          "destination",
+          "depart_date"
+        ],
+        "properties": {
+          "origin": {
+            "type": "string",
+            "description": "City name for the origin (e.g., 'Austin', 'LAX'). City names often work better than airport codes."
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "sort": {
+                "enum": [
+                  "price",
+                  "duration",
+                  "quality",
+                  "date"
+                ],
+                "type": "string",
+                "description": "Sort results by: price, duration, quality or date (default: date)"
+              },
+              "locale": {
+                "type": "string",
+                "maxLength": 5,
+                "minLength": 2,
+                "description": "Language of city names and kiwi.com website links (examples: en, uk, de, fr, es, it, ru etc.)"
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency for response (examples: EUR, USD, GBP, JPY, CAD, AUD, NZD, CHF etc.)"
+              },
+              "passengers": {
+                "type": "object",
+                "properties": {
+                  "adults": {
+                    "type": "integer",
+                    "maximum": 9,
+                    "minimum": 0,
+                    "description": "Number of adults (over 12 years old included)"
+                  },
+                  "infants": {
+                    "type": "integer",
+                    "maximum": 4,
+                    "minimum": 0,
+                    "description": "Number of infants (under 2 years old)"
+                  },
+                  "children": {
+                    "type": "integer",
+                    "maximum": 8,
+                    "minimum": 0,
+                    "description": "Number of children (from 3 to 11 years old included)"
+                  }
+                },
+                "description": "Passengers details. The total number of passengers must be between 1 and 9. There must be at least one adult. There must be at least one adult per infant.",
+                "additionalProperties": false
+              },
+              "cabin_class": {
+                "enum": [
+                  "M",
+                  "W",
+                  "C",
+                  "F"
+                ],
+                "type": "string",
+                "description": "Cabin class: M (economy), W (economy premium), C (business), F (first class)"
+              },
+              "return_date_flex_range": {
+                "type": "integer",
+                "maximum": 3,
+                "minimum": 0,
+                "description": "Return date flexibility range in days (0 to 3 days before/after the selected return date)"
+              },
+              "departure_date_flex_range": {
+                "type": "integer",
+                "maximum": 3,
+                "minimum": 0,
+                "description": "Departure date flexibility range in days (0 to 3 days before/after the selected departure date)"
+              }
+            },
+            "description": "Additional search options for more precise flight search",
+            "additionalProperties": false
+          },
+          "depart_date": {
+            "type": "string",
+            "description": "Departure date in any format accepted by Kiwi (e.g., '2024-09-07', '07/09/2024', 'September 7, 2024')."
+          },
+          "destination": {
+            "type": "string",
+            "description": "City name for the destination (e.g., 'San Francisco', 'NRT'). City names often work better than airport codes."
+          },
+          "return_date": {
+            "type": "string",
+            "description": "Return date for round-trip flights in any format accepted by Kiwi (e.g., '2024-09-14', '14/09/2024', 'September 14, 2024'). Omit this parameter for one-way flights."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_calendar",
+      "description": "Find the cheapest travel dates for a route. Provide origin/destination airports and target month/date. Returns price calendar showing best dates to travel. Supports V1 price trends (daily cheapest non-stop/one-stop/two-stop flights) and V2 matrix views. Optional: trip length, flight class, calendar type.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "origin",
+          "destination",
+          "date"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}(-\\d{2})?$"
+          },
+          "origin": {
+            "type": "string",
+            "description": "IATA code for the origin airport (e.g., 'LAX')."
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1,
+                "description": "Number of results to return (default: 30)."
+              },
+              "market": {
+                "type": "string",
+                "description": "Market code (default: 'us')."
+              },
+              "one_way": {
+                "type": "boolean",
+                "description": "One-way flight search (default: false, only for month-matrix)."
+              },
+              "sorting": {
+                "enum": [
+                  "price",
+                  "route",
+                  "distance_unit_price"
+                ],
+                "type": "string",
+                "description": "Sorting method: 'price', 'route', or 'distance_unit_price' (default: 'price')."
+              },
+              "currency": {
+                "type": "string",
+                "default": "USD",
+                "maxLength": 3,
+                "minLength": 3,
+                "description": "Currency code (e.g., 'USD')."
+              },
+              "trip_class": {
+                "type": "integer",
+                "maximum": 2,
+                "minimum": 0,
+                "description": "Flight class: 0=economy, 1=business, 2=first class (default: 0)."
+              },
+              "api_version": {
+                "enum": [
+                  "v1",
+                  "v2"
+                ],
+                "type": "string",
+                "default": "v2",
+                "description": "API version: 'v1' for price trends calendar, 'v2' for matrix calendars (default: 'v2')."
+              },
+              "return_date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}(-\\d{2})?$",
+                "description": "Return month for V1 price trends calendar (YYYY-MM format)."
+              },
+              "trip_length": {
+                "type": "integer",
+                "maximum": 30,
+                "minimum": 1,
+                "description": "Length of stay in days (default: 7)."
+              },
+              "calendar_type": {
+                "enum": [
+                  "month",
+                  "week",
+                  "price_trends"
+                ],
+                "type": "string",
+                "default": "month",
+                "description": "Calendar type: 'month' for month-matrix, 'week' for week-matrix, 'price_trends' for V1 daily price trends (default: 'month')."
+              }
+            },
+            "additionalProperties": false
+          },
+          "destination": {
+            "type": "string",
+            "description": "IATA code for the destination airport (e.g., 'NRT')."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_reference_data",
+      "description": "Get travel reference data - airports, cities, airlines, or countries. Use 'list' to get all data or 'search' with query to find specific items. Helpful for finding IATA codes and location information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type",
+          "action"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "airports",
+              "cities",
+              "airlines",
+              "countries"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results to return for 'search' action."
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query for 'search' action."
+          },
+          "action": {
+            "enum": [
+              "list",
+              "search"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "discover_flights",
+      "description": "Discover flight deals and travel inspiration. Get popular routes, find alternative nearby airports for better deals, or browse special offers from an origin city. Great for flexible travel planning.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "popular_routes",
+              "alternative_directions",
+              "special_offers"
+            ],
+            "type": "string"
+          },
+          "origin": {
+            "type": "string",
+            "description": "IATA code for the origin airport (e.g., 'LAX')."
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1,
+                "description": "Number of results to return."
+              },
+              "currency": {
+                "type": "string",
+                "maxLength": 3,
+                "minLength": 3,
+                "description": "Currency code (e.g., 'USD')."
+              },
+              "distance": {
+                "type": "integer",
+                "maximum": 1000,
+                "minimum": 1,
+                "description": "Search radius for alternative directions (km)."
+              },
+              "depart_date": {
+                "type": "string",
+                "description": "Departure date (YYYY-MM-DD format, required for alternative_directions)."
+              },
+              "destination": {
+                "type": "string",
+                "description": "IATA code for destination (required for alternative_directions)."
+              },
+              "flexibility": {
+                "type": "integer",
+                "maximum": 30,
+                "minimum": 0,
+                "description": "Date flexibility offset (days)."
+              },
+              "return_date": {
+                "type": "string",
+                "description": "Return date (YYYY-MM-DD format, required for alternative_directions)."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@gvzq/flight-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

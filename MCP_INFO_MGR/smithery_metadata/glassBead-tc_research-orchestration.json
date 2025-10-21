@@ -1,0 +1,812 @@
+{
+  "qualifiedName": "@glassBead-tc/research-orchestration",
+  "displayName": "Dorak Research",
+  "description": "alternate deep researcher",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/c0b79401-47d3-482a-8a4e-833b8cf8c081.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@glassBead-tc/research-orchestration",
+  "security": null,
+  "tools": [
+    {
+      "name": "sequentialthinking",
+      "description": "Dynamic and reflective problem-solving through a sequence of thoughts.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "thought",
+          "nextThoughtNeeded",
+          "thoughtNumber",
+          "totalThoughts"
+        ],
+        "properties": {
+          "thought": {
+            "type": "string",
+            "description": "Your current thinking step"
+          },
+          "branchId": {
+            "type": "string",
+            "description": "Branch identifier"
+          },
+          "isRevision": {
+            "type": "boolean",
+            "description": "Whether this revises previous thinking"
+          },
+          "thoughtNumber": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Current thought number"
+          },
+          "totalThoughts": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Estimated total thoughts needed"
+          },
+          "revisesThought": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which thought is being reconsidered"
+          },
+          "branchFromThought": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Branching point thought number"
+          },
+          "needsMoreThoughts": {
+            "type": "boolean",
+            "description": "If more thoughts are needed"
+          },
+          "nextThoughtNeeded": {
+            "type": "boolean",
+            "description": "Whether another thought step is needed"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "web_search_exa",
+      "description": "Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs. Supports configurable result counts and returns the content from the most relevant websites.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of search results to return (default: 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "research_paper_search_exa",
+      "description": "Search for academic papers and research using Exa AI - specializes in finding scholarly articles, research papers, and academic content. Returns detailed information about research findings and academic sources.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Research paper search query"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of research papers to return (default: 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "crawling_exa",
+      "description": "Extract and crawl content from specific URLs using Exa AI - retrieves full text content, metadata, and structured information from web pages. Ideal for extracting detailed content from known URLs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to crawl and extract content from"
+          },
+          "maxCharacters": {
+            "type": "number",
+            "description": "Maximum characters to extract (default: 3000)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "company_research_exa",
+      "description": "Research companies using Exa AI - finds comprehensive information about businesses, organizations, and corporations. Provides insights into company operations, news, financial information, and industry analysis.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "companyName"
+        ],
+        "properties": {
+          "numResults": {
+            "type": "number",
+            "description": "Number of search results to return (default: 5)"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Name of the company to research"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "competitor_finder_exa",
+      "description": "Find competitors for a business using Exa AI - identifies similar companies, competitive landscape analysis, and market positioning. Helps discover direct and indirect competitors in any industry.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "companyName"
+        ],
+        "properties": {
+          "industry": {
+            "type": "string",
+            "description": "Industry sector (optional, helps narrow search)"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of competitors to find (default: 5)"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Name of the company to find competitors for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "linkedin_search_exa",
+      "description": "Search LinkedIn profiles and companies using Exa AI - finds professional profiles, company pages, and business-related content on LinkedIn. Useful for networking, recruitment, and business research.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "LinkedIn search query (e.g., person name, company, job title)"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of LinkedIn results to return (default: 5)"
+          },
+          "searchType": {
+            "enum": [
+              "profiles",
+              "companies",
+              "all"
+            ],
+            "type": "string",
+            "description": "Type of LinkedIn content to search (default: all)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "wikipedia_search_exa",
+      "description": "Search Wikipedia articles using Exa AI - finds comprehensive, factual information from Wikipedia entries. Ideal for research, fact-checking, and getting authoritative information on various topics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Wikipedia search query (topic, person, place, concept, etc.)"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of Wikipedia articles to return (default: 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "github_search_exa",
+      "description": "Search GitHub repositories and code using Exa AI - finds repositories, code snippets, documentation, and developer profiles on GitHub. Useful for finding open source projects, code examples, and technical resources.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "GitHub search query (repository name, programming language, username, etc.)"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of GitHub results to return (default: 5)"
+          },
+          "searchType": {
+            "enum": [
+              "repositories",
+              "code",
+              "users",
+              "all"
+            ],
+            "type": "string",
+            "description": "Type of GitHub content to search (default: all)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scrape_reddit_exa",
+      "description": "Search Reddit discussions using Exa AI - finds threads, comments, and community discussions across Reddit. Ideal for sentiment analysis, product research, community feedback, and trending topics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Reddit search query (topic, product, question, or any search term)"
+          },
+          "subreddit": {
+            "type": "string",
+            "description": "Specific subreddit to search within (e.g., 'technology', 'science')"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of Reddit results to return (default: 5)"
+          },
+          "searchType": {
+            "enum": [
+              "discussions",
+              "posts",
+              "comments",
+              "subreddits"
+            ],
+            "type": "string",
+            "description": "Type of Reddit content to search for (default: discussions)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tiktok_search_exa",
+      "description": "Search TikTok for videos using Exa AI. Returns video titles, URLs, and metadata for TikTok content matching your search query.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "TikTok search query"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of TikTok results to return (default: 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "youtube_search_exa",
+      "description": "Search YouTube videos, channels, and playlists using Exa AI - finds video content, creator channels, and curated playlists on YouTube. Ideal for discovering educational content, tutorials, entertainment, and trending videos.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "YouTube search query (topic, video title, channel name, or any search term)"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of YouTube results to return (default: 10)"
+          },
+          "searchType": {
+            "enum": [
+              "videos",
+              "channels",
+              "playlists",
+              "all"
+            ],
+            "type": "string",
+            "description": "Type of YouTube content to search for (default: videos)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "youtube_video_details_exa",
+      "description": "Get detailed information about YouTube videos by their IDs. Returns video titles, view counts, publish dates, and channel information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoIds"
+        ],
+        "properties": {
+          "videoIds": {
+            "type": "string",
+            "description": "Comma-separated list of YouTube video IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scout_search",
+      "description": "Right-Depth Scout – one-shot fast search (5–8 links, highlights only). Returns minimal fields for speed.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "maxLinks": {
+            "type": "number",
+            "description": "Max links to return (default: 6)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "light_research.design_plan",
+      "description": "Design a Right-Depth Light Research plan (balanced snapshot).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "budgets": {
+            "type": "object",
+            "properties": {
+              "maxCostUsd": {
+                "type": "number"
+              },
+              "concurrency": {
+                "type": "number"
+              },
+              "maxLatencyMs": {
+                "type": "number"
+              },
+              "maxSearchCalls": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "quality": {
+            "enum": [
+              "scout",
+              "balanced",
+              "high"
+            ],
+            "type": "string",
+            "default": "balanced"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "light_research.run_plan",
+      "description": "Run a Light Research plan using Effect-TS with retries, timeouts and concurrency caps.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "plan": {},
+          "plan_json": {}
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deep_research.start",
+      "description": "Start an asynchronous Deep Research task. Returns a task_id to poll.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string",
+            "description": "Reserved for future structured objectives"
+          },
+          "budgets": {
+            "type": "object",
+            "properties": {
+              "maxCostUsd": {
+                "type": "number",
+                "default": 0.5
+              },
+              "concurrency": {
+                "type": "number",
+                "default": 5
+              },
+              "maxLatencyMs": {
+                "type": "number",
+                "default": 60000
+              },
+              "maxSearchCalls": {
+                "type": "number",
+                "default": 50
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deep_research.check",
+      "description": "Check the status of a Deep Research task by id.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "task_id"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.start_session",
+      "description": "Start a planning/scoping session and create an empty ScopingDoc.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "agentId"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "default": ""
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string",
+            "default": "general"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.define_objectives",
+      "description": "Define objectives, scope in/out, stakeholders, and timeframe.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "scopeIn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "scopeOut": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "timeframe": {
+            "type": "string",
+            "default": ""
+          },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "stakeholders": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.capture_constraints",
+      "description": "Capture budgets, allowed/blocked tools, and compliance notes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "budgets": {
+            "type": "object",
+            "properties": {
+              "maxCostUsd": {
+                "type": "number"
+              },
+              "concurrency": {
+                "type": "number"
+              },
+              "maxLatencyMs": {
+                "type": "number"
+              },
+              "maxSearchCalls": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "allowedTools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "blockedTools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "complianceNotes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.list_unknowns_and_assumptions",
+      "description": "Record unknowns and assumptions for the scoping document.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "unknowns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.success_criteria",
+      "description": "Define success criteria and verification steps.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "verificationSteps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "acceptanceCriteria": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.tool_selection",
+      "description": "Recommend tools based on info types and prior effectiveness in this context.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId",
+          "infoTypes"
+        ],
+        "properties": {
+          "context": {
+            "type": "string",
+            "default": "general"
+          },
+          "infoTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sessionId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.plan_outline",
+      "description": "Draft an orchestration outline and convert to a LightPlan candidate.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "decomposition": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.critique_plan",
+      "description": "Critique a plan against scoping constraints and success criteria.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "plan": {},
+          "sessionId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "planning_scoping.scoping_brief",
+      "description": "Generate a Markdown scoping brief from the current scoping doc and critiques.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@glassBead-tc/research-orchestration/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

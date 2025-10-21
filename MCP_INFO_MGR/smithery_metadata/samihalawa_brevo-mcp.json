@@ -1,0 +1,1039 @@
+{
+  "qualifiedName": "@samihalawa/brevo-mcp",
+  "displayName": "Brevo MCP",
+  "description": "Brevo MCP is a streamlined control panel for managing all Brevo API capabilities in one place. It allows you to send transactional emails and SMS, manage contacts, run campaigns, handle conversations, configure webhooks, track events, and access CRM, e-commerce, and WhatsApp features—all through an organized, ready-to-run interface.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.brevo.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "contacts",
+      "description": "Comprehensive contact management - create, update, get, bulk import, manage lists and attributes",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "listId": {
+            "type": "number",
+            "description": "List ID for list operations"
+          },
+          "contacts": {
+            "type": "array",
+            "description": "Array of contacts for bulk operations"
+          },
+          "listData": {
+            "type": "object",
+            "description": "List information for create list operation"
+          },
+          "operation": {
+            "enum": [
+              "get",
+              "create",
+              "update",
+              "delete",
+              "bulk_import",
+              "bulk_update",
+              "export",
+              "add_to_list",
+              "remove_from_list",
+              "get_lists",
+              "create_list",
+              "get_attributes",
+              "create_attribute",
+              "update_attribute"
+            ],
+            "type": "string",
+            "description": "Contact operation to perform"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Contact email or ID (for get, update, delete operations)"
+          },
+          "contactData": {
+            "type": "object",
+            "description": "Contact information for create/update operations"
+          },
+          "attributeData": {
+            "type": "object",
+            "description": "Attribute data for create/update attribute operations"
+          },
+          "attributeName": {
+            "type": "string",
+            "description": "Attribute name for attribute operations"
+          }
+        }
+      }
+    },
+    {
+      "name": "email",
+      "description": "Transactional email operations - send emails, manage templates, track events",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "to": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Recipients list"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Tag for filtering statistics"
+          },
+          "days": {
+            "type": "number",
+            "description": "Number of days for statistics"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address for event filtering"
+          },
+          "params": {
+            "type": "object",
+            "description": "Template parameters for personalization"
+          },
+          "sender": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "description": "Sender information"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date for statistics (YYYY-MM-DD)"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Message ID for event tracking"
+          },
+          "operation": {
+            "enum": [
+              "send",
+              "send_template",
+              "get_events",
+              "get_templates",
+              "create_template",
+              "update_template",
+              "delete_template",
+              "get_blocked_domains",
+              "get_email_statistics"
+            ],
+            "type": "string",
+            "description": "Email operation to perform"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date for statistics (YYYY-MM-DD)"
+          },
+          "templateId": {
+            "type": "number",
+            "description": "Template ID for template operations"
+          },
+          "htmlContent": {
+            "type": "string",
+            "description": "HTML content of the email"
+          },
+          "textContent": {
+            "type": "string",
+            "description": "Text content of the email"
+          },
+          "templateData": {
+            "type": "object",
+            "description": "Template data for create/update operations"
+          }
+        }
+      }
+    },
+    {
+      "name": "campaigns",
+      "description": "Email and SMS campaign management - create, update, send, schedule campaigns",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "email",
+              "sms"
+            ],
+            "type": "string",
+            "description": "Campaign type"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Number of campaigns to retrieve"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "sent",
+              "archive",
+              "queued",
+              "suspended"
+            ],
+            "type": "string",
+            "description": "Campaign status filter"
+          },
+          "operation": {
+            "enum": [
+              "get_email_campaigns",
+              "create_email_campaign",
+              "update_email_campaign",
+              "send_email_campaign",
+              "schedule_email_campaign",
+              "delete_email_campaign",
+              "export_email_recipients",
+              "get_sms_campaigns",
+              "create_sms_campaign",
+              "update_sms_campaign",
+              "send_sms_campaign",
+              "schedule_sms_campaign",
+              "delete_sms_campaign",
+              "export_sms_recipients",
+              "get_campaign_statistics"
+            ],
+            "type": "string",
+            "description": "Campaign operation to perform"
+          },
+          "campaignId": {
+            "type": "number",
+            "description": "Campaign ID for specific campaign operations"
+          },
+          "campaignData": {
+            "type": "object",
+            "description": "Campaign configuration data"
+          }
+        }
+      }
+    },
+    {
+      "name": "sms",
+      "description": "SMS operations - send transactional SMS, manage SMS contacts",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "Tag for SMS tracking"
+          },
+          "days": {
+            "type": "number",
+            "description": "Number of days for statistics"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sort order for events"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags for filtering events"
+          },
+          "type": {
+            "enum": [
+              "transactional",
+              "marketing"
+            ],
+            "type": "string",
+            "default": "transactional",
+            "description": "SMS type"
+          },
+          "event": {
+            "type": "string",
+            "description": "Event type for filtering"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Limit for events/statistics"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Offset for pagination"
+          },
+          "sender": {
+            "type": "string",
+            "description": "SMS sender name/number"
+          },
+          "content": {
+            "type": "string",
+            "description": "SMS message content"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date for events/statistics (YYYY-MM-DD)"
+          },
+          "operation": {
+            "enum": [
+              "send",
+              "send_batch",
+              "get_events",
+              "get_statistics"
+            ],
+            "type": "string",
+            "description": "SMS operation to perform"
+          },
+          "recipient": {
+            "type": "string",
+            "description": "Phone number for single SMS"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date for events/statistics (YYYY-MM-DD)"
+          },
+          "recipients": {
+            "type": "array",
+            "description": "Phone numbers for batch SMS"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number for filtering events"
+          }
+        }
+      }
+    },
+    {
+      "name": "conversations",
+      "description": "Chat and conversation management - handle customer conversations",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "type": "string",
+            "description": "Conversation status"
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Agent ID for conversation assignment"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message content to send"
+          },
+          "operation": {
+            "enum": [
+              "get_conversations",
+              "get_conversation",
+              "get_messages",
+              "send_message",
+              "update_conversation"
+            ],
+            "type": "string",
+            "description": "Conversation operation to perform"
+          },
+          "conversationId": {
+            "type": "string",
+            "description": "Conversation ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "webhooks",
+      "description": "Webhook management - create, update, delete webhooks for event notifications",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Webhook URL"
+          },
+          "type": {
+            "enum": [
+              "transactional",
+              "marketing"
+            ],
+            "type": "string",
+            "description": "Webhook type"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of events to subscribe to"
+          },
+          "operation": {
+            "enum": [
+              "get_webhooks",
+              "create_webhook",
+              "update_webhook",
+              "delete_webhook",
+              "get_webhook",
+              "export_history"
+            ],
+            "type": "string",
+            "description": "Webhook operation to perform"
+          },
+          "webhookId": {
+            "type": "number",
+            "description": "Webhook ID for specific operations"
+          },
+          "exportData": {
+            "type": "object",
+            "description": "Export configuration for webhook history"
+          },
+          "description": {
+            "type": "string",
+            "description": "Webhook description"
+          }
+        }
+      }
+    },
+    {
+      "name": "account",
+      "description": "Account management - get account info, manage senders, domains, folders",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Domain name for domain operations"
+          },
+          "folderId": {
+            "type": "number",
+            "description": "Folder ID for folder operations"
+          },
+          "senderId": {
+            "type": "number",
+            "description": "Sender ID for sender operations"
+          },
+          "operation": {
+            "enum": [
+              "get_account",
+              "get_senders",
+              "create_sender",
+              "update_sender",
+              "delete_sender",
+              "get_domains",
+              "create_domain",
+              "validate_domain",
+              "get_folders",
+              "create_folder",
+              "update_folder",
+              "delete_folder"
+            ],
+            "type": "string",
+            "description": "Account operation to perform"
+          },
+          "folderData": {
+            "type": "object",
+            "description": "Folder information"
+          },
+          "senderData": {
+            "type": "object",
+            "description": "Sender information"
+          }
+        }
+      }
+    },
+    {
+      "name": "ecommerce",
+      "description": "E-commerce integration - manage orders, products, coupons, and payments",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Number of items to retrieve"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Order ID"
+          },
+          "operation": {
+            "enum": [
+              "create_order",
+              "get_order",
+              "get_orders",
+              "update_order",
+              "create_batch_order",
+              "get_products",
+              "create_product",
+              "update_product",
+              "delete_product",
+              "create_update_batch_products",
+              "get_categories",
+              "create_category",
+              "update_category",
+              "delete_category",
+              "create_update_batch_category",
+              "get_coupon_collections",
+              "get_coupon_collection",
+              "create_coupon_collection",
+              "update_coupon_collection",
+              "create_coupons",
+              "create_payment_request",
+              "get_payment_request",
+              "delete_payment_request"
+            ],
+            "type": "string",
+            "description": "E-commerce operation to perform"
+          },
+          "orderData": {
+            "type": "object",
+            "description": "Order information"
+          },
+          "productId": {
+            "type": "string",
+            "description": "Product ID"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Category ID"
+          },
+          "couponData": {
+            "type": "object",
+            "description": "Coupon collection data"
+          },
+          "paymentData": {
+            "type": "object",
+            "description": "Payment request data"
+          },
+          "productData": {
+            "type": "object",
+            "description": "Product information"
+          },
+          "categoryData": {
+            "type": "object",
+            "description": "Category information"
+          },
+          "couponCollectionId": {
+            "type": "string",
+            "description": "Coupon collection ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "crm",
+      "description": "Complete CRM functionality - manage companies, deals, tasks, and notes",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Number of items to retrieve"
+          },
+          "dealId": {
+            "type": "string",
+            "description": "Deal ID"
+          },
+          "noteId": {
+            "type": "string",
+            "description": "Note ID"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "taskId": {
+            "type": "string",
+            "description": "Task ID"
+          },
+          "filters": {
+            "type": "object",
+            "description": "Filters for listing operations"
+          },
+          "dealData": {
+            "type": "object",
+            "description": "Deal information"
+          },
+          "entityId": {
+            "type": "string",
+            "description": "Entity ID for linking/notes"
+          },
+          "noteData": {
+            "type": "object",
+            "description": "Note information"
+          },
+          "taskData": {
+            "type": "object",
+            "description": "Task information"
+          },
+          "companyId": {
+            "type": "string",
+            "description": "Company ID"
+          },
+          "operation": {
+            "enum": [
+              "get_companies",
+              "get_company",
+              "create_company",
+              "update_company",
+              "delete_company",
+              "link_unlink_company",
+              "get_company_attributes",
+              "get_deals",
+              "get_deal",
+              "create_deal",
+              "update_deal",
+              "delete_deal",
+              "link_unlink_deal",
+              "get_deal_attributes",
+              "get_pipelines",
+              "get_tasks",
+              "get_task",
+              "create_task",
+              "update_task",
+              "delete_task",
+              "get_task_types",
+              "get_notes",
+              "get_note",
+              "create_note",
+              "update_note",
+              "delete_note"
+            ],
+            "type": "string",
+            "description": "CRM operation to perform"
+          },
+          "entityType": {
+            "enum": [
+              "companies",
+              "deals",
+              "contacts"
+            ],
+            "type": "string",
+            "description": "Entity type for linking/notes"
+          },
+          "companyData": {
+            "type": "object",
+            "description": "Company information"
+          }
+        }
+      }
+    },
+    {
+      "name": "whatsapp",
+      "description": "WhatsApp messaging - send messages, manage campaigns and templates",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Number of items to retrieve"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Message ID for event tracking"
+          },
+          "operation": {
+            "enum": [
+              "send_message",
+              "get_whatsapp_events",
+              "get_whatsapp_campaigns",
+              "get_whatsapp_campaign",
+              "create_whatsapp_campaign",
+              "update_whatsapp_campaign",
+              "delete_whatsapp_campaign",
+              "get_whatsapp_templates",
+              "create_whatsapp_template",
+              "get_whatsapp_config"
+            ],
+            "type": "string",
+            "description": "WhatsApp operation to perform"
+          },
+          "recipient": {
+            "type": "string",
+            "description": "WhatsApp number for single message"
+          },
+          "campaignId": {
+            "type": "number",
+            "description": "WhatsApp campaign ID"
+          },
+          "templateId": {
+            "type": "number",
+            "description": "WhatsApp template ID"
+          },
+          "campaignData": {
+            "type": "object",
+            "description": "Campaign configuration data"
+          },
+          "templateData": {
+            "type": "object",
+            "description": "Template data and parameters"
+          }
+        }
+      }
+    },
+    {
+      "name": "events",
+      "description": "Custom event tracking and behavioral data management",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation",
+          "email",
+          "eventName"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Contact email for event tracking"
+          },
+          "eventData": {
+            "type": "object",
+            "description": "Event properties and data"
+          },
+          "eventName": {
+            "type": "string",
+            "description": "Name of the event to track"
+          },
+          "operation": {
+            "enum": [
+              "create_event"
+            ],
+            "type": "string",
+            "description": "Event operation to perform"
+          }
+        }
+      }
+    },
+    {
+      "name": "inbound",
+      "description": "Process inbound emails and attachments",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "Email UUID for specific email operations"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Number of items to retrieve"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "sender": {
+            "type": "string",
+            "description": "Sender email filter"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date for filtering (YYYY-MM-DD)"
+          },
+          "operation": {
+            "enum": [
+              "get_inbound_email_events",
+              "get_inbound_email_by_uuid",
+              "get_inbound_email_attachment"
+            ],
+            "type": "string",
+            "description": "Inbound parsing operation to perform"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date for filtering (YYYY-MM-DD)"
+          },
+          "attachmentId": {
+            "type": "string",
+            "description": "Attachment ID for download"
+          }
+        }
+      }
+    },
+    {
+      "name": "enterprise",
+      "description": "Multi-tenant account and user management for enterprise features",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Number of items to retrieve"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID for permission operations"
+          },
+          "operation": {
+            "enum": [
+              "get_master_account",
+              "get_sub_accounts",
+              "create_sub_account",
+              "get_sub_account",
+              "delete_sub_account",
+              "create_api_key",
+              "get_invited_users",
+              "edit_user_permission",
+              "get_user_permission"
+            ],
+            "type": "string",
+            "description": "Enterprise operation to perform"
+          },
+          "permissions": {
+            "type": "object",
+            "description": "User permission settings"
+          },
+          "subAccountId": {
+            "type": "number",
+            "description": "Sub-account ID"
+          },
+          "subAccountData": {
+            "type": "object",
+            "description": "Sub-account configuration data"
+          }
+        }
+      }
+    },
+    {
+      "name": "bulk_contact_import",
+      "description": "Intelligent bulk contact import from pasted text - analyzes text, maps attributes, checks duplicates, and imports efficiently",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Pasted contact data (CSV, email list, mixed text format)"
+          },
+          "dryRun": {
+            "type": "boolean",
+            "default": false,
+            "description": "Preview the import without executing"
+          },
+          "listId": {
+            "type": "number",
+            "description": "Optional: List ID to add contacts to"
+          },
+          "updateExisting": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to update existing contacts"
+          }
+        }
+      }
+    },
+    {
+      "name": "contact_with_list",
+      "description": "Create contact and add to list in one call - universally useful combination",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "email",
+          "listIds"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Contact email address"
+          },
+          "listIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Lists to add contact to"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Contact last name"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Contact first name"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Contact custom attributes"
+          },
+          "updateExisting": {
+            "type": "boolean",
+            "default": true,
+            "description": "Update contact if already exists"
+          }
+        }
+      }
+    },
+    {
+      "name": "email_with_tracking",
+      "description": "Send email and return tracking info immediately - universally useful combination",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "to"
+        ],
+        "properties": {
+          "to": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Recipients list"
+          },
+          "params": {
+            "type": "object",
+            "description": "Template parameters"
+          },
+          "sender": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "description": "Sender information"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject"
+          },
+          "templateId": {
+            "type": "number",
+            "description": "Template ID to use instead of content"
+          },
+          "htmlContent": {
+            "type": "string",
+            "description": "Email HTML content"
+          },
+          "includeStats": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include detailed tracking stats"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@samihalawa/brevo-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug mode for additional logging (true/false)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Brevo API key for authentication (get from https://app.brevo.com/settings/keys/api - required)"
+          },
+          "defaultSenderName": {
+            "type": "string",
+            "description": "Default sender name for emails (e.g., 'Your Company Name' or 'John Doe')"
+          },
+          "defaultSenderEmail": {
+            "type": "string",
+            "description": "Default sender email address (must be verified in Brevo, e.g., your-email@yourdomain.com)"
+          }
+        }
+      }
+    }
+  ]
+}

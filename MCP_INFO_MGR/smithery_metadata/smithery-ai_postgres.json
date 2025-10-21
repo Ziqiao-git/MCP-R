@@ -1,0 +1,96 @@
+{
+  "qualifiedName": "@smithery-ai/postgres",
+  "displayName": "PostgreSQL MCP Server",
+  "description": "A Model Context Protocol server that provides read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.postgresql.org.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "checkpoint",
+      "title": "Checkpoint Management",
+      "description": "Manage database checkpoints for safe experimentation. Start checkpoint mode to enable undo/redo capabilities.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "start",
+              "list",
+              "rollback",
+              "commit",
+              "discard"
+            ],
+            "type": "string",
+            "description": "Action to perform: 'start' (begin checkpoint mode), 'list' (show checkpoints), 'rollback' (undo to checkpoint), 'commit' (save changes), 'discard' (throw away all changes)"
+          },
+          "checkpointId": {
+            "type": "number",
+            "description": "Checkpoint ID to rollback to (only used with 'rollback' action)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "query",
+      "title": "Execute PostgreSQL Query",
+      "description": "Run read-only SQL queries (SELECT privilege) - Role: read",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "The SQL query to execute"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@smithery-ai/postgres/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "postgresConnectionString"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "read",
+              "insert",
+              "write",
+              "admin"
+            ],
+            "type": "string",
+            "default": "read",
+            "description": "Database permission role: 'read' (SELECT only), 'insert' (SELECT + INSERT, append-only), 'write' (SELECT, INSERT, UPDATE, DELETE), 'admin' (all privileges including DDL)."
+          },
+          "postgresConnectionString": {
+            "type": "string",
+            "description": "The connection string for the PostgreSQL database, including the host, port, and database name, e.g., 'postgresql://user:password@host:port/db-name'."
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

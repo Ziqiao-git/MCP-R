@@ -1,0 +1,169 @@
+{
+  "qualifiedName": "@rfdez/pvpc-mcp-server",
+  "displayName": "Voluntary Price for the Small Consumer (PVPC)",
+  "description": "Retrieve daily PVPC electricity tariffs for 2.0 TD consumers, published by Red Eléctrica.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/9c9240d2-b55a-4e20-8081-90e12adac36c.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@rfdez/pvpc-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "fetch_prices",
+      "title": "Fetch PVPC Prices",
+      "description": "Fetches the Voluntary Price for the Small Consumer (PVPC) prices for a given date range and geographical area.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "locale": {
+            "enum": [
+              "es",
+              "en"
+            ],
+            "type": "string",
+            "default": "es",
+            "description": "Get translations for sources. Accepted values: `es`, `en`. Defaults to `es`."
+          },
+          "endDate": {
+            "type": "string",
+            "default": "2025-10-11T23:59:59.999Z",
+            "description": "End of the date range to filter indicator values in iso8601 format. E.g. 2025-06-29T23:59:59.999+02:00. Defaults to the end of today."
+          },
+          "startDate": {
+            "type": "string",
+            "default": "2025-10-11T00:00:00.000Z",
+            "description": "Beginning of the date range to filter indicator values in iso8601 format. E.g. 2025-06-29T00:00:00.000+02:00. Defaults to the start of today."
+          },
+          "timeTruncation": {
+            "enum": [
+              "hour",
+              "day",
+              "month",
+              "year"
+            ],
+            "type": "string",
+            "description": "Tells how to truncate data time series. Accepted values: `hour`, `day`, `month`, `year`."
+          },
+          "geographicalIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "default": [
+              8741,
+              8742,
+              8743,
+              8744,
+              8745
+            ],
+            "description": "Tells the geographical IDs to filter indicator values. Accepted values: `3` (España), `8741` (Península), `8742` (Canarias), `8743` (Baleares), `8744` (Ceuta), `8745` (Melilla). Defaults to `8741`, `8742`, `8743`, `8744`, `8745`."
+          },
+          "timeAggregation": {
+            "enum": [
+              "sum",
+              "average"
+            ],
+            "type": "string",
+            "default": "sum",
+            "description": "How to aggregate indicator values when grouping them by time. Accepted values: `sum`, `average`. Defaults to `sum`."
+          },
+          "geographicalTruncation": {
+            "enum": [
+              "country",
+              "electric_system"
+            ],
+            "type": "string",
+            "description": "Tells how to group data at geographical level when the geographical aggregation is informed. Accepted values: `country`, `electric_system`."
+          },
+          "geographicalAggregation": {
+            "enum": [
+              "sum",
+              "average"
+            ],
+            "type": "string",
+            "default": "sum",
+            "description": "How to aggregate indicator values when grouping them by geographical ID. Accepted values: `sum`, `average`. Defaults to `sum`."
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prices"
+        ],
+        "properties": {
+          "prices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "price",
+                "magnitude",
+                "datetime",
+                "datetimeUtc",
+                "geographicalId",
+                "geographicalName",
+                "updatedAt"
+              ],
+              "properties": {
+                "price": {
+                  "type": "object",
+                  "required": [
+                    "amount",
+                    "currencyCode",
+                    "currencySymbol"
+                  ],
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "currencyCode": {
+                      "type": "string"
+                    },
+                    "currencySymbol": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "magnitude": {
+                  "type": "string"
+                },
+                "updatedAt": {
+                  "type": "string"
+                },
+                "datetimeUtc": {
+                  "type": "string"
+                },
+                "geographicalId": {
+                  "type": "number"
+                },
+                "geographicalName": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@rfdez/pvpc-mcp-server/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

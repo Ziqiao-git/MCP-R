@@ -1,0 +1,147 @@
+{
+  "qualifiedName": "@ucalyptus/prem-mcp-server",
+  "displayName": "Prem AI MCP Server",
+  "description": "Integrate seamlessly with Prem AI's powerful features for chat completions and document management. Enhance your AI assistants with Retrieval-Augmented Generation capabilities and real-time streaming responses. Upload and manage documents effortlessly to enrich your interactions.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/premai.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "chat",
+      "description": "Chat with Prem AI - supports chat completions with optional RAG capabilities.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Optional limit of context chunks for RAG"
+          },
+          "model": {
+            "type": "string",
+            "description": "Optional model to use for completion"
+          },
+          "query": {
+            "type": "string",
+            "description": "The chat message to send"
+          },
+          "max_tokens": {
+            "type": "number",
+            "description": "Optional maximum tokens to generate"
+          },
+          "temperature": {
+            "type": "number",
+            "description": "Optional temperature for response generation"
+          },
+          "system_prompt": {
+            "type": "string",
+            "description": "Optional system prompt to guide the model's behavior"
+          },
+          "repository_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Optional array of repository IDs for RAG"
+          },
+          "similarity_threshold": {
+            "type": "number",
+            "description": "Optional similarity threshold for RAG"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "prem_upload_document",
+      "description": "Upload a document to a Prem AI repository",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "repository_id",
+          "file_path"
+        ],
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Path to the file to upload"
+          },
+          "repository_id": {
+            "type": "string",
+            "description": "ID of the repository to upload to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "prem_chat_with_template",
+      "description": "Chat using a predefined Prem AI prompt template",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "template_id",
+          "params"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Optional model to use"
+          },
+          "params": {
+            "type": "object",
+            "description": "Parameters to fill in the template",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "max_tokens": {
+            "type": "number",
+            "description": "Optional maximum tokens to generate"
+          },
+          "temperature": {
+            "type": "number",
+            "description": "Optional temperature parameter"
+          },
+          "template_id": {
+            "type": "string",
+            "description": "ID of the prompt template to use"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@ucalyptus/prem-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "premApiKey",
+          "premProjectId"
+        ],
+        "properties": {
+          "premApiKey": {
+            "type": "string",
+            "description": "API key for Prem AI authentication."
+          },
+          "premProjectId": {
+            "type": "string",
+            "description": "Prem project ID."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "qualifiedName": "@tanwenxin/mail-126-mcp",
+  "displayName": "126 Email SMTP Server",
+  "description": "Send emails securely using the 126 email service with SMTP support. Enable sending plain text and HTML emails with CC and BCC options. Verify SMTP connections easily to ensure reliable email delivery.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@tanwenxin/mail-126-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Send email using 126 SMTP service",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "to",
+          "subject"
+        ],
+        "properties": {
+          "cc": {
+            "type": "string",
+            "description": "CC email addresses (comma separated)"
+          },
+          "to": {
+            "type": "string",
+            "description": "Recipient email address"
+          },
+          "bcc": {
+            "type": "string",
+            "description": "BCC email addresses (comma separated)"
+          },
+          "html": {
+            "type": "string",
+            "description": "HTML content"
+          },
+          "text": {
+            "type": "string",
+            "description": "Plain text content"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_smtp_connection",
+      "description": "Verify SMTP connection to 126 email service",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@tanwenxin/mail-126-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "email_user",
+          "email_password"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "from_name": {
+            "type": "string",
+            "description": "Display name for sender"
+          },
+          "smtp_host": {
+            "type": "string",
+            "default": "smtp.126.com",
+            "description": "SMTP server host"
+          },
+          "smtp_port": {
+            "type": "number",
+            "default": 465,
+            "description": "SMTP server port (465 for SSL)"
+          },
+          "email_user": {
+            "type": "string",
+            "description": "126 email address for authentication"
+          },
+          "smtp_secure": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use SSL/TLS (true for SSL)"
+          },
+          "email_password": {
+            "type": "string",
+            "description": "126 email password or app-specific password"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

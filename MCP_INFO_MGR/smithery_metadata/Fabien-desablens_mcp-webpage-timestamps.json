@@ -1,0 +1,110 @@
+{
+  "qualifiedName": "@Fabien-desablens/mcp-webpage-timestamps",
+  "displayName": "Webpage Timestamps Extractor",
+  "description": "Extract creation, modification, and publication timestamps from webpages to evaluate content freshness and support temporal analysis. Utilize multiple data sources including HTML meta tags, HTTP headers, JSON-LD, and heuristic methods for comprehensive timestamp detection. Process single or batch URLs with configurable options and confidence scoring for reliable results.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "extract_timestamps",
+      "description": "Extract creation, modification, and publication timestamps from a webpage",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the webpage to extract timestamps from"
+          },
+          "config": {
+            "type": "object",
+            "properties": {
+              "timeout": {
+                "type": "number",
+                "description": "Request timeout in milliseconds (default: 10000)"
+              },
+              "userAgent": {
+                "type": "string",
+                "description": "User agent string to use for requests"
+              },
+              "maxRedirects": {
+                "type": "number",
+                "description": "Maximum number of redirects to follow (default: 5)"
+              },
+              "followRedirects": {
+                "type": "boolean",
+                "description": "Whether to follow HTTP redirects (default: true)"
+              },
+              "enableHeuristics": {
+                "type": "boolean",
+                "description": "Whether to enable heuristic timestamp detection (default: true)"
+              }
+            },
+            "description": "Optional configuration for the extraction"
+          }
+        }
+      }
+    },
+    {
+      "name": "batch_extract_timestamps",
+      "description": "Extract timestamps from multiple webpages in batch",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "urls"
+        ],
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of URLs to extract timestamps from"
+          },
+          "config": {
+            "type": "object",
+            "properties": {
+              "timeout": {
+                "type": "number",
+                "description": "Request timeout in milliseconds (default: 10000)"
+              },
+              "userAgent": {
+                "type": "string",
+                "description": "User agent string to use for requests"
+              },
+              "maxRedirects": {
+                "type": "number",
+                "description": "Maximum number of redirects to follow (default: 5)"
+              },
+              "followRedirects": {
+                "type": "boolean",
+                "description": "Whether to follow HTTP redirects (default: true)"
+              },
+              "enableHeuristics": {
+                "type": "boolean",
+                "description": "Whether to enable heuristic timestamp detection (default: true)"
+              }
+            },
+            "description": "Optional configuration for the extraction"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Fabien-desablens/mcp-webpage-timestamps/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

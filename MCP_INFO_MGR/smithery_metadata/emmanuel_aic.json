@@ -1,0 +1,3833 @@
+{
+  "qualifiedName": "@emmanuel/aic",
+  "displayName": "NWS Weather",
+  "description": "Get real-time U.S. alerts, forecasts, radar, and observations from the National Weather Service. Build location-aware experiences with station, zone, and text product data. Track aviation weather with TAFs and SIGMET/AIRMETs and monitor active hazards.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@emmanuel/aic",
+  "security": null,
+  "tools": [
+    {
+      "name": "alerts_query",
+      "description": "Returns all alerts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams"
+        ],
+        "properties": {
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "end": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "End time"
+              },
+              "area": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "AL",
+                        "AK",
+                        "AS",
+                        "AR",
+                        "AZ",
+                        "CA",
+                        "CO",
+                        "CT",
+                        "DE",
+                        "DC",
+                        "FL",
+                        "GA",
+                        "GU",
+                        "HI",
+                        "ID",
+                        "IL",
+                        "IN",
+                        "IA",
+                        "KS",
+                        "KY",
+                        "LA",
+                        "ME",
+                        "MD",
+                        "MA",
+                        "MI",
+                        "MN",
+                        "MS",
+                        "MO",
+                        "MT",
+                        "NE",
+                        "NV",
+                        "NH",
+                        "NJ",
+                        "NM",
+                        "NY",
+                        "NC",
+                        "ND",
+                        "OH",
+                        "OK",
+                        "OR",
+                        "PA",
+                        "PR",
+                        "RI",
+                        "SC",
+                        "SD",
+                        "TN",
+                        "TX",
+                        "UT",
+                        "VT",
+                        "VI",
+                        "VA",
+                        "WA",
+                        "WV",
+                        "WI",
+                        "WY",
+                        "MP",
+                        "PW",
+                        "FM",
+                        "MH"
+                      ]
+                    },
+                    {
+                      "enum": [
+                        "AM",
+                        "AN",
+                        "GM",
+                        "LC",
+                        "LE",
+                        "LH",
+                        "LM",
+                        "LO",
+                        "LS",
+                        "PH",
+                        "PK",
+                        "PM",
+                        "PS",
+                        "PZ",
+                        "SL"
+                      ],
+                      "description": "Marine area code as defined in NWS Directive 10-302:\n* AM: Western North Atlantic Ocean and along U.S. East Coast south of Currituck Beach Light NC following the coastline into Gulf of Mexico to Ocean Reef FL including the Caribbean\n* AN: Western North Atlantic Ocean and along U.S. East Coast from Canadian border south to Currituck Beach Light NC\n* GM: Gulf of Mexico and along the U.S. Gulf Coast from the Mexican border to Ocean Reef FL\n* LC: Lake St. Clair\n* LE: Lake Erie\n* LH: Lake Huron\n* LM: Lake Michigan\n* LO: Lake Ontario\n* LS: Lake Superior\n* PH: Central Pacific Ocean including Hawaiian waters\n* PK: North Pacific Ocean near Alaska and along Alaska coastline including the Bering Sea and the Gulf of Alaska\n* PM: Western Pacific Ocean including Mariana Island waters\n* PS: South Central Pacific Ocean including American Samoa waters\n* PZ: Eastern North Pacific Ocean and along U.S. West Coast from Canadian border to Mexican border\n* SL: St. Lawrence River above St. Regis\n"
+                    }
+                  ]
+                },
+                "description": "State/territory code or marine area code\nThis parameter is incompatible with the following parameters: point, region, region_type, zone\n"
+              },
+              "code": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^\\w{3}$"
+                },
+                "description": "Event code"
+              },
+              "zone": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^(A[KLMNRSZ]|C[AOT]|D[CE]|F[LM]|G[AMU]|I[ADLN]|K[SY]|L[ACEHMOS]|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[AHKMRSWZ]|S[CDL]|T[NX]|UT|V[AIT]|W[AIVY]|[HR]I)[CZ]\\d{3}$",
+                  "description": "UGC identifier for a NWS forecast zone or county.\nThe first two letters will correspond to either a state code or marine area code (see #/components/schemas/StateTerritoryCode and #/components/schemas/MarineAreaCode for lists of valid letter combinations).\nThe third letter will be Z for public/fire zone or C for county.\n"
+                },
+                "description": "Zone ID (forecast or county)\nThis parameter is incompatible with the following parameters: area, point, region, region_type\n"
+              },
+              "event": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^[A-Za-z0-9 ]+$"
+                },
+                "description": "Event name"
+              },
+              "limit": {
+                "type": "integer",
+                "default": 500,
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "point": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?)$",
+                "description": "Point (latitude,longitude)\nThis parameter is incompatible with the following parameters: area, region, region_type, zone\n"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Start time"
+              },
+              "active": {
+                "type": "boolean",
+                "description": "List only active alerts (use /alerts/active endpoints instead)"
+              },
+              "cursor": {
+                "type": "string",
+                "description": "Pagination cursor"
+              },
+              "region": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "AL",
+                    "AT",
+                    "GL",
+                    "GM",
+                    "PA",
+                    "PI"
+                  ],
+                  "description": "Marine region code. These are groups of marine areas combined.\n* AL: Alaska waters (PK)\n* AT: Atlantic Ocean (AM, AN)\n* GL: Great Lakes (LC, LE, LH, LM, LO, LS, SL)\n* GM: Gulf of Mexico (GM)\n* PA: Eastern Pacific Ocean and U.S. West Coast (PZ)\n* PI: Central and Western Pacific (PH, PM, PS)\n"
+                },
+                "description": "Marine region code\nThis parameter is incompatible with the following parameters: area, point, region_type, zone\n"
+              },
+              "status": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "actual",
+                    "exercise",
+                    "system",
+                    "test",
+                    "draft"
+                  ]
+                },
+                "description": "Status (actual, exercise, system, test, draft)"
+              },
+              "urgency": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Immediate",
+                    "Expected",
+                    "Future",
+                    "Past",
+                    "Unknown"
+                  ]
+                },
+                "description": "Urgency (immediate, expected, future, past, unknown)"
+              },
+              "severity": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Extreme",
+                    "Severe",
+                    "Moderate",
+                    "Minor",
+                    "Unknown"
+                  ]
+                },
+                "description": "Severity (extreme, severe, moderate, minor, unknown)"
+              },
+              "certainty": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Observed",
+                    "Likely",
+                    "Possible",
+                    "Unlikely",
+                    "Unknown"
+                  ]
+                },
+                "description": "Certainty (observed, likely, possible, unlikely, unknown)"
+              },
+              "region_type": {
+                "enum": [
+                  "land",
+                  "marine"
+                ],
+                "description": "Region type (land or marine)\nThis parameter is incompatible with the following parameters: area, point, region, zone\n"
+              },
+              "message_type": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "alert",
+                    "update",
+                    "cancel"
+                  ]
+                },
+                "description": "Message type (alert, update, cancel)"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alerts_active",
+      "description": "Returns all currently active alerts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams"
+        ],
+        "properties": {
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "area": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "AL",
+                        "AK",
+                        "AS",
+                        "AR",
+                        "AZ",
+                        "CA",
+                        "CO",
+                        "CT",
+                        "DE",
+                        "DC",
+                        "FL",
+                        "GA",
+                        "GU",
+                        "HI",
+                        "ID",
+                        "IL",
+                        "IN",
+                        "IA",
+                        "KS",
+                        "KY",
+                        "LA",
+                        "ME",
+                        "MD",
+                        "MA",
+                        "MI",
+                        "MN",
+                        "MS",
+                        "MO",
+                        "MT",
+                        "NE",
+                        "NV",
+                        "NH",
+                        "NJ",
+                        "NM",
+                        "NY",
+                        "NC",
+                        "ND",
+                        "OH",
+                        "OK",
+                        "OR",
+                        "PA",
+                        "PR",
+                        "RI",
+                        "SC",
+                        "SD",
+                        "TN",
+                        "TX",
+                        "UT",
+                        "VT",
+                        "VI",
+                        "VA",
+                        "WA",
+                        "WV",
+                        "WI",
+                        "WY",
+                        "MP",
+                        "PW",
+                        "FM",
+                        "MH"
+                      ]
+                    },
+                    {
+                      "enum": [
+                        "AM",
+                        "AN",
+                        "GM",
+                        "LC",
+                        "LE",
+                        "LH",
+                        "LM",
+                        "LO",
+                        "LS",
+                        "PH",
+                        "PK",
+                        "PM",
+                        "PS",
+                        "PZ",
+                        "SL"
+                      ],
+                      "description": "Marine area code as defined in NWS Directive 10-302:\n* AM: Western North Atlantic Ocean and along U.S. East Coast south of Currituck Beach Light NC following the coastline into Gulf of Mexico to Ocean Reef FL including the Caribbean\n* AN: Western North Atlantic Ocean and along U.S. East Coast from Canadian border south to Currituck Beach Light NC\n* GM: Gulf of Mexico and along the U.S. Gulf Coast from the Mexican border to Ocean Reef FL\n* LC: Lake St. Clair\n* LE: Lake Erie\n* LH: Lake Huron\n* LM: Lake Michigan\n* LO: Lake Ontario\n* LS: Lake Superior\n* PH: Central Pacific Ocean including Hawaiian waters\n* PK: North Pacific Ocean near Alaska and along Alaska coastline including the Bering Sea and the Gulf of Alaska\n* PM: Western Pacific Ocean including Mariana Island waters\n* PS: South Central Pacific Ocean including American Samoa waters\n* PZ: Eastern North Pacific Ocean and along U.S. West Coast from Canadian border to Mexican border\n* SL: St. Lawrence River above St. Regis\n"
+                    }
+                  ]
+                },
+                "description": "State/territory code or marine area code\nThis parameter is incompatible with the following parameters: point, region, region_type, zone\n"
+              },
+              "code": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^\\w{3}$"
+                },
+                "description": "Event code"
+              },
+              "zone": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^(A[KLMNRSZ]|C[AOT]|D[CE]|F[LM]|G[AMU]|I[ADLN]|K[SY]|L[ACEHMOS]|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[AHKMRSWZ]|S[CDL]|T[NX]|UT|V[AIT]|W[AIVY]|[HR]I)[CZ]\\d{3}$",
+                  "description": "UGC identifier for a NWS forecast zone or county.\nThe first two letters will correspond to either a state code or marine area code (see #/components/schemas/StateTerritoryCode and #/components/schemas/MarineAreaCode for lists of valid letter combinations).\nThe third letter will be Z for public/fire zone or C for county.\n"
+                },
+                "description": "Zone ID (forecast or county)\nThis parameter is incompatible with the following parameters: area, point, region, region_type\n"
+              },
+              "event": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^[A-Za-z0-9 ]+$"
+                },
+                "description": "Event name"
+              },
+              "point": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?)$",
+                "description": "Point (latitude,longitude)\nThis parameter is incompatible with the following parameters: area, region, region_type, zone\n"
+              },
+              "region": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "AL",
+                    "AT",
+                    "GL",
+                    "GM",
+                    "PA",
+                    "PI"
+                  ],
+                  "description": "Marine region code. These are groups of marine areas combined.\n* AL: Alaska waters (PK)\n* AT: Atlantic Ocean (AM, AN)\n* GL: Great Lakes (LC, LE, LH, LM, LO, LS, SL)\n* GM: Gulf of Mexico (GM)\n* PA: Eastern Pacific Ocean and U.S. West Coast (PZ)\n* PI: Central and Western Pacific (PH, PM, PS)\n"
+                },
+                "description": "Marine region code\nThis parameter is incompatible with the following parameters: area, point, region_type, zone\n"
+              },
+              "status": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "actual",
+                    "exercise",
+                    "system",
+                    "test",
+                    "draft"
+                  ]
+                },
+                "description": "Status (actual, exercise, system, test, draft)"
+              },
+              "urgency": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Immediate",
+                    "Expected",
+                    "Future",
+                    "Past",
+                    "Unknown"
+                  ]
+                },
+                "description": "Urgency (immediate, expected, future, past, unknown)"
+              },
+              "severity": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Extreme",
+                    "Severe",
+                    "Moderate",
+                    "Minor",
+                    "Unknown"
+                  ]
+                },
+                "description": "Severity (extreme, severe, moderate, minor, unknown)"
+              },
+              "certainty": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Observed",
+                    "Likely",
+                    "Possible",
+                    "Unlikely",
+                    "Unknown"
+                  ]
+                },
+                "description": "Certainty (observed, likely, possible, unlikely, unknown)"
+              },
+              "region_type": {
+                "enum": [
+                  "land",
+                  "marine"
+                ],
+                "description": "Region type (land or marine)\nThis parameter is incompatible with the following parameters: area, point, region, zone\n"
+              },
+              "message_type": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "alert",
+                    "update",
+                    "cancel"
+                  ]
+                },
+                "description": "Message type (alert, update, cancel)"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alerts_active_count",
+      "description": "Returns info on the number of active alerts",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alerts_active_zone",
+      "description": "Returns active alerts for the given NWS public zone or county",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "zoneId"
+            ],
+            "properties": {
+              "zoneId": {
+                "type": "string",
+                "description": "NWS public zone/county identifier"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alerts_active_area",
+      "description": "Returns active alerts for the given area (state or marine area)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "area"
+            ],
+            "properties": {
+              "area": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "AL",
+                      "AK",
+                      "AS",
+                      "AR",
+                      "AZ",
+                      "CA",
+                      "CO",
+                      "CT",
+                      "DE",
+                      "DC",
+                      "FL",
+                      "GA",
+                      "GU",
+                      "HI",
+                      "ID",
+                      "IL",
+                      "IN",
+                      "IA",
+                      "KS",
+                      "KY",
+                      "LA",
+                      "ME",
+                      "MD",
+                      "MA",
+                      "MI",
+                      "MN",
+                      "MS",
+                      "MO",
+                      "MT",
+                      "NE",
+                      "NV",
+                      "NH",
+                      "NJ",
+                      "NM",
+                      "NY",
+                      "NC",
+                      "ND",
+                      "OH",
+                      "OK",
+                      "OR",
+                      "PA",
+                      "PR",
+                      "RI",
+                      "SC",
+                      "SD",
+                      "TN",
+                      "TX",
+                      "UT",
+                      "VT",
+                      "VI",
+                      "VA",
+                      "WA",
+                      "WV",
+                      "WI",
+                      "WY",
+                      "MP",
+                      "PW",
+                      "FM",
+                      "MH"
+                    ]
+                  },
+                  {
+                    "enum": [
+                      "AM",
+                      "AN",
+                      "GM",
+                      "LC",
+                      "LE",
+                      "LH",
+                      "LM",
+                      "LO",
+                      "LS",
+                      "PH",
+                      "PK",
+                      "PM",
+                      "PS",
+                      "PZ",
+                      "SL"
+                    ],
+                    "description": "Marine area code as defined in NWS Directive 10-302:\n* AM: Western North Atlantic Ocean and along U.S. East Coast south of Currituck Beach Light NC following the coastline into Gulf of Mexico to Ocean Reef FL including the Caribbean\n* AN: Western North Atlantic Ocean and along U.S. East Coast from Canadian border south to Currituck Beach Light NC\n* GM: Gulf of Mexico and along the U.S. Gulf Coast from the Mexican border to Ocean Reef FL\n* LC: Lake St. Clair\n* LE: Lake Erie\n* LH: Lake Huron\n* LM: Lake Michigan\n* LO: Lake Ontario\n* LS: Lake Superior\n* PH: Central Pacific Ocean including Hawaiian waters\n* PK: North Pacific Ocean near Alaska and along Alaska coastline including the Bering Sea and the Gulf of Alaska\n* PM: Western Pacific Ocean including Mariana Island waters\n* PS: South Central Pacific Ocean including American Samoa waters\n* PZ: Eastern North Pacific Ocean and along U.S. West Coast from Canadian border to Mexican border\n* SL: St. Lawrence River above St. Regis\n"
+                  }
+                ],
+                "description": "State/area ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alerts_active_region",
+      "description": "Returns active alerts for the given marine region",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "region"
+            ],
+            "properties": {
+              "region": {
+                "enum": [
+                  "AL",
+                  "AT",
+                  "GL",
+                  "GM",
+                  "PA",
+                  "PI"
+                ],
+                "description": "Marine region ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alerts_types",
+      "description": "Returns a list of alert types",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alerts_single",
+      "description": "Returns a specific alert",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Alert identifier"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cwsu",
+      "description": "Returns metadata about a Center Weather Service Unit",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "cwsuId"
+            ],
+            "properties": {
+              "cwsuId": {
+                "enum": [
+                  "ZAB",
+                  "ZAN",
+                  "ZAU",
+                  "ZBW",
+                  "ZDC",
+                  "ZDV",
+                  "ZFA",
+                  "ZFW",
+                  "ZHU",
+                  "ZID",
+                  "ZJX",
+                  "ZKC",
+                  "ZLA",
+                  "ZLC",
+                  "ZMA",
+                  "ZME",
+                  "ZMP",
+                  "ZNY",
+                  "ZOA",
+                  "ZOB",
+                  "ZSE",
+                  "ZTL"
+                ],
+                "description": "NWS CWSU ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cwas",
+      "description": "Returns a list of Center Weather Advisories from a CWSU",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "cwsuId"
+            ],
+            "properties": {
+              "cwsuId": {
+                "enum": [
+                  "ZAB",
+                  "ZAN",
+                  "ZAU",
+                  "ZBW",
+                  "ZDC",
+                  "ZDV",
+                  "ZFA",
+                  "ZFW",
+                  "ZHU",
+                  "ZID",
+                  "ZJX",
+                  "ZKC",
+                  "ZLA",
+                  "ZLC",
+                  "ZMA",
+                  "ZME",
+                  "ZMP",
+                  "ZNY",
+                  "ZOA",
+                  "ZOB",
+                  "ZSE",
+                  "ZTL"
+                ],
+                "description": "NWS CWSU ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cwa",
+      "description": "Returns a list of Center Weather Advisories from a CWSU",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "cwsuId",
+              "date",
+              "sequence"
+            ],
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))$",
+                "description": "Date (YYYY-MM-DD format)"
+              },
+              "cwsuId": {
+                "enum": [
+                  "ZAB",
+                  "ZAN",
+                  "ZAU",
+                  "ZBW",
+                  "ZDC",
+                  "ZDV",
+                  "ZFA",
+                  "ZFW",
+                  "ZHU",
+                  "ZID",
+                  "ZJX",
+                  "ZKC",
+                  "ZLA",
+                  "ZLC",
+                  "ZMA",
+                  "ZME",
+                  "ZMP",
+                  "ZNY",
+                  "ZOA",
+                  "ZOB",
+                  "ZSE",
+                  "ZTL"
+                ],
+                "description": "NWS CWSU ID"
+              },
+              "sequence": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 100,
+                "description": "Sequence number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sigmetQuery",
+      "description": "Returns a list of SIGMET/AIRMETs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams"
+        ],
+        "properties": {
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "end": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "End time"
+              },
+              "atsu": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^[A-Z]{3,4}$",
+                "description": "ATSU identifier"
+              },
+              "date": {
+                "type": "string",
+                "description": "Date (YYYY-MM-DD format)"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Start time"
+              },
+              "sequence": {
+                "type": "string",
+                "description": "SIGMET sequence number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sigmetsByATSU",
+      "description": "Returns a list of SIGMET/AIRMETs for the specified ATSU",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "atsu"
+            ],
+            "properties": {
+              "atsu": {
+                "type": "string",
+                "description": "ATSU identifier"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sigmetsByATSUByDate",
+      "description": "Returns a list of SIGMET/AIRMETs for the specified ATSU for the specified date",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "atsu",
+              "date"
+            ],
+            "properties": {
+              "atsu": {
+                "type": "string",
+                "description": "ATSU identifier"
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))$",
+                "description": "Date (YYYY-MM-DD format)"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sigmet",
+      "description": "Returns a specific SIGMET/AIRMET",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "atsu",
+              "date",
+              "time"
+            ],
+            "properties": {
+              "atsu": {
+                "type": "string",
+                "description": "ATSU identifier"
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))$",
+                "description": "Date (YYYY-MM-DD format)"
+              },
+              "time": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^([01][0-9]|2[0-3])[0-5][0-9]$",
+                "description": "Time (HHMM format). This time is always specified in UTC (Zulu) time."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "glossary",
+      "description": "Returns glossary terms",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "gridpoint",
+      "description": "Returns raw numerical forecast data for a 2.5km grid area",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "wfo",
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid X coordinate"
+              },
+              "y": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid Y coordinate"
+              },
+              "wfo": {
+                "enum": [
+                  "AKQ",
+                  "ALY",
+                  "BGM",
+                  "BOX",
+                  "BTV",
+                  "BUF",
+                  "CAE",
+                  "CAR",
+                  "CHS",
+                  "CLE",
+                  "CTP",
+                  "GSP",
+                  "GYX",
+                  "ILM",
+                  "ILN",
+                  "LWX",
+                  "MHX",
+                  "OKX",
+                  "PBZ",
+                  "PHI",
+                  "RAH",
+                  "RLX",
+                  "RNK",
+                  "ABQ",
+                  "AMA",
+                  "BMX",
+                  "BRO",
+                  "CRP",
+                  "EPZ",
+                  "EWX",
+                  "FFC",
+                  "FWD",
+                  "HGX",
+                  "HUN",
+                  "JAN",
+                  "JAX",
+                  "KEY",
+                  "LCH",
+                  "LIX",
+                  "LUB",
+                  "LZK",
+                  "MAF",
+                  "MEG",
+                  "MFL",
+                  "MLB",
+                  "MOB",
+                  "MRX",
+                  "OHX",
+                  "OUN",
+                  "SHV",
+                  "SJT",
+                  "SJU",
+                  "TAE",
+                  "TBW",
+                  "TSA",
+                  "ABR",
+                  "APX",
+                  "ARX",
+                  "BIS",
+                  "BOU",
+                  "CYS",
+                  "DDC",
+                  "DLH",
+                  "DMX",
+                  "DTX",
+                  "DVN",
+                  "EAX",
+                  "FGF",
+                  "FSD",
+                  "GID",
+                  "GJT",
+                  "GLD",
+                  "GRB",
+                  "GRR",
+                  "ICT",
+                  "ILX",
+                  "IND",
+                  "IWX",
+                  "JKL",
+                  "LBF",
+                  "LMK",
+                  "LOT",
+                  "LSX",
+                  "MKX",
+                  "MPX",
+                  "MQT",
+                  "OAX",
+                  "PAH",
+                  "PUB",
+                  "RIW",
+                  "SGF",
+                  "TOP",
+                  "UNR",
+                  "BOI",
+                  "BYZ",
+                  "EKA",
+                  "FGZ",
+                  "GGW",
+                  "HNX",
+                  "LKN",
+                  "LOX",
+                  "MFR",
+                  "MSO",
+                  "MTR",
+                  "OTX",
+                  "PDT",
+                  "PIH",
+                  "PQR",
+                  "PSR",
+                  "REV",
+                  "SEW",
+                  "SGX",
+                  "SLC",
+                  "STO",
+                  "TFX",
+                  "TWC",
+                  "VEF",
+                  "AER",
+                  "AFC",
+                  "AFG",
+                  "AJK",
+                  "ALU",
+                  "GUM",
+                  "HPA",
+                  "HFO",
+                  "PPG",
+                  "STU",
+                  "NH1",
+                  "NH2",
+                  "ONA",
+                  "ONP"
+                ],
+                "description": "Forecast office ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "gridpoint_forecast",
+      "description": "Returns a textual forecast for a 2.5km grid area",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams",
+          "headers"
+        ],
+        "properties": {
+          "headers": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "Feature-Flags": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "forecast_temperature_qv",
+                    "forecast_wind_speed_qv"
+                  ]
+                },
+                "description": "Enable future and experimental features (see documentation for more info):\n* forecast_temperature_qv: Represent temperature as QuantitativeValue\n* forecast_wind_speed_qv: Represent wind speed as QuantitativeValue\n"
+              }
+            },
+            "additionalProperties": false
+          },
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "wfo",
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid X coordinate"
+              },
+              "y": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid Y coordinate"
+              },
+              "wfo": {
+                "enum": [
+                  "AKQ",
+                  "ALY",
+                  "BGM",
+                  "BOX",
+                  "BTV",
+                  "BUF",
+                  "CAE",
+                  "CAR",
+                  "CHS",
+                  "CLE",
+                  "CTP",
+                  "GSP",
+                  "GYX",
+                  "ILM",
+                  "ILN",
+                  "LWX",
+                  "MHX",
+                  "OKX",
+                  "PBZ",
+                  "PHI",
+                  "RAH",
+                  "RLX",
+                  "RNK",
+                  "ABQ",
+                  "AMA",
+                  "BMX",
+                  "BRO",
+                  "CRP",
+                  "EPZ",
+                  "EWX",
+                  "FFC",
+                  "FWD",
+                  "HGX",
+                  "HUN",
+                  "JAN",
+                  "JAX",
+                  "KEY",
+                  "LCH",
+                  "LIX",
+                  "LUB",
+                  "LZK",
+                  "MAF",
+                  "MEG",
+                  "MFL",
+                  "MLB",
+                  "MOB",
+                  "MRX",
+                  "OHX",
+                  "OUN",
+                  "SHV",
+                  "SJT",
+                  "SJU",
+                  "TAE",
+                  "TBW",
+                  "TSA",
+                  "ABR",
+                  "APX",
+                  "ARX",
+                  "BIS",
+                  "BOU",
+                  "CYS",
+                  "DDC",
+                  "DLH",
+                  "DMX",
+                  "DTX",
+                  "DVN",
+                  "EAX",
+                  "FGF",
+                  "FSD",
+                  "GID",
+                  "GJT",
+                  "GLD",
+                  "GRB",
+                  "GRR",
+                  "ICT",
+                  "ILX",
+                  "IND",
+                  "IWX",
+                  "JKL",
+                  "LBF",
+                  "LMK",
+                  "LOT",
+                  "LSX",
+                  "MKX",
+                  "MPX",
+                  "MQT",
+                  "OAX",
+                  "PAH",
+                  "PUB",
+                  "RIW",
+                  "SGF",
+                  "TOP",
+                  "UNR",
+                  "BOI",
+                  "BYZ",
+                  "EKA",
+                  "FGZ",
+                  "GGW",
+                  "HNX",
+                  "LKN",
+                  "LOX",
+                  "MFR",
+                  "MSO",
+                  "MTR",
+                  "OTX",
+                  "PDT",
+                  "PIH",
+                  "PQR",
+                  "PSR",
+                  "REV",
+                  "SEW",
+                  "SGX",
+                  "SLC",
+                  "STO",
+                  "TFX",
+                  "TWC",
+                  "VEF",
+                  "AER",
+                  "AFC",
+                  "AFG",
+                  "AJK",
+                  "ALU",
+                  "GUM",
+                  "HPA",
+                  "HFO",
+                  "PPG",
+                  "STU",
+                  "NH1",
+                  "NH2",
+                  "ONA",
+                  "ONP"
+                ],
+                "description": "Forecast office ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "units": {
+                "enum": [
+                  "us",
+                  "si"
+                ],
+                "default": "us",
+                "description": "Use US customary or SI (metric) units in textual output"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "gridpoint_forecast_hourly",
+      "description": "Returns a textual hourly forecast for a 2.5km grid area",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams",
+          "headers"
+        ],
+        "properties": {
+          "headers": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "Feature-Flags": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "forecast_temperature_qv",
+                    "forecast_wind_speed_qv"
+                  ]
+                },
+                "description": "Enable future and experimental features (see documentation for more info):\n* forecast_temperature_qv: Represent temperature as QuantitativeValue\n* forecast_wind_speed_qv: Represent wind speed as QuantitativeValue\n"
+              }
+            },
+            "additionalProperties": false
+          },
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "wfo",
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid X coordinate"
+              },
+              "y": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid Y coordinate"
+              },
+              "wfo": {
+                "enum": [
+                  "AKQ",
+                  "ALY",
+                  "BGM",
+                  "BOX",
+                  "BTV",
+                  "BUF",
+                  "CAE",
+                  "CAR",
+                  "CHS",
+                  "CLE",
+                  "CTP",
+                  "GSP",
+                  "GYX",
+                  "ILM",
+                  "ILN",
+                  "LWX",
+                  "MHX",
+                  "OKX",
+                  "PBZ",
+                  "PHI",
+                  "RAH",
+                  "RLX",
+                  "RNK",
+                  "ABQ",
+                  "AMA",
+                  "BMX",
+                  "BRO",
+                  "CRP",
+                  "EPZ",
+                  "EWX",
+                  "FFC",
+                  "FWD",
+                  "HGX",
+                  "HUN",
+                  "JAN",
+                  "JAX",
+                  "KEY",
+                  "LCH",
+                  "LIX",
+                  "LUB",
+                  "LZK",
+                  "MAF",
+                  "MEG",
+                  "MFL",
+                  "MLB",
+                  "MOB",
+                  "MRX",
+                  "OHX",
+                  "OUN",
+                  "SHV",
+                  "SJT",
+                  "SJU",
+                  "TAE",
+                  "TBW",
+                  "TSA",
+                  "ABR",
+                  "APX",
+                  "ARX",
+                  "BIS",
+                  "BOU",
+                  "CYS",
+                  "DDC",
+                  "DLH",
+                  "DMX",
+                  "DTX",
+                  "DVN",
+                  "EAX",
+                  "FGF",
+                  "FSD",
+                  "GID",
+                  "GJT",
+                  "GLD",
+                  "GRB",
+                  "GRR",
+                  "ICT",
+                  "ILX",
+                  "IND",
+                  "IWX",
+                  "JKL",
+                  "LBF",
+                  "LMK",
+                  "LOT",
+                  "LSX",
+                  "MKX",
+                  "MPX",
+                  "MQT",
+                  "OAX",
+                  "PAH",
+                  "PUB",
+                  "RIW",
+                  "SGF",
+                  "TOP",
+                  "UNR",
+                  "BOI",
+                  "BYZ",
+                  "EKA",
+                  "FGZ",
+                  "GGW",
+                  "HNX",
+                  "LKN",
+                  "LOX",
+                  "MFR",
+                  "MSO",
+                  "MTR",
+                  "OTX",
+                  "PDT",
+                  "PIH",
+                  "PQR",
+                  "PSR",
+                  "REV",
+                  "SEW",
+                  "SGX",
+                  "SLC",
+                  "STO",
+                  "TFX",
+                  "TWC",
+                  "VEF",
+                  "AER",
+                  "AFC",
+                  "AFG",
+                  "AJK",
+                  "ALU",
+                  "GUM",
+                  "HPA",
+                  "HFO",
+                  "PPG",
+                  "STU",
+                  "NH1",
+                  "NH2",
+                  "ONA",
+                  "ONP"
+                ],
+                "description": "Forecast office ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "units": {
+                "enum": [
+                  "us",
+                  "si"
+                ],
+                "default": "us",
+                "description": "Use US customary or SI (metric) units in textual output"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "gridpoint_stations",
+      "description": "Returns a list of observation stations usable for a given 2.5km grid area",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams",
+          "headers"
+        ],
+        "properties": {
+          "headers": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "Feature-Flags": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "obs_station_provider"
+                  ]
+                },
+                "description": "Enable future and experimental features (see documentation for more info):\n* obs_station_provider: Include the data provider in the metadata about observation stations\n"
+              }
+            },
+            "additionalProperties": false
+          },
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "wfo",
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid X coordinate"
+              },
+              "y": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "description": "Forecast grid Y coordinate"
+              },
+              "wfo": {
+                "enum": [
+                  "AKQ",
+                  "ALY",
+                  "BGM",
+                  "BOX",
+                  "BTV",
+                  "BUF",
+                  "CAE",
+                  "CAR",
+                  "CHS",
+                  "CLE",
+                  "CTP",
+                  "GSP",
+                  "GYX",
+                  "ILM",
+                  "ILN",
+                  "LWX",
+                  "MHX",
+                  "OKX",
+                  "PBZ",
+                  "PHI",
+                  "RAH",
+                  "RLX",
+                  "RNK",
+                  "ABQ",
+                  "AMA",
+                  "BMX",
+                  "BRO",
+                  "CRP",
+                  "EPZ",
+                  "EWX",
+                  "FFC",
+                  "FWD",
+                  "HGX",
+                  "HUN",
+                  "JAN",
+                  "JAX",
+                  "KEY",
+                  "LCH",
+                  "LIX",
+                  "LUB",
+                  "LZK",
+                  "MAF",
+                  "MEG",
+                  "MFL",
+                  "MLB",
+                  "MOB",
+                  "MRX",
+                  "OHX",
+                  "OUN",
+                  "SHV",
+                  "SJT",
+                  "SJU",
+                  "TAE",
+                  "TBW",
+                  "TSA",
+                  "ABR",
+                  "APX",
+                  "ARX",
+                  "BIS",
+                  "BOU",
+                  "CYS",
+                  "DDC",
+                  "DLH",
+                  "DMX",
+                  "DTX",
+                  "DVN",
+                  "EAX",
+                  "FGF",
+                  "FSD",
+                  "GID",
+                  "GJT",
+                  "GLD",
+                  "GRB",
+                  "GRR",
+                  "ICT",
+                  "ILX",
+                  "IND",
+                  "IWX",
+                  "JKL",
+                  "LBF",
+                  "LMK",
+                  "LOT",
+                  "LSX",
+                  "MKX",
+                  "MPX",
+                  "MQT",
+                  "OAX",
+                  "PAH",
+                  "PUB",
+                  "RIW",
+                  "SGF",
+                  "TOP",
+                  "UNR",
+                  "BOI",
+                  "BYZ",
+                  "EKA",
+                  "FGZ",
+                  "GGW",
+                  "HNX",
+                  "LKN",
+                  "LOX",
+                  "MFR",
+                  "MSO",
+                  "MTR",
+                  "OTX",
+                  "PDT",
+                  "PIH",
+                  "PQR",
+                  "PSR",
+                  "REV",
+                  "SEW",
+                  "SGX",
+                  "SLC",
+                  "STO",
+                  "TFX",
+                  "TWC",
+                  "VEF",
+                  "AER",
+                  "AFC",
+                  "AFG",
+                  "AJK",
+                  "ALU",
+                  "GUM",
+                  "HPA",
+                  "HFO",
+                  "PPG",
+                  "STU",
+                  "NH1",
+                  "NH2",
+                  "ONA",
+                  "ONP"
+                ],
+                "description": "Forecast office ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "default": 500,
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Limit"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "icons",
+      "description": "Returns a forecast icon. Icon services in API are deprecated.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "set",
+              "timeOfDay",
+              "first"
+            ],
+            "properties": {
+              "set": {
+                "type": "string",
+                "description": "."
+              },
+              "first": {
+                "type": "string",
+                "description": "."
+              },
+              "timeOfDay": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "size": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "small",
+                      "medium",
+                      "large"
+                    ]
+                  },
+                  {
+                    "type": "integer",
+                    "maximum": 500,
+                    "minimum": 10
+                  }
+                ],
+                "description": "Font size"
+              },
+              "fontsize": {
+                "type": "integer",
+                "maximum": 24,
+                "minimum": 2,
+                "description": "Font size"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "iconsDualCondition",
+      "description": "Returns a forecast icon. Icon services in API are deprecated.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "set",
+              "timeOfDay",
+              "first",
+              "second"
+            ],
+            "properties": {
+              "set": {
+                "type": "string",
+                "description": "."
+              },
+              "first": {
+                "type": "string",
+                "description": "."
+              },
+              "second": {
+                "type": "string",
+                "description": "."
+              },
+              "timeOfDay": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "size": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "small",
+                      "medium",
+                      "large"
+                    ]
+                  },
+                  {
+                    "type": "integer",
+                    "maximum": 500,
+                    "minimum": 10
+                  }
+                ],
+                "description": "Font size"
+              },
+              "fontsize": {
+                "type": "integer",
+                "maximum": 24,
+                "minimum": 2,
+                "description": "Font size"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "icons_summary",
+      "description": "Returns a list of icon codes and textual descriptions. Icon services in API are deprecated.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "satellite_thumbnails",
+      "description": "Returns a thumbnail image for a satellite region. Image services in API are deprecated.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "area"
+            ],
+            "properties": {
+              "area": {
+                "enum": [
+                  "a",
+                  "e",
+                  "g",
+                  "h",
+                  "p",
+                  "s",
+                  "w"
+                ],
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "station_observation_list",
+      "description": "Returns a list of observations for a given station",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId"
+            ],
+            "properties": {
+              "stationId": {
+                "type": "string",
+                "description": "Observation station ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "end": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "End time"
+              },
+              "limit": {
+                "type": "integer",
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Start time"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "station_observation_latest",
+      "description": "Returns the latest observation for a station",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId"
+            ],
+            "properties": {
+              "stationId": {
+                "type": "string",
+                "description": "Observation station ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "require_qc": {
+                "type": "boolean",
+                "description": "Require QC"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "station_observation_time",
+      "description": "Returns a single observation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId",
+              "time"
+            ],
+            "properties": {
+              "time": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Timestamp of requested observation"
+              },
+              "stationId": {
+                "type": "string",
+                "description": "Observation station ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tafs",
+      "description": "Returns Terminal Aerodrome Forecasts for the specified airport station.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId"
+            ],
+            "properties": {
+              "stationId": {
+                "type": "string",
+                "description": "Observation station ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "taf",
+      "description": "Returns a single Terminal Aerodrome Forecast.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId",
+              "date",
+              "time"
+            ],
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))$",
+                "description": "Date (YYYY-MM-DD format)"
+              },
+              "time": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^([01][0-9]|2[0-3])[0-5][0-9]$",
+                "description": "Time (HHMM format). This time is always specified in UTC (Zulu) time."
+              },
+              "stationId": {
+                "type": "string",
+                "description": "Observation station ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "obs_stations",
+      "description": "Returns a list of observation stations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "headers"
+        ],
+        "properties": {
+          "headers": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "Feature-Flags": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "obs_station_provider"
+                  ]
+                },
+                "description": "Enable future and experimental features (see documentation for more info):\n* obs_station_provider: Include the data provider in the metadata about observation stations\n"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "id": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by observation station ID"
+              },
+              "limit": {
+                "type": "integer",
+                "default": 500,
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "state": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "AL",
+                        "AK",
+                        "AS",
+                        "AR",
+                        "AZ",
+                        "CA",
+                        "CO",
+                        "CT",
+                        "DE",
+                        "DC",
+                        "FL",
+                        "GA",
+                        "GU",
+                        "HI",
+                        "ID",
+                        "IL",
+                        "IN",
+                        "IA",
+                        "KS",
+                        "KY",
+                        "LA",
+                        "ME",
+                        "MD",
+                        "MA",
+                        "MI",
+                        "MN",
+                        "MS",
+                        "MO",
+                        "MT",
+                        "NE",
+                        "NV",
+                        "NH",
+                        "NJ",
+                        "NM",
+                        "NY",
+                        "NC",
+                        "ND",
+                        "OH",
+                        "OK",
+                        "OR",
+                        "PA",
+                        "PR",
+                        "RI",
+                        "SC",
+                        "SD",
+                        "TN",
+                        "TX",
+                        "UT",
+                        "VT",
+                        "VI",
+                        "VA",
+                        "WA",
+                        "WV",
+                        "WI",
+                        "WY",
+                        "MP",
+                        "PW",
+                        "FM",
+                        "MH"
+                      ]
+                    },
+                    {
+                      "enum": [
+                        "AM",
+                        "AN",
+                        "GM",
+                        "LC",
+                        "LE",
+                        "LH",
+                        "LM",
+                        "LO",
+                        "LS",
+                        "PH",
+                        "PK",
+                        "PM",
+                        "PS",
+                        "PZ",
+                        "SL"
+                      ],
+                      "description": "Marine area code as defined in NWS Directive 10-302:\n* AM: Western North Atlantic Ocean and along U.S. East Coast south of Currituck Beach Light NC following the coastline into Gulf of Mexico to Ocean Reef FL including the Caribbean\n* AN: Western North Atlantic Ocean and along U.S. East Coast from Canadian border south to Currituck Beach Light NC\n* GM: Gulf of Mexico and along the U.S. Gulf Coast from the Mexican border to Ocean Reef FL\n* LC: Lake St. Clair\n* LE: Lake Erie\n* LH: Lake Huron\n* LM: Lake Michigan\n* LO: Lake Ontario\n* LS: Lake Superior\n* PH: Central Pacific Ocean including Hawaiian waters\n* PK: North Pacific Ocean near Alaska and along Alaska coastline including the Bering Sea and the Gulf of Alaska\n* PM: Western Pacific Ocean including Mariana Island waters\n* PS: South Central Pacific Ocean including American Samoa waters\n* PZ: Eastern North Pacific Ocean and along U.S. West Coast from Canadian border to Mexican border\n* SL: St. Lawrence River above St. Regis\n"
+                    }
+                  ]
+                },
+                "description": "Filter by state/marine area code"
+              },
+              "cursor": {
+                "type": "string",
+                "description": "Pagination cursor"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "obs_station",
+      "description": "Returns metadata about a given observation station",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams",
+          "headers"
+        ],
+        "properties": {
+          "headers": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "Feature-Flags": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "obs_station_provider"
+                  ]
+                },
+                "description": "Enable future and experimental features (see documentation for more info):\n* obs_station_provider: Include the data provider in the metadata about observation stations\n"
+              }
+            },
+            "additionalProperties": false
+          },
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId"
+            ],
+            "properties": {
+              "stationId": {
+                "type": "string",
+                "description": "Observation station ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "office",
+      "description": "Returns metadata about a NWS forecast office",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "officeId"
+            ],
+            "properties": {
+              "officeId": {
+                "anyOf": [
+                  {},
+                  {
+                    "enum": [
+                      "ARH",
+                      "CRH",
+                      "ERH",
+                      "PRH",
+                      "SRH",
+                      "WRH"
+                    ],
+                    "description": "Three-letter identifier for a NWS Regional HQ."
+                  },
+                  {
+                    "enum": [
+                      "NWS"
+                    ],
+                    "description": "Three-letter identifier for NWS National HQ."
+                  }
+                ],
+                "description": "NWS office ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "office_headline",
+      "description": "Returns a specific news headline for a given NWS office",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "officeId",
+              "headlineId"
+            ],
+            "properties": {
+              "officeId": {
+                "anyOf": [
+                  {},
+                  {
+                    "enum": [
+                      "ARH",
+                      "CRH",
+                      "ERH",
+                      "PRH",
+                      "SRH",
+                      "WRH"
+                    ],
+                    "description": "Three-letter identifier for a NWS Regional HQ."
+                  },
+                  {
+                    "enum": [
+                      "NWS"
+                    ],
+                    "description": "Three-letter identifier for NWS National HQ."
+                  }
+                ],
+                "description": "NWS office ID"
+              },
+              "headlineId": {
+                "type": "string",
+                "description": "Headline record ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "office_headlines",
+      "description": "Returns a list of news headlines for a given NWS office",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "officeId"
+            ],
+            "properties": {
+              "officeId": {
+                "anyOf": [
+                  {},
+                  {
+                    "enum": [
+                      "ARH",
+                      "CRH",
+                      "ERH",
+                      "PRH",
+                      "SRH",
+                      "WRH"
+                    ],
+                    "description": "Three-letter identifier for a NWS Regional HQ."
+                  },
+                  {
+                    "enum": [
+                      "NWS"
+                    ],
+                    "description": "Three-letter identifier for NWS National HQ."
+                  }
+                ],
+                "description": "NWS office ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "point",
+      "description": "Returns metadata about a given latitude/longitude point",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "latitude",
+              "longitude"
+            ],
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "maximum": 90,
+                "minimum": -90,
+                "description": "Latitude"
+              },
+              "longitude": {
+                "type": "number",
+                "maximum": 180,
+                "minimum": -180,
+                "description": "Longitude"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "point_stations",
+      "description": "Returns a list of observation stations for a given point",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "latitude",
+              "longitude"
+            ],
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "maximum": 90,
+                "minimum": -90,
+                "description": "Latitude"
+              },
+              "longitude": {
+                "type": "number",
+                "maximum": 180,
+                "minimum": -180,
+                "description": "Longitude"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "radar_servers",
+      "description": "Returns a list of radar servers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams"
+        ],
+        "properties": {
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "reportingHost": {
+                "type": "string",
+                "description": "Show records from specific reporting host"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "radar_server",
+      "description": "Returns metadata about a given radar server",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Server ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "reportingHost": {
+                "type": "string",
+                "description": "Show records from specific reporting host"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "radar_stations",
+      "description": "Returns a list of radar stations",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams"
+        ],
+        "properties": {
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Show latency info from specific LDM host"
+              },
+              "stationType": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^[A-Za-z0-9-]+$"
+                },
+                "description": "Limit results to a specific station type or types"
+              },
+              "reportingHost": {
+                "type": "string",
+                "description": "Show RDA and latency info from specific reporting host"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "radar_station",
+      "description": "Returns metadata about a given radar station",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId"
+            ],
+            "properties": {
+              "stationId": {
+                "type": "string",
+                "description": "Radar station ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Show latency info from specific LDM host"
+              },
+              "reportingHost": {
+                "type": "string",
+                "description": "Show RDA and latency info from specific reporting host"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "radar_station_alarms",
+      "description": "Returns metadata about a given radar station alarms",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId"
+            ],
+            "properties": {
+              "stationId": {
+                "type": "string",
+                "description": "Radar station ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "radar_queue",
+      "description": "Returns metadata about a given radar queue",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "host"
+            ],
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "LDM host"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "feed": {
+                "type": "string",
+                "description": "Originating product feed"
+              },
+              "type": {
+                "type": "string",
+                "description": "Record type"
+              },
+              "limit": {
+                "type": "integer",
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Record limit"
+              },
+              "arrived": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  }
+                ],
+                "description": "Range for arrival time"
+              },
+              "created": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  }
+                ],
+                "description": "Range for creation time"
+              },
+              "station": {
+                "type": "string",
+                "description": "Station identifier"
+              },
+              "published": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  }
+                ],
+                "description": "Range for publish time"
+              },
+              "resolution": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "description": "Resolution version"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "radar_profiler",
+      "description": "Returns metadata about a given radar wind profiler",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "stationId"
+            ],
+            "properties": {
+              "stationId": {
+                "type": "string",
+                "description": "Profiler station ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "time": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)\\/P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "regex",
+                    "pattern": "^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?\\/(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:?\\d{2}?)|NOW)$"
+                  }
+                ],
+                "description": "Time interval"
+              },
+              "interval": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$",
+                "examples": [
+                  "P2DT12H"
+                ],
+                "description": "Averaging interval"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "products_query",
+      "description": "Returns a list of text products",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams"
+        ],
+        "properties": {
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "end": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "End time"
+              },
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^\\w{3}$"
+                },
+                "description": "Product code"
+              },
+              "limit": {
+                "type": "integer",
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Start time"
+              },
+              "wmoid": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^[A-Z]{4}\\d{2}$"
+                },
+                "description": "WMO id code"
+              },
+              "office": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^[A-Z]{4}$"
+                },
+                "description": "Issuing office"
+              },
+              "location": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Location id"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "product_locations",
+      "description": "Returns a list of valid text product issuance locations",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "product_types",
+      "description": "Returns a list of valid text product types and codes",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "product",
+      "description": "Returns a specific text product",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "productId"
+            ],
+            "properties": {
+              "productId": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "products_type",
+      "description": "Returns a list of text products of a given type",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "typeId"
+            ],
+            "properties": {
+              "typeId": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "products_type_locations",
+      "description": "Returns a list of valid text product issuance locations for a given product type",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "typeId"
+            ],
+            "properties": {
+              "typeId": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "location_products",
+      "description": "Returns a list of valid text product types for a given issuance location",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "locationId"
+            ],
+            "properties": {
+              "locationId": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "products_type_location",
+      "description": "Returns a list of text products of a given type for a given issuance location",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "typeId",
+              "locationId"
+            ],
+            "properties": {
+              "typeId": {
+                "type": "string",
+                "description": "."
+              },
+              "locationId": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "latest_product_type_location",
+      "description": "Returns latest text products of a given type for a given issuance location with product text",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "typeId",
+              "locationId"
+            ],
+            "properties": {
+              "typeId": {
+                "type": "string",
+                "description": "."
+              },
+              "locationId": {
+                "type": "string",
+                "description": "."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "zone_list",
+      "description": "Returns a list of zones",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams"
+        ],
+        "properties": {
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "id": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^(A[KLMNRSZ]|C[AOT]|D[CE]|F[LM]|G[AMU]|I[ADLN]|K[SY]|L[ACEHMOS]|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[AHKMRSWZ]|S[CDL]|T[NX]|UT|V[AIT]|W[AIVY]|[HR]I)[CZ]\\d{3}$",
+                  "description": "UGC identifier for a NWS forecast zone or county.\nThe first two letters will correspond to either a state code or marine area code (see #/components/schemas/StateTerritoryCode and #/components/schemas/MarineAreaCode for lists of valid letter combinations).\nThe third letter will be Z for public/fire zone or C for county.\n"
+                },
+                "description": "Zone ID (forecast or county)"
+              },
+              "area": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "AL",
+                        "AK",
+                        "AS",
+                        "AR",
+                        "AZ",
+                        "CA",
+                        "CO",
+                        "CT",
+                        "DE",
+                        "DC",
+                        "FL",
+                        "GA",
+                        "GU",
+                        "HI",
+                        "ID",
+                        "IL",
+                        "IN",
+                        "IA",
+                        "KS",
+                        "KY",
+                        "LA",
+                        "ME",
+                        "MD",
+                        "MA",
+                        "MI",
+                        "MN",
+                        "MS",
+                        "MO",
+                        "MT",
+                        "NE",
+                        "NV",
+                        "NH",
+                        "NJ",
+                        "NM",
+                        "NY",
+                        "NC",
+                        "ND",
+                        "OH",
+                        "OK",
+                        "OR",
+                        "PA",
+                        "PR",
+                        "RI",
+                        "SC",
+                        "SD",
+                        "TN",
+                        "TX",
+                        "UT",
+                        "VT",
+                        "VI",
+                        "VA",
+                        "WA",
+                        "WV",
+                        "WI",
+                        "WY",
+                        "MP",
+                        "PW",
+                        "FM",
+                        "MH"
+                      ]
+                    },
+                    {
+                      "enum": [
+                        "AM",
+                        "AN",
+                        "GM",
+                        "LC",
+                        "LE",
+                        "LH",
+                        "LM",
+                        "LO",
+                        "LS",
+                        "PH",
+                        "PK",
+                        "PM",
+                        "PS",
+                        "PZ",
+                        "SL"
+                      ],
+                      "description": "Marine area code as defined in NWS Directive 10-302:\n* AM: Western North Atlantic Ocean and along U.S. East Coast south of Currituck Beach Light NC following the coastline into Gulf of Mexico to Ocean Reef FL including the Caribbean\n* AN: Western North Atlantic Ocean and along U.S. East Coast from Canadian border south to Currituck Beach Light NC\n* GM: Gulf of Mexico and along the U.S. Gulf Coast from the Mexican border to Ocean Reef FL\n* LC: Lake St. Clair\n* LE: Lake Erie\n* LH: Lake Huron\n* LM: Lake Michigan\n* LO: Lake Ontario\n* LS: Lake Superior\n* PH: Central Pacific Ocean including Hawaiian waters\n* PK: North Pacific Ocean near Alaska and along Alaska coastline including the Bering Sea and the Gulf of Alaska\n* PM: Western Pacific Ocean including Mariana Island waters\n* PS: South Central Pacific Ocean including American Samoa waters\n* PZ: Eastern North Pacific Ocean and along U.S. West Coast from Canadian border to Mexican border\n* SL: St. Lawrence River above St. Regis\n"
+                    }
+                  ]
+                },
+                "description": "State/marine area code"
+              },
+              "type": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "land",
+                    "marine",
+                    "forecast",
+                    "public",
+                    "coastal",
+                    "offshore",
+                    "fire",
+                    "county"
+                  ]
+                },
+                "description": "Zone type"
+              },
+              "limit": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "point": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?)$",
+                "description": "Point (latitude,longitude)"
+              },
+              "region": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "AR",
+                        "CR",
+                        "ER",
+                        "PR",
+                        "SR",
+                        "WR"
+                      ],
+                      "description": "Land region code. These correspond to the six NWS regional headquarters:\n* AR: Alaska Region\n* CR: Central Region\n* ER: Eastern Region\n* PR: Pacific Region\n* SR: Southern Region\n* WR: Western Region\n"
+                    },
+                    {}
+                  ]
+                },
+                "description": "Region code"
+              },
+              "effective": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Effective date/time"
+              },
+              "include_geometry": {
+                "type": "boolean",
+                "description": "Include geometry in results (true/false)"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "zone_list_type",
+      "description": "Returns a list of zones of a given type",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "land",
+                  "marine",
+                  "forecast",
+                  "public",
+                  "coastal",
+                  "offshore",
+                  "fire",
+                  "county"
+                ],
+                "description": "Zone type"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "id": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "regex",
+                  "pattern": "^(A[KLMNRSZ]|C[AOT]|D[CE]|F[LM]|G[AMU]|I[ADLN]|K[SY]|L[ACEHMOS]|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[AHKMRSWZ]|S[CDL]|T[NX]|UT|V[AIT]|W[AIVY]|[HR]I)[CZ]\\d{3}$",
+                  "description": "UGC identifier for a NWS forecast zone or county.\nThe first two letters will correspond to either a state code or marine area code (see #/components/schemas/StateTerritoryCode and #/components/schemas/MarineAreaCode for lists of valid letter combinations).\nThe third letter will be Z for public/fire zone or C for county.\n"
+                },
+                "description": "Zone ID (forecast or county)"
+              },
+              "area": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "AL",
+                        "AK",
+                        "AS",
+                        "AR",
+                        "AZ",
+                        "CA",
+                        "CO",
+                        "CT",
+                        "DE",
+                        "DC",
+                        "FL",
+                        "GA",
+                        "GU",
+                        "HI",
+                        "ID",
+                        "IL",
+                        "IN",
+                        "IA",
+                        "KS",
+                        "KY",
+                        "LA",
+                        "ME",
+                        "MD",
+                        "MA",
+                        "MI",
+                        "MN",
+                        "MS",
+                        "MO",
+                        "MT",
+                        "NE",
+                        "NV",
+                        "NH",
+                        "NJ",
+                        "NM",
+                        "NY",
+                        "NC",
+                        "ND",
+                        "OH",
+                        "OK",
+                        "OR",
+                        "PA",
+                        "PR",
+                        "RI",
+                        "SC",
+                        "SD",
+                        "TN",
+                        "TX",
+                        "UT",
+                        "VT",
+                        "VI",
+                        "VA",
+                        "WA",
+                        "WV",
+                        "WI",
+                        "WY",
+                        "MP",
+                        "PW",
+                        "FM",
+                        "MH"
+                      ]
+                    },
+                    {
+                      "enum": [
+                        "AM",
+                        "AN",
+                        "GM",
+                        "LC",
+                        "LE",
+                        "LH",
+                        "LM",
+                        "LO",
+                        "LS",
+                        "PH",
+                        "PK",
+                        "PM",
+                        "PS",
+                        "PZ",
+                        "SL"
+                      ],
+                      "description": "Marine area code as defined in NWS Directive 10-302:\n* AM: Western North Atlantic Ocean and along U.S. East Coast south of Currituck Beach Light NC following the coastline into Gulf of Mexico to Ocean Reef FL including the Caribbean\n* AN: Western North Atlantic Ocean and along U.S. East Coast from Canadian border south to Currituck Beach Light NC\n* GM: Gulf of Mexico and along the U.S. Gulf Coast from the Mexican border to Ocean Reef FL\n* LC: Lake St. Clair\n* LE: Lake Erie\n* LH: Lake Huron\n* LM: Lake Michigan\n* LO: Lake Ontario\n* LS: Lake Superior\n* PH: Central Pacific Ocean including Hawaiian waters\n* PK: North Pacific Ocean near Alaska and along Alaska coastline including the Bering Sea and the Gulf of Alaska\n* PM: Western Pacific Ocean including Mariana Island waters\n* PS: South Central Pacific Ocean including American Samoa waters\n* PZ: Eastern North Pacific Ocean and along U.S. West Coast from Canadian border to Mexican border\n* SL: St. Lawrence River above St. Regis\n"
+                    }
+                  ]
+                },
+                "description": "State/marine area code"
+              },
+              "type": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "land",
+                    "marine",
+                    "forecast",
+                    "public",
+                    "coastal",
+                    "offshore",
+                    "fire",
+                    "county"
+                  ]
+                },
+                "description": "Zone type"
+              },
+              "limit": {
+                "type": "integer",
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "point": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?)$",
+                "description": "Point (latitude,longitude)"
+              },
+              "region": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "AR",
+                        "CR",
+                        "ER",
+                        "PR",
+                        "SR",
+                        "WR"
+                      ],
+                      "description": "Land region code. These correspond to the six NWS regional headquarters:\n* AR: Alaska Region\n* CR: Central Region\n* ER: Eastern Region\n* PR: Pacific Region\n* SR: Southern Region\n* WR: Western Region\n"
+                    },
+                    {}
+                  ]
+                },
+                "description": "Region code"
+              },
+              "effective": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Effective date/time"
+              },
+              "include_geometry": {
+                "type": "boolean",
+                "description": "Include geometry in results (true/false)"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "zone",
+      "description": "Returns metadata about a given zone",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "type",
+              "zoneId"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "land",
+                  "marine",
+                  "forecast",
+                  "public",
+                  "coastal",
+                  "offshore",
+                  "fire",
+                  "county"
+                ],
+                "description": "Zone type"
+              },
+              "zoneId": {
+                "type": "string",
+                "description": "NWS public zone/county identifier"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "effective": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Effective date/time"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "zone_forecast",
+      "description": "Returns the current zone forecast for a given zone",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "type",
+              "zoneId"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Zone type"
+              },
+              "zoneId": {
+                "type": "string",
+                "description": "NWS public zone/county identifier"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "zone_obs",
+      "description": "Returns a list of observations for a given zone",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams"
+        ],
+        "properties": {
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "zoneId"
+            ],
+            "properties": {
+              "zoneId": {
+                "type": "string",
+                "description": "NWS public zone/county identifier"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "end": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "End date/time"
+              },
+              "limit": {
+                "type": "integer",
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z)$",
+                "description": "Start date/time"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "zone_stations",
+      "description": "Returns a list of observation stations for a given zone",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "queryParams",
+          "pathParams",
+          "headers"
+        ],
+        "properties": {
+          "headers": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "Feature-Flags": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "obs_station_provider"
+                  ]
+                },
+                "description": "Enable future and experimental features (see documentation for more info):\n* obs_station_provider: Include the data provider in the metadata about observation stations\n"
+              }
+            },
+            "additionalProperties": false
+          },
+          "pathParams": {
+            "type": "object",
+            "required": [
+              "zoneId"
+            ],
+            "properties": {
+              "zoneId": {
+                "type": "string",
+                "description": "NWS public zone/county identifier"
+              }
+            },
+            "additionalProperties": false
+          },
+          "queryParams": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "default": 500,
+                "maximum": 500,
+                "minimum": 1,
+                "description": "Limit"
+              },
+              "cursor": {
+                "type": "string",
+                "description": "Pagination cursor"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@emmanuel/aic/mcp",
+      "configSchema": {}
+    }
+  ]
+}

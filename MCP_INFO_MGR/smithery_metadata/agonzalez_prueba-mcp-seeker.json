@@ -1,0 +1,1968 @@
+{
+  "qualifiedName": "@agonzalez/prueba-mcp-seeker",
+  "displayName": "MCP Seeker",
+  "description": "Search hotels by city, state, country, or geolocation and explore detailed property info. Check live availability, compare rates and room types, and review boards and promotions. Create ready-to-book links with preselected rooms, rates, supplements, and optional guest details.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@agonzalez/prueba-mcp-seeker",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_all_paraty_hotels_with_info",
+      "annotations": {
+        "title": "Get All Hotels (Paginated)",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get paginated list of all ParatyTech hotels with complete information including location, contact, ratings, and amenities.\n\n\t**When to use**: User wants to browse all hotels, asks \"show me all hotels\" or \"list available hotels\".\n\n\t**Returns**:\n\t- hotels: List of hotel objects with identification, location, contact info, TripAdvisor ratings, amenities, and room types\n\t- pagination: Metadata with page, page_size, total_hotels, total_pages, has_next, has_previous\n\n\t**Usage**: Start with page=1, page_size=50. Use pagination.has_next to fetch more pages if needed.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_all_paraty_hotels_with_infoArguments",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "default": 1,
+            "maximum": 1000,
+            "minimum": 1,
+            "examples": [
+              1,
+              2,
+              3
+            ],
+            "description": "Page number starting from 1"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size",
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "examples": [
+              25,
+              50,
+              100
+            ],
+            "description": "Hotels per page"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_hotel",
+      "annotations": {
+        "title": "Get Hotel Details by Code",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Retrieve detailed information about a specific hotel by its unique code.\n\n\t**When to use**: When hotel_code were provided by user or another tool\".\n\n\t**Returns**: Complete hotel object with identification, location, contact info, TripAdvisor ratings, amenities, room types, and policies. Returns null if hotel code not found.\n\n\t**Hotel code format**: Lowercase kebab-case (e.g., \"tarik\", \"landmar-arena\", \"port-azafata\").",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_hotelArguments",
+        "required": [
+          "hotel_code"
+        ],
+        "properties": {
+          "hotel_code": {
+            "type": "string",
+            "title": "Hotel Code",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "examples": [
+              "tarik",
+              "landmar-arena",
+              "port-azafata",
+              "hotel-mirador"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Unique hotel identifier in lowercase kebab-case"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_hotels_by_city",
+      "annotations": {
+        "title": "Search Hotels by City",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search for hotels in a specific city with complete details.\n\n\t**When to use**: User mentions a city name like 'Fuengirola', 'Torremolinos', 'Benidorm'.\n\n\t**Returns**: List of hotel objects with location, contact info, ratings, and amenities.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_hotels_by_cityArguments",
+        "required": [
+          "city"
+        ],
+        "properties": {
+          "city": {
+            "type": "string",
+            "title": "City",
+            "examples": [
+              "Fuengirola",
+              "Torremolinos",
+              "Benidorm",
+              "Salou"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "City name to search"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_hotels_by_state",
+      "annotations": {
+        "title": "Search Hotels by State/Province",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search for hotels in a specific state or province.\n\n\t**When to use**: User mentions a state, province like 'Malaga', 'Madrid', 'Barcelona'.\n\n\t**Returns**: List of hotel objects with complete information. Case-insensitive search.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_hotels_by_stateArguments",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "title": "State",
+            "examples": [
+              "Malaga",
+              "Madrid",
+              "Barcelona"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "State or province name"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_hotels_by_country",
+      "annotations": {
+        "title": "Search Hotels by Country",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search for hotels in a specific country.\n\n\t**When to use**: User mentions a country like 'Spain', 'France', 'United States', or wants all hotels in a country.\n\n\t**Returns**: List of hotel objects with location, contact, ratings, and amenities. Use full country names in English.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_hotels_by_countryArguments",
+        "required": [
+          "country"
+        ],
+        "properties": {
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "examples": [
+              "Spain",
+              "France",
+              "United States",
+              "Mexico",
+              "Germany"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Country name in English"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_hotels_by_geo_location",
+      "annotations": {
+        "title": "Search Hotels by GPS Location",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search for hotels near GPS coordinates within a specified radius, sorted by distance.\n\n\t**When to use**: User provides a specific place that is not a city, state or country itself, you must search the GPS coordinates about that place and use them in this tool.\n\n\t**Returns**: Hotels sorted by distance with location, contact, ratings, and distance in kilometers.\n\t",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_hotels_by_geo_locationArguments",
+        "required": [
+          "latitude",
+          "longitude",
+          "radius_km"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "title": "Latitude",
+            "maximum": 90,
+            "minimum": -90,
+            "examples": [
+              40.4168,
+              48.8566,
+              40.7128,
+              51.5074
+            ],
+            "description": "Latitude in decimal degrees"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude",
+            "maximum": 180,
+            "minimum": -180,
+            "examples": [
+              -3.7038,
+              2.3522,
+              -74.006,
+              -0.1278
+            ],
+            "description": "Longitude in decimal degrees"
+          },
+          "radius_km": {
+            "type": "number",
+            "title": "Radius Km",
+            "maximum": 100,
+            "minimum": 0.1,
+            "examples": [
+              5,
+              10,
+              2,
+              15
+            ],
+            "description": "Search radius in kilometers. Use 1-5km for cities, 10-50km for regions"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_availability",
+      "annotations": {
+        "title": "Check Hotel Availability & Pricing",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search hotel room availability and pricing for specific dates and occupancy. Returns real-time availability, room types, rates, meal plans, and pricing.\n\n\t**When to use**: User wants to book a hotel, asks \"check availability\", \"what rooms are available\", or provides dates and guest count.\n\n\t**Required parameters**:\n\t- hotel_code: Hotel identifier (e.g., \"tarik\", \"landmar-arena\")\n\t- start_date: Check-in date in DD/MM/YYYY format (e.g., \"13/10/2025\")\n\t- end_date: Check-out date in DD/MM/YYYY format (e.g., \"20/10/2025\")\n\n\t**CRITICAL - Date format**: Must be DD/MM/YYYY (European format). NOT MM/DD/YYYY or YYYY-MM-DD.\n\tExamples: \"25/12/2025\" (Christmas), \"01/01/2026\" (New Year)\n\n\t**Occupancy** (optional, defaults to 2 adults in 1 room):\n\t- num_rooms: 1-3 rooms\n\t- adults_roomN, children_roomN, babies_roomN for each room (N=1,2,3)\n\t- children: ages 2-12 years, babies: ages 0-2 years\n\n\t**Optional filters**: promo_code, currency (EUR/USD/GBP), language (en/es/fr), show_names, country_code\n\n\t**Returns**:\n\t- result: Available room/rate combinations with pricing\n\t- resultsPerDay: Daily price breakdown\n\t- promotions: Applicable promotional offers\n\t- names: Translated names for rooms, rates, meal plans\n\t- extra: roomMaxAvailability, availability counts, restrictions, notAvailable dates\n\t- search: Echo of search parameters\n\n\t**Examples**:\n\t- Simple: get_availability(\"tarik\", \"15/03/2026\", \"18/03/2026\")\n\t- Family: add adults_room1=2, children_room1=2, currency=\"EUR\"\n\t- Multi-room: set num_rooms=2, adults_room1=2, adults_room2=2\n\t- With promo: add promo_code=\"SUMMER2025\"\n\n\t**Note**: Maximum 3 rooms per search. Availability is real-time but not reserved until booking confirmed.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_availabilityArguments",
+        "properties": {
+          "mapping": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mapping",
+            "default": null,
+            "examples": [
+              true,
+              false
+            ],
+            "description": "Include mapping/location information"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$",
+                "maxLength": 3,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency",
+            "default": null,
+            "examples": [
+              "EUR",
+              "USD",
+              "GBP",
+              "JPY"
+            ],
+            "description": "ISO 4217 currency code for prices"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date",
+            "default": null,
+            "examples": [
+              "20/10/2025",
+              "28/12/2025",
+              "05/01/2026"
+            ],
+            "description": "Check-out date in DD/MM/YYYY format (required)"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+                "maxLength": 5,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "default": null,
+            "examples": [
+              "en",
+              "es",
+              "fr",
+              "de"
+            ],
+            "description": "ISO 639-1 language code"
+          },
+          "num_rooms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Num Rooms",
+            "default": null,
+            "examples": [
+              1,
+              2,
+              3
+            ],
+            "description": "Number of rooms (1-3). Default: 1"
+          },
+          "short_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Key",
+            "default": null,
+            "examples": [
+              "campaign-2025",
+              "corporate-rate"
+            ],
+            "description": "Short key identifier for special searches"
+          },
+          "hotel_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hotel Code",
+            "default": null,
+            "examples": [
+              "tarik",
+              "landmar-arena",
+              "port-azafata"
+            ],
+            "description": "Hotel unique identifier (required)"
+          },
+          "promo_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promo Code",
+            "default": null,
+            "examples": [
+              "SUMMER2025",
+              "EARLYBIRD",
+              "WEEKEND10"
+            ],
+            "description": "Promotional discount code"
+          },
+          "show_names": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$",
+                "maxLength": 2,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Show Names",
+            "default": null,
+            "examples": [
+              "EN",
+              "ES",
+              "FR",
+              "DE"
+            ],
+            "description": "Language code for displaying names (uppercase)"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date",
+            "default": null,
+            "examples": [
+              "13/10/2025",
+              "25/12/2025",
+              "01/01/2026"
+            ],
+            "description": "Check-in date in DD/MM/YYYY format (required)"
+          },
+          "adults_room1": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adults Room1",
+            "default": null,
+            "examples": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "description": "Adults in room 1. Default: 2"
+          },
+          "adults_room2": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adults Room2",
+            "default": null,
+            "examples": [
+              2,
+              3,
+              4
+            ],
+            "description": "Adults in room 2 (only if num_rooms >= 2)"
+          },
+          "adults_room3": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adults Room3",
+            "default": null,
+            "examples": [
+              2,
+              3,
+              4
+            ],
+            "description": "Adults in room 3 (only if num_rooms = 3)"
+          },
+          "babies_room1": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Babies Room1",
+            "default": null,
+            "examples": [
+              0,
+              1,
+              2
+            ],
+            "description": "Babies (0-2 years) in room 1. Default: 0"
+          },
+          "babies_room2": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Babies Room2",
+            "default": null,
+            "examples": [
+              0,
+              1
+            ],
+            "description": "Babies in room 2 (only if num_rooms >= 2)"
+          },
+          "babies_room3": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Babies Room3",
+            "default": null,
+            "examples": [
+              0,
+              1
+            ],
+            "description": "Babies in room 3 (only if num_rooms = 3)"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$",
+                "maxLength": 2,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code",
+            "default": null,
+            "examples": [
+              "ES",
+              "FR",
+              "US",
+              "GB"
+            ],
+            "description": "ISO 3166-1 alpha-2 country code"
+          },
+          "children_room1": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Children Room1",
+            "default": null,
+            "examples": [
+              0,
+              1,
+              2
+            ],
+            "description": "Children (2-12 years) in room 1. Default: 0"
+          },
+          "children_room2": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Children Room2",
+            "default": null,
+            "examples": [
+              0,
+              1,
+              2
+            ],
+            "description": "Children in room 2 (only if num_rooms >= 2)"
+          },
+          "children_room3": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Children Room3",
+            "default": null,
+            "examples": [
+              0,
+              1,
+              2
+            ],
+            "description": "Children in room 3 (only if num_rooms = 3)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_rooms_info",
+      "annotations": {
+        "title": "Get Room Types Info",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get detailed room types information for a specific hotel including capacities, descriptions, and photos.\n\n\t**When to use**: User asks about room types, room details, or room amenities for a specific hotel or you don't have enough information about rooms.\n\n\t**Returns**: List of room objects with capacities, names, descriptions, photos, and unique keys.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_rooms_infoArguments",
+        "required": [
+          "hotel_id"
+        ],
+        "properties": {
+          "hotel_id": {
+            "type": "string",
+            "title": "Hotel Id",
+            "examples": [
+              "tarik",
+              "landmar-arena",
+              "port-azafata"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Hotel unique identifier"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "SPANISH",
+            "examples": [
+              "SPANISH",
+              "ENGLISH"
+            ],
+            "description": "Language code for room information"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_rates_info",
+      "annotations": {
+        "title": "Get Rate Plans Info",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get available rate plans and pricing policies for a specific hotel including cancellation policies.\n\n\t**When to use**: User asks about rate plans, cancellation policies, pricing options for a specific hotel or you need these information for another tool.\n\n\t**Returns**: List of rate objects with names, descriptions, dates, cancellation policies, and unique keys.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_rates_infoArguments",
+        "required": [
+          "hotel_id"
+        ],
+        "properties": {
+          "hotel_id": {
+            "type": "string",
+            "title": "Hotel Id",
+            "examples": [
+              "tarik",
+              "landmar-arena",
+              "port-azafata"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Hotel unique identifier"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "SPANISH",
+            "examples": [
+              "GERMAN",
+              "FRENCH"
+            ],
+            "description": "Language code for rate information"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_boards_info",
+      "annotations": {
+        "title": "Get Meal Plans Info",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Get meal plan options (board types) for a specific hotel with descriptions.\n\n\t**When to use**: User asks about meal plans, board options, food service types for a specific hotel or you need these for another tool.\n\n\t**Returns**: List of board/meal plan objects with names, descriptions, and unique keys.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_boards_infoArguments",
+        "required": [
+          "hotel_id"
+        ],
+        "properties": {
+          "hotel_id": {
+            "type": "string",
+            "title": "Hotel Id",
+            "examples": [
+              "tarik",
+              "landmar-arena",
+              "port-azafata"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Hotel unique identifier"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "SPANISH",
+            "examples": [
+              "SPANISH"
+            ],
+            "description": "Language code for board information"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_b0",
+      "annotations": {
+        "title": "Multi-Hotel Search (B0)",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search hotel availability across multiple hotels simultaneously. Returns a list of available hotels for the specified dates and occupancy.\n\n\t**When to use**: ONLY when user wants to compare multiple hotels from the same hotel chain.\n\n\t**Required**: Either 'destination' OR 'applicationIds' (semicolon-separated hotel codes like \"hotel1;hotel2;hotel3\")\n\n\t**Dates**: startDate and endDate in DD/MM/YYYY format (defaults to today and tomorrow if not provided)\n\n\t**Occupancy**: occupancy_per_room as list of dicts with adults, children, babies, pets per room.\n\tExample: [{\"adults\": 2, \"children\": 1, \"babies\": 0}]\n\n\t**Returns**: Booking URL showing list of available hotels for the user to explore.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_b0Arguments",
+        "properties": {
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate",
+            "default": null,
+            "examples": [
+              "20/11/2025",
+              "05/12/2025",
+              "30/03/2026"
+            ],
+            "description": "Check-out date in DD/MM/YYYY format. Defaults to startDate + 1 day if not provided."
+          },
+          "days_num": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Num",
+            "default": null,
+            "examples": [
+              1,
+              3,
+              7,
+              14
+            ],
+            "description": "Number of days to stay. Used to calculate endDate if not provided."
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "SPANISH",
+            "examples": [
+              "SPANISH",
+              "ENGLISH",
+              "GERMAN",
+              "FRENCH"
+            ],
+            "description": "Language code for booking process"
+          },
+          "numRooms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numrooms",
+            "default": null,
+            "examples": [
+              1,
+              2,
+              3
+            ],
+            "description": "Number of rooms to book"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startdate",
+            "default": null,
+            "examples": [
+              "15/11/2025",
+              "01/12/2025",
+              "25/03/2026"
+            ],
+            "description": "Check-in date in DD/MM/YYYY format. Defaults to today if not provided."
+          },
+          "destination": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination",
+            "default": null,
+            "examples": [
+              "DEST123",
+              "Todos los Hoteles",
+              "Madrid Hotels"
+            ],
+            "description": "Destination code to search hotels in an area. Required if applicationIds not provided."
+          },
+          "extra_params": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extra Params",
+            "default": null,
+            "description": "Additional parameters as key-value dictionary"
+          },
+          "applicationIds": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z0-9-]+(;[a-z0-9-]+)*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicationids",
+            "default": null,
+            "examples": [
+              "port-azafata;port-huerto;port-feria",
+              "hotel-a;hotel-b"
+            ],
+            "description": "Semicolon-separated hotel codes (e.g., 'hotel1;hotel2;hotel3'). Required if destination not provided."
+          },
+          "entry_tomorrow": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Tomorrow",
+            "default": null,
+            "examples": [
+              0,
+              1
+            ],
+            "description": "Set to 1 to use tomorrow as default check-in if startDate not provided"
+          },
+          "occupancy_per_room": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupancy Per Room",
+            "default": null,
+            "examples": [
+              [
+                {
+                  "pets": 0,
+                  "adults": 2,
+                  "babies": 0,
+                  "children": 1
+                }
+              ]
+            ],
+            "description": "List of occupancy dicts per room with keys: adults, children, babies, pets"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_b1",
+      "annotations": {
+        "title": "Single Hotel Search (B1)",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Search room availability in a specific hotel. Shows all available room types, rates, and meal plan options.\n\n\t**When to use**: User wants to see available rooms by itself, from the webpage.\n\n\t**Required**: hotel_code (Get it from get_all_hotels)\n\n\t**Dates**: startDate and endDate in DD/MM/YYYY format\n\n\t**Occupancy**: \n\t- occupancy_per_room: List of dicts per room (adults, children, babies, pets)\n\t- ages_kid_per_room: Optional list of lists with children ages per room (e.g., [[5, 8], None])\n\t- ages_baby_per_room: Optional list of lists with baby ages per room\n\n\t**Filters**:\n\t- promocode: Apply promotional code (e.g., \"RESIDENTE\", \"EARLY_BOOKING\")\n\t- roomFilter: Regex to filter rooms (e.g., \".*suite.*\")\n\t- rate_filter_regex: Regex to filter rates (e.g., \".*FLEXIBLE.*\")\n\n\t**Returns**: Booking URL with available rooms, rates, and pricing for the hotel.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_b1Arguments",
+        "required": [
+          "hotel_code"
+        ],
+        "properties": {
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate",
+            "default": null,
+            "examples": [
+              "20/11/2025",
+              "05/12/2025"
+            ],
+            "description": "Check-out date in DD/MM/YYYY format"
+          },
+          "days_num": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Num",
+            "default": null,
+            "examples": [
+              3,
+              7,
+              14
+            ],
+            "description": "Number of days to stay"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "SPANISH",
+            "examples": [
+              "SPANISH",
+              "ENGLISH",
+              "GERMAN",
+              "FRENCH"
+            ],
+            "description": "Language code"
+          },
+          "numRooms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numrooms",
+            "default": null,
+            "examples": [
+              1,
+              2,
+              3
+            ],
+            "description": "Number of rooms"
+          },
+          "promocode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promocode",
+            "default": null,
+            "examples": [
+              "RESIDENTE",
+              "EARLY_BOOKING",
+              "SUMMER2025"
+            ],
+            "description": "Promotional code to apply discounts"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startdate",
+            "default": null,
+            "examples": [
+              "16/11/2025",
+              "01/12/2025"
+            ],
+            "description": "Check-in date in DD/MM/YYYY format"
+          },
+          "hotel_code": {
+            "type": "string",
+            "title": "Hotel Code",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "examples": [
+              "demo-fitur",
+              "landmar-arena",
+              "port-azafata"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Hotel unique identifier (required)"
+          },
+          "roomFilter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Roomfilter",
+            "default": null,
+            "examples": [
+              ".*suite.*",
+              ".*front.*",
+              ".*deluxe.*"
+            ],
+            "description": "Regular expression to filter room types"
+          },
+          "rate_filter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Filter",
+            "default": null,
+            "examples": [
+              "RATE1,RATE2",
+              "FLEXIBLE,NONREFUNDABLE"
+            ],
+            "description": "Comma-separated rate identifiers"
+          },
+          "extra_params": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extra Params",
+            "default": null,
+            "description": "Additional parameters dictionary"
+          },
+          "showCalendar": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Showcalendar",
+            "default": null,
+            "examples": [
+              true,
+              false
+            ],
+            "description": "Open calendar by default"
+          },
+          "entry_tomorrow": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Tomorrow",
+            "default": null,
+            "examples": [
+              0,
+              1
+            ],
+            "description": "Use tomorrow as default check-in (1=yes, 0=no)"
+          },
+          "ages_kid_per_room": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ages Kid Per Room",
+            "default": null,
+            "examples": [
+              [
+                [
+                  5,
+                  8
+                ],
+                null
+              ],
+              [
+                [
+                  10,
+                  12,
+                  6
+                ]
+              ]
+            ],
+            "description": "List of lists with children ages per room. None for rooms without children."
+          },
+          "rate_filter_regex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Filter Regex",
+            "default": null,
+            "examples": [
+              ".*FLEXIBLE.*",
+              ".*NO_REFUNDABLE.*"
+            ],
+            "description": "Regular expression to filter rates"
+          },
+          "ages_baby_per_room": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ages Baby Per Room",
+            "default": null,
+            "examples": [
+              [
+                [
+                  1
+                ],
+                null
+              ],
+              [
+                null,
+                [
+                  0,
+                  2
+                ]
+              ]
+            ],
+            "description": "List of lists with baby ages per room. None for rooms without babies."
+          },
+          "occupancy_per_room": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupancy Per Room",
+            "default": null,
+            "examples": [
+              [
+                {
+                  "adults": 2,
+                  "babies": 0,
+                  "children": 2
+                }
+              ]
+            ],
+            "description": "List of dicts per room with adults, children, babies, pets"
+          },
+          "package_preselection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Preselection",
+            "default": null,
+            "examples": [
+              true,
+              false
+            ],
+            "description": "Show packages tab by default"
+          },
+          "specific_rate_search": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specific Rate Search",
+            "default": null,
+            "examples": [
+              ".*FLEXIBLE.*",
+              ".*BEST_RATE.*"
+            ],
+            "description": "Regex for specific rate. Shows no availability if not found."
+          },
+          "standard_preselection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standard Preselection",
+            "default": null,
+            "examples": [
+              true,
+              false
+            ],
+            "description": "Show standard prices tab by default (if club configured)"
+          },
+          "target_hotel_namespace": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Hotel Namespace",
+            "default": null,
+            "examples": [
+              "hotel-secondary",
+              "hotel-branch"
+            ],
+            "description": "Target hotel namespace (only if multiple hotels share domain)"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_b2",
+      "annotations": {
+        "title": "Prebuilt Booking (B2)",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Create prebuilt booking URL with preselected room, rate, and meal plan. Hotel must have \"Enable direct search\" configured.\n\n\t**When to use**: After B1 search, user has selected specific room/rate/board and wants direct booking link.\n\n\t**Required**:\n\t- hotel_code: Hotel identifier\n\t- occupancyN: Format \"adults-children-babies\" (e.g., \"2-1-0\")\n\t- room_preselection: List of dicts with roomKey, rateKey, boardKey (datastore keys from previous search)\n\n\t**IMPORTANT**: All keys (roomKey, rateKey, boardKey) must be valid keys obtained from get_availability.\n\n\t**Returns**: Direct booking URL with preselected options ready for confirmation.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_b2Arguments",
+        "required": [
+          "hotel_code",
+          "occupancyN",
+          "room_preselection"
+        ],
+        "properties": {
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate",
+            "default": null,
+            "examples": [
+              "28/11/2025",
+              "05/12/2025"
+            ],
+            "description": "Check-out date in DD/MM/YYYY format"
+          },
+          "days_num": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Num",
+            "default": null,
+            "examples": [
+              3,
+              5,
+              7
+            ],
+            "description": "Number of days to stay"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "SPANISH",
+            "examples": [
+              "SPANISH",
+              "ENGLISH",
+              "GERMAN",
+              "FRENCH"
+            ],
+            "description": "Language code"
+          },
+          "numRooms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numrooms",
+            "default": null,
+            "examples": [
+              1,
+              2,
+              3
+            ],
+            "description": "Number of rooms"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startdate",
+            "default": null,
+            "examples": [
+              "23/11/2025",
+              "01/12/2025"
+            ],
+            "description": "Check-in date in DD/MM/YYYY format"
+          },
+          "hotel_code": {
+            "type": "string",
+            "title": "Hotel Code",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "examples": [
+              "landmar-arena",
+              "port-azafata",
+              "demo-fitur"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Hotel unique identifier (required)"
+          },
+          "occupancyN": {
+            "type": "string",
+            "title": "Occupancyn",
+            "pattern": "^\\d+-\\d+-\\d+$",
+            "examples": [
+              "2-0-0",
+              "2-1-0",
+              "4-2-1"
+            ],
+            "description": "Occupancy shorthand format 'adults-children-babies' (required)"
+          },
+          "extra_params": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extra Params",
+            "default": null,
+            "description": "Additional parameters dictionary"
+          },
+          "entry_tomorrow": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Tomorrow",
+            "default": null,
+            "examples": [
+              0,
+              1
+            ],
+            "description": "Use tomorrow as check-in (1) or today (0)"
+          },
+          "room_preselection": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "title": "Room Preselection",
+            "examples": [
+              [
+                {
+                  "rateKey": "ahJlfnNlY3VyZS1ib29raW5nMzBy...",
+                  "roomKey": "ahJlfnNlY3VyZS1ib29raW5nMzBy...",
+                  "boardKey": "ahJlfnNlY3VyZS1ib29raW5nMzBy..."
+                }
+              ]
+            ],
+            "description": "List of dicts with roomKey, rateKey, boardKey per room (all required)"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_b3",
+      "annotations": {
+        "title": "Complete Booking Link (B3)",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Create complete prebuilt booking URL with preselected room, rate, meal plan, supplements, and prefilled guest details. Most comprehensive booking link creation tool.\n\n\t**CRITICAL**: Always run get_availability FIRST to obtain valid keys (roomKey, rateKey, boardKey) before using this tool.\n\n\t**When to use**: User wants a complete direct booking link with all options preselected, including optional supplements and guest information prefilled.\n\n\t**Required**:\n\t- hotel_code: Hotel unique identifier\n\t- occupancyN: Format \"adults-children-babies\" (e.g., \"2-0-0\" for 2 adults, no children/babies)\n\n\t**Dates**: startDate and endDate in DD/MM/YYYY format\n\n\t**Room Preselection** (optional but recommended):\n\t- room_preselection: List of dicts with roomKey, rateKey, boardKey per room\n\t  Keys must be valid datastore keys from get_availability results\n\n\t**Rate Filters** (optional):\n\t- rate_filter or rate_filter_list: Filter specific rates\n\t- rate_filter_regex: Regex to filter rates\n\t- package_preselection: Show packages tab by default\n\t- standard_preselection: Show standard prices tab by default\n\n\t**Supplements** (optional):\n\t- supplement_preselection: List of dicts with supplementKey, supplementAmount, supplementDays\n\t  If supplementKey provided, supplementAmount and supplementDays are REQUIRED\n\t  Example: [{\"supplementKey\": \"key123\", \"supplementAmount\": 1, \"supplementDays\": 5}]\n\n\t**Personal Details Autofill** (optional):\n\t- personal_details: Dict to prefill guest information\n\t  Available: pdName, pdSurname, pdEmail, pdPhone, pdCountry, pdPersonalId, \n\t  pdBirthDay/Month/Year (or pdBirthDate as DD/MM/YYYY), pdComments\n\t  Example: {\"pdName\": \"Juan\", \"pdEmail\": \"juan@example.com\", \"pdCountry\": \"ES\"}\n\n\t**Usage Flow**:\n\t1. First: get_availability(hotel_code, dates) → Get valid keys\n\t2. Then: search_b3(hotel_code, occupancyN, room_preselection with keys from step 1)\n\n\t**Returns**: Complete booking URL with all preselections and autofilled data, ready for user to confirm reservation.\n\n\t**Note**: Hotel must have \"Enable direct search\" configuration enabled.",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_b3Arguments",
+        "required": [
+          "hotel_code",
+          "occupancyN"
+        ],
+        "properties": {
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate",
+            "default": null,
+            "examples": [
+              "30/11/2025",
+              "07/12/2025"
+            ],
+            "description": "Check-out date in DD/MM/YYYY format"
+          },
+          "days_num": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Num",
+            "default": null,
+            "examples": [
+              5,
+              7,
+              14
+            ],
+            "description": "Number of days to stay"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "SPANISH",
+            "examples": [
+              "SPANISH",
+              "ENGLISH",
+              "GERMAN",
+              "FRENCH"
+            ],
+            "description": "Language code"
+          },
+          "numRooms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numrooms",
+            "default": null,
+            "examples": [
+              1,
+              2,
+              3
+            ],
+            "description": "Number of rooms"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startdate",
+            "default": null,
+            "examples": [
+              "25/11/2025",
+              "01/12/2025"
+            ],
+            "description": "Check-in date in DD/MM/YYYY format"
+          },
+          "hotel_code": {
+            "type": "string",
+            "title": "Hotel Code",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "examples": [
+              "landmar-arena",
+              "port-azafata",
+              "hotel-xyz"
+            ],
+            "maxLength": 100,
+            "minLength": 2,
+            "description": "Hotel unique identifier (required)"
+          },
+          "occupancyN": {
+            "type": "string",
+            "title": "Occupancyn",
+            "pattern": "^\\d+-\\d+-\\d+$",
+            "examples": [
+              "2-0-0",
+              "2-1-0",
+              "4-2-1"
+            ],
+            "description": "Occupancy shorthand 'adults-children-babies' (required)"
+          },
+          "rate_filter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Filter",
+            "default": null,
+            "examples": [
+              "FLEXIBLE,NO_REFUNDABLE",
+              "BEST_RATE"
+            ],
+            "description": "Comma-separated rate identifiers"
+          },
+          "extra_params": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extra Params",
+            "default": null,
+            "description": "Additional parameters dictionary"
+          },
+          "entry_tomorrow": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Tomorrow",
+            "default": null,
+            "examples": [
+              0,
+              1
+            ],
+            "description": "Use tomorrow as check-in (1) or today (0)"
+          },
+          "personal_details": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Personal Details",
+            "default": null,
+            "examples": [
+              {
+                "pdName": "Juan",
+                "pdEmail": "juan@example.com",
+                "pdPhone": "+34600123456",
+                "pdCountry": "ES",
+                "pdSurname": "Pérez"
+              }
+            ],
+            "description": "Dict to prefill guest info: pdName, pdSurname, pdEmail, pdPhone, pdCountry, etc."
+          },
+          "rate_filter_list": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Filter List",
+            "default": null,
+            "examples": [
+              [
+                "FLEXIBLE",
+                "NO_REFUNDABLE"
+              ],
+              [
+                "BEST_RATE"
+              ]
+            ],
+            "description": "List of rate identifiers (converted to comma-separated)"
+          },
+          "rate_filter_regex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Filter Regex",
+            "default": null,
+            "examples": [
+              ".*FLEXIBLE.*",
+              ".*NO_REFUNDABLE.*"
+            ],
+            "description": "Regular expression to filter rates"
+          },
+          "room_preselection": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room Preselection",
+            "default": null,
+            "examples": [
+              [
+                {
+                  "rateKey": "ahJlfnNlY3VyZS1ib29raW5nMzBy...",
+                  "roomKey": "ahJlfnNlY3VyZS1ib29raW5nMzBy...",
+                  "boardKey": "ahJlfnNlY3VyZS1ib29raW5nMzBy..."
+                }
+              ]
+            ],
+            "description": "List of dicts with roomKey, rateKey, boardKey per room (from get_availability)"
+          },
+          "package_preselection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Preselection",
+            "default": null,
+            "examples": [
+              true,
+              false
+            ],
+            "description": "Show packages tab by default"
+          },
+          "specific_rate_search": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specific Rate Search",
+            "default": null,
+            "examples": [
+              ".*BEST_RATE.*",
+              ".*FLEXIBLE.*"
+            ],
+            "description": "Regex for specific rate search"
+          },
+          "standard_preselection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standard Preselection",
+            "default": null,
+            "examples": [
+              true,
+              false
+            ],
+            "description": "Show standard prices tab by default"
+          },
+          "supplement_preselection": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplement Preselection",
+            "default": null,
+            "examples": [
+              [
+                {
+                  "supplementKey": "ahJlfnNlY3VyZS1ib29raW5nMzBy...",
+                  "supplementDays": 5,
+                  "supplementAmount": 1
+                }
+              ]
+            ],
+            "description": "List of dicts with supplementKey, supplementAmount, supplementDays"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@agonzalez/prueba-mcp-seeker/mcp",
+      "configSchema": {}
+    }
+  ]
+}

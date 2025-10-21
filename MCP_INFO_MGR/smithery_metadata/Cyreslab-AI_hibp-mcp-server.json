@@ -1,0 +1,103 @@
+{
+  "qualifiedName": "@Cyreslab-AI/hibp-mcp-server",
+  "displayName": "Have I Been Pwned Integration Server",
+  "description": "Check if your accounts or passwords have been compromised in data breaches. Utilize powerful tools to verify email addresses, passwords, and get detailed breach information seamlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/haveibeenpwned.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "check_email",
+      "description": "Check if an email address has been found in data breaches",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address to check"
+          },
+          "truncate_response": {
+            "type": "boolean",
+            "default": false,
+            "description": "Truncate the response to only include breach names"
+          },
+          "include_unverified": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include unverified breaches in the results"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_password",
+      "description": "Check if a password has been exposed in data breaches (using k-anonymity)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "Password to check"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_breach_details",
+      "description": "Get details about a specific data breach",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "breach_name"
+        ],
+        "properties": {
+          "breach_name": {
+            "type": "string",
+            "description": "Name of the breach to get details for"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_all_breaches",
+      "description": "List all breaches in the system",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Filter breaches by domain"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Cyreslab-AI/hibp-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "hibpApiKey"
+        ],
+        "properties": {
+          "hibpApiKey": {
+            "type": "string",
+            "description": "Your Have I Been Pwned API key."
+          }
+        }
+      }
+    }
+  ]
+}

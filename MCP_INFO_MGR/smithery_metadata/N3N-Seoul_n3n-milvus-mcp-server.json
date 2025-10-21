@@ -1,0 +1,347 @@
+{
+  "qualifiedName": "@N3N-Seoul/n3n-milvus-mcp-server",
+  "displayName": "Milvus Search",
+  "description": "Index your documents in Milvus for fast semantic search. Retrieve the most relevant passages for RAG, Q&A, and summarization. List collections and inspect their details to manage your knowledge base.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@N3N-Seoul/n3n-milvus-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "ingest_documents_from_path",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Load documents from a directory, split them into chunks,\nembed them, and insert into a Milvus collection using LangChain.\n\nArgs:\n    path: The absolute path to the directory containing documents.\n    collection_name: The name of the target Milvus collection. If not provided, the default name from the server configuration will be used.\n    chunk_size: The size of text chunks.\n    chunk_overlap: The overlap between text chunks.\n    recreate_collection: If True, the collection will be deleted and recreated.\n    schema_json: Optional JSON string to define the collection schema.\n    index_params_json: Optional JSON string to define the index parameters.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "chunk_size": {
+            "type": "integer",
+            "title": "Chunk Size",
+            "default": 1000
+          },
+          "schema_json": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schema Json",
+            "default": null
+          },
+          "chunk_overlap": {
+            "type": "integer",
+            "title": "Chunk Overlap",
+            "default": 100
+          },
+          "collection_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection Name",
+            "default": null
+          },
+          "index_params_json": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Index Params Json",
+            "default": null
+          },
+          "recreate_collection": {
+            "type": "boolean",
+            "title": "Recreate Collection",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "ingest_documents_from_files",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Ingest specific document files (PDF/Markdown) into a Milvus collection.\n\nEnforces a total payload size cap of 15 MB across all provided files.\n\nArgs:\n    files: Absolute file paths to ingest. Supports .pdf and .md.\n    collection_name: Target collection name. Falls back to default from config.\n    chunk_size: Text chunk size.\n    chunk_overlap: Overlap between chunks.\n    recreate_collection: If True, delete and recreate the collection.\n    schema_json: Optional JSON string defining collection schema.\n    index_params_json: Optional JSON string defining index parameters.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Files"
+          },
+          "chunk_size": {
+            "type": "integer",
+            "title": "Chunk Size",
+            "default": 1000
+          },
+          "schema_json": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schema Json",
+            "default": null
+          },
+          "chunk_overlap": {
+            "type": "integer",
+            "title": "Chunk Overlap",
+            "default": 100
+          },
+          "collection_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection Name",
+            "default": null
+          },
+          "index_params_json": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Index Params Json",
+            "default": null
+          },
+          "recreate_collection": {
+            "type": "boolean",
+            "title": "Recreate Collection",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "vector_search",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Perform a RAG search on a Milvus collection using LangChain.\nReturns the most relevant document chunks with their similarity scores.\n\nArgs:\n    query: The query text.\n    collection_name: The name of the collection to search in. If not provided, the default name from the server configuration will be used.\n    k: The number of results to return.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "k": {
+            "type": "integer",
+            "title": "K",
+            "default": 4
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "collection_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "list_collections",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "List all collections in the database.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_collection_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Lists detailed information about a specific collection.\n\nArgs:\n    collection_name: Name of collection to inspect. If not provided, the default name from the server configuration will be used.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "collection_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@N3N-Seoul/n3n-milvus-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "openaiApiKey",
+          "milvusUri",
+          "milvusToken",
+          "collectionName"
+        ],
+        "properties": {
+          "milvusUri": {
+            "type": "string",
+            "default": "https://[your-milvus-uri]",
+            "description": "Milvus connection URI"
+          },
+          "milvusToken": {
+            "type": "string",
+            "description": "Milvus connection token"
+          },
+          "openaiApiKey": {
+            "type": "string",
+            "description": "OpenAI API key"
+          },
+          "openaiBaseUrl": {
+            "type": "string",
+            "description": "OpenAI-compatible base URL (e.g., http://host/api/<model_id>/v1)"
+          },
+          "collectionName": {
+            "type": "string",
+            "description": "Name of the collection to use for the MCP"
+          },
+          "embeddingModelName": {
+            "type": "string",
+            "description": "Embedding model name to be used by the server"
+          }
+        }
+      }
+    }
+  ]
+}

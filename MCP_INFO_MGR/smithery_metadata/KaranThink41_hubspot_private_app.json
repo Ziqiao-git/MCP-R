@@ -1,0 +1,166 @@
+{
+  "qualifiedName": "@KaranThink41/hubspot_private_app",
+  "displayName": "HubSpot MCP Server",
+  "description": "Interact seamlessly with HubSpot CRM to manage your Note engagements. Create, update, delete, and fetch summary records effortlessly, enhancing your workflow and productivity. Streamline your communication by sending records via chat or email directly from the server.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "create_shared_summary",
+      "description": "Step 1: Accept a title, summary, and author.\nStep 2: Combine these into a note body.\nStep 3: Create a new HubSpot Note engagement associated with a dedicated contact.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "title",
+          "summary",
+          "author"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the summary"
+          },
+          "author": {
+            "type": "string",
+            "description": "Name of the author"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Content of the summary"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_summaries",
+      "description": "Retrieve summary notes from HubSpot with flexible filters.\nOptional filters:\n  • date: (YYYY-MM-DD) to filter by a specific date.\n  • dayOfWeek: e.g., 'Monday' to filter by day of the week.\n  • limit: Number of most recent summaries to return.\n  • timeRange: { start: 'HH:MM', end: 'HH:MM' } to filter by time of day.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Optional: Date in YYYY-MM-DD format"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Optional: Number of summaries to return"
+          },
+          "dayOfWeek": {
+            "type": "string",
+            "description": "Optional: Day of the week (e.g., Monday)"
+          },
+          "timeRange": {
+            "type": "object",
+            "properties": {
+              "end": {
+                "type": "string",
+                "description": "Optional: End time in HH:MM"
+              },
+              "start": {
+                "type": "string",
+                "description": "Optional: Start time in HH:MM"
+              }
+            },
+            "description": "Optional: Time range filter"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_shared_summary",
+      "description": "Step 1: Provide an explicit Engagement ID OR a search query (query) to locate the note.\nStep 2: Retrieve the current note content.\nStep 3: Merge existing values with any provided updates (title, summary, author).\nStep 4: Update the note while preserving unchanged fields.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Optional: Engagement ID of the note"
+          },
+          "query": {
+            "type": "string",
+            "description": "Optional: Keyword to search in note content"
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional: Updated title"
+          },
+          "author": {
+            "type": "string",
+            "description": "Optional: Updated author"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Optional: Updated content"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_shared_summary",
+      "description": "Delete a summary note from HubSpot.\nEither provide an explicit Engagement ID (id) or use optional filters (date, dayOfWeek, limit, timeRange) to select a candidate note (e.g., 'delete my last summary').",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Optional: Engagement ID to delete"
+          },
+          "date": {
+            "type": "string",
+            "description": "Optional: Date in YYYY-MM-DD format"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Optional: Number of summaries to consider (default 1)"
+          },
+          "dayOfWeek": {
+            "type": "string",
+            "description": "Optional: Day of the week (e.g., Monday)"
+          },
+          "timeRange": {
+            "type": "object",
+            "properties": {
+              "end": {
+                "type": "string",
+                "description": "Optional: End time in HH:MM"
+              },
+              "start": {
+                "type": "string",
+                "description": "Optional: Start time in HH:MM"
+              }
+            },
+            "description": "Optional: Time range filter"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@KaranThink41/hubspot_private_app/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "HUBSPOT_ACCESS_TOKEN",
+          "SHARED_CONTACT_ID"
+        ],
+        "properties": {
+          "SHARED_CONTACT_ID": {
+            "type": "string",
+            "description": "Shared Contact ID for HubSpot"
+          },
+          "HUBSPOT_ACCESS_TOKEN": {
+            "type": "string",
+            "description": "HubSpot API access token"
+          }
+        }
+      }
+    }
+  ]
+}

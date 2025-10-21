@@ -1,0 +1,248 @@
+{
+  "qualifiedName": "@demomagic/lifi-mcp-server",
+  "displayName": "LI.FI Cross-Chain Integration Server",
+  "description": "Enable AI assistants and applications to seamlessly interact with cross-chain blockchain infrastructure. Access comprehensive token data, bridging tools, transaction tracking, and gas price information through a standardized protocol. Simplify cross-chain operations and enhance blockchain interoperability within your AI workflows.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/li.fi.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@demomagic/lifi-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "lifi_get_chains",
+      "description": "Get information about all currently supported chains from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "chainTypes": {
+            "type": "string",
+            "description": "Optional filter to restrict the resulting chains to specific chainTypes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_tokens",
+      "description": "Get information about all supported tokens from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "chains": {
+            "type": "string",
+            "description": "Optional comma-separated list of chain ids or keys to filter tokens"
+          },
+          "chainTypes": {
+            "type": "string",
+            "description": "Optional filter to restrict the resulting tokens to specific chainTypes"
+          },
+          "minPriceUSD": {
+            "type": "number",
+            "description": "Optional filter by minimum token price in USD (minimum 0, default 0.0001)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_token",
+      "description": "Get detailed information about a specific token from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chain",
+          "token"
+        ],
+        "properties": {
+          "chain": {
+            "type": "string",
+            "description": "Chain ID or name where the token exists"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token address or symbol to get information for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_tools",
+      "description": "Get information about all supported tools (bridges and exchanges) from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "chains": {
+            "type": "string",
+            "description": "Optional comma-separated list of chain ids or keys to filter tools"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_connections",
+      "description": "Get information about supported chain connections from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "toChain": {
+            "type": "string",
+            "description": "Optional destination chain id or key to filter connections to"
+          },
+          "toToken": {
+            "type": "string",
+            "description": "Optional destination token address to filter connections"
+          },
+          "fromChain": {
+            "type": "string",
+            "description": "Optional source chain id or key to filter connections from"
+          },
+          "fromToken": {
+            "type": "string",
+            "description": "Optional source token address to filter connections"
+          },
+          "denyBridges": {
+            "type": "string",
+            "description": "Optional comma-separated list of denied bridge keys"
+          },
+          "allowBridges": {
+            "type": "string",
+            "description": "Optional comma-separated list of allowed bridge keys"
+          },
+          "denyExchanges": {
+            "type": "string",
+            "description": "Optional comma-separated list of denied exchange keys"
+          },
+          "allowExchanges": {
+            "type": "string",
+            "description": "Optional comma-separated list of allowed exchange keys"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_gas_prices",
+      "description": "Get gas price information for a specific chain from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chainId"
+        ],
+        "properties": {
+          "chainId": {
+            "type": "string",
+            "description": "Chain ID to get gas prices for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_gas_suggestion",
+      "description": "Get gas amount suggestions for a specific chain from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chain"
+        ],
+        "properties": {
+          "chain": {
+            "type": "string",
+            "description": "Chain ID or key to get gas suggestions for"
+          },
+          "fromChain": {
+            "type": "string",
+            "description": "Optional source chain to calculate required fromToken amount"
+          },
+          "fromToken": {
+            "type": "string",
+            "description": "Optional source token address to calculate required amount"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_transaction_status",
+      "description": "Get the status of a cross-chain transfer by transaction hash from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "txHash": {
+            "type": "string",
+            "description": "Optional transaction hash to check status for"
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "Optional alternative transaction identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lifi_get_integrator_fee_withdrawal",
+      "description": "Get integrator fee withdrawal transaction for a specific chain from LI.FI API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "integratorId",
+          "chainId"
+        ],
+        "properties": {
+          "tokens": {
+            "type": "string",
+            "description": "Optional comma-separated list of token addresses to withdraw"
+          },
+          "chainId": {
+            "type": "string",
+            "description": "Chain ID to withdraw fees from"
+          },
+          "integratorId": {
+            "type": "string",
+            "description": "Integrator ID to get fee withdrawal transaction for"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@demomagic/lifi-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "lifiApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "lifiApiKey": {
+            "type": "string",
+            "description": "API key for LI.FI API authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

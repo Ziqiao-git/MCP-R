@@ -1,0 +1,940 @@
+{
+  "qualifiedName": "@isnow890/naver-search-mcp",
+  "displayName": "Naver Search",
+  "description": "\n네이버 검색 API 기반 MCP 서버입니다. 뉴스, 카페, 블로그, 쇼핑, 웹 검색 등 다양한 콘텐츠 검색과 함께 데이터랩 API로 검색어/쇼핑 트렌드 분석이 가능합니다. 쇼핑 분석은 카테고리, 기기, 성별, 연령대별 소비자 행동 패턴을 제공합니다.\n\n-smithery 소스코드는 더이상 관리하지 않습니다. \nsource code 링크에서 github으로 이동후 npx로 설치하시는걸 강력 추천합니다.\n\n\n  • 스마트 카테고리 검색 - 검색 트렌드/쇼핑인사이트 검색시 카테고리 코드를 ai가 자동으로 찾아서 트렌드 검색해줘요.\n  • 한국 시간 컨텍스트 - 오늘 기반으로 정확히 검색할수 있게 합니다,\n\n\nA MCP server based on Naver Search API. Enables searching various content types (news, cafe, blogs, shopping, web search, etc.) and analyzing search/shopping trends via DataLab API. Shopping analytics provide consumer behavior patterns by category, device, gender, and age group.\n\n",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/347d01cc-d8ed-4ec0-be82-a7ae353dbd38.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@isnow890/naver-search-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "search_webkr",
+      "description": "🌐 Search Korean web documents and general content. Comprehensive search across Korean websites and online content. Find articles, information, and documents from various Korean sources. For recent content or 'today's results', use get_current_korean_time first. (네이버 웹문서 검색 - 한국 웹사이트 종합 검색, 최근 콘텐츠나 오늘 결과를 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_news",
+      "description": "📰 Search latest Korean news articles from major outlets. Perfect for current events, breaking news, and recent developments. Covers politics, economy, society, and international news. For today's news or current events, use get_current_korean_time first to understand what 'today' means. (네이버 뉴스 검색 - 최신 뉴스와 시사 정보, 오늘 뉴스를 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_blog",
+      "description": "✍️ Search personal blogs and reviews for authentic user experiences. Great for product reviews, personal stories, detailed tutorials, and real user opinions. Find genuine Korean perspectives. For recent posts or 'today's content', use get_current_korean_time first. (네이버 블로그 검색 - 실제 사용자 후기와 개인적 경험, 최근 글이나 오늘 내용을 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_shop",
+      "description": "🛒 Search Naver Shopping for products, prices, and shopping deals. Compare prices across vendors, find product specifications, and discover shopping trends in Korea. For current deals or today's specials, use get_current_korean_time first. (네이버 쇼핑 검색 - 상품 정보와 가격 비교, 현재 할인이나 오늘 특가를 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_image",
+      "description": "🖼️ Search for images with Korean context and relevance. Find visual content, infographics, charts, and photos related to your search terms. Great for visual research and content discovery. For recent images or current visual content, use get_current_korean_time first. (네이버 이미지 검색 - 시각적 컨텐츠 발견, 최근 이미지나 현재 시각 자료를 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_kin",
+      "description": "❓ Search Naver KnowledgeiN for Q&A and community-driven answers. Find solutions to problems, get expert advice, and discover community insights on various topics. For recent questions or current discussions, use get_current_korean_time first. (네이버 지식iN 검색 - 질문과 답변, 커뮤니티 지식, 최근 질문이나 현재 토론을 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_book",
+      "description": "📚 Search for books, publications, and literary content. Find book reviews, author information, publication details, and reading recommendations in Korean literature and translated works. For new releases or current bestsellers, use get_current_korean_time first. (네이버 책 검색 - 도서 정보와 서평, 신간도서나 현재 베스트셀러를 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_encyc",
+      "description": "📖 Search Naver Encyclopedia for authoritative knowledge and definitions. Best for academic research, getting reliable information, and understanding Korean concepts and terminology. For current definitions or recent updates, use get_current_korean_time for context. (네이버 지식백과 검색 - 신뢰할 수 있는 정보와 정의, 현재 정의나 최근 업데이트를 찾을 때는 get_current_korean_time으로 상황을 파악하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_academic",
+      "description": "🎓 Search academic papers, research documents, and scholarly content. Access Korean academic resources, research papers, theses, and professional publications. For recent publications or current research, use get_current_korean_time first. (네이버 전문자료 검색 - 학술 논문과 전문 자료, 최근 발표나 현재 연구를 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_local",
+      "description": "📍 Search for local businesses, restaurants, and places in Korea. Find location information, reviews, contact details, and business hours for Korean establishments. For current business hours or today's availability, use get_current_korean_time first. (네이버 지역 검색 - 지역 업체와 장소 정보, 현재 영업시간이나 오늘 이용 가능 여부를 확인할 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "random",
+              "comment"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (random: 정확도순, comment: 리뷰 많은순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (최대 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (최대 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_cafearticle",
+      "description": "☕ Search Naver Cafe articles for community discussions and specialized content. Find niche communities, hobby groups, and specialized discussions on various topics. For recent discussions or current community topics, use get_current_korean_time first. (네이버 카페글 검색 - 커뮤니티 토론과 전문 정보, 최근 논의나 현재 커뮤니티 주제를 찾을 때는 먼저 get_current_korean_time으로 현재 시간을 확인하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "sim",
+              "date"
+            ],
+            "type": "string",
+            "description": "정렬 방식 (sim: 유사도, date: 날짜순)"
+          },
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "start": {
+            "type": "number",
+            "description": "검색 시작 위치 (기본 1)"
+          },
+          "display": {
+            "type": "number",
+            "description": "한 번에 가져올 결과 수 (기본 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_search",
+      "description": "📊 Analyze search keyword trends over time using Naver DataLab. Track popularity changes, seasonal patterns, and compare multiple keywords. Perfect for market research and trend analysis. For current trend analysis or 'recent trends', use get_current_korean_time to determine proper date ranges. (네이버 데이터랩 검색어 트렌드 분석, 현재 트렌드나 최근 동향 분석 시 get_current_korean_time으로 적절한 날짜 범위를 설정하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "keywordGroups"
+        ],
+        "properties": {
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          },
+          "keywordGroups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "groupName",
+                "keywords"
+              ],
+              "properties": {
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of keywords"
+                },
+                "groupName": {
+                  "type": "string",
+                  "description": "Group name"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Keyword groups"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_category",
+      "description": "🛍️ STEP 2: Analyze shopping category trends over time. Use find_category first to get category codes. BUSINESS CASES: Market size analysis, seasonal trend identification, category performance comparison. EXAMPLE: Compare '패션의류' vs '화장품' trends over 6 months. For current period analysis, use get_current_korean_time to set proper date ranges. (네이버 쇼핑 카테고리별 트렌드 분석 - 먼저 find_category 도구로 카테고리 코드를 찾고, 현재 기간 분석시 get_current_korean_time으로 적절한 날짜 범위 설정)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category"
+        ],
+        "properties": {
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "category": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "param"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Category name"
+                },
+                "param": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Category codes"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of category name and code pairs"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_by_device",
+      "description": "📱 Analyze shopping trends by device (PC vs Mobile). Use find_category first. BUSINESS CASES: Mobile commerce strategy, responsive design priority, device-specific campaigns. EXAMPLE: 'PC 사용자가 더 많이 구매하는 카테고리는?' For current device trends, use get_current_korean_time to set proper analysis period. (기기별 쇼핑 트렌드 분석 - 먼저 find_category 도구로 카테고리 코드를 찾고, 현재 기기 트렌드 분석시 get_current_korean_time으로 적절한 분석 기간 설정)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category",
+          "device"
+        ],
+        "properties": {
+          "device": {
+            "enum": [
+              "pc",
+              "mo"
+            ],
+            "type": "string",
+            "description": "Device type"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category code"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_by_gender",
+      "description": "👥 Analyze shopping trends by gender (Male vs Female). Use find_category first. BUSINESS CASES: Gender-targeted marketing, product positioning, demographic analysis. EXAMPLE: '화장품 쇼핑에서 남녀 비율은?' For current gender trends, use get_current_korean_time to set proper analysis period. (성별 쇼핑 트렌드 분석 - 먼저 find_category 도구로 카테고리 코드를 찾고, 현재 성별 트렌드 분석시 get_current_korean_time으로 적절한 분석 기간 설정)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category",
+          "gender"
+        ],
+        "properties": {
+          "gender": {
+            "enum": [
+              "f",
+              "m"
+            ],
+            "type": "string",
+            "description": "Gender"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category code"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_by_age",
+      "description": "👶👦👨👴 Analyze shopping trends by age groups (10s, 20s, 30s, 40s, 50s, 60s+). Use find_category first. BUSINESS CASES: Age-targeted products, generational preferences, lifecycle marketing. EXAMPLE: '개발 도구는 어느 연령대가 많이 구매하나?' For current age trends, use get_current_korean_time to set proper analysis period. (연령별 쇼핑 트렌드 - 먼저 find_category 도구로 카테고리 코드를 찾고, 현재 연령 트렌드 분석시 get_current_korean_time으로 적절한 분석 기간 설정)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category",
+          "ages"
+        ],
+        "properties": {
+          "ages": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "10",
+                "20",
+                "30",
+                "40",
+                "50",
+                "60"
+              ],
+              "type": "string"
+            },
+            "description": "Age groups"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category code"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_keywords",
+      "description": "🔍 Compare specific keywords within a shopping category. Use find_category first. BUSINESS CASES: Product keyword optimization, competitor analysis, search trend identification. EXAMPLE: Within '패션' category, compare '원피스' vs '자켓' vs '드레스' trends. For current keyword trends, use get_current_korean_time to set proper analysis period. (카테고리 내 키워드 비교 - 먼저 find_category 도구로 카테고리 코드를 찾고, 현재 키워드 트렌드 분석시 get_current_korean_time으로 적절한 분석 기간 설정)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category",
+          "keyword"
+        ],
+        "properties": {
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "keyword": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "param"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Keyword name"
+                },
+                "param": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Keyword values"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of keyword name and value pairs"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category code"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_keyword_by_device",
+      "description": "📱🔍 Analyze keyword performance by device within shopping categories. Use find_category first to get category codes. Perfect for understanding mobile vs desktop shopping behavior for specific products. (쇼핑 키워드 기기별 트렌드 - 먼저 find_category 도구로 카테고리 코드를 찾으세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category",
+          "keyword",
+          "device"
+        ],
+        "properties": {
+          "device": {
+            "enum": [
+              "pc",
+              "mo"
+            ],
+            "type": "string",
+            "description": "Device type"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "Search keyword"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category code"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_keyword_by_gender",
+      "description": "👥🔍 Analyze keyword performance by gender within shopping categories. Use find_category first to get category codes. Essential for gender-targeted marketing and product positioning strategies. (쇼핑 키워드 성별 트렌드 - 먼저 find_category 도구로 카테고리 코드를 찾으세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category",
+          "keyword",
+          "gender"
+        ],
+        "properties": {
+          "gender": {
+            "enum": [
+              "f",
+              "m"
+            ],
+            "type": "string",
+            "description": "Gender"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "Search keyword"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category code"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "datalab_shopping_keyword_by_age",
+      "description": "👶👦👨👴🔍 Analyze keyword performance by age groups within shopping categories. Use find_category first to get category codes. Perfect for age-targeted marketing and understanding generational shopping preferences. (쇼핑 키워드 연령별 트렌드 - 먼저 find_category 도구로 카테고리 코드를 찾으세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startDate",
+          "endDate",
+          "timeUnit",
+          "category",
+          "keyword",
+          "ages"
+        ],
+        "properties": {
+          "ages": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "10",
+                "20",
+                "30",
+                "40",
+                "50",
+                "60"
+              ],
+              "type": "string"
+            },
+            "description": "Age groups"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (yyyy-mm-dd)"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "Search keyword"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category code"
+          },
+          "timeUnit": {
+            "enum": [
+              "date",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "description": "Time unit"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (yyyy-mm-dd)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_current_korean_time",
+      "description": "🕐 Get current Korean time (KST) with date and time information. Use this tool whenever you need to know 'today', 'now', 'current time', or any time-related queries. Essential for understanding what 'today' means in Korean context. Always use this tool when users mention 'today' or 'current' to provide accurate time context. (현재 한국 시간 조회 - '오늘', '현재', '지금' 등의 시간 정보가 필요할 때 항상 사용하세요)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_category",
+      "description": "🚀 STEP 1: Find shopping categories with Korean search terms. Search in KOREAN (패션, 화장품, 가전제품, etc.) to find category codes needed for datalab tools. Smart fuzzy matching finds similar categories even with partial matches. (카테고리 검색: 한국어로 검색하여 데이터랩 분석에 필요한 카테고리 코드를 찾아주는 필수 도구)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Korean category search query (한국어 카테고리 검색어, 예: '패션', '화장품', '가구', '스마트폰'). Supports exact match and fuzzy search with level-based priority"
+          },
+          "max_results": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of results to return (반환할 최대 결과 수, 기본값: 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@isnow890/naver-search-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "NAVER_CLIENT_ID",
+          "NAVER_CLIENT_SECRET"
+        ],
+        "properties": {
+          "NAVER_CLIENT_ID": {
+            "type": "string",
+            "description": "Naver API Client ID"
+          },
+          "NAVER_CLIENT_SECRET": {
+            "type": "string",
+            "description": "Naver API Client Secret"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

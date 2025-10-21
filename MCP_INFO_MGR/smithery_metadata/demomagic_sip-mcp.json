@@ -1,0 +1,92 @@
+{
+  "qualifiedName": "@demomagic/sip-mcp",
+  "displayName": "sip",
+  "description": "The sip MCP (Model Context Protocol) integration provides a powerful way to automate and manage Solana token swaps directly through an intelligent agent or system. It essentially turns complex blockchain interactions into easily callable \"tools\" within your MCP server.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/1ae42d2d-9931-4dc0-8e10-f63abfed35f1.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@demomagic/sip-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "executeSolanaSwap",
+      "description": "Execute a token swap on the Solana, buying one token with another, or selling a token for USDC.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputMint",
+          "outputMint",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "The quantity of the inputMint token to swap, in its smallest unit (e.g., 2,000,000 for 2 USDC because USDC has 6 decimals).",
+            "exclusiveMinimum": 0
+          },
+          "inputMint": {
+            "type": "string",
+            "description": "The mint address of the token you are selling/spending (e.g., 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' for USDC)."
+          },
+          "outputMint": {
+            "type": "string",
+            "description": "The mint address of the token you want to buy/receive. If this is 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' (USDC), it indicates selling 'inputMint' for USDC."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "searchTokens",
+      "description": "Searches for cryptocurrency tokens by keyword and optional blockchain chain. Defaults to Solana if no chain is specified. Return the mint addresses",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "keyword"
+        ],
+        "properties": {
+          "chain": {
+            "type": "string",
+            "default": "solana",
+            "description": "The blockchain chain to filter by (e.g., 'ethereum', 'bsc', 'solana'). Defaults to 'solana'."
+          },
+          "keyword": {
+            "type": "string",
+            "description": "The keyword to search for (token symbol)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@demomagic/sip-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "privateKey"
+        ],
+        "properties": {
+          "privateKey": {
+            "type": "string",
+            "description": "Solana private key for transaction signing (loaded from environment)."
+          },
+          "solanaRpcUrl": {
+            "type": "string",
+            "format": "uri",
+            "default": "https://api.sip.trading/helius-api",
+            "description": "Solana RPC URL"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

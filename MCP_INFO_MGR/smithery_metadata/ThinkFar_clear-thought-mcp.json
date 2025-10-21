@@ -1,0 +1,1278 @@
+{
+  "qualifiedName": "@ThinkFar/clear-thought-mcp",
+  "displayName": "Clear Thought Server",
+  "description": "Provide systematic thinking, mental models, and debugging approaches to enhance problem-solving capabilities. Enable structured reasoning and decision-making support for complex problems. Facilitate integration with MCP-compatible clients for advanced cognitive workflows.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "sequentialthinking",
+      "description": "A detailed tool for dynamic and reflective problem-solving through thoughts.\nThis tool helps analyze problems through a flexible thinking process that can adapt and evolve.\nEach thought can build on, question, or revise previous insights as understanding deepens.\n\nWhen to use this tool:\n- Breaking down complex problems into steps\n- Planning and design with room for revision\n- Analysis that might need course correction\n- Problems where the full scope might not be clear initially\n- Problems that require a multi-step solution\n- Tasks that need to maintain context over multiple steps\n- Situations where irrelevant information needs to be filtered out\n\nYou should:\n1. Start with an initial estimate of needed thoughts, but be ready to adjust\n2. Feel free to question or revise previous thoughts\n3. Don't hesitate to add more thoughts if needed, even at the \"end\"\n4. Express uncertainty when present\n5. Mark thoughts that revise previous thinking or branch into new paths\n6. Ignore information that is irrelevant to the current step\n7. Generate a solution hypothesis when appropriate\n8. Verify the hypothesis based on the Chain of Thought steps\n9. Repeat the process until satisfied with the solution\n10. Provide a single, ideally correct answer as the final output\n11. Only set next_thought_needed to false when truly done and a satisfactory answer is reached",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "thought",
+          "thoughtNumber",
+          "totalThoughts",
+          "nextThoughtNeeded"
+        ],
+        "properties": {
+          "thought": {
+            "type": "string"
+          },
+          "branchId": {
+            "type": "string"
+          },
+          "isRevision": {
+            "type": "boolean"
+          },
+          "thoughtNumber": {
+            "type": "number",
+            "minimum": 1
+          },
+          "totalThoughts": {
+            "type": "number",
+            "minimum": 1
+          },
+          "revisesThought": {
+            "type": "number",
+            "minimum": 1
+          },
+          "branchFromThought": {
+            "type": "number",
+            "minimum": 1
+          },
+          "needsMoreThoughts": {
+            "type": "boolean"
+          },
+          "nextThoughtNeeded": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "name": "mentalmodel",
+      "description": "A tool for applying structured mental models to problem-solving.\nSupports various mental models including:\n- First Principles Thinking\n- Opportunity Cost Analysis\n- Error Propagation Understanding\n- Rubber Duck Debugging\n- Pareto Principle\n- Occam's Razor\n\nEach model provides a systematic approach to breaking down and solving problems.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "modelName",
+          "problem"
+        ],
+        "properties": {
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "problem": {
+            "type": "string"
+          },
+          "modelName": {
+            "enum": [
+              "first_principles",
+              "opportunity_cost",
+              "error_propagation",
+              "rubber_duck",
+              "pareto_principle",
+              "occams_razor"
+            ],
+            "type": "string"
+          },
+          "reasoning": {
+            "type": "string"
+          },
+          "conclusion": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "designpattern",
+      "description": "A tool for applying design patterns to software architecture and implementation.\nSupports various design patterns including:\n- Modular Architecture\n- API Integration Patterns\n- State Management\n- Asynchronous Processing\n- Scalability Considerations\n- Security Best Practices\n- Agentic Design Patterns\n\nEach pattern provides a structured approach to solving common design challenges.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "patternName",
+          "context"
+        ],
+        "properties": {
+          "context": {
+            "type": "string"
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tradeoffs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "codeExample": {
+            "type": "string"
+          },
+          "patternName": {
+            "enum": [
+              "modular_architecture",
+              "api_integration",
+              "state_management",
+              "async_processing",
+              "scalability",
+              "security",
+              "agentic_design"
+            ],
+            "type": "string"
+          },
+          "implementation": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "programmingparadigm",
+      "description": "A tool for applying different programming paradigms to solve problems.\nSupports various programming paradigms including:\n- Imperative Programming\n- Procedural Programming\n- Object-Oriented Programming\n- Functional Programming\n- Declarative Programming\n- Logic Programming\n- Event-Driven Programming\n- Aspect-Oriented Programming\n- Concurrent Programming\n- Reactive Programming\n\nEach paradigm provides a different approach to structuring and executing code.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "paradigmName",
+          "problem"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string"
+          },
+          "approach": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "codeExample": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "paradigmName": {
+            "enum": [
+              "imperative",
+              "procedural",
+              "object_oriented",
+              "functional",
+              "declarative",
+              "logic",
+              "event_driven",
+              "aspect_oriented",
+              "concurrent",
+              "reactive"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "debuggingapproach",
+      "description": "A tool for applying systematic debugging approaches to solve technical issues.\nSupports various debugging methods including:\n- Binary Search\n- Reverse Engineering\n- Divide and Conquer\n- Backtracking\n- Cause Elimination\n- Program Slicing\n\nEach approach provides a structured method for identifying and resolving issues.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "approachName",
+          "issue"
+        ],
+        "properties": {
+          "issue": {
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "findings": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string"
+          },
+          "approachName": {
+            "enum": [
+              "binary_search",
+              "reverse_engineering",
+              "divide_conquer",
+              "backtracking",
+              "cause_elimination",
+              "program_slicing"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "collaborativereasoning",
+      "description": "A detailed tool for simulating expert collaboration with diverse perspectives.\nThis tool helps models tackle complex problems by coordinating multiple viewpoints.\nIt provides a framework for structured collaborative reasoning and perspective integration.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "topic",
+          "personas",
+          "contributions",
+          "stage",
+          "activePersonaId",
+          "sessionId",
+          "iteration",
+          "nextContributionNeeded"
+        ],
+        "properties": {
+          "stage": {
+            "enum": [
+              "problem-definition",
+              "ideation",
+              "critique",
+              "integration",
+              "decision",
+              "reflection"
+            ],
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "personas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "expertise",
+                "background",
+                "perspective",
+                "biases",
+                "communication"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "biases": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "expertise": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "background": {
+                  "type": "string"
+                },
+                "perspective": {
+                  "type": "string"
+                },
+                "communication": {
+                  "type": "object",
+                  "required": [
+                    "style",
+                    "tone"
+                  ],
+                  "properties": {
+                    "tone": {
+                      "type": "string"
+                    },
+                    "style": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "iteration": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Current iteration of the collaboration"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Unique identifier for this collaboration session"
+          },
+          "keyInsights": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contributions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "personaId",
+                "content",
+                "type",
+                "confidence"
+              ],
+              "properties": {
+                "type": {
+                  "enum": [
+                    "observation",
+                    "question",
+                    "insight",
+                    "concern",
+                    "suggestion",
+                    "challenge",
+                    "synthesis"
+                  ],
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "personaId": {
+                  "type": "string"
+                },
+                "confidence": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "referenceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "disagreements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "topic",
+                "positions"
+              ],
+              "properties": {
+                "topic": {
+                  "type": "string"
+                },
+                "positions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "personaId",
+                      "position",
+                      "arguments"
+                    ],
+                    "properties": {
+                      "position": {
+                        "type": "string"
+                      },
+                      "arguments": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "personaId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "nextPersonaId": {
+            "type": "string"
+          },
+          "openQuestions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "activePersonaId": {
+            "type": "string"
+          },
+          "consensusPoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "finalRecommendation": {
+            "type": "string"
+          },
+          "nextContributionNeeded": {
+            "type": "boolean",
+            "description": "Whether another contribution is needed"
+          },
+          "suggestedContributionTypes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "observation",
+                "question",
+                "insight",
+                "concern",
+                "suggestion",
+                "challenge",
+                "synthesis"
+              ],
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "decisionframework",
+      "description": "A detailed tool for structured decision analysis and rational choice.\nThis tool helps models systematically evaluate options, criteria, and outcomes.\nIt supports multiple decision frameworks, probability estimates, and value judgments.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "decisionStatement",
+          "options",
+          "analysisType",
+          "stage",
+          "decisionId",
+          "iteration",
+          "nextStageNeeded"
+        ],
+        "properties": {
+          "stage": {
+            "enum": [
+              "problem-definition",
+              "options-generation",
+              "criteria-definition",
+              "evaluation",
+              "sensitivity-analysis",
+              "decision"
+            ],
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "description"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "weight"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "weight": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "iteration": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Current iteration of the decision process"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "decisionId": {
+            "type": "string",
+            "description": "Unique identifier for this decision analysis"
+          },
+          "constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "timeHorizon": {
+            "type": "string"
+          },
+          "analysisType": {
+            "enum": [
+              "pros-cons",
+              "weighted-criteria",
+              "decision-tree",
+              "expected-value",
+              "scenario-analysis"
+            ],
+            "type": "string"
+          },
+          "stakeholders": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "riskTolerance": {
+            "enum": [
+              "risk-averse",
+              "risk-neutral",
+              "risk-seeking"
+            ],
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "nextStageNeeded": {
+            "type": "boolean",
+            "description": "Whether another stage is needed in the process"
+          },
+          "possibleOutcomes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "description",
+                "probability",
+                "optionId",
+                "value",
+                "confidenceInEstimate"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "optionId": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "probability": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "confidenceInEstimate": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          "decisionStatement": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "metacognitivemonitoring",
+      "description": "A detailed tool for systematic self-monitoring of knowledge and reasoning quality.\nThis tool helps models track knowledge boundaries, claim certainty, and reasoning biases.\nIt provides a framework for metacognitive assessment across various domains and reasoning tasks.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "task",
+          "stage",
+          "overallConfidence",
+          "uncertaintyAreas",
+          "recommendedApproach",
+          "monitoringId",
+          "iteration",
+          "nextAssessmentNeeded"
+        ],
+        "properties": {
+          "task": {
+            "type": "string"
+          },
+          "stage": {
+            "enum": [
+              "knowledge-assessment",
+              "planning",
+              "execution",
+              "monitoring",
+              "evaluation",
+              "reflection"
+            ],
+            "type": "string"
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "claim",
+                "status",
+                "confidenceScore",
+                "evidenceBasis"
+              ],
+              "properties": {
+                "claim": {
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "fact",
+                    "inference",
+                    "speculation",
+                    "uncertain"
+                  ],
+                  "type": "string"
+                },
+                "evidenceBasis": {
+                  "type": "string"
+                },
+                "confidenceScore": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "falsifiabilityCriteria": {
+                  "type": "string"
+                },
+                "alternativeInterpretations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "iteration": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Current iteration of the monitoring process"
+          },
+          "monitoringId": {
+            "type": "string",
+            "description": "Unique identifier for this monitoring session"
+          },
+          "reasoningSteps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "step",
+                "potentialBiases",
+                "assumptions",
+                "logicalValidity",
+                "inferenceStrength"
+              ],
+              "properties": {
+                "step": {
+                  "type": "string"
+                },
+                "assumptions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "logicalValidity": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "potentialBiases": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "inferenceStrength": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          "uncertaintyAreas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "overallConfidence": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0
+          },
+          "knowledgeAssessment": {
+            "type": "object",
+            "required": [
+              "domain",
+              "knowledgeLevel",
+              "confidenceScore",
+              "supportingEvidence",
+              "knownLimitations"
+            ],
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "knowledgeLevel": {
+                "enum": [
+                  "expert",
+                  "proficient",
+                  "familiar",
+                  "basic",
+                  "minimal",
+                  "none"
+                ],
+                "type": "string"
+              },
+              "confidenceScore": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "knownLimitations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "supportingEvidence": {
+                "type": "string"
+              },
+              "relevantTrainingCutoff": {
+                "type": "string"
+              }
+            }
+          },
+          "recommendedApproach": {
+            "type": "string"
+          },
+          "nextAssessmentNeeded": {
+            "type": "boolean",
+            "description": "Whether further assessment is needed"
+          },
+          "suggestedAssessments": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "knowledge",
+                "claim",
+                "reasoning",
+                "overall"
+              ],
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "scientificmethod",
+      "description": "A detailed tool for applying formal scientific reasoning to questions and problems.\nThis tool guides models through the scientific method with structured hypothesis testing.\nIt enforces explicit variable identification, prediction making, and evidence evaluation.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "stage",
+          "inquiryId",
+          "iteration",
+          "nextStageNeeded"
+        ],
+        "properties": {
+          "stage": {
+            "enum": [
+              "observation",
+              "question",
+              "hypothesis",
+              "experiment",
+              "analysis",
+              "conclusion",
+              "iteration"
+            ],
+            "type": "string"
+          },
+          "analysis": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "inquiryId": {
+            "type": "string",
+            "description": "Unique identifier for this scientific inquiry"
+          },
+          "iteration": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Current iteration of the scientific process"
+          },
+          "conclusion": {
+            "type": "string"
+          },
+          "experiment": {
+            "type": "object",
+            "required": [
+              "design",
+              "methodology",
+              "predictions",
+              "experimentId",
+              "hypothesisId",
+              "controlMeasures"
+            ],
+            "properties": {
+              "design": {
+                "type": "string"
+              },
+              "results": {
+                "type": "string"
+              },
+              "nextSteps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "methodology": {
+                "type": "string"
+              },
+              "predictions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "if",
+                    "then"
+                  ],
+                  "properties": {
+                    "if": {
+                      "type": "string"
+                    },
+                    "else": {
+                      "type": "string"
+                    },
+                    "then": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "experimentId": {
+                "type": "string"
+              },
+              "hypothesisId": {
+                "type": "string"
+              },
+              "outcomeMatched": {
+                "type": "boolean"
+              },
+              "controlMeasures": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "unexpectedObservations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "hypothesis": {
+            "type": "object",
+            "required": [
+              "statement",
+              "variables",
+              "assumptions",
+              "hypothesisId",
+              "confidence",
+              "domain",
+              "iteration",
+              "status"
+            ],
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "proposed",
+                  "testing",
+                  "supported",
+                  "refuted",
+                  "refined"
+                ],
+                "type": "string"
+              },
+              "iteration": {
+                "type": "number",
+                "minimum": 0
+              },
+              "statement": {
+                "type": "string"
+              },
+              "variables": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "type"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "independent",
+                        "dependent",
+                        "controlled",
+                        "confounding"
+                      ],
+                      "type": "string"
+                    },
+                    "operationalization": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "confidence": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "assumptions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hypothesisId": {
+                "type": "string"
+              },
+              "refinementOf": {
+                "type": "string"
+              },
+              "alternativeTo": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "observation": {
+            "type": "string"
+          },
+          "nextStageNeeded": {
+            "type": "boolean",
+            "description": "Whether another stage is needed in the process"
+          }
+        }
+      }
+    },
+    {
+      "name": "structuredargumentation",
+      "description": "A detailed tool for systematic dialectical reasoning and argument analysis.\nThis tool helps analyze complex questions through formal argumentation structures.\nIt facilitates the creation, critique, and synthesis of competing arguments.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "claim",
+          "premises",
+          "conclusion",
+          "argumentType",
+          "confidence",
+          "nextArgumentNeeded"
+        ],
+        "properties": {
+          "claim": {
+            "type": "string"
+          },
+          "premises": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "supports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs of arguments this supports"
+          },
+          "strengths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Notable strong points of the argument"
+          },
+          "argumentId": {
+            "type": "string",
+            "description": "Optional unique identifier for this argument"
+          },
+          "conclusion": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Confidence level in this argument (0.0-1.0)"
+          },
+          "respondsTo": {
+            "type": "string",
+            "description": "ID of the argument this directly responds to"
+          },
+          "weaknesses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Notable weak points of the argument"
+          },
+          "contradicts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs of arguments this contradicts"
+          },
+          "argumentType": {
+            "enum": [
+              "thesis",
+              "antithesis",
+              "synthesis",
+              "objection",
+              "rebuttal"
+            ],
+            "type": "string"
+          },
+          "nextArgumentNeeded": {
+            "type": "boolean",
+            "description": "Whether another argument is needed in the dialectic"
+          },
+          "suggestedNextTypes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "thesis",
+                "antithesis",
+                "synthesis",
+                "objection",
+                "rebuttal"
+              ],
+              "type": "string"
+            },
+            "description": "Suggested types for the next argument"
+          }
+        }
+      }
+    },
+    {
+      "name": "visualreasoning",
+      "description": "A tool for visual thinking, problem-solving, and communication.\nThis tool enables models to create, manipulate, and interpret diagrams, graphs, and other visual representations.\nIt supports various visual elements and operations to facilitate insight generation and hypothesis testing.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation",
+          "diagramId",
+          "diagramType",
+          "iteration",
+          "nextOperationNeeded"
+        ],
+        "properties": {
+          "insight": {
+            "type": "string"
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "type",
+                "properties"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "node",
+                    "edge",
+                    "container",
+                    "annotation"
+                  ],
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "target": {
+                  "type": "string"
+                },
+                "contains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "properties": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "diagramId": {
+            "type": "string"
+          },
+          "iteration": {
+            "type": "number",
+            "minimum": 0
+          },
+          "operation": {
+            "enum": [
+              "create",
+              "update",
+              "delete",
+              "transform",
+              "observe"
+            ],
+            "type": "string"
+          },
+          "hypothesis": {
+            "type": "string"
+          },
+          "diagramType": {
+            "enum": [
+              "graph",
+              "flowchart",
+              "stateDiagram",
+              "conceptMap",
+              "treeDiagram",
+              "custom"
+            ],
+            "type": "string"
+          },
+          "observation": {
+            "type": "string"
+          },
+          "transformationType": {
+            "enum": [
+              "rotate",
+              "move",
+              "resize",
+              "recolor",
+              "regroup"
+            ],
+            "type": "string"
+          },
+          "nextOperationNeeded": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@ThinkFar/clear-thought-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

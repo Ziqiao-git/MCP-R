@@ -1,0 +1,2571 @@
+{
+  "qualifiedName": "@alphago2580/naramarketmcp",
+  "displayName": "NaraMarketMCP",
+  "description": "Access Korea’s G2B procurement and Nara Market data for bid notices, awards, contracts, statistics, and shopping-mall products. Search recent bids, explore product catalogs, and retrieve yearly or business-type stats with simple queries. \n\n대한민국 조달청의 OPEN API를 활용해 공공조달관련 정보를 얻을 수 있는 MCP서버입니다.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/6b408172-e391-4d89-8a1b-16dcbfc77f90.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@alphago2580/naramarketmcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "crawl_list",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Fetch product list for a category from Nara Market API",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "num_rows": {
+            "type": "integer",
+            "title": "Num Rows",
+            "default": 100
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 7
+          },
+          "inqry_bgn_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inqry Bgn Date",
+            "default": null
+          },
+          "inqry_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inqry End Date",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "CrawlListResult",
+        "properties": {
+          "error": {
+            "type": "string",
+            "title": "Error"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Items"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "total_count": {
+            "type": "integer",
+            "title": "Total Count"
+          },
+          "current_page": {
+            "type": "integer",
+            "title": "Current Page"
+          }
+        },
+        "description": "Result structure for crawl list operations."
+      }
+    },
+    {
+      "name": "get_detailed_attributes",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get detailed product attributes from G2B API",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "api_item"
+        ],
+        "properties": {
+          "api_item": {
+            "type": "object",
+            "title": "Api Item",
+            "additionalProperties": true
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "DetailResult",
+        "properties": {
+          "error": {
+            "type": "string",
+            "title": "Error"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "api_item": {
+            "type": "object",
+            "title": "Api Item",
+            "additionalProperties": true
+          },
+          "enhanced": {
+            "type": "boolean",
+            "title": "Enhanced"
+          },
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "additionalProperties": true
+          },
+          "attributes": {
+            "type": "object",
+            "title": "Attributes",
+            "additionalProperties": true
+          },
+          "error_type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "payload_attempted": {
+            "type": "object",
+            "title": "Payload Attempted",
+            "additionalProperties": true
+          }
+        },
+        "description": "Result structure for detailed product attribute operations (enhanced in FastMCP 2.0)."
+      }
+    },
+    {
+      "name": "server_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get server status and available tools list.\n\nReturns:\n    ServerInfo with server details",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "ServerInfo",
+        "properties": {
+          "app": {
+            "type": "string",
+            "title": "App"
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Tools"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          }
+        },
+        "description": "Server information structure."
+      }
+    },
+    {
+      "name": "call_procurement_statistics_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "공공조달통계정보서비스 API 호출 (Enhanced parameterized).\n\nAvailable operations (14개):\n- getTotlPubPrcrmntSttus: 전체 공공조달 현황\n- getInsttDivAccotPrcrmntSttus: 기관구분별 조달 현황\n- getEntrprsDivAccotPrcrmntSttus: 기업구분별 조달 현황\n- getCntrctMthdAccotSttus: 계약방법별 현황\n- getRgnLmtSttus: 지역제한 현황\n- getRgnDutyCmmnCntrctSttus: 지역의무공동계약 현황\n- getPrcrmntObjectBsnsObjAccotSttus: 조달목적물(업무대상)별 현황\n- getDminsttAccotEntrprsDivAccotArslt: 수요기관별 기업구분별 실적\n- getDminsttAccotCntrctMthdAccotArslt: 수요기관별 계약방법별 실적\n- getDminsttAccotBsnsObjAccotArslt: 수요기관별 업무대상별 실적\n- getDminsttAccotSystmTyAccotArslt: 수요기관별 시스템유형별 실적\n- getPrcrmntEntrprsAccotCntrctMthdAccotArslt: 조달기업별 계약방법별 실적\n- getPrcrmntEntrprsAccotBsnsObjAccotArslt: 조달기업별 업무대상별 실적\n- getPrdctIdntNoServcAccotArslt: 품목 및 서비스별 실적\n\nArgs:\n    operation: API 오퍼레이션명\n    num_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    search_base_year: 검색기준년도 (YYYY)\n    search_base_month_start: 기준년월 시작 (YYYYMM)\n    search_base_month_end: 기준년월 종료 (YYYYMM)\n    demand_institution_code: 수요기관코드\n    demand_institution_name: 수요기관명\n    corp_unity_no: 업체통합번호\n    corp_name: 업체명\n    product_classification_no: 물품분류번호\n    product_classification_name: 물품분류명\n    lower_institution_result_inclusion: 하위기관실적포함여부\n    link_system_code: 연계시스템코드\n    fields: 선택할 필드 목록 (예: [\"기관명\", \"조달금액\"])\n    response_format: 응답 형식 (\"full\", \"compact\", \"minimal\")\n\nReturns:\n    API 응답 데이터 (필드 선택 적용됨)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "num_rows": {
+            "type": "integer",
+            "title": "Num Rows",
+            "default": 5
+          },
+          "corp_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Corp Name",
+            "default": null
+          },
+          "operation": {
+            "type": "string",
+            "title": "Operation"
+          },
+          "corp_unity_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Corp Unity No",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "link_system_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link System Code",
+            "default": null
+          },
+          "search_base_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search Base Year",
+            "default": null
+          },
+          "search_base_month_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search Base Month End",
+            "default": null
+          },
+          "demand_institution_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand Institution Code",
+            "default": null
+          },
+          "demand_institution_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand Institution Name",
+            "default": null
+          },
+          "search_base_month_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search Base Month Start",
+            "default": null
+          },
+          "product_classification_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Classification No",
+            "default": null
+          },
+          "product_classification_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Classification Name",
+            "default": null
+          },
+          "lower_institution_result_inclusion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lower Institution Result Inclusion",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "call_product_list_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "조달청 물품목록정보서비스 API 호출 (Enhanced parameterized).\n\nAvailable operations (12개):\n- getThngGuidanceMapInfo: 물품안내지도 조회\n- getThngPrdnmLocplcAccotListInfoInfoPrdlstSearch: 품목 목록 조회\n- getThngPrdnmLocplcAccotListInfoInfoPrdnmSearch: 품명 목록 조회\n- getThngPrdnmLocplcAccotListInfoInfoLocplcSearch: 소재지 목록 조회\n- getThngListClChangeHistInfo: 분류변경이력 조회\n- getLsfgdNdPrdlstChghstlnfoSttus: 품목변경이력 조회\n- getPrdctClsfcNoUnit2Info: 물품분류2단위 내역조회\n- getPrdctClsfcNoUnit4Info: 물품분류4단위 내역조회\n- getPrdctClsfcNoUnit6Info: 물품분류6단위 내역조회\n- getPrdctClsfcNoUnit8Info: 물품분류8단위 내역조회\n- getPrdctClsfcNoUnit10Info: 물품분류10단위 내역조회\n- getPrdctClsfcNoChgHstry: 물품분류변경 이력조회\n\nArgs:\n    operation: API 오퍼레이션명\n    num_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    upper_product_classification_no: 상위 물품분류번호\n    product_classification_no: 물품분류번호\n    product_id_no: 물품식별번호\n    detail_product_classification_no: 세부품명번호\n    product_classification_name: 품명\n    product_classification_eng_name: 영문품명\n    korean_product_name: 한글품목명\n    manufacturer_corp_name: 제조업체명\n    region_code: 지역코드\n    inquiry_div: 조회구분\n    inquiry_start_date: 조회시작일시 (YYYYMMDDHHMM)\n    inquiry_end_date: 조회종료일시 (YYYYMMDDHHMM)\n    change_period_start_date: 변경기간 시작일자 (YYYYMMDD)\n    change_period_end_date: 변경기간 종료일자 (YYYYMMDD)\n    fields: 선택할 필드 목록 (예: [\"품목명\", \"제조업체명\"])\n    response_format: 응답 형식 (\"full\", \"compact\", \"minimal\")\n\nReturns:\n    API 응답 데이터 (필드 선택 적용됨)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "num_rows": {
+            "type": "integer",
+            "title": "Num Rows",
+            "default": 5
+          },
+          "operation": {
+            "type": "string",
+            "title": "Operation"
+          },
+          "inquiry_div": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry Div",
+            "default": null
+          },
+          "region_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Code",
+            "default": null
+          },
+          "product_id_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id No",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "inquiry_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry End Date",
+            "default": null
+          },
+          "inquiry_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry Start Date",
+            "default": null
+          },
+          "korean_product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Korean Product Name",
+            "default": null
+          },
+          "change_period_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Period End Date",
+            "default": null
+          },
+          "manufacturer_corp_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer Corp Name",
+            "default": null
+          },
+          "change_period_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Period Start Date",
+            "default": null
+          },
+          "product_classification_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Classification No",
+            "default": null
+          },
+          "product_classification_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Classification Name",
+            "default": null
+          },
+          "product_classification_eng_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Classification Eng Name",
+            "default": null
+          },
+          "upper_product_classification_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upper Product Classification No",
+            "default": null
+          },
+          "detail_product_classification_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail Product Classification No",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "call_shopping_mall_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터 종합쇼핑몰 품목정보 서비스 API 호출 (Enhanced parameterized).\n\nAvailable operations (9개):\n- getMASCntrctPrdctInfoList: 다수공급자계약 품목정보 조회\n- getUcntrctPrdctInfoList: 일반단가계약 품목정보 조회\n- getThptyUcntrctPrdctInfoList: 제3자단가계약 품목정보 조회\n- getDlvrReqInfoList: 납품요구정보 현황 목록조회\n- getDlvrReqDtlInfoList: 납품요구상세 현황 목록조회\n- getShoppingMallPrdctInfoList: 종합쇼핑몰 품목 정보 목록 조회\n- getVntrPrdctOrderDealDtlsInfoList: 벤처나라 물품 주문거래 내역 조회\n- getSpcifyPrdlstPrcureInfoList: 특정품목조달내역 목록 조회\n- getSpcifyPrdlstPrcureTotList: 특정품목조달집계 목록 조회\n\nArgs:\n    operation: API 오퍼레이션명\n    num_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    registration_start_date: 등록시작일시 (YYYYMMDDHH24M)\n    registration_end_date: 등록종료일시 (YYYYMMDDHH24M)\n    change_start_date: 변경시작일시 (YYYYMMDDHH24M)\n    change_end_date: 변경종료일시 (YYYYMMDDHH24M)\n    product_classification_name: 품명\n    product_id_no: 물품식별번호\n    contract_corp_name: 계약업체명\n    product_certification: 제품인증여부\n    inquiry_div: 조회구분\n    inquiry_start_date: 조회시작일자 (YYYYMMDD)\n    inquiry_end_date: 조회종료일자 (YYYYMMDD)\n    detail_product_classification_name: 세부분류품명\n    product_id_name: 품목명(식별명)\n    excellent_product: 우수제품여부\n    mas_yn: 다수공급경쟁자여부\n    shopping_contract_no: 쇼핑계약번호\n    registration_cancel: 등록해지상품포함여부\n    demand_institution_name: 수요기관명\n    demand_institution_region_name: 수요기관관할지역명\n    delivery_request_no: 납품요구번호\n    inquiry_product_div: 조회상품구분\n    procurement_div: 조달방식구분\n    fields: 선택할 필드 목록 (예: [\"품목명\", \"계약업체명\"])\n    response_format: 응답 형식 (\"full\", \"compact\", \"minimal\")\n\nReturns:\n    API 응답 데이터 (필드 선택 적용됨)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "mas_yn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mas Yn",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "num_rows": {
+            "type": "integer",
+            "title": "Num Rows",
+            "default": 5
+          },
+          "operation": {
+            "type": "string",
+            "title": "Operation"
+          },
+          "inquiry_div": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry Div",
+            "default": null
+          },
+          "product_id_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id No",
+            "default": null
+          },
+          "change_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change End Date",
+            "default": null
+          },
+          "procurement_div": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Procurement Div",
+            "default": null
+          },
+          "product_id_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id Name",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "inquiry_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry End Date",
+            "default": null
+          },
+          "change_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Start Date",
+            "default": null
+          },
+          "excellent_product": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excellent Product",
+            "default": null
+          },
+          "contract_corp_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contract Corp Name",
+            "default": null
+          },
+          "inquiry_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry Start Date",
+            "default": null
+          },
+          "delivery_request_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery Request No",
+            "default": null
+          },
+          "inquiry_product_div": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry Product Div",
+            "default": null
+          },
+          "registration_cancel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Cancel",
+            "default": null
+          },
+          "shopping_contract_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shopping Contract No",
+            "default": null
+          },
+          "product_certification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Certification",
+            "default": null
+          },
+          "registration_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration End Date",
+            "default": null
+          },
+          "demand_institution_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand Institution Name",
+            "default": null
+          },
+          "registration_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Start Date",
+            "default": null
+          },
+          "product_classification_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Classification Name",
+            "default": null
+          },
+          "demand_institution_region_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand Institution Region Name",
+            "default": null
+          },
+          "detail_product_classification_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail Product Classification Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_all_api_services_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "모든 API 서비스 정보 조회 (Enhanced).\n\nReturns:\n    전체 서비스 및 오퍼레이션 정보",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_api_operations",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "특정 서비스의 사용 가능한 오퍼레이션 목록 조회 (Enhanced).\n\nArgs:\n    service_type: 서비스 타입 (public_data_standard, procurement_statistics, product_list, shopping_mall)\n\nReturns:\n    서비스별 오퍼레이션 목록",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "service_type"
+        ],
+        "properties": {
+          "service_type": {
+            "type": "string",
+            "title": "Service Type"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_response_field_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "API 응답 필드 선택 기능 정보 조회.\n\nArgs:\n    service_type: 서비스 타입 (bid_announcement, successful_bid, contract_info, procurement_stats, product_list, shopping_mall)\n\nReturns:\n    필드 선택 가능한 정보 및 사용법",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service_type": {
+            "type": "string",
+            "title": "Service Type",
+            "default": "bid_announcement"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_all_response_format_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "모든 서비스의 응답 형태 정보 조회.\n\nReturns:\n    전체 응답 형태 정보 및 사용 가이드",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_api_key_status",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "API 키 설정 상태 및 구성 정보 조회.\n\nReturns:\n    키 설정 상태와 사용 방법 안내",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "call_api_with_pagination_support",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "페이징 지원 API 호출 (리모트 서버 환경 최적화).\n\n이 도구는 리모트 서버 환경에서 많은 데이터를 효율적으로 탐색할 때 사용하세요.\n컨텍스트 보호와 함께 다음 페이지 요청 방법을 자동으로 제공합니다.\n\nArgs:\n    service_type: 서비스 타입 (public_data_standard, procurement_statistics, product_list, shopping_mall)\n    operation: API 오퍼레이션명\n    num_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    bid_notice_start_date: 입찰공고 시작일 (YYYYMMDDHHMM)\n    bid_notice_end_date: 입찰공고 종료일 (YYYYMMDDHHMM)\n    search_base_year: 검색 기준년도 (YYYY)\n    upper_product_classification_no: 상위물품분류번호\n    registration_start_date: 등록 시작일 (YYYYMMDDHHMM)\n    registration_end_date: 등록 종료일 (YYYYMMDDHHMM)\n    bid_announcement_notice_type: 입찰공고유형\n    business_type: 업종\n    company_name: 업체명\n    product_name: 상품명\n\nReturns:\n    컨텍스트 보호된 API 응답 데이터 + 페이징 안내",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "service_type",
+          "operation"
+        ],
+        "properties": {
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "num_rows": {
+            "type": "integer",
+            "title": "Num Rows",
+            "default": 10
+          },
+          "operation": {
+            "type": "string",
+            "title": "Operation"
+          },
+          "company_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Name",
+            "default": null
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name",
+            "default": null
+          },
+          "service_type": {
+            "type": "string",
+            "title": "Service Type"
+          },
+          "business_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Type",
+            "default": null
+          },
+          "search_base_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search Base Year",
+            "default": null
+          },
+          "bid_notice_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Notice End Date",
+            "default": null
+          },
+          "bid_notice_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Notice Start Date",
+            "default": null
+          },
+          "registration_end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration End Date",
+            "default": null
+          },
+          "registration_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Start Date",
+            "default": null
+          },
+          "bid_announcement_notice_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Announcement Notice Type",
+            "default": null
+          },
+          "upper_product_classification_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upper Product Classification No",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_data_exploration_guide",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "데이터 탐색을 위한 최적화된 매개변수 가이드 제공.\n\n리모트 서버 환경에서 효율적인 데이터 탐색을 위한 권장 설정을 제공합니다.\n\nArgs:\n    service_type: 서비스 타입\n    operation: API 오퍼레이션명\n    expected_data_size: 예상 데이터 크기 (\"small\", \"medium\", \"large\")\n\nReturns:\n    최적화된 탐색 가이드",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "service_type",
+          "operation"
+        ],
+        "properties": {
+          "operation": {
+            "type": "string",
+            "title": "Operation"
+          },
+          "service_type": {
+            "type": "string",
+            "title": "Service Type"
+          },
+          "expected_data_size": {
+            "type": "string",
+            "title": "Expected Data Size",
+            "default": "medium"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_bid_announcement_construction",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터검색조건에 의한 입찰공고공사조회 (AI 친화적 도구).\n\n공사부문의 입찰공고정보를 조회합니다. 자동으로 날짜 범위를 계산합니다.\n\nArgs:\n    inqry_div: 조회구분 (1:공고게시일시, 2:개찰일시)\n    days_back: 며칠 전까지 조회할지 (기본값: 7일)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    bid_ntce_nm: 입찰공고명 (부분검색 가능)\n    ntce_instt_nm: 공고기관명 (부분검색 가능)\n    dminst_nm: 수요기관명 (부분검색 가능)\n    prtcpt_lmt_rgn_cd: 참가제한지역코드 (11:서울, 41:경기도 등)\n    indstryty_nm: 업종명 (부분검색 가능)\n    presmpt_prce_bgn: 추정가격 시작금액 (원)\n    presmpt_prce_end: 추정가격 종료금액 (원)\n    fields: 선택할 특정 필드 리스트 (예: [\"bidNtceNo\", \"bidNtceNm\", \"presmptPrce\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    입찰공고 공사 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 7
+          },
+          "dminst_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dminst Nm",
+            "default": null
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div",
+            "default": "1"
+          },
+          "bid_ntce_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce Nm",
+            "default": null
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "indstryty_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indstryty Nm",
+            "default": null
+          },
+          "ntce_instt_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce Instt Nm",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "presmpt_prce_bgn": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presmpt Prce Bgn",
+            "default": null
+          },
+          "presmpt_prce_end": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presmpt Prce End",
+            "default": null
+          },
+          "prtcpt_lmt_rgn_cd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prtcpt Lmt Rgn Cd",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_bid_announcement_service",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터검색조건에 의한 입찰공고용역조회 (AI 친화적 도구).\n\n용역부문의 입찰공고정보를 조회합니다. 자동으로 날짜 범위를 계산합니다.\n\nArgs:\n    inqry_div: 조회구분 (1:공고게시일시, 2:개찰일시)\n    days_back: 며칠 전까지 조회할지 (기본값: 7일)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    bid_ntce_nm: 입찰공고명 (부분검색 가능)\n    ntce_instt_nm: 공고기관명 (부분검색 가능)\n    dminst_nm: 수요기관명 (부분검색 가능)\n    prtcpt_lmt_rgn_cd: 참가제한지역코드 (11:서울, 41:경기도 등)\n    indstryty_nm: 업종명 (부분검색 가능)\n    presmpt_prce_bgn: 추정가격 시작금액 (원)\n    presmpt_prce_end: 추정가격 종료금액 (원)\n    fields: 선택할 특정 필드 리스트 (예: [\"bidNtceNo\", \"bidNtceNm\", \"presmptPrce\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    입찰공고 용역 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 7
+          },
+          "dminst_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dminst Nm",
+            "default": null
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div",
+            "default": "1"
+          },
+          "bid_ntce_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce Nm",
+            "default": null
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "indstryty_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indstryty Nm",
+            "default": null
+          },
+          "ntce_instt_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce Instt Nm",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "presmpt_prce_bgn": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presmpt Prce Bgn",
+            "default": null
+          },
+          "presmpt_prce_end": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presmpt Prce End",
+            "default": null
+          },
+          "prtcpt_lmt_rgn_cd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prtcpt Lmt Rgn Cd",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_bid_announcement_goods",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터검색조건에 의한 입찰공고물품조회 (AI 친화적 도구).\n\n물품부문의 입찰공고정보를 조회합니다. 자동으로 날짜 범위를 계산합니다.\n\nArgs:\n    inqry_div: 조회구분 (1:공고게시일시, 2:개찰일시)\n    days_back: 며칠 전까지 조회할지 (기본값: 7일)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    bid_ntce_nm: 입찰공고명 (부분검색 가능)\n    ntce_instt_nm: 공고기관명 (부분검색 가능)\n    dminst_nm: 수요기관명 (부분검색 가능)\n    prtcpt_lmt_rgn_cd: 참가제한지역코드 (11:서울, 41:경기도 등)\n    mas_yn: 다수공급경쟁자여부 (Y/N)\n    fields: 선택할 특정 필드 리스트 (예: [\"bidNtceNo\", \"bidNtceNm\", \"presmptPrce\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    입찰공고 물품 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "mas_yn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mas Yn",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 7
+          },
+          "dminst_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dminst Nm",
+            "default": null
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div",
+            "default": "1"
+          },
+          "bid_ntce_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce Nm",
+            "default": null
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "ntce_instt_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce Instt Nm",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "prtcpt_lmt_rgn_cd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prtcpt Lmt Rgn Cd",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_successful_bid_list_goods",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터 검색조건에 의한 낙찰된 목록 현황 물품조회 (AI 친화적 도구).\n\nArgs:\n    inqry_div: 조회구분 (1:공고게시일시, 2:개찰일시, 3:입찰공고번호)\n    days_back: 며칠 전까지 조회할지 (inqry_div가 1,2일 때만 사용, 기본값: 30일)\n    bid_ntce_no: 입찰공고번호 (inqry_div=3일 때 필수)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    bid_ntce_nm: 입찰공고명 (부분검색 가능)\n    ntce_instt_nm: 공고기관명 (부분검색 가능)\n    dminst_nm: 수요기관명 (부분검색 가능)\n    fields: 선택할 특정 필드 리스트 (예: [\"bidNtceNo\", \"bidNtceNm\", \"scsbidPrce\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    낙찰정보 물품 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inqry_div"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 30
+          },
+          "dminst_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dminst Nm",
+            "default": null
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div"
+          },
+          "bid_ntce_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce Nm",
+            "default": null
+          },
+          "bid_ntce_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce No",
+            "default": null
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "ntce_instt_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce Instt Nm",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_successful_bid_list_construction",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터 검색조건에 의한 낙찰된 목록 현황 공사조회 (AI 친화적 도구).\n\nArgs:\n    inqry_div: 조회구분 (1:공고게시일시, 2:개찰일시, 3:입찰공고번호)\n    days_back: 며칠 전까지 조회할지 (inqry_div가 1,2일 때만 사용, 기본값: 30일)\n    bid_ntce_no: 입찰공고번호 (inqry_div=3일 때 필수)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    bid_ntce_nm: 입찰공고명 (부분검색 가능)\n    ntce_instt_nm: 공고기관명 (부분검색 가능)\n    dminst_nm: 수요기관명 (부분검색 가능)\n    fields: 선택할 특정 필드 리스트 (예: [\"bidNtceNo\", \"bidNtceNm\", \"scsbidPrce\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    낙찰정보 공사 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inqry_div"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 30
+          },
+          "dminst_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dminst Nm",
+            "default": null
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div"
+          },
+          "bid_ntce_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce Nm",
+            "default": null
+          },
+          "bid_ntce_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce No",
+            "default": null
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "ntce_instt_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce Instt Nm",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_successful_bid_list_service",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터 검색조건에 의한 낙찰된 목록 현황 용역조회 (AI 친화적 도구).\n\nArgs:\n    inqry_div: 조회구분 (1:공고게시일시, 2:개찰일시, 3:입찰공고번호)\n    days_back: 며칠 전까지 조회할지 (inqry_div가 1,2일 때만 사용, 기본값: 30일)\n    bid_ntce_no: 입찰공고번호 (inqry_div=3일 때 필수)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    bid_ntce_nm: 입찰공고명 (부분검색 가능)\n    ntce_instt_nm: 공고기관명 (부분검색 가능)\n    dminst_nm: 수요기관명 (부분검색 가능)\n    fields: 선택할 특정 필드 리스트 (예: [\"bidNtceNo\", \"bidNtceNm\", \"scsbidPrce\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    낙찰정보 용역 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inqry_div"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 30
+          },
+          "dminst_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dminst Nm",
+            "default": null
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div"
+          },
+          "bid_ntce_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce Nm",
+            "default": null
+          },
+          "bid_ntce_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bid Ntce No",
+            "default": null
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "ntce_instt_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce Instt Nm",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_contract_info_goods",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터검색조건에 의한 계약현황 물품조회 (AI 친화적 도구).\n\nArgs:\n    inqry_div: 조회구분 (1:계약체결일자, 2:확정계약번호, 3:요청번호, 4:공고번호)\n    days_back: 며칠 전까지 조회할지 (inqry_div=1일 때만 사용, 기본값: 30일)\n    dcsn_cntrct_no: 확정계약번호 (inqry_div=2일 때 필수)\n    req_no: 요청번호 (inqry_div=3일 때 필수)\n    ntce_no: 공고번호 (inqry_div=4일 때 필수)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    instt_nm: 기관명\n    prdct_clsfc_no_nm: 품명\n    fields: 선택할 특정 필드 리스트 (예: [\"cntrctNo\", \"cntrctAmt\", \"prdctNm\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    계약정보 물품 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inqry_div"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "req_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Req No",
+            "default": null
+          },
+          "ntce_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce No",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "instt_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instt Nm",
+            "default": null
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 30
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div"
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "dcsn_cntrct_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dcsn Cntrct No",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "prdct_clsfc_no_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prdct Clsfc No Nm",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_contract_info_construction",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터검색조건에 의한 계약현황 공사조회 (AI 친화적 도구).\n\nArgs:\n    inqry_div: 조회구분 (1:계약체결일자, 2:확정계약번호, 3:요청번호, 4:공고번호)\n    days_back: 며칠 전까지 조회할지 (inqry_div=1일 때만 사용, 기본값: 30일)\n    dcsn_cntrct_no: 확정계약번호 (inqry_div=2일 때 필수)\n    req_no: 요청번호 (inqry_div=3일 때 필수)\n    ntce_no: 공고번호 (inqry_div=4일 때 필수)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    cnstty_nm: 공종명\n    cnstwk_nm: 공사명\n    fields: 선택할 특정 필드 리스트 (예: [\"cntrctNo\", \"cntrctAmt\", \"cnstwkNm\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    계약정보 공사 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inqry_div"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "req_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Req No",
+            "default": null
+          },
+          "ntce_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce No",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "cnstty_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cnstty Nm",
+            "default": null
+          },
+          "cnstwk_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cnstwk Nm",
+            "default": null
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 30
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div"
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "dcsn_cntrct_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dcsn Cntrct No",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_contract_info_service",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터검색조건에 의한 계약현황 용역조회 (AI 친화적 도구).\n\nArgs:\n    inqry_div: 조회구분 (1:계약체결일자, 2:확정계약번호, 3:요청번호, 4:공고번호)\n    days_back: 며칠 전까지 조회할지 (inqry_div=1일 때만 사용, 기본값: 30일)\n    dcsn_cntrct_no: 확정계약번호 (inqry_div=2일 때 필수)\n    req_no: 요청번호 (inqry_div=3일 때 필수)\n    ntce_no: 공고번호 (inqry_div=4일 때 필수)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    cnstty_nm: 공종명\n    cntrct_nm: 계약명(용역명)\n    fields: 선택할 특정 필드 리스트 (예: [\"cntrctNo\", \"cntrctAmt\", \"cntrctNm\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    계약정보 용역 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inqry_div"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "req_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Req No",
+            "default": null
+          },
+          "ntce_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce No",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "cnstty_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cnstty Nm",
+            "default": null
+          },
+          "cntrct_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cntrct Nm",
+            "default": null
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 30
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div"
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "dcsn_cntrct_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dcsn Cntrct No",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_contract_info_foreign",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터검색조건에 의한 계약현황 외자조회 (AI 친화적 도구).\n\nArgs:\n    inqry_div: 조회구분 (1:계약체결일자, 2:확정계약번호, 3:요청번호, 4:공고번호)\n    days_back: 며칠 전까지 조회할지 (inqry_div=1일 때만 사용, 기본값: 30일)\n    dcsn_cntrct_no: 확정계약번호 (inqry_div=2일 때 필수)\n    req_no: 요청번호 (inqry_div=3일 때 필수)\n    ntce_no: 공고번호 (inqry_div=4일 때 필수)\n    num_of_rows: 한 페이지 결과 수 (기본값: 10)\n    page_no: 페이지 번호 (기본값: 1)\n    prdct_clsfc_no_nm: 품명(영문물품명)\n    sply_corp_nm: 공급업체명\n    make_corp_nm: 제작업체명\n    fields: 선택할 특정 필드 리스트 (예: [\"cntrctNo\", \"cntrctAmt\", \"prdctClsfcNoNm\"])\n    response_format: 응답 형태 (\"full\", \"summary\", \"minimal\", \"key_fields\")\n\nReturns:\n    계약정보 외자 목록 (필터링된 필드)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "inqry_div"
+        ],
+        "properties": {
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields",
+            "default": null
+          },
+          "req_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Req No",
+            "default": null
+          },
+          "ntce_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ntce No",
+            "default": null
+          },
+          "page_no": {
+            "type": "integer",
+            "title": "Page No",
+            "default": 1
+          },
+          "days_back": {
+            "type": "integer",
+            "title": "Days Back",
+            "default": 30
+          },
+          "inqry_div": {
+            "type": "string",
+            "title": "Inqry Div"
+          },
+          "num_of_rows": {
+            "type": "integer",
+            "title": "Num Of Rows",
+            "default": 10
+          },
+          "make_corp_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Make Corp Nm",
+            "default": null
+          },
+          "sply_corp_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sply Corp Nm",
+            "default": null
+          },
+          "dcsn_cntrct_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dcsn Cntrct No",
+            "default": null
+          },
+          "response_format": {
+            "type": "string",
+            "title": "Response Format",
+            "default": "full"
+          },
+          "prdct_clsfc_no_nm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prdct Clsfc No Nm",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_region_codes",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터 참가제한지역코드 목록 조회.\n\nReturns:\n    지역코드와 지역명의 매핑 딕셔너리",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "get_procurement_statistics_by_year",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "연도별 공공조달 통계 조회 (AI 친화적 단순 도구).\n\nArgs:\n    year: 조회할 연도 (예: \"2024\")\n    num_rows: 조회할 결과 수 (기본값: 10)\n\nReturns:\n    연도별 공공조달 통계",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "year"
+        ],
+        "properties": {
+          "year": {
+            "type": "string",
+            "title": "Year"
+          },
+          "num_rows": {
+            "type": "integer",
+            "title": "Num Rows",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_shopping_mall_products",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "나라장터 쇼핑몰 제품 검색 (AI 친화적 단순 도구).\n\nArgs:\n    product_name: 검색할 제품명 (선택사항)\n    company_name: 검색할 업체명 (선택사항)\n    num_rows: 조회할 결과 수 (기본값: 5)\n\nReturns:\n    쇼핑몰 제품 검색 결과",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "num_rows": {
+            "type": "integer",
+            "title": "Num Rows",
+            "default": 5
+          },
+          "company_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Name",
+            "default": null
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "health_check",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Health check endpoint for deployment monitoring.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@alphago2580/naramarketmcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

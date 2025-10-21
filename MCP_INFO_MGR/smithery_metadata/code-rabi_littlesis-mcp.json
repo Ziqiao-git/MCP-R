@@ -1,0 +1,210 @@
+{
+  "qualifiedName": "@code-rabi/littlesis-mcp",
+  "displayName": "LittleSis API Server",
+  "description": "Provide access to the LittleSis API to track corporate power and accountability. Enable querying and exploring relationships and entities related to corporate influence. Facilitate integration of corporate data into LLM applications for enhanced context and insights.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/b7139536-3e0e-41a6-ae2a-a625ced8709a.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@code-rabi/littlesis-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_entity",
+      "description": "Get detailed information about a specific entity (person or organization) from LittleSis by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique numerical ID of the entity in LittleSis database"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_entities",
+      "description": "Get information about multiple entities at once (up to 300 entities per request)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 300,
+            "description": "Array of entity IDs to retrieve (maximum 300)"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_entities",
+      "description": "Search for entities by name. Results are ranked by number of relationships.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "q"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query (entity name)"
+          },
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Page number for pagination (default: 1)"
+          },
+          "tags": {
+            "type": "string",
+            "description": "Filter by tags (e.g., \"oil\")"
+          },
+          "regions": {
+            "type": "number",
+            "description": "Filter by region ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_entity_extensions",
+      "description": "Get the types/extensions associated with an entity (Person, Organization, Business, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The entity ID"
+          },
+          "details": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include additional details contained within extensions"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_entity_relationships",
+      "description": "Get all relationships this entity has with other entities",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The entity ID"
+          },
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Page number for pagination"
+          },
+          "sort": {
+            "enum": [
+              "amount",
+              "oldest",
+              "recent"
+            ],
+            "type": "string",
+            "default": "recent",
+            "description": "Sort order for relationships"
+          },
+          "category_id": {
+            "type": "number",
+            "description": "Filter relationships by category (1-12)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_entity_connections",
+      "description": "Get other entities that this entity has relationships with",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The entity ID"
+          },
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Page number for pagination"
+          },
+          "category_id": {
+            "type": "number",
+            "description": "Filter connections by relationship category"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_entity_lists",
+      "description": "Get the lists that an entity appears on (e.g., Fortune 1000, lobbying lists)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The entity ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_relationship",
+      "description": "Get detailed information about a specific relationship between two entities",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique numerical ID of the relationship in LittleSis database"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@code-rabi/littlesis-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

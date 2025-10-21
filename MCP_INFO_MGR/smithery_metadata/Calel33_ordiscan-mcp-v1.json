@@ -1,0 +1,589 @@
+{
+  "qualifiedName": "@Calel33/ordiscan-mcp-v1",
+  "displayName": "Ordiscan MCP Server",
+  "description": "Access real-time blockchain data with a set of 29 tools integrated with the Ordiscan API. Perform authenticated queries on Bitcoin addresses, inscriptions, transactions, collections, runes, BRC-20 tokens, and sats.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/ordiscan.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Calel33/ordiscan-mcp-v1",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "ordiscan_address_brc20_activity",
+      "description": "Get all BRC-20 token transaction activity for a Bitcoin address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "Page number for pagination (20 transfers per page)"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sort order: 'newest' or 'oldest' (default)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "A valid Bitcoin address"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_address_brc20",
+      "description": "Get all BRC-20 token balances for a Bitcoin address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "A valid Bitcoin address"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_brc20_info",
+      "description": "Get detailed information about a specific BRC-20 token",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tick": {
+            "type": "string",
+            "description": "The unique tick of the token. Can be either uppercase or lowercase."
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_brc20_list",
+      "description": "Get a paginated list of BRC-20 tokens",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "Page number for pagination (20 tokens per page)"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sort order: 'newest' or 'oldest' (default)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_collection_info",
+      "description": "Get detailed information about a specific collection",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "The unique identifier for a collection (e.g. taproot-wizards)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_collection_inscriptions",
+      "description": "Get inscriptions in a collection",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "Page number for pagination (20 inscriptions per page)"
+          },
+          "slug": {
+            "type": "string",
+            "description": "The collection slug to get inscriptions for"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_collections_list",
+      "description": "Get a paginated list of indexed collections",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "Page number for pagination (20 collections per page)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_inscription_info",
+      "description": "Get detailed information about a specific inscription",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The inscription ID (e.g. b61b0172d95e266c18aea0c624db987e971a5d6d4ebc2aaed85da4642d635735i0)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_inscription_traits",
+      "description": "Get traits for a specific inscription",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The inscription ID (e.g. b61b0172d95e266c18aea0c624db987e971a5d6d4ebc2aaed85da4642d635735i0)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_inscription_transfers",
+      "description": "Get transfer history for an inscription",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The inscription ID to get transfers for"
+          },
+          "page": {
+            "type": "string",
+            "description": "Page number for pagination (20 transfers per page)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_inscriptions_activity",
+      "description": "Get inscription transfer activity for an address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "Page number for pagination (20 transfers per page)"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sort order: 'newest' or 'oldest' (default)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "Bitcoin address to get activity for"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_inscriptions_detail",
+      "description": "Get detailed information about an inscription by number or ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The inscription ID to get details for (alternative to number)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "number": {
+            "type": "string",
+            "description": "The inscription number to get details for"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_inscriptions_list",
+      "description": "Get a paginated list of all inscriptions",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Get inscriptions after this number"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "before": {
+            "type": "string",
+            "description": "Get inscriptions before this number"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_address_inscriptions",
+      "description": "Get all inscription IDs owned by a Bitcoin address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "A valid Bitcoin address"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_address_rare_sats",
+      "description": "Get all rare sats owned by a Bitcoin address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "A valid Bitcoin address"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_rune_market",
+      "description": "Get the latest price and market cap for a rune",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The unique name of the rune (without spacers)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_rune_name_unlock",
+      "description": "Check when a specific rune name becomes available to etch",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The desired name of the rune (without spacers)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_runes_activity",
+      "description": "Get rune transfer activity for an address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "Page number for pagination (20 transfers per page)"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sort order: 'newest' or 'oldest' (default)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "Bitcoin address to get activity for"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_address_runes",
+      "description": "Get all rune balances for a Bitcoin address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "A valid Bitcoin address"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_runes_list",
+      "description": "Get a paginated list of all runes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sort": {
+            "type": "string",
+            "description": "Sort order: 'newest' or 'oldest' (default)"
+          },
+          "after": {
+            "type": "string",
+            "description": "Get runes after this number"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "before": {
+            "type": "string",
+            "description": "Get runes before this number"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_sat_info",
+      "description": "Get information about a specific satoshi",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "ordinal": {
+            "type": "string",
+            "description": "The ordinal number of the satoshi"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_tx_info",
+      "description": "Get information about a Bitcoin transaction",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "txid": {
+            "type": "string",
+            "description": "The transaction ID (txid)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_tx_inscription_transfers",
+      "description": "Get a list of all inscriptions transferred in the transaction",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "txid": {
+            "type": "string",
+            "description": "The transaction ID (txid)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_tx_inscriptions",
+      "description": "Get all new inscriptions created in a Bitcoin transaction",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "txid": {
+            "type": "string",
+            "description": "The transaction ID (txid)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_tx_runes",
+      "description": "Get a list of all minted and transferred runes in the transaction",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "txid": {
+            "type": "string",
+            "description": "The transaction ID (txid)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_utxo_rare_sats",
+      "description": "Get all the rare sats for a specific UTXO",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "utxo": {
+            "type": "string",
+            "description": "A valid Bitcoin UTXO (e.g. 3d57f76284e17370f1ce45e75f68b5960906c4117951607f20ddd19f85c15706:0)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_utxo_sat_ranges",
+      "description": "Get all the sat ranges for a specific UTXO",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "utxo": {
+            "type": "string",
+            "description": "A valid Bitcoin UTXO (e.g. 3d57f76284e17370f1ce45e75f68b5960906c4117951607f20ddd19f85c15706:0)"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_address_utxos",
+      "description": "Get all UTXOs owned by a Bitcoin address and their associated inscriptions and runes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "address": {
+            "type": "string",
+            "description": "A valid Bitcoin address"
+          }
+        }
+      }
+    },
+    {
+      "name": "ordiscan_main",
+      "description": "Main Ordiscan API tool for general rune information and status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your Ordiscan API key. If not provided, will use environment variable ORDISCAN_API_KEY"
+          },
+          "runeName": {
+            "type": "string",
+            "description": "The unique name of the rune (without spacers)"
+          },
+          "blockHeight": {
+            "type": "string",
+            "description": "Current block height for minting status calculation. If not provided, will be fetched from API."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Calel33/ordiscan-mcp-v1/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "port": {
+            "type": "number",
+            "default": 1337,
+            "description": "The port number for the MCP server to listen on"
+          },
+          "endpoint": {
+            "type": "string",
+            "default": "/mcp",
+            "description": "The endpoint path for MCP requests"
+          },
+          "responseMode": {
+            "type": "string",
+            "default": "stream",
+            "description": "The response mode for the server"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "qualifiedName": "@lebrackyt/playlistable",
+  "displayName": "Playlistable",
+  "description": "Generate and manage Spotify playlists with AI. Search songs, edit lists, and refine music to fit any vibe or request.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/playlistable.io.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@lebrackyt/playlistable",
+  "security": null,
+  "tools": [
+    {
+      "name": "generate_playlist",
+      "title": "Generate Playlist",
+      "description": "Create a playlist and return a playlistable URL immediately (async generation).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "mood"
+        ],
+        "properties": {
+          "mood": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_playlist",
+      "title": "Get Playlist",
+      "description": "Get a playlist details by ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_playlists",
+      "title": "Get Playlists",
+      "description": "List the user's playlists (paginated).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "lastDocId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "playlist_suggestions",
+      "title": "Get Playlist Suggestions",
+      "description": "Get 6 AI-generated playlist mood suggestions for the current user.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "userHour": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 23,
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^\\d+$"
+              }
+            ],
+            "description": "The user's current hour (0-23) to provide time context. Defaults to server time if not provided."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "edit_playlist",
+      "title": "Edit Playlist Songs",
+      "description": "Add or remove songs in a playlist by Spotify track IDs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "addedSongs": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "removedSongs": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_playlist",
+      "title": "Delete Playlist",
+      "description": "Delete a playlist by ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_songs",
+      "title": "Search Songs",
+      "description": "Search Spotify tracks by query. Returns id, name, artist, image, url.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 20,
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "pattern": "^\\d+$"
+              }
+            ]
+          },
+          "query": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_artists",
+      "title": "Search Artists",
+      "description": "Search Spotify artists by query. Returns id, name, image, url, genres.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 20,
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "pattern": "^\\d+$"
+              }
+            ]
+          },
+          "query": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@lebrackyt/playlistable/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {},
+        "description": "No client configuration required. Authenticate via OAuth when prompted.",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

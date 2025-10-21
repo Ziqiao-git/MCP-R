@@ -1,0 +1,136 @@
+{
+  "qualifiedName": "@dpflucas/mysql-mcp-server",
+  "displayName": "MySQL Database Access",
+  "description": "Access your MySQL databases securely and efficiently. List databases, tables, and execute read-only SQL queries without the risk of data modification. Simplify your database interactions with a robust, read-only interface.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list_databases",
+      "description": "List all accessible databases on the MySQL server",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_tables",
+      "description": "List all tables in a specified database",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "database": {
+            "type": "string",
+            "description": "Database name (optional, uses default if not specified)"
+          }
+        }
+      }
+    },
+    {
+      "name": "describe_table",
+      "description": "Show the schema for a specific table",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table"
+        ],
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "Table name"
+          },
+          "database": {
+            "type": "string",
+            "description": "Database name (optional, uses default if not specified)"
+          }
+        }
+      }
+    },
+    {
+      "name": "execute_query",
+      "description": "Execute a read-only SQL query",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "SQL query (only SELECT, SHOW, DESCRIBE, and EXPLAIN statements are allowed)"
+          },
+          "database": {
+            "type": "string",
+            "description": "Database name (optional, uses default if not specified)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@dpflucas/mysql-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "mysqlHost",
+          "mysqlUser"
+        ],
+        "properties": {
+          "mysqlHost": {
+            "type": "string",
+            "description": "MySQL server hostname"
+          },
+          "mysqlPort": {
+            "type": "number",
+            "default": 3306,
+            "description": "MySQL server port"
+          },
+          "mysqlUser": {
+            "type": "string",
+            "description": "MySQL username"
+          },
+          "mysqlMaxIdle": {
+            "type": "number",
+            "description": "Maximum number of idle connections to keep in the pool (optional)"
+          },
+          "mysqlDatabase": {
+            "type": "string",
+            "description": "Default database (optional)"
+          },
+          "mysqlPassword": {
+            "type": "string",
+            "description": "MySQL password (optional)"
+          },
+          "mysqlQueueLimit": {
+            "type": "number",
+            "default": 0,
+            "description": "Maximum number of connection requests to queue (optional)"
+          },
+          "mysqlIdleTimeout": {
+            "type": "number",
+            "description": "How long a connection can be idle before being released in milliseconds (optional)"
+          },
+          "mysqlConnectTimeout": {
+            "type": "number",
+            "default": 10000,
+            "description": "Connection timeout in milliseconds (optional)"
+          },
+          "mysqlConnectionLimit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of connections in the pool (optional)"
+          }
+        }
+      }
+    }
+  ]
+}

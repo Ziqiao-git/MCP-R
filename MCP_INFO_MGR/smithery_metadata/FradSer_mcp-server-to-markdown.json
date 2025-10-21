@@ -1,0 +1,58 @@
+{
+  "qualifiedName": "@FradSer/mcp-server-to-markdown",
+  "displayName": "Markdown转换服务器",
+  "description": "将各种格式的文件转换为Markdown描述，帮助用户轻松获取文件内容的结构化信息。通过Cloudflare AI服务，支持多种文件类型的转换，提升文档处理效率。",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "to-markdown",
+      "description": "Generate markdown description for files including PDF (.pdf), Images (.jpeg, .jpg, .png, .webp, .svg), HTML (.html), XML (.xml), Microsoft Office (.xlsx, .xlsm, .xlsb, .xls, .et), Open Document Format (.ods), CSV (.csv), and Apple Documents (.numbers)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filePaths"
+        ],
+        "properties": {
+          "filePaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of absolute file paths to generate descriptions for"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@FradSer/mcp-server-to-markdown/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "cloudflareApiToken",
+          "cloudflareAccountId"
+        ],
+        "properties": {
+          "cloudflareApiToken": {
+            "type": "string",
+            "description": "Your Cloudflare API token"
+          },
+          "cloudflareAccountId": {
+            "type": "string",
+            "description": "Your Cloudflare Account ID"
+          }
+        }
+      }
+    }
+  ]
+}

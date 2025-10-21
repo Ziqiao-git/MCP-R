@@ -1,0 +1,250 @@
+{
+  "qualifiedName": "@knowall-ai/mcp-neo4j-agent-memory",
+  "displayName": "Neo4j Agent Memory Server",
+  "description": "Neo4j Agent Memory enables AI assistants to build and query persistent knowledge graphs. Store information as nodes, create meaningful relationships between them, and search across your connected data. Unlike simple key-value stores, this graph-based approach captures how information relates, providing rich context for more intelligent responses.\n\n### Key Features:\n* **Store facts as nodes** - people, places, organizations, projects, events\n* **Connect with semantic relationships** - KNOWS, WORKS_AT, CREATED, MANAGES\n* **Word-tokenized search** - finds \"John\" OR \"Smith\" when searching \"John Smith\"\n* **Date filtering** - find memories created after specific dates\n* **Multi-hop traversal** - explore connections up to 3 levels deep\n* **Automatic timestamps** - track when memories were created\n* **Flexible schema** - use any label or property you need\n* **Relationship properties** - add context like \"since: 2023\" to connections\n* **10 specialized tools** - search, create, update, delete memories and connections\n* **LLM-friendly design** - simple atomic operations, AI handles the intelligence\n\nBuild persistent, queryable knowledge graphs that grow smarter over time.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/knowall.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "search_memories",
+      "description": "Search and retrieve memories from the knowledge graph",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "depth": {
+            "type": "number",
+            "description": "Relationship depth to include, defaults to 1"
+          },
+          "label": {
+            "type": "string",
+            "description": "Filter by memory label"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum results to return, defaults to 10, max 200"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search text to find in any property (searches for ANY word - e.g. \"Ben Weeks\" finds memories containing \"Ben\" OR \"Weeks\")"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Sort order such as created_at DESC, name ASC"
+          },
+          "since_date": {
+            "type": "string",
+            "description": "ISO date string to filter memories created after this date (e.g., \"2024-01-01\" or \"2024-01-01T00:00:00Z\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_memory",
+      "description": "Create a new memory in the knowledge graph. Consider that the memory might already exist, so Search → Create → Connect (its important to try and connect memories)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "label",
+          "properties"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Memory label in lowercase (use list_memory_labels first to check existing labels for consistency) - common: person, place, organization, project, event, topic, object, animal, plant, food, activity, media, skill, document, meeting, task, habit, health, vehicle, tool, idea, goal"
+          },
+          "properties": {
+            "type": "object",
+            "description": "Information to store about this memory (use \"name\" as primary identifier, e.g. {name: \"John Smith\", age: 30, occupation: \"Engineer\"})",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "create_connection",
+      "description": "Create a connection between two memories (its good to have connected memories)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fromMemoryId",
+          "toMemoryId",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Relationship type such as KNOWS, WORKS_ON, LIVES_IN, HAS_SKILL, PARTICIPATES_IN"
+          },
+          "properties": {
+            "type": "object",
+            "description": "Optional relationship metadata (e.g. {since: \"2023-01\", role: \"Manager\", status: \"active\"})",
+            "additionalProperties": true
+          },
+          "toMemoryId": {
+            "type": "number",
+            "description": "ID of the target memory"
+          },
+          "fromMemoryId": {
+            "type": "number",
+            "description": "ID of the source memory"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_memory",
+      "description": "Update properties of an existing memory such as adding more detail or make a change when you find out something new",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "nodeId",
+          "properties"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "number",
+            "description": "ID of the memory to update"
+          },
+          "properties": {
+            "type": "object",
+            "description": "Properties to update/add",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "update_connection",
+      "description": "Update properties of an existing connection between memories",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fromMemoryId",
+          "toMemoryId",
+          "type",
+          "properties"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Relationship type to identify which connection to update (e.g. WORKS_AT, KNOWS, MANAGES)"
+          },
+          "properties": {
+            "type": "object",
+            "description": "Properties to update/add (e.g. {status: \"completed\", end_date: \"2024-01\"})",
+            "additionalProperties": true
+          },
+          "toMemoryId": {
+            "type": "number",
+            "description": "ID of the target memory"
+          },
+          "fromMemoryId": {
+            "type": "number",
+            "description": "ID of the source memory"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_memory",
+      "description": "Delete a memory and all its connections (use with caution - this permanently removes the memory and all its connections)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "nodeId"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "number",
+            "description": "ID of the memory to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_connection",
+      "description": "Delete a specific connection between two memories (use with caution - this permanently removes the relationship)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fromMemoryId",
+          "toMemoryId",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Exact relationship type to delete (e.g. WORKS_AT, KNOWS, MANAGES)"
+          },
+          "toMemoryId": {
+            "type": "number",
+            "description": "ID of the target memory"
+          },
+          "fromMemoryId": {
+            "type": "number",
+            "description": "ID of the source memory"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_memory_labels",
+      "description": "List all unique memory labels currently in use with their counts (useful for getting an overview of the knowledge graph)",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_guidance",
+      "description": "Get help on using the memory tools effectively",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "Topic: connections, labels, relationships, best-practices, examples, or leave empty for all"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@knowall-ai/mcp-neo4j-agent-memory/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "neo4jUri": {
+            "type": "string",
+            "default": "bolt://localhost:7687",
+            "description": "The URI for the Neo4j database."
+          },
+          "neo4jDatabase": {
+            "type": "string",
+            "default": "neo4j",
+            "description": "The database name for Neo4j Enterprise (optional)."
+          },
+          "neo4jPassword": {
+            "type": "string",
+            "default": "",
+            "description": "The password for the Neo4j database."
+          },
+          "neo4jUsername": {
+            "type": "string",
+            "default": "neo4j",
+            "description": "The username for the Neo4j database."
+          }
+        }
+      }
+    }
+  ]
+}

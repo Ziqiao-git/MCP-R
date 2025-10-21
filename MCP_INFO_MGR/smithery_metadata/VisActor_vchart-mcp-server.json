@@ -1,0 +1,1453 @@
+{
+  "qualifiedName": "@VisActor/vchart-mcp-server",
+  "displayName": "VChart Visualization Server",
+  "description": "Generate interactive charts and visualizations through AI assistants using a variety of chart types and output formats. Easily create images, HTML, or specification objects for programmatic use to enhance data presentation and analysis. Support a wide range of chart types including Cartesian, polar, hierarchical, progress, word cloud, and more for versatile visualization needs.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/7d9ea9f5-50b0-45db-879c-3c389d5712c3.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "generate_cartesian_chart",
+      "description": "Generates Cartesian charts: line (trends over time), area (cumulative totals), bar (category comparison), waterfall (incremental changes), ranking bar (ordered categories), and funnel (visualizes stages in a process or conversion rates).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chartType",
+          "dataTable",
+          "xField",
+          "yField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "xField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Dimension field. Must exist in the data."
+          },
+          "yField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Measure field. Must be numeric and exist in the data."
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "chartType": {
+            "enum": [
+              "area",
+              "line",
+              "bar",
+              "waterfall",
+              "ranking_bar",
+              "funnel"
+            ],
+            "type": "string"
+          },
+          "dataTable": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "minItems": 1,
+            "description": "Data array, e.g., [{ x: '2018', y: 99.9 }]. Cannot be empty."
+          },
+          "timeField": {
+            "type": "string",
+            "description": "Time field, such as year or month. The x field and time field must be different. this field is required in ranking_bar"
+          },
+          "transpose": {
+            "type": "boolean",
+            "description": "Set to true only when displaying a horizontal bar chart."
+          },
+          "xAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "X-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "yAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "Y-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "string",
+            "description": "Color grouping field. Should not duplicate the dimension field."
+          },
+          "xAxisTitle": {
+            "type": "string",
+            "description": "X-axis title."
+          },
+          "yAxisTitle": {
+            "type": "string",
+            "description": "Y-axis title."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          },
+          "xAxisOrient": {
+            "enum": [
+              "bottom",
+              "top"
+            ],
+            "type": "string",
+            "description": "X-axis position in the chart."
+          },
+          "yAxisOrient": {
+            "enum": [
+              "left",
+              "right"
+            ],
+            "type": "string",
+            "description": "Y-axis position in the chart."
+          },
+          "xAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show vertical grid lines for the X-axis."
+          },
+          "xAxisHasTick": {
+            "type": "boolean",
+            "description": "Show X-axis ticks."
+          },
+          "yAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show horizontal grid lines for the Y-axis."
+          },
+          "yAxisHasTick": {
+            "type": "boolean",
+            "description": "Show Y-axis ticks."
+          },
+          "xAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show X-axis labels."
+          },
+          "yAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show Y-axis labels."
+          },
+          "stackOrPercent": {
+            "enum": [
+              "stack",
+              "percent"
+            ],
+            "type": "string",
+            "description": "Stacking mode: 'stack' for stacked data, 'percent' for percentage stacking. Requires 'color' field."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_dual_axis_chart",
+      "description": "Generate a dual-axis chart for visualizing two quantitative variables using a combination of bar and line series. Ideal for comparing trends and magnitudes across two metrics with distinct y-axes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataTable",
+          "xField",
+          "yField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "xField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Dimension field. Must exist in the data."
+          },
+          "yField": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Measure field. Must be numeric and exist in the data."
+            },
+            "maxItems": 2,
+            "minItems": 2
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Input data for the dual axis chart, e.g., [{ x: '2018', gmv: 99.9, user: 1200 }]."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "string",
+            "description": "Color grouping field. Should not duplicate the dimension field."
+          },
+          "xAxisTitle": {
+            "type": "string",
+            "description": "X-axis title."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          },
+          "xAxisOrient": {
+            "enum": [
+              "bottom",
+              "top"
+            ],
+            "type": "string",
+            "description": "X-axis position in the chart."
+          },
+          "xAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show vertical grid lines for the X-axis."
+          },
+          "xAxisHasTick": {
+            "type": "boolean",
+            "description": "Show X-axis ticks."
+          },
+          "xAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show X-axis labels."
+          },
+          "leftYAxisTitle": {
+            "type": "string",
+            "description": "Y-axis title."
+          },
+          "stackOrPercent": {
+            "enum": [
+              "stack",
+              "percent"
+            ],
+            "type": "string",
+            "description": "Stacking mode: 'stack' for stacked data, 'percent' for percentage stacking. Requires 'color' field."
+          },
+          "rightYAxisTitle": {
+            "$ref": "#/properties/leftYAxisTitle"
+          },
+          "leftYAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show horizontal grid lines for the Y-axis."
+          },
+          "leftYAxisHasTick": {
+            "type": "boolean",
+            "description": "Show Y-axis ticks."
+          },
+          "leftYAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show Y-axis labels."
+          },
+          "rightYAxisHasGrid": {
+            "$ref": "#/properties/leftYAxisHasGrid"
+          },
+          "rightYAxisHasTick": {
+            "$ref": "#/properties/leftYAxisHasTick"
+          },
+          "rightYAxisHasLabel": {
+            "$ref": "#/properties/leftYAxisHasLabel"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_heatmap_chart",
+      "description": "Generates a heatmap chart based on a Cartesian coordinate system. It is used to visualize the intensity or density of values at the intersection of two discrete variables, suitable for revealing association patterns and distribution characteristics between variables.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataTable",
+          "xField",
+          "yField",
+          "sizeField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "xField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Dimension field. Must exist in the data."
+          },
+          "yField": {
+            "$ref": "#/properties/xField"
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Heatmap data array, e.g., [{ gender: 'male', age: '20-30', size: 30 }]."
+          },
+          "sizeField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Measure field. Must be numeric and exist in the data."
+          },
+          "transpose": {
+            "type": "boolean"
+          },
+          "xAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "X-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "yAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "Y-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "xAxisTitle": {
+            "type": "string",
+            "description": "X-axis title."
+          },
+          "yAxisTitle": {
+            "type": "string",
+            "description": "Y-axis title."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          },
+          "xAxisOrient": {
+            "enum": [
+              "bottom",
+              "top"
+            ],
+            "type": "string",
+            "description": "X-axis position in the chart."
+          },
+          "yAxisOrient": {
+            "enum": [
+              "left",
+              "right"
+            ],
+            "type": "string",
+            "description": "Y-axis position in the chart."
+          },
+          "xAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show vertical grid lines for the X-axis."
+          },
+          "xAxisHasTick": {
+            "type": "boolean",
+            "description": "Show X-axis ticks."
+          },
+          "yAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show horizontal grid lines for the Y-axis."
+          },
+          "yAxisHasTick": {
+            "type": "boolean",
+            "description": "Show Y-axis ticks."
+          },
+          "xAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show X-axis labels."
+          },
+          "yAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show Y-axis labels."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_polar_chart",
+      "description": "Generate a polar chart (rose, radar, pie) to display numerical differences among different categories using radius and angle in polar coordinates.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataTable",
+          "chartType",
+          "categoryField",
+          "valueField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "chartType": {
+            "enum": [
+              "rose",
+              "radar",
+              "pie"
+            ],
+            "type": "string"
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Data for the chart, e.g., [{ category: 'Category 01', value: 10 }]."
+          },
+          "transpose": {
+            "type": "boolean"
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "string",
+            "description": "Color grouping field. Should not duplicate the dimension field."
+          },
+          "valueField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Measure field. Must be numeric and exist in the data."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          },
+          "angleAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "Angle axis type: categorical ('band') or continuous ('linear')."
+          },
+          "categoryField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Dimension field. Must exist in the data."
+          },
+          "angleAxisTitle": {
+            "type": "string",
+            "description": "Angle axis title."
+          },
+          "radiusAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "Radius axis type: categorical ('band') or continuous ('linear')."
+          },
+          "stackOrPercent": {
+            "enum": [
+              "stack",
+              "percent"
+            ],
+            "type": "string",
+            "description": "Stacking mode: 'stack' for stacked data, 'percent' for percentage stacking. Requires 'color' field."
+          },
+          "radiusAxisTitle": {
+            "type": "string",
+            "description": "Radius axis title."
+          },
+          "angleAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show grid lines for the angle axis."
+          },
+          "angleAxisHasTick": {
+            "type": "boolean",
+            "description": "Show angle axis ticks."
+          },
+          "angleAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show angle axis labels."
+          },
+          "radiusAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show grid lines for the radius axis."
+          },
+          "radiusAxisHasTick": {
+            "type": "boolean",
+            "description": "Show radius axis ticks."
+          },
+          "radiusAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show radius axis labels."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_progress_chart",
+      "description": "Generates a progress chart for visualizing quantitative values normalized between 0 and 1. Ideal for representing progress, completion rates, or proportional metrics. The gauge chart and liquid chart currently only supports displaying data for a single dimension.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataTable",
+          "chartType",
+          "valueField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "chartType": {
+            "enum": [
+              "linear_progress",
+              "circular_progress",
+              "gauge",
+              "liquid"
+            ],
+            "type": "string"
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Data for the progress chart, e.g., [{ category: 'category 01', value: 0.5 }]."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "string",
+            "description": "Dimension field, Must exist in the data, required in linear_progress, circular_progress and gauge"
+          },
+          "valueField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Measure field with values in [0, 1]. Must exist in the data."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_range_column_chart",
+      "description": "Generate a range column chart to display the value range (such as minimum and maximum) for each category, suitable for comparing the range distribution across different categories.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataTable",
+          "xField",
+          "yField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "xField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Dimension field. Must exist in the data."
+          },
+          "yField": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Measure field. Must be numeric and exist in the data."
+            },
+            "maxItems": 2,
+            "minItems": 2
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Data for the range column chart, e.g., [{ category: 'Category 01', min: 10, max: 50 }]."
+          },
+          "xAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "X-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "yAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "Y-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "string",
+            "description": "Color grouping field. Should not duplicate the dimension field."
+          },
+          "xAxisTitle": {
+            "type": "string",
+            "description": "X-axis title."
+          },
+          "yAxisTitle": {
+            "type": "string",
+            "description": "Y-axis title."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          },
+          "xAxisOrient": {
+            "enum": [
+              "bottom",
+              "top"
+            ],
+            "type": "string",
+            "description": "X-axis position in the chart."
+          },
+          "yAxisOrient": {
+            "enum": [
+              "left",
+              "right"
+            ],
+            "type": "string",
+            "description": "Y-axis position in the chart."
+          },
+          "xAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show vertical grid lines for the X-axis."
+          },
+          "xAxisHasTick": {
+            "type": "boolean",
+            "description": "Show X-axis ticks."
+          },
+          "yAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show horizontal grid lines for the Y-axis."
+          },
+          "yAxisHasTick": {
+            "type": "boolean",
+            "description": "Show Y-axis ticks."
+          },
+          "xAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show X-axis labels."
+          },
+          "yAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show Y-axis labels."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_sankey_chart",
+      "description": "Generate a Sankey diagram to visualize the flow relationships between nodes in complex networks, suitable for displaying the distribution and flow paths of source and target data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataTable",
+          "sourceField",
+          "targetField",
+          "valueField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Data for the Sankey diagram, e.g., [{ category: 'category 01', value: 10 }]."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "valueField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Measure field. Must be numeric and exist in the data."
+          },
+          "sourceField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The source field in the Sankey diagram; must exist in the data."
+          },
+          "targetField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The target field in the Sankey diagram; must exist in the data."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_scatter_chart",
+      "description": "Generate a scatter chart to visually display the distribution, clustering trends, and correlations of data points in two-dimensional or multi-dimensional space. Suitable for analyzing relationships between variables, outlier detection, and similar scenarios.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dataTable",
+          "xField",
+          "yField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "xField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Measure field. Must be numeric and exist in the data."
+          },
+          "yField": {
+            "$ref": "#/properties/xField"
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Scatter chart data, e.g., [{ x: 34, y: 10, category: 'A' }]."
+          },
+          "sizeField": {
+            "type": "string",
+            "description": "Numeric field for bubble size."
+          },
+          "xAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "X-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "yAxisType": {
+            "enum": [
+              "band",
+              "linear"
+            ],
+            "type": "string",
+            "description": "Y-axis type: categorical ('band') or continuous ('linear')."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "string",
+            "description": "Color grouping field. Should not duplicate the dimension field."
+          },
+          "xAxisTitle": {
+            "type": "string",
+            "description": "X-axis title."
+          },
+          "yAxisTitle": {
+            "type": "string",
+            "description": "Y-axis title."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          },
+          "xAxisOrient": {
+            "enum": [
+              "bottom",
+              "top"
+            ],
+            "type": "string",
+            "description": "X-axis position in the chart."
+          },
+          "yAxisOrient": {
+            "enum": [
+              "left",
+              "right"
+            ],
+            "type": "string",
+            "description": "Y-axis position in the chart."
+          },
+          "xAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show vertical grid lines for the X-axis."
+          },
+          "xAxisHasTick": {
+            "type": "boolean",
+            "description": "Show X-axis ticks."
+          },
+          "yAxisHasGrid": {
+            "type": "boolean",
+            "description": "Show horizontal grid lines for the Y-axis."
+          },
+          "yAxisHasTick": {
+            "type": "boolean",
+            "description": "Show Y-axis ticks."
+          },
+          "xAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show X-axis labels."
+          },
+          "yAxisHasLabel": {
+            "type": "boolean",
+            "description": "Show Y-axis labels."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_hierarchical_chart",
+      "description": "Generate a chart for hierarchical visualization of multi-level categorical data proportions, include sunburst, treemap, circle_packing.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chartType",
+          "dataTable",
+          "colorField",
+          "valueField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "chartType": {
+            "enum": [
+              "sunburst",
+              "treemap",
+              "circle_packing"
+            ],
+            "type": "string",
+            "description": "Chart type"
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Hierarchical data for the chart, e.g., [{ category: 'Category 0', subCategory: 'Category 01', value: 10}]."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Dimension field. Must exist in the data."
+            },
+            "minItems": 1
+          },
+          "valueField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Measure field. Must be numeric and exist in the data."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_wordcloud_venn",
+      "description": "Generate a word cloud to visualize word frequency or importance, or a Venn diagram to show relationships such as intersections and unions between sets.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chartType",
+          "dataTable",
+          "colorField",
+          "valueField"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title text."
+          },
+          "width": {
+            "type": "number",
+            "description": "Chart width. Optional, defaults to 500."
+          },
+          "colors": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Color value"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Color palette for chart elements."
+          },
+          "height": {
+            "type": "number",
+            "description": "Chart height. Optional, defaults to 500."
+          },
+          "output": {
+            "enum": [
+              "spec",
+              "image",
+              "html"
+            ],
+            "type": "string",
+            "default": "image",
+            "description": "Chart output type. Defaults to 'image'."
+          },
+          "subTitle": {
+            "type": "string",
+            "description": "Chart subtitle text."
+          },
+          "chartType": {
+            "enum": [
+              "wordcloud",
+              "venn"
+            ],
+            "type": "string"
+          },
+          "dataTable": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Data for the chart, e.g., [{ word: 'TEST', value: 10 }]."
+          },
+          "background": {
+            "type": "string",
+            "description": "Chart background color (hex). Optional, defaults to white."
+          },
+          "chartTheme": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string",
+            "description": "Chart theme. Optional, defaults to 'light'."
+          },
+          "colorField": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Specifies the field in the dataset that represents each word (for word clouds) or the set (for Venn diagrams). For Venn diagrams, use a comma-separated string to describe the set. This field must exist in the dataset."
+          },
+          "valueField": {
+            "type": "string",
+            "description": "Specifies the field representing the metric value. Required for Venn diagrams."
+          },
+          "titleOrient": {
+            "enum": [
+              "top",
+              "left",
+              "right",
+              "bottom"
+            ],
+            "type": "string",
+            "description": "Title position in the chart."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@VisActor/vchart-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

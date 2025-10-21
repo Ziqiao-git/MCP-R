@@ -1,0 +1,183 @@
+{
+  "qualifiedName": "@smithery-ai/slack",
+  "displayName": "Slack",
+  "description": "Enable interaction with Slack workspaces. Supports subscribing to Slack events through Resources.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/slack.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@smithery-ai/slack",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "slack_list_channels",
+      "description": "List public or pre-defined channels in the workspace with pagination",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum number of channels to return (default 100, max 200)"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for next page of results"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "slack_post_message",
+      "description": "Post a new message to a Slack channel or reply to a thread",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channel_id",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The message text to post"
+          },
+          "thread_ts": {
+            "type": "string",
+            "description": "Optional. The timestamp of the parent message to reply to in the format '1234567890.123456'. When provided, the message will be posted as a reply to the thread."
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel to post to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "slack_add_reaction",
+      "description": "Add a reaction emoji to a message",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channel_id",
+          "timestamp",
+          "reaction"
+        ],
+        "properties": {
+          "reaction": {
+            "type": "string",
+            "description": "The name of the emoji reaction (without ::)"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The timestamp of the message to react to"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel containing the message"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "slack_get_channel_history",
+      "description": "Get recent messages from a channel",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channel_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of messages to retrieve (default 10)"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "slack_get_thread_replies",
+      "description": "Get all replies in a message thread",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channel_id",
+          "thread_ts"
+        ],
+        "properties": {
+          "thread_ts": {
+            "type": "string",
+            "description": "The timestamp of the parent message in the format '1234567890.123456'. Timestamps in the format without the period can be converted by adding the period such that 6 numbers come after it."
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "The ID of the channel containing the thread"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "slack_get_users",
+      "description": "Get a list of all users in the workspace with their basic profile information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum number of users to return (default 100, max 200)"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for next page of results"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "slack_get_user_profile",
+      "description": "Get detailed profile information for a specific user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The ID of the user"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@smithery-ai/slack/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "qualifiedName": "@dravidsajinraj-iex/cms-mcp",
+  "displayName": "CMS Mcp Server",
+  "description": "Provide a scaffold framework to build MCP servers efficiently. Enable rapid development and integration of MCP tools, resources, and prompts with modern TypeScript support. Simplify MCP server setup and management for developers.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@dravidsajinraj-iex/cms-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_webflow_blog_post",
+      "description": "Create a blog post in Webflow. This tool automatically analyzes the blog post content, creates the necessary collection fields if they don't exist, and posts the blog content. No need to specify collection fields - they are generated automatically based on the blog post data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "webflowToken",
+          "siteId",
+          "collectionName",
+          "blogPost"
+        ],
+        "properties": {
+          "siteId": {
+            "type": "string",
+            "description": "Webflow site ID"
+          },
+          "blogPost": {
+            "type": "object",
+            "required": [
+              "title",
+              "slug",
+              "content"
+            ],
+            "properties": {
+              "slug": {
+                "type": "string",
+                "description": "Blog post slug"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Blog post tags"
+              },
+              "title": {
+                "type": "string",
+                "description": "Blog post title"
+              },
+              "author": {
+                "type": "string",
+                "description": "Author name"
+              },
+              "content": {
+                "type": "string",
+                "description": "Blog post content (HTML)"
+              },
+              "excerpt": {
+                "type": "string",
+                "description": "Blog post excerpt"
+              },
+              "publishDate": {
+                "type": "string",
+                "description": "Publish date (ISO format)"
+              },
+              "customFields": {
+                "type": "object",
+                "description": "Additional custom field values",
+                "additionalProperties": {}
+              },
+              "featuredImage": {
+                "type": "string",
+                "description": "Featured image URL"
+              }
+            },
+            "description": "Blog post data",
+            "additionalProperties": false
+          },
+          "webflowToken": {
+            "type": "string",
+            "description": "Webflow API token"
+          },
+          "customDomains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Custom domains to publish to"
+          },
+          "collectionName": {
+            "type": "string",
+            "description": "Name of the blog collection"
+          },
+          "publishAfterCreation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to publish the site after creating the post"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@dravidsajinraj-iex/cms-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

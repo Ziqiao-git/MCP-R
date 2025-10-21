@@ -1,0 +1,115 @@
+{
+  "qualifiedName": "@hiraishikentaro/wezterm-mcp",
+  "displayName": "WezTerm MCP Server",
+  "description": "Enable integration of WezTerm terminal emulator with external tools and resources through the Model Context Protocol. Enhance your terminal experience by allowing dynamic access to data and actions via MCP. Simplify automation and context-aware workflows within WezTerm.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "write_to_terminal",
+      "description": "Writes text to the active WezTerm pane - often used to run commands",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "The command to run or text to write to the terminal"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_terminal_output",
+      "description": "Reads output from the active WezTerm pane",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "type": "number",
+            "description": "Number of lines to read from the terminal (default: 50)"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_control_character",
+      "description": "Sends control characters to the active WezTerm pane",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "character"
+        ],
+        "properties": {
+          "character": {
+            "type": "string",
+            "description": "Control character to send (e.g., 'c' for Ctrl+C)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_panes",
+      "description": "Lists all panes in the current WezTerm window",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "switch_pane",
+      "description": "Switches to a specific pane in WezTerm",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "pane_id"
+        ],
+        "properties": {
+          "pane_id": {
+            "type": "number",
+            "description": "ID of the pane to switch to"
+          }
+        }
+      }
+    },
+    {
+      "name": "write_to_specific_pane",
+      "description": "Writes text to a specific WezTerm pane by pane ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "command",
+          "pane_id"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "The command to run or text to write to the terminal"
+          },
+          "pane_id": {
+            "type": "number",
+            "description": "ID of the pane to write to"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@hiraishikentaro/wezterm-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

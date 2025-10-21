@@ -1,0 +1,84 @@
+{
+  "qualifiedName": "@Laksh-star/mcp-server-tmdb",
+  "displayName": "TMDB Server",
+  "description": "This server integrates with The Movie Database (TMDB) API to provide movie information, search capabilities, and recommendations.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "search_movies",
+      "description": "Search for movies by title or keywords",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query for movie titles"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_recommendations",
+      "description": "Get movie recommendations based on a movie ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "movieId"
+        ],
+        "properties": {
+          "movieId": {
+            "type": "string",
+            "description": "TMDB movie ID to get recommendations for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_trending",
+      "description": "Get trending movies for a time window",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "timeWindow"
+        ],
+        "properties": {
+          "timeWindow": {
+            "enum": [
+              "day",
+              "week"
+            ],
+            "type": "string",
+            "description": "Time window for trending movies"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Laksh-star/mcp-server-tmdb/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "tmdbApiKey"
+        ],
+        "properties": {
+          "tmdbApiKey": {
+            "type": "string",
+            "description": "The TMDB API key from your TMDB account"
+          }
+        }
+      }
+    }
+  ]
+}

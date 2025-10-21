@@ -1,0 +1,162 @@
+{
+  "qualifiedName": "@mikechao/balldontlie-mcp",
+  "displayName": "Balldontlie Sports Data Server",
+  "description": "Provide up-to-date information about players, teams, and games for the NBA, NFL, and MLB. Query detailed sports data dynamically to enhance your applications or agents with real-time sports insights. Easily integrate with popular clients like Claude Desktop and LibreChat using your Balldontlie API key.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/balldontlie.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_teams",
+      "description": "Gets the list of team from one of the following leagues NBA (National Basketball Association), MLB (Major League Baseball), NFL (National Football League)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "league"
+        ],
+        "properties": {
+          "league": {
+            "enum": [
+              "NBA",
+              "MLB",
+              "NFL"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_players",
+      "description": "Gets the list of players from one of the following leagues NBA (National Basketball Association), MLB (Major League Baseball), NFL (National Football League)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "league"
+        ],
+        "properties": {
+          "cursor": {
+            "type": "number",
+            "description": "Cursor for pagination, the value should be next_cursor from previous call of get_players tool, optional"
+          },
+          "league": {
+            "enum": [
+              "NBA",
+              "MLB",
+              "NFL"
+            ],
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the player to search for, optional"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the player to search for, optional"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_games",
+      "description": "Gets the list of games from one of the following leagues NBA (National Basketball Association), MLB (Major League Baseball), NFL (National Football League)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "league"
+        ],
+        "properties": {
+          "dates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Get games for a range of dates, format: YYYY-MM-DD, optional"
+          },
+          "cursor": {
+            "type": "number",
+            "description": "Cursor for pagination, the value should be next_cursor from previous call of get_games tool, optional"
+          },
+          "league": {
+            "enum": [
+              "NBA",
+              "MLB",
+              "NFL"
+            ],
+            "type": "string"
+          },
+          "seasons": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Get games for a specific season, format: YYYY, optional"
+          },
+          "teamIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Get games for specific team IDs, optional"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_game",
+      "description": "Get a specific game from one of the following leagues NBA (National Basketball Association), MLB (Major League Baseball), NFL (National Football League)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "league",
+          "gameId"
+        ],
+        "properties": {
+          "gameId": {
+            "type": "number",
+            "description": "Game ID to get the game for, the value should be Game ID from previous call of get_games tool"
+          },
+          "league": {
+            "enum": [
+              "NBA",
+              "MLB",
+              "NFL"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@mikechao/balldontlie-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "balldontlieApiKey"
+        ],
+        "properties": {
+          "balldontlieApiKey": {
+            "type": "string",
+            "description": "API key for the Balldontlie service"
+          }
+        }
+      }
+    }
+  ]
+}

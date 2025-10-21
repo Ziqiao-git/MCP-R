@@ -1,0 +1,194 @@
+{
+  "qualifiedName": "@halismertkir/academik-tinder",
+  "displayName": "YÖK Akademik Profiles",
+  "description": "Search and explore academic profiles from YÖK Akademik. Retrieve structured profile details and collaborators to support research discovery, hiring, and networking.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@halismertkir/academik-tinder",
+  "security": null,
+  "tools": [
+    {
+      "name": "health_check",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Health check for the MCP server",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "server_status",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get server status and information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "mcp_test",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Test tool for MCP connectivity verification",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_profile",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "YÖK Akademik platformunda akademisyen profili ara (batch desteği ile)\n\nArgs:\n    name: Aranacak akademisyen adı\n    batch_size: Her batch'te işlenecek maksimum profil sayısı (varsayılan: 20)\n    start_batch: Başlanacak batch numarası (varsayılan: 0)\n    max_batches: Maksimum batch sayısı (varsayılan: 5)\n\nReturns:\n    Session bilgisi ve batch parametreleri",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "batch_size": {
+            "type": "integer",
+            "title": "Batch Size",
+            "default": 20
+          },
+          "max_batches": {
+            "type": "integer",
+            "title": "Max Batches",
+            "default": 5
+          },
+          "start_batch": {
+            "type": "integer",
+            "title": "Start Batch",
+            "default": 0
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_profile",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get detailed profile information from a session",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_collaborators",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get collaborators for a specific profile from search results\nReturns immediately with processing status, actual scraping happens in background",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "session_id",
+          "profile_index"
+        ],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "profile_index": {
+            "type": "integer",
+            "title": "Profile Index"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_collaborators_status",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Check the status of collaborator scraping for a session",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "session_id"
+        ],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@halismertkir/academik-tinder/mcp",
+      "configSchema": {}
+    }
+  ]
+}

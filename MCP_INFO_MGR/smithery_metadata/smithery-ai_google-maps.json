@@ -1,0 +1,243 @@
+{
+  "qualifiedName": "@smithery-ai/google-maps",
+  "displayName": "Google Maps",
+  "description": "Provides location-based services and mapping functionality through the Google Maps Platform APIs",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons//google-maps.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@smithery-ai/google-maps",
+  "security": null,
+  "tools": [
+    {
+      "name": "maps_geocode",
+      "description": "Convert an address into geographic coordinates",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "The address to geocode"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "maps_reverse_geocode",
+      "description": "Convert coordinates into an address",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "Latitude coordinate"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude coordinate"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "maps_search_places",
+      "description": "Search for places using Google Places API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "radius": {
+            "type": "number",
+            "description": "Search radius in meters (max 50000)"
+          },
+          "location": {
+            "type": "object",
+            "required": [
+              "latitude",
+              "longitude"
+            ],
+            "properties": {
+              "latitude": {
+                "type": "number"
+              },
+              "longitude": {
+                "type": "number"
+              }
+            },
+            "description": "Optional center point for the search",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "maps_place_details",
+      "description": "Get detailed information about a specific place",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "place_id"
+        ],
+        "properties": {
+          "place_id": {
+            "type": "string",
+            "description": "The place ID to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "maps_distance_matrix",
+      "description": "Calculate travel distance and time for multiple origins and destinations",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "origins",
+          "destinations"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "driving",
+              "walking",
+              "bicycling",
+              "transit"
+            ],
+            "type": "string",
+            "description": "Travel mode"
+          },
+          "origins": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of origin addresses or coordinates"
+          },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of destination addresses or coordinates"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "maps_elevation",
+      "description": "Get elevation data for locations on the earth",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "locations"
+        ],
+        "properties": {
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "latitude",
+                "longitude"
+              ],
+              "properties": {
+                "latitude": {
+                  "type": "number"
+                },
+                "longitude": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of locations to get elevation for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "maps_directions",
+      "description": "Get directions between two points",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "origin",
+          "destination"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "driving",
+              "walking",
+              "bicycling",
+              "transit"
+            ],
+            "type": "string",
+            "description": "Travel mode"
+          },
+          "origin": {
+            "type": "string",
+            "description": "Starting point address or coordinates"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Ending point address or coordinates"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@smithery-ai/google-maps/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Google Maps API key. Get one from https://mapsplatform.google.com"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

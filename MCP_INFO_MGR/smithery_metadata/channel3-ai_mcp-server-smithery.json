@@ -1,0 +1,217 @@
+{
+  "qualifiedName": "@channel3-ai/mcp-server-smithery",
+  "displayName": "Channel3 MCP Server",
+  "description": "Let your agent discovery any product on the internet. Earn commissions when your agent drives sales.\n\nSign up for free at trychannel3.com\n\n",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/b7e7356d-b3c7-44be-9657-8e7c6b41ef66.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@channel3-ai/mcp-server-smithery",
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Search for products that match a query with optional filters",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 20
+          },
+          "query": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "filters": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "price": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "max_price": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "min_price": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "gender": {
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "male",
+                          "female",
+                          "unisex"
+                        ],
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "brand_ids": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "availability": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "InStock",
+                            "OutOfStock",
+                            "PreOrder",
+                            "LimitedAvailability",
+                            "BackOrder",
+                            "Discontinued",
+                            "SoldOut",
+                            "Unknown"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": {}
+          },
+          "image_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_product_detail",
+      "description": "Get detailed information about a specific product by its ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "product_id"
+        ],
+        "properties": {
+          "product_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_brands",
+      "description": "Get all brands that the vendor currently sells with optional query",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1
+          },
+          "size": {
+            "type": "integer",
+            "default": 100
+          },
+          "query": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_brand_detail",
+      "description": "Get detailed information for a specific brand by its ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "brand_id"
+        ],
+        "properties": {
+          "brand_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@channel3-ai/mcp-server-smithery/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Required API key"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

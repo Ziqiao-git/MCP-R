@@ -1,0 +1,105 @@
+{
+  "qualifiedName": "@imprvhub/mcp-claude-hackernews",
+  "displayName": "Hacker News MCP",
+  "description": "Enable seamless interaction with Hacker News directly from Claude Desktop. Browse latest, top, and best stories, view detailed story information, and read comments with clean formatting for enhanced readability. Access Hacker News content effortlessly using natural language or commands.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/claude.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "hn_latest",
+      "description": "Get the latest/newest stories from Hacker News",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of stories to fetch (1-50, default: 10)"
+          }
+        }
+      }
+    },
+    {
+      "name": "hn_top",
+      "description": "Get the top-ranked stories from Hacker News",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of stories to fetch (1-50, default: 10)"
+          }
+        }
+      }
+    },
+    {
+      "name": "hn_best",
+      "description": "Get the best stories from Hacker News",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of stories to fetch (1-50, default: 10)"
+          }
+        }
+      }
+    },
+    {
+      "name": "hn_story",
+      "description": "Get details for a specific story by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "story_id"
+        ],
+        "properties": {
+          "story_id": {
+            "type": "number",
+            "description": "The ID of the story to fetch"
+          }
+        }
+      }
+    },
+    {
+      "name": "hn_comments",
+      "description": "Get comments for a story (by story ID or index from last story list)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "story_id": {
+            "type": "number",
+            "description": "The ID of the story to get comments for"
+          },
+          "story_index": {
+            "type": "number",
+            "minimum": 1,
+            "description": "The index (1-based) of the story from the last fetched list"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@imprvhub/mcp-claude-hackernews/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

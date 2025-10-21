@@ -1,0 +1,167 @@
+{
+  "qualifiedName": "@mfukushim/map-traveler-mcp",
+  "displayName": "Virtual Traveling Bot",
+  "description": "Create immersive travel experiences by instructing an avatar to navigate Google Maps. Report on the journey's progress with real-time updates and photos, enhancing your virtual exploration. Engage with a unique travel narrative that integrates social media interactions seamlessly.\nSmithery Remote Edition now supports image compositing via nano-banana. Enjoy text-based journeys on the map.\nFor more advanced usage, consider building it in a local environment.\nhttps://www.npmjs.com/package/@mfukushim/map-traveler-mcp\n\nIf you connect without making any settings, it will operate in practice mode.\nSet the Google Maps API token, Turso SQLite API token, and Gemini Image API token to travel on real maps with the Smithery version.\nStreamable-http connection is now supported.\n",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/akibakokoubou.jp.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@mfukushim/map-traveler-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_traveler_view_info",
+      "title": "Get the current location's view",
+      "description": "Get the address of the current traveler's location and information on nearby facilities,view snapshot",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "includePhoto": {
+            "type": "boolean",
+            "description": "Get scenery photos of current location"
+          },
+          "includeNearbyFacilities": {
+            "type": "boolean",
+            "description": "Get information on nearby facilities"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_traveler_location",
+      "title": "Get the traveler's current location",
+      "description": "Get the address of the current traveler's location",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "tips",
+      "title": "Tips for using this MCP server",
+      "description": "Inform you of recommended actions for your device",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_setting",
+      "title": "Get the current setting",
+      "description": "Get current setting",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_traveler_info",
+      "title": "Get the traveler's preferences (optional).",
+      "description": "get a traveler's setting.For example, traveler's name, the language traveler speak, Personality and speaking habits, etc.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "settings": {}
+        }
+      }
+    },
+    {
+      "name": "set_traveler_info",
+      "title": "Set the traveler's preferences (optional).",
+      "description": "set a traveler's setting.For example, traveler's name, the language traveler speak, Personality and speaking habits, etc.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "settings"
+        ],
+        "properties": {
+          "settings": {
+            "type": "string",
+            "description": "traveler's setting. traveler's name, the language traveler speak, etc."
+          }
+        }
+      }
+    },
+    {
+      "name": "start_traveler_journey",
+      "title": "Start the journey",
+      "description": "Start the traveler's journey to destination",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "stop_traveler_journey",
+      "title": "Stop the journey",
+      "description": "Stop the traveler's journey",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@mfukushim/map-traveler-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "MT_BS_ID": {
+            "type": "string",
+            "description": "Bluesky sns registration address"
+          },
+          "MT_BS_PASS": {
+            "type": "string",
+            "description": "bluesky sns password"
+          },
+          "MT_FEED_TAG": {
+            "type": "string",
+            "description": "Specify the feed tag when posting to SNS (#required, 15 characters or more) Default is"
+          },
+          "MT_BS_HANDLE": {
+            "type": "string",
+            "description": "bluesky sns handle name. e.g. xxxxxxxx.bsky.social"
+          },
+          "MT_MOVE_MODE": {
+            "type": "string",
+            "default": "realtime",
+            "description": "Specify whether the movement mode is realtime or skip. default realtime"
+          },
+          "MT_TURSO_URL": {
+            "type": "string",
+            "description": "Turso sqlite API URL"
+          },
+          "MT_TURSO_TOKEN": {
+            "type": "string",
+            "description": "Turso sqlite API access token"
+          },
+          "MT_FILTER_TOOLS": {
+            "type": "string",
+            "description": "Directly filter the tools to be used. All are available if not specified. e.g. tips,set_traveler_location"
+          },
+          "MT_GOOGLE_MAP_KEY": {
+            "type": "string",
+            "description": "Google Map API key"
+          },
+          "MT_AVATAR_IMAGE_URI": {
+            "type": "string",
+            "description": "Character reference image uri. Multiple settings can be made by separating them with the '|'"
+          },
+          "MT_GEMINI_IMAGE_KEY": {
+            "type": "string",
+            "description": "Gemini Image API key"
+          },
+          "MT_MAX_RETRY_GEMINI": {
+            "type": "string",
+            "description": "Gemini Image retry count"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

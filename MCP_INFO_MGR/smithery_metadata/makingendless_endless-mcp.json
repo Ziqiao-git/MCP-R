@@ -1,0 +1,72 @@
+{
+  "qualifiedName": "@makingendless/endless-mcp",
+  "displayName": "Endless",
+  "description": "MCP server for Endless, an all-in-one platform to collaborate, transform, and create content.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/endless.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-alerts",
+      "description": "Get weather alerts for a state",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "description": "Two-letter state code (e.g. CA, NY)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-forecast",
+      "description": "Get weather forecast for a location",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90,
+            "minimum": -90,
+            "description": "Latitude of the location"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180,
+            "minimum": -180,
+            "description": "Longitude of the location"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@makingendless/endless-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

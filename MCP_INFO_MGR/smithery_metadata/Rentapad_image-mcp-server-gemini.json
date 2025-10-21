@@ -1,0 +1,136 @@
+{
+  "qualifiedName": "@Rentapad/image-mcp-server-gemini",
+  "displayName": "Image Analysis Server",
+  "description": "Analyze images and videos by providing URLs or local file paths. Gain insights and detailed descriptions of image content using advanced AI models. Enhance your applications with high-precision image recognition and video analysis capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "analyze_image",
+      "description": "Receives one or more image URLs and analyzes the image contents using Flash 2.0. Can analyze relationships between multiple images.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "imageUrls"
+        ],
+        "properties": {
+          "imageUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of URLs for the images to analyze"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_image_from_path",
+      "description": "Loads one or more images from local file paths and analyzes their contents using Flash 2.0. Can analyze relationships between multiple images. Provide valid paths for the server environment.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "imagePaths"
+        ],
+        "properties": {
+          "imagePaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of local file paths for the images to analyze (must be accessible from the server)"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_video",
+      "description": "Downloads videos from URLs, analyzes content using Gemini 2.0 Flash. Best for small videos (<20MB). Can analyze multiple videos together.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "videoUrls"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Optional text prompt (e.g., \"Summarize this video.\")"
+          },
+          "videoUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of video URLs to analyze (small videos recommended)."
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_video_from_path",
+      "description": "Loads videos from local paths, analyzes content using Gemini 2.0 Flash. Best for small videos (<20MB). Can analyze multiple videos together.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "videoPaths"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Optional text prompt (e.g., \"What happens at 0:15?\")"
+          },
+          "videoPaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of local video file paths (small videos recommended)."
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_youtube_video",
+      "description": "Analyzes a video directly from a YouTube URL using Gemini 2.0 Flash.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "youtubeUrl"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Optional text prompt (e.g., \"Summarize this video.\")"
+          },
+          "youtubeUrl": {
+            "type": "string",
+            "description": "The YouTube video URL to analyze."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Rentapad/image-mcp-server-gemini/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "geminiApiKey"
+        ],
+        "properties": {
+          "geminiApiKey": {
+            "type": "string",
+            "description": "Your Google Gemini API key required for image analysis."
+          }
+        }
+      }
+    }
+  ]
+}

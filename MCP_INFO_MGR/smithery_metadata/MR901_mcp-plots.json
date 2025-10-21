@@ -1,0 +1,132 @@
+{
+  "qualifiedName": "@MR901/mcp-plots",
+  "displayName": "Plots",
+  "description": "Visualize tabular data as polished charts in seconds. Personalize themes and layout, then render bar, line, pie, and more—with smart suggestions for field mapping. Follow a guided workflow to optimize results and produce share-ready outputs.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@MR901/mcp-plots",
+  "security": null,
+  "tools": [
+    {
+      "name": "configure_preferences",
+      "description": "\n        Interactive configuration tool for setting user preferences.\n        \n        Parameters:\n        - output_format: \"mermaid\", \"mcp_image\", or \"mcp_text\"\n        - theme: \"default\", \"dark\", \"seaborn\", \"minimal\", etc.\n        - chart_width: Chart width in pixels\n        - chart_height: Chart height in pixels  \n        - reset_to_defaults: Reset all preferences to system defaults\n        \n        If no parameters provided, shows current configuration with sample.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "configure_preferencesArguments",
+        "properties": {
+          "theme": {
+            "type": "string",
+            "title": "Theme",
+            "default": null
+          },
+          "chart_width": {
+            "type": "integer",
+            "title": "Chart Width",
+            "default": null
+          },
+          "chart_height": {
+            "type": "integer",
+            "title": "Chart Height",
+            "default": null
+          },
+          "output_format": {
+            "type": "string",
+            "title": "Output Format",
+            "default": null
+          },
+          "reset_to_defaults": {
+            "type": "boolean",
+            "title": "Reset To Defaults",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "configure_preferencesOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "render_chart",
+      "description": "\n        Render a chart from tabular data and return MCP-compatible content.\n        \n        Special modes:\n        - chart_type=\"help\": Returns available chart types, themes, and field suggestions\n        - chart_type=\"suggest\": Analyzes your data and suggests field mappings (requires data)\n\n        Parameters:\n        - chart_type: chart type (\"line\", \"bar\", \"pie\", etc.) or \"help\"/\"suggest\"\n        - data: list of objects (rows) - optional for help mode\n        - field_map: keys like x_field, y_field, category_field, value_field, group_field, size_field\n        - config_overrides: subset of ChartConfig as dict (width, height, title, theme, dpi, etc.)\n        - options: generator-specific options (e.g., smooth, stack)\n        - output_format: MCP_IMAGE (PNG), MCP_TEXT (SVG), or MERMAID\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "render_chartArguments",
+        "required": [
+          "chart_type"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Data",
+            "default": null
+          },
+          "options": {
+            "type": "object",
+            "title": "Options",
+            "default": null,
+            "additionalProperties": true
+          },
+          "field_map": {
+            "type": "object",
+            "title": "Field Map",
+            "default": null,
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "chart_type": {
+            "type": "string",
+            "title": "Chart Type"
+          },
+          "output_format": {
+            "type": "string",
+            "title": "Output Format",
+            "default": null
+          },
+          "config_overrides": {
+            "type": "object",
+            "title": "Config Overrides",
+            "default": null,
+            "additionalProperties": true
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "render_chartOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@MR901/mcp-plots/mcp",
+      "configSchema": {}
+    }
+  ]
+}

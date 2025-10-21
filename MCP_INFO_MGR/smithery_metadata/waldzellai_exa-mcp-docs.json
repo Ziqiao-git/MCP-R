@@ -1,0 +1,234 @@
+{
+  "qualifiedName": "@waldzellai/exa-mcp-docs",
+  "displayName": "Exa Documentation Server",
+  "description": "Provide AI assistants with comprehensive, offline-first access to Exa.ai's complete API documentation, code examples, integrations, and changelogs. Enable seamless integration of Exa's search capabilities into developer workflows through smart, context-aware tools. Enhance productivity by delivering accurate, up-to-date information without requiring an internet connection.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/exa.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@waldzellai/exa-mcp-docs",
+  "security": null,
+  "tools": [
+    {
+      "name": "exa_docs",
+      "description": "Access Exa.ai's complete documentation, code examples, and interactive tutorials through a single unified tool. This simplifies usage by providing all documentation operations in one place instead of multiple separate tools.\n\nAvailable operations:\n- Documentation: get_docs, search_docs\n- Examples: list_examples, get_example, search_examples  \n- Integrations: get_integration, list_integrations, search_integrations\n- Websets: get_websets_docs, search_websets\n- Changelog: get_changelog, get_latest_changes, search_changes",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "operation"
+        ],
+        "properties": {
+          "docs": {
+            "type": "object",
+            "properties": {
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific documentation paths to retrieve"
+              },
+              "query": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Keywords to search across documentation"
+              },
+              "category": {
+                "enum": [
+                  "api",
+                  "concepts",
+                  "guides",
+                  "admin",
+                  "reference"
+                ],
+                "type": "string",
+                "description": "Filter by documentation category"
+              }
+            },
+            "additionalProperties": false
+          },
+          "websets": {
+            "type": "object",
+            "properties": {
+              "feature": {
+                "enum": [
+                  "monitors",
+                  "webhooks",
+                  "enrichments",
+                  "imports",
+                  "websets",
+                  "events",
+                  "searches",
+                  "items"
+                ],
+                "type": "string",
+                "description": "Specific Websets feature"
+              },
+              "operation": {
+                "enum": [
+                  "create",
+                  "update",
+                  "delete",
+                  "list",
+                  "get",
+                  "cancel"
+                ],
+                "type": "string",
+                "description": "Specific operation type"
+              },
+              "includeExamples": {
+                "type": "boolean",
+                "description": "Include code examples in response"
+              }
+            },
+            "additionalProperties": false
+          },
+          "examples": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Specific example name to retrieve"
+              },
+              "query": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Keywords to search within examples"
+              },
+              "useCase": {
+                "enum": [
+                  "research",
+                  "rag",
+                  "news",
+                  "analysis",
+                  "recruiting",
+                  "hallucination-detection"
+                ],
+                "type": "string",
+                "description": "Filter by use case type"
+              },
+              "language": {
+                "enum": [
+                  "python",
+                  "typescript",
+                  "javascript"
+                ],
+                "type": "string",
+                "description": "Filter by programming language"
+              }
+            },
+            "additionalProperties": false
+          },
+          "changelog": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "type": "string",
+                "description": "Specific version or 'latest'"
+              },
+              "dateRange": {
+                "type": "object",
+                "properties": {
+                  "end": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": "string"
+                  }
+                },
+                "description": "Filter changes by date range",
+                "additionalProperties": false
+              },
+              "changeType": {
+                "enum": [
+                  "breaking",
+                  "feature",
+                  "fix",
+                  "deprecation",
+                  "enhancement"
+                ],
+                "type": "string",
+                "description": "Filter by type of change"
+              }
+            },
+            "additionalProperties": false
+          },
+          "operation": {
+            "enum": [
+              "get_docs",
+              "search_docs",
+              "list_examples",
+              "get_example",
+              "search_examples",
+              "get_integration",
+              "list_integrations",
+              "search_integrations",
+              "get_websets_docs",
+              "search_websets",
+              "get_changelog",
+              "get_latest_changes",
+              "search_changes"
+            ],
+            "type": "string",
+            "description": "What you want to do"
+          },
+          "integrations": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Keywords to search within integrations"
+              },
+              "topic": {
+                "type": "string",
+                "description": "Integration topic"
+              },
+              "method": {
+                "type": "string",
+                "description": "Specific method or feature"
+              },
+              "platform": {
+                "enum": [
+                  "python-sdk",
+                  "js-sdk",
+                  "typescript-sdk",
+                  "langchain",
+                  "llamaindex",
+                  "crewai",
+                  "openai",
+                  "vercel",
+                  "ibm-watsonx",
+                  "openrouter"
+                ],
+                "type": "string",
+                "description": "Specific platform or SDK"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@waldzellai/exa-mcp-docs/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

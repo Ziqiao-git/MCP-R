@@ -1,0 +1,57 @@
+{
+  "qualifiedName": "mcp-summarization-functions",
+  "displayName": "Summarization Functions",
+  "description": "Provides summarised output from various actions that could otherwise eat up tokens and cause crashes.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [],
+  "connections": [
+    {
+      "type": "stdio",
+      "stdioFunction": "config => ({command: 'npx', args: ['-y', 'mcp-summarization-functions'], env: {PROVIDER: config.provider, API_KEY: config.apiKey, MODEL_ID: config.modelId, PROVIDER_BASE_URL: config.providerBaseUrl, MAX_TOKENS: config.maxTokens, SUMMARIZATION_CHAR_THRESHOLD: config.summarizationCharThreshold, SUMMARIZATION_CACHE_MAX_AGE: config.summarizationCacheMaxAge, MCP_WORKING_DIR: config.mcpWorkingDir}})",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "provider",
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "API key for the selected provider."
+          },
+          "modelId": {
+            "type": "string",
+            "description": "Specific model to use."
+          },
+          "provider": {
+            "type": "string",
+            "description": "AI provider to use. Supported values: ANTHROPIC, OPENAI, OPENAI-COMPATIBLE, GOOGLE."
+          },
+          "maxTokens": {
+            "type": "number",
+            "description": "Maximum tokens for model responses."
+          },
+          "mcpWorkingDir": {
+            "type": "string",
+            "description": "Fallback directory for trying to find files with relative paths from."
+          },
+          "providerBaseUrl": {
+            "type": "string",
+            "description": "Custom API endpoint for OpenAI-compatible providers."
+          },
+          "summarizationCacheMaxAge": {
+            "type": "number",
+            "description": "Cache duration in milliseconds."
+          },
+          "summarizationCharThreshold": {
+            "type": "number",
+            "description": "Character count threshold for when to summarize."
+          }
+        }
+      }
+    }
+  ]
+}

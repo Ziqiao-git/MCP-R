@@ -1,0 +1,268 @@
+{
+  "qualifiedName": "@Hint-Services/mcp-trello",
+  "displayName": "Trello",
+  "description": "Covers main interactions with Trello boards. Managing and moving cards, list interactions, and board activities.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/8bb1367f-db00-48ac-b0b1-6826102c2eae.jpeg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Hint-Services/mcp-trello",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "getCardsByList",
+      "description": "Get cards by list ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getLists",
+      "description": "Get all lists from the configured board",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getRecentActivity",
+      "description": "Get recent activity from the configured board",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addCard",
+      "description": "Add a new card to a list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "listId": {
+            "type": "string"
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateCard",
+      "description": "Update an existing card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "cardId": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string",
+            "description": "top, bottom, or a number"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "moveCard",
+      "description": "Move a card to a different list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId",
+          "listId"
+        ],
+        "properties": {
+          "cardId": {
+            "type": "string"
+          },
+          "listId": {
+            "type": "string"
+          },
+          "boardId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "changeCardMembers",
+      "description": "Change the members of a card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId",
+          "members"
+        ],
+        "properties": {
+          "cardId": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "archiveCard",
+      "description": "Archive a card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cardId"
+        ],
+        "properties": {
+          "cardId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addList",
+      "description": "Add a new list to the configured board",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "archiveList",
+      "description": "Archive a list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getMyCards",
+      "description": "Get cards assigned to the authenticated user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Hint-Services/mcp-trello/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey",
+          "token",
+          "boardId"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Trello token generated using your API key"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Trello API key from https://trello.com/app-key"
+          },
+          "boardId": {
+            "type": "string",
+            "description": "ID of the Trello board to interact with (found in board URL)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

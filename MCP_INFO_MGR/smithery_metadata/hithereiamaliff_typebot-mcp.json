@@ -1,0 +1,249 @@
+{
+  "qualifiedName": "@hithereiamaliff/typebot-mcp",
+  "displayName": "Typebot MCP Server",
+  "description": "Expose Typebot's REST API as callable tools to manage and interact with Typebots using natural language commands. Create, list, update, delete, publish, and chat with Typebots seamlessly through an MCP interface. Simplify Typebot workspace management and conversation retrieval with easy-to-use commands.\n\nNote: this is NOT an official MCP server by Typebot, and is a direct fork of osdeibi's MCP-typebot.\n\n",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/1e079a96-93fc-4ea7-b907-7fb07070ae10.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/typebot-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "createBot",
+      "title": "createBot",
+      "description": "Create a new Typebot. Requires \"name\", optional \"description\"",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "workspaceId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "listBots",
+      "title": "listBots",
+      "description": "List all Typebots in a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "workspaceId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getBot",
+      "title": "getBot",
+      "description": "Get a Typebot by its ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "botId"
+        ],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateBot",
+      "title": "updateBot",
+      "description": "Update an existing Typebot (e.g., change name)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "botId",
+          "typebot"
+        ],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "typebot": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "overwrite": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteBot",
+      "title": "deleteBot",
+      "description": "Delete a Typebot by its ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "botId"
+        ],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "publishBot",
+      "title": "publishBot",
+      "description": "Publish an existing Typebot",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "botId"
+        ],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "unpublishBot",
+      "title": "unpublishBot",
+      "description": "Unpublish an existing Typebot",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "botId"
+        ],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "listResults",
+      "title": "listResults",
+      "description": "List results of a Typebot",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "botId"
+        ],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "timeFilter": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "startChat",
+      "title": "startChat",
+      "description": "Start a chat with a Typebot. Requires botId, optional chat.context",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "botId"
+        ],
+        "properties": {
+          "chat": {
+            "type": "object",
+            "properties": {
+              "context": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            },
+            "additionalProperties": false
+          },
+          "botId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/typebot-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "TYPEBOT_TOKEN",
+          "TYPEBOT_WORKSPACE_ID",
+          "TYPEBOT_API_URL"
+        ],
+        "properties": {
+          "TYPEBOT_TOKEN": {
+            "type": "string",
+            "description": "API token for Typebot"
+          },
+          "TYPEBOT_API_URL": {
+            "type": "string",
+            "description": "API URL for Typebot"
+          },
+          "TYPEBOT_WORKSPACE_ID": {
+            "type": "string",
+            "description": "Default workspace ID for Typebot"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

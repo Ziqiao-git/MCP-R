@@ -1,0 +1,342 @@
+{
+  "qualifiedName": "@samuelvinay91/testrail-mcp",
+  "displayName": "TestRail",
+  "description": "Connect to your TestRail instance to view and manage projects, test cases, and test runs. Generate project dashboards with metrics and analytics to track quality and progress. Streamline QA workflows by creating and organizing cases and runs directly from one place.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@samuelvinay91/testrail-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "connect_testrail",
+      "description": "Connect to TestRail instance with credentials",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "baseUrl",
+          "username",
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "TestRail API key"
+          },
+          "baseUrl": {
+            "type": "string",
+            "description": "TestRail instance URL (e.g., https://yourcompany.testrail.io)"
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Request timeout in milliseconds (default: 30000)"
+          },
+          "username": {
+            "type": "string",
+            "description": "TestRail username (email address)"
+          }
+        }
+      }
+    },
+    {
+      "name": "test_connection",
+      "description": "Test TestRail connection and validate credentials",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_projects",
+      "description": "Get all TestRail projects",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "isCompleted": {
+            "type": "boolean",
+            "description": "Filter by completion status"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_project",
+      "description": "Get specific TestRail project by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "number",
+            "description": "Project ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_project",
+      "description": "Create new TestRail project",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "suiteMode": {
+            "type": "number",
+            "description": "Suite mode (1=single, 2=single+baselines, 3=multiple)"
+          },
+          "announcement": {
+            "type": "string",
+            "description": "Project announcement"
+          },
+          "showAnnouncement": {
+            "type": "boolean",
+            "description": "Show announcement to users"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_cases",
+      "description": "Get test cases for a project/suite",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "suiteId": {
+            "type": "number",
+            "description": "Suite ID"
+          },
+          "projectId": {
+            "type": "number",
+            "description": "Project ID"
+          },
+          "sectionId": {
+            "type": "number",
+            "description": "Section ID (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_case",
+      "description": "Create new test case",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sectionId",
+          "title"
+        ],
+        "properties": {
+          "refs": {
+            "type": "string",
+            "description": "References (requirements)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Test case title"
+          },
+          "typeId": {
+            "type": "number",
+            "description": "Test case type ID"
+          },
+          "estimate": {
+            "type": "string",
+            "description": "Time estimate"
+          },
+          "sectionId": {
+            "type": "number",
+            "description": "Section ID"
+          },
+          "priorityId": {
+            "type": "number",
+            "description": "Priority ID"
+          },
+          "milestone_id": {
+            "type": "number",
+            "description": "Milestone ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_runs",
+      "description": "Get test runs for a project",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Limit results"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Offset for pagination"
+          },
+          "createdBy": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Created by user IDs"
+          },
+          "projectId": {
+            "type": "number",
+            "description": "Project ID"
+          },
+          "isCompleted": {
+            "type": "boolean",
+            "description": "Filter by completion status"
+          },
+          "createdAfter": {
+            "type": "number",
+            "description": "Created after timestamp"
+          },
+          "createdBefore": {
+            "type": "number",
+            "description": "Created before timestamp"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_run",
+      "description": "Create new test run",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Test run name"
+          },
+          "caseIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Test case IDs to include"
+          },
+          "suiteId": {
+            "type": "number",
+            "description": "Suite ID"
+          },
+          "projectId": {
+            "type": "number",
+            "description": "Project ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "Test run description"
+          },
+          "milestoneId": {
+            "type": "number",
+            "description": "Milestone ID"
+          },
+          "assignedtoId": {
+            "type": "number",
+            "description": "Assigned user ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "generate_project_dashboard",
+      "description": "Generate comprehensive project dashboard with metrics and analytics",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "number",
+            "description": "Project ID"
+          },
+          "timeframe": {
+            "enum": [
+              "7d",
+              "30d",
+              "90d",
+              "all"
+            ],
+            "type": "string",
+            "description": "Time frame for analytics"
+          },
+          "includeCharts": {
+            "type": "boolean",
+            "description": "Include chart data"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@samuelvinay91/testrail-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "baseUrl",
+          "username",
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "TestRail API key"
+          },
+          "baseUrl": {
+            "type": "string",
+            "description": "TestRail instance URL (e.g., https://yourcompany.testrail.io)"
+          },
+          "timeout": {
+            "type": "number",
+            "default": 30000,
+            "description": "Request timeout in milliseconds"
+          },
+          "cacheTtl": {
+            "type": "number",
+            "default": 300,
+            "description": "Cache TTL in seconds"
+          },
+          "username": {
+            "type": "string",
+            "description": "TestRail username (email address)"
+          },
+          "defaultSuiteId": {
+            "type": "number",
+            "default": 1,
+            "description": "Default suite ID"
+          },
+          "defaultProjectId": {
+            "type": "number",
+            "default": 1,
+            "description": "Default project ID"
+          },
+          "rateLimitRequestsPerMinute": {
+            "type": "number",
+            "default": 60,
+            "description": "Rate limit requests per minute"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

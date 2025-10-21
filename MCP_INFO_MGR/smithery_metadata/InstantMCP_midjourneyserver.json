@@ -1,0 +1,295 @@
+{
+  "qualifiedName": "@InstantMCP/midjourneyserver",
+  "displayName": "Midjourney  MCP Server",
+  "description": "Enable your AI assistant to generate stunning images and perform various actions using Midjourney's capabilities. Interact seamlessly with the MCP to create, modify, and check prompts for your creative projects.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/instantmcp.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "midjourney_imagine",
+      "description": "Generate up to 4 images from a text prompt using Midjourney's image generation capabilities.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "fast",
+              "relax",
+              "turbo"
+            ],
+            "type": "string",
+            "description": "The task mode for generating images. Default is 'fast' if not specified."
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Text prompt to generate the image from. Example: 'a cat --ar 1:1'"
+          },
+          "hookUrl": {
+            "type": "string",
+            "description": "URL for task completion or failure notification. If not set, you'll need to request the result separately."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Queue timeout in seconds (300-1200). Default is 300 seconds for 'fast' and 'turbo' modes, 600 seconds for 'relax' mode."
+          },
+          "getUrImages": {
+            "type": "boolean",
+            "description": "Whether to obtain four small pictures. Default is false."
+          }
+        }
+      }
+    },
+    {
+      "name": "midjourney_action",
+      "description": "Perform operations like upsampling, variations, zoom out, etc. on Midjourney-generated images.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "action"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The jobId returned in a previous Midjourney request"
+          },
+          "action": {
+            "enum": [
+              "upsample1",
+              "upsample2",
+              "upsample3",
+              "upsample4",
+              "variation1",
+              "variation2",
+              "variation3",
+              "variation4",
+              "high_variation",
+              "low_variation",
+              "upscale2",
+              "upscale4",
+              "upscale_creative",
+              "upscale_subtle",
+              "zoom_out_2",
+              "zoom_out_1_5",
+              "pan_left",
+              "pan_right",
+              "pan_up",
+              "pan_down",
+              "reroll",
+              "redo_upscale2",
+              "redo_upscale4",
+              "make_square",
+              "redo_upscale_subtle",
+              "redo_upscale_creative"
+            ],
+            "type": "string",
+            "description": "The action to perform on the image. Each corresponds to a Midjourney button operation."
+          },
+          "hookUrl": {
+            "type": "string",
+            "description": "URL for task completion or failure notification. If not set, you'll need to request the result separately."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Request timeout in seconds. Default is 300 seconds."
+          },
+          "getUrImages": {
+            "type": "boolean",
+            "description": "Whether to obtain four small pictures. Default is false."
+          }
+        }
+      }
+    },
+    {
+      "name": "midjourney_seed",
+      "description": "Get the seed value from a Midjourney-generated image, which can be used for reproducibility.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The jobId returned in a previous Midjourney request"
+          },
+          "hookUrl": {
+            "type": "string",
+            "description": "URL for task completion or failure notification. If not set, you'll need to request the result separately."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Request timeout in seconds. Default is 300 seconds."
+          }
+        }
+      }
+    },
+    {
+      "name": "midjourney_blend",
+      "description": "Upload 2-5 images and combine them into a new image based on the concept and aesthetic of each image.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "imgBase64Array"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "fast",
+              "relax",
+              "turbo"
+            ],
+            "type": "string",
+            "description": "The task mode for generating images. Default is 'fast' if not specified."
+          },
+          "hookUrl": {
+            "type": "string",
+            "description": "URL for task completion or failure notification. If not set, you'll need to request the result separately."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Request timeout in seconds. Default is 300 seconds."
+          },
+          "dimensions": {
+            "enum": [
+              "PORTRAIT",
+              "SQUARE",
+              "LANDSCAPE"
+            ],
+            "type": "string",
+            "description": "Scale of generated image. PORTRAIT (2:3), SQUARE (1:1), or LANDSCAPE (3:2). Default is SQUARE."
+          },
+          "imgBase64Array": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 2,
+            "description": "Array of base64-encoded images (2-5 images required). Each string should include the data URL prefix (e.g., 'data:image/png;base64,xxx')."
+          }
+        }
+      }
+    },
+    {
+      "name": "midjourney_describe",
+      "description": "Upload an image and generate four prompts based on the image.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "base64"
+        ],
+        "properties": {
+          "base64": {
+            "type": "string",
+            "description": "Base64 encoding of image. Example: 'data:image/png;base64,xxx1'"
+          },
+          "hookUrl": {
+            "type": "string",
+            "description": "URL for task completion or failed notification. If not set, you'll need to request the result separately."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Request timeout in seconds. Default is 300 seconds."
+          }
+        }
+      }
+    },
+    {
+      "name": "midjourney_inpaint",
+      "description": "Modify specific regions of an image using a mask and optional prompt.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "mask"
+        ],
+        "properties": {
+          "mask": {
+            "type": "string",
+            "description": "Base64 encoded mask image where white areas indicate regions to be redrawn and black areas remain unchanged"
+          },
+          "jobId": {
+            "type": "string",
+            "description": "The jobId of a previous Midjourney request to be modified"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Optional drawing prompt for the selected areas"
+          },
+          "hookUrl": {
+            "type": "string",
+            "description": "URL for task completion or failed notification. If not set, you'll need to request the result separately."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Request timeout in seconds. Default is 300 seconds."
+          }
+        }
+      }
+    },
+    {
+      "name": "midjourney_fetch_job",
+      "description": "Fetches the result status and details of a previously submitted Midjourney job using its Job ID.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "jobId"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The unique identifier of the Midjourney job to fetch the results for."
+          }
+        }
+      }
+    },
+    {
+      "name": "midjourney_prompt_check",
+      "description": "Checks if a given text prompt is compliant with Midjourney rules before potentially using it for generation. This is a free check.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "The text prompt to check for compliance."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@InstantMCP/midjourneyserver/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Go to InstantMcp.com and create an account. Then go to the API Keys page and create an API Key."
+          },
+          "logLevel": {
+            "type": "string",
+            "default": "info",
+            "description": "Log level for the server (e.g., debug, info, warn, error)."
+          }
+        }
+      }
+    }
+  ]
+}

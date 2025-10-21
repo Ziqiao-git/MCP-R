@@ -1,0 +1,190 @@
+{
+  "qualifiedName": "@DynamicEndpoints/fantasy-pros-mcp",
+  "displayName": "FantasyPros API Server",
+  "description": "Access sports data, news, rankings, and projections seamlessly. Retrieve the latest updates and player information for NFL, MLB, NBA, and NHL with ease. Enhance your applications with real-time sports insights and analytics.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_sport_news",
+      "description": "Get news for a specific sport",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sport"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 25,
+            "minimum": 1,
+            "description": "Number of news items to return (max 25)"
+          },
+          "sport": {
+            "enum": [
+              "nfl",
+              "mlb",
+              "nba",
+              "nhl"
+            ],
+            "type": "string",
+            "description": "Sport to get news for"
+          },
+          "category": {
+            "enum": [
+              "injury",
+              "recap",
+              "transaction",
+              "rumor",
+              "breaking"
+            ],
+            "type": "string",
+            "description": "Type of news to show"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_players",
+      "description": "Get player information for a specific sport",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sport"
+        ],
+        "properties": {
+          "sport": {
+            "enum": [
+              "nfl",
+              "mlb",
+              "nba",
+              "nhl"
+            ],
+            "type": "string",
+            "description": "Sport to get players for"
+          },
+          "playerId": {
+            "type": "string",
+            "description": "Filter by specific player ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_rankings",
+      "description": "Get consensus rankings for a sport",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sport"
+        ],
+        "properties": {
+          "sport": {
+            "enum": [
+              "nfl",
+              "nba"
+            ],
+            "type": "string",
+            "description": "Sport to get rankings for"
+          },
+          "scoring": {
+            "enum": [
+              "STD",
+              "PPR",
+              "HALF"
+            ],
+            "type": "string",
+            "description": "Scoring type (for NFL)"
+          },
+          "position": {
+            "type": "string",
+            "description": "Position to filter by"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_projections",
+      "description": "Get player projections for a sport",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sport",
+          "season"
+        ],
+        "properties": {
+          "week": {
+            "type": "string",
+            "description": "Week number (for NFL)"
+          },
+          "sport": {
+            "enum": [
+              "nfl",
+              "mlb",
+              "nba"
+            ],
+            "type": "string",
+            "description": "Sport to get projections for"
+          },
+          "season": {
+            "type": "string",
+            "description": "Season year"
+          },
+          "position": {
+            "type": "string",
+            "description": "Position to filter by"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_all_news",
+      "description": "Get all news from FantasyPros",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 25,
+            "minimum": 1,
+            "description": "Number of news items to return (max 25)"
+          },
+          "category": {
+            "enum": [
+              "injury",
+              "recap",
+              "transaction",
+              "rumor",
+              "breaking"
+            ],
+            "type": "string",
+            "description": "Type of news items to show"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@DynamicEndpoints/fantasy-pros-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "fantasyprosApiKey"
+        ],
+        "properties": {
+          "fantasyprosApiKey": {
+            "type": "string",
+            "description": "API key for FantasyPros services."
+          }
+        }
+      }
+    }
+  ]
+}

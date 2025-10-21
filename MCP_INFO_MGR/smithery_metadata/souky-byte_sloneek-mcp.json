@@ -1,0 +1,580 @@
+{
+  "qualifiedName": "@souky-byte/sloneek-mcp",
+  "displayName": "Sloneek MCP Server",
+  "description": "Integrate seamlessly with the Sloneek API to manage users, absences, and personal information. Empower your LLM applications to interact with real-time data through a standardized interface. Enhance your workflows with advanced querying and user management capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "search_sloneek_users",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of tags to filter users by"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of roles to filter users by"
+          },
+          "teams": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of teams to filter users by"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Filter by user status (active/inactive)"
+          },
+          "perPage": {
+            "type": "number",
+            "description": "Number of records per page (default: 25, max: 100)"
+          },
+          "searchText": {
+            "type": "string",
+            "description": "Text to search for users (name, surname, email, position). To search for a full name, you can enter e.g., \"John Doe\" and the system will automatically search in both name and surname fields."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sloneek_user_personal_information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userUuid"
+        ],
+        "properties": {
+          "userUuid": {
+            "type": "string",
+            "description": "UUID of the user whose personal information is to be retrieved"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "query_sloneek_users",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Natural language query in English, e.g., \"Find all users who do not have a personal email filled in\" or \"Show me users with the position Developer\""
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sloneek_birthdays",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format (e.g., 2024-12-31)"
+          },
+          "from": {
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format (e.g., 2024-01-01)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sloneek_salary_history",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userUuid"
+        ],
+        "properties": {
+          "userUuid": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "UUID of the user for whom to retrieve salary history and financial data"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of user UUIDs for whom to retrieve salary history and financial data. To retrieve all users, enter \"all\"."
+              }
+            ],
+            "description": "UUID of the user or array of user UUIDs for whom to retrieve financial data. The tool returns not only salary history but also bonuses, deductions, meal voucher information, and working hours. The value \"all\" retrieves data for all active users."
+          },
+          "maxRetries": {
+            "type": "number",
+            "default": 3,
+            "description": "Maximum number of retry attempts for failed requests"
+          },
+          "include_disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, include disabled/inactive users when using the value \"all\""
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sloneek_user_timeline",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userUuid"
+        ],
+        "properties": {
+          "userUuid": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "UUID of the user for whom to retrieve the timeline"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of user UUIDs for whom to retrieve the timeline. To retrieve all users, enter \"all\"."
+              }
+            ],
+            "description": "UUID of the user or array of user UUIDs for whom to retrieve the timeline. The tool returns a chronological overview of important events in the user's history: join date, position changes, team changes, location changes, kudos received, evaluations, and other important milestones. The value \"all\" retrieves data for all active users."
+          },
+          "maxRetries": {
+            "type": "number",
+            "default": 3,
+            "description": "Maximum number of retry attempts for failed requests"
+          },
+          "include_disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, include disabled/inactive users when using the value \"all\""
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_users_per_team",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "team": {
+            "type": "string",
+            "description": "Team to filter results - can be team name (e.g., \"Development\"), code (e.g., \"DEVELOPMENT\"), or UUID"
+          },
+          "cacheMinutes": {
+            "type": "number",
+            "default": 120,
+            "description": "How long the results should be cached in minutes (default: 120 minutes)"
+          },
+          "includeDisabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, include disabled users in the results"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add_bonus_to_employees",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "value",
+          "currency",
+          "date"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Date of the bonus in YYYY-MM-DD format"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the bonus"
+          },
+          "note": {
+            "type": "string",
+            "description": "Note for the bonus"
+          },
+          "team": {
+            "type": "string",
+            "description": "Team whose members should receive the bonus - can be team name (e.g., \"Development\"), code (e.g., \"DEVELOPMENT\"), or UUID"
+          },
+          "value": {
+            "type": "number",
+            "description": "Value of the bonus",
+            "exclusiveMinimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code (e.g., EUR, CZK, USD) or currency UUID"
+          },
+          "userUuid": {
+            "type": "string",
+            "description": "UUID of the user to add the bonus to"
+          },
+          "userUuids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of user UUIDs to add the bonus to"
+          },
+          "isRecurring": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the bonus is recurring"
+          },
+          "recurringToDate": {
+            "type": "string",
+            "description": "Date until which the bonus recurs, in YYYY-MM-DD format"
+          },
+          "recurringFromDate": {
+            "type": "string",
+            "description": "Date from which the bonus recurs, in YYYY-MM-DD format"
+          },
+          "recurringInterval": {
+            "enum": [
+              "month",
+              "quarter",
+              "year"
+            ],
+            "type": "string",
+            "description": "Interval for the recurring bonus"
+          },
+          "isIndefinitePeriod": {
+            "type": "boolean",
+            "description": "Whether the recurring bonus is for an indefinite period"
+          },
+          "recurringDayOfMonth": {
+            "type": "number",
+            "maximum": 31,
+            "minimum": 1,
+            "description": "Day of the month for recurring bonus (1-31)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sloneek_absence_options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userUuid"
+        ],
+        "properties": {
+          "userUuid": {
+            "type": "string",
+            "description": "UUID of the user for whom to retrieve absence options"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_sloneek_absence",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userUuid",
+          "userAbsenceEventUuid",
+          "startDateTime",
+          "endDateTime",
+          "dayType"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "Note for the absence"
+          },
+          "dayType": {
+            "enum": [
+              "full_day",
+              "first_half",
+              "second_half",
+              "custom"
+            ],
+            "type": "string",
+            "description": "Type of absence day (full day, first half, second half, custom)"
+          },
+          "fullDay": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether it is a full-day absence"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message for the absence"
+          },
+          "mentions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of user UUIDs to be mentioned in the absence"
+          },
+          "userUuid": {
+            "type": "string",
+            "description": "UUID of the user for whom to create the absence"
+          },
+          "endDateTime": {
+            "type": "string",
+            "description": "End date and time of the absence in ISO 8601 format (YYYY-MM-DDThh:mm:ss+hh:mm)"
+          },
+          "startDateTime": {
+            "type": "string",
+            "description": "Start date and time of the absence in ISO 8601 format (YYYY-MM-DDThh:mm:ss+hh:mm)"
+          },
+          "automaticallyApprove": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the absence should be automatically approved"
+          },
+          "userAbsenceEventUuid": {
+            "type": "string",
+            "description": "UUID of the absence type to create (obtained from get_sloneek_absence_options)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_sloneek_survey",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "deadline_in_days_from_start",
+          "questions"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Survey name is required"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "in_progress",
+              "completed"
+            ],
+            "type": "string",
+            "default": "draft",
+            "description": "Status of the survey"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "text",
+                "type"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Question text"
+                },
+                "type": {
+                  "enum": [
+                    "text",
+                    "scale",
+                    "single_select",
+                    "multi_select",
+                    "enps"
+                  ],
+                  "type": "string",
+                  "description": "Type of question"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "text"
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Option text"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "description": "Options for select questions"
+                },
+                "scale_end": {
+                  "type": "number",
+                  "description": "End value for scale questions"
+                },
+                "is_required": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Whether the question is required"
+                },
+                "scale_start": {
+                  "type": "number",
+                  "description": "Start value for scale questions"
+                },
+                "scale_end_description": {
+                  "type": "string",
+                  "description": "Description for the end of the scale"
+                },
+                "can_add_custom_response": {
+                  "type": "boolean",
+                  "description": "Whether users can add custom responses to select questions"
+                },
+                "scale_start_description": {
+                  "type": "string",
+                  "description": "Description for the start of the scale"
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "description": "Questions for the survey"
+          },
+          "users_type": {
+            "enum": [
+              "company",
+              "location",
+              "tag",
+              "team",
+              "user"
+            ],
+            "type": "string",
+            "default": "company",
+            "description": "Type of users to include in the survey"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the survey"
+          },
+          "is_anonymous": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the survey is anonymous"
+          },
+          "users_type_uuids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "UUIDs of users, teams, tags, or locations to include in the survey"
+          },
+          "is_send_reminders": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to send reminders for the survey"
+          },
+          "can_edit_in_progress": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether users can edit their responses while the survey is in progress"
+          },
+          "deadline_in_days_from_start": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Deadline in days from the start of the survey"
+          },
+          "deadline_reminder_in_days_from_deadline": {
+            "type": "integer",
+            "description": "Days before deadline to send a reminder"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "process_natural_language_request",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Natural language query in English, e.g., \"Book a vacation for user Beruni for the last week of May\""
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@souky-byte/sloneek-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "sloneekApiUrl",
+          "sloneekClientId",
+          "sloneekClientSecret"
+        ],
+        "properties": {
+          "sloneekApiUrl": {
+            "type": "string",
+            "description": "URL for Sloneek API (e.g., https://api.sloneek.com)"
+          },
+          "sloneekClientId": {
+            "type": "string",
+            "description": "Client ID for Sloneek API authentication"
+          },
+          "sloneekClientSecret": {
+            "type": "string",
+            "description": "Client Secret for Sloneek API authentication"
+          }
+        }
+      }
+    }
+  ]
+}

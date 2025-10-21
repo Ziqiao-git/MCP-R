@@ -1,0 +1,40 @@
+{
+  "qualifiedName": "mcp-server-bigquery",
+  "displayName": "BigQuery Server",
+  "description": "A Model Context Protocol server that provides access to BigQuery, enabling LLMs to inspect database schemas and execute queries.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [],
+  "connections": [
+    {
+      "type": "stdio",
+      "stdioFunction": "config => ({command: \"uvx\", args: [\"mcp-server-bigquery\", \"--project\", config.gcpProjectId, \"--location\", config.gcpLocation, ...(config.dataset ? config.dataset.flatMap(d => [\"--dataset\", d]) : [])]})",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "gcpProjectId",
+          "gcpLocation"
+        ],
+        "properties": {
+          "dataset": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific BigQuery datasets to consider; if not provided, all tables in the project will be considered."
+          },
+          "gcpLocation": {
+            "type": "string",
+            "description": "The GCP location (e.g. europe-west9)."
+          },
+          "gcpProjectId": {
+            "type": "string",
+            "description": "The GCP project ID."
+          }
+        }
+      }
+    }
+  ]
+}

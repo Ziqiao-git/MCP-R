@@ -1,0 +1,96 @@
+{
+  "qualifiedName": "@deeppath-ai/mcp-system-infra",
+  "displayName": "Intelligent Architecture Recommendation Engine",
+  "description": "Generate tailored system architecture recommendations based on your business parameters such as QPS, concurrent users, database type, and AI model size. Automatically receive optimal resource allocation, middleware combinations, deployment strategies, and exportable architecture diagrams. Simplify infrastructure planning and ensure scalable, reliable system design with minimal effort.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@deeppath-ai/mcp-system-infra",
+  "security": null,
+  "tools": [
+    {
+      "name": "assess-system-infra",
+      "description": "This system evaluates the compliance and potential risks associated with web crawling activities. It is designed to assist developers, legal teams, and data professionals in ensuring that their crawlers operate within acceptable technical, legal, and ethical boundaries.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "qps": {
+            "type": "number",
+            "default": 10,
+            "description": "Expected Queries Per Second (QPS)"
+          },
+          "type": {
+            "enum": [
+              "web",
+              "ai"
+            ],
+            "type": "string",
+            "default": "web",
+            "description": "System type, e.g., \"web\" or \"ai\""
+          },
+          "dbType": {
+            "enum": [
+              "relational",
+              "nosql",
+              "analytics"
+            ],
+            "type": "string",
+            "default": "relational",
+            "description": "Type of database used"
+          },
+          "modelSize": {
+            "enum": [
+              "small",
+              "medium",
+              "large"
+            ],
+            "type": "string",
+            "default": "medium",
+            "description": "AI model size (if applicable)"
+          },
+          "concurrentUsers": {
+            "type": "number",
+            "default": 100,
+            "description": "Concurrent active users at peak time"
+          },
+          "activeUsersDaily": {
+            "type": "number",
+            "default": 1000,
+            "description": "Total number of active users per day"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@deeppath-ai/mcp-system-infra/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "server": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "The host to bind the server to. Default is localhost. Use 0.0.0.0 to bind to all interfaces"
+              },
+              "port": {
+                "type": "number",
+                "description": "The port to listen on for SSE or MCP transport"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

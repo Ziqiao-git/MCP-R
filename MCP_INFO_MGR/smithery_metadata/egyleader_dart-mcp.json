@@ -1,0 +1,319 @@
+{
+  "qualifiedName": "@egyleader/dart-mcp",
+  "displayName": "Dart MCP Server",
+  "description": "Bridge the gap between AI coding assistants and Dart/Flutter development workflows. Utilize powerful Dart SDK commands to analyze, compile, and manage your Dart projects seamlessly. Experience intelligent path handling and zero configuration for a smooth development experience.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.npmjs.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "dart-analyze",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Directory or file to analyze"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional options for the dart analyze command"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-compile",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "format",
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to the Dart file to compile"
+          },
+          "format": {
+            "enum": [
+              "exe",
+              "aot-snapshot",
+              "jit-snapshot",
+              "kernel",
+              "js"
+            ],
+            "type": "string",
+            "description": "Output format for the compilation"
+          },
+          "output": {
+            "type": "string",
+            "description": "Output file path"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional compilation options"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-create",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectName"
+        ],
+        "properties": {
+          "output": {
+            "type": "string",
+            "description": "Directory where to create the project"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional project creation options"
+          },
+          "template": {
+            "enum": [
+              "console",
+              "package",
+              "server-shelf",
+              "web"
+            ],
+            "type": "string",
+            "default": "package",
+            "description": "Template to use for project generation"
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-doc",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Directory containing the Dart package to document"
+          },
+          "output": {
+            "type": "string",
+            "description": "Output directory for the generated documentation"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional documentation options"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-fix",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Directory or file to apply fixes to"
+          },
+          "apply": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to apply the suggested fixes"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional fix options"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-format",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "paths"
+        ],
+        "properties": {
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Files or directories to format"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional format options"
+          },
+          "setExitIfChanged": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return exit code 1 if there are any formatting changes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-info",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional info options"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-package",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Arguments for the pub subcommand"
+          },
+          "command": {
+            "enum": [
+              "get",
+              "upgrade",
+              "outdated",
+              "add",
+              "remove",
+              "publish",
+              "deps",
+              "downgrade",
+              "cache",
+              "run",
+              "global"
+            ],
+            "type": "string",
+            "description": "Pub subcommand to execute"
+          },
+          "workingDir": {
+            "type": "string",
+            "description": "Working directory for the command"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-run",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "script"
+        ],
+        "properties": {
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Arguments to pass to the script"
+          },
+          "script": {
+            "type": "string",
+            "description": "Path to the Dart script to run"
+          },
+          "workingDir": {
+            "type": "string",
+            "description": "Working directory for the command"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dart-test",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to the test file or directory"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional test options"
+          },
+          "workingDir": {
+            "type": "string",
+            "description": "Working directory for the command"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@egyleader/dart-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

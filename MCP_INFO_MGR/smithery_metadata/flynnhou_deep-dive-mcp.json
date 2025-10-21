@@ -1,0 +1,72 @@
+{
+  "qualifiedName": "@flynnhou/deep-dive-mcp",
+  "displayName": "Deep Dive MCP Server",
+  "description": "Provide a customizable MCP server implementation that integrates with Claude Desktop and other clients. Enable dynamic loading and execution of tools and resources via the Model Context Protocol to enhance LLM applications. Simplify installation and deployment with support for Smithery and containerized environments.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-alerts",
+      "description": "Get weather alerts for a state",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "description": "Two-letter state code (e.g., CA, NY"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-forecast",
+      "description": "Get weather forecast for a location",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90,
+            "minimum": -90,
+            "description": "Latitude of the location"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180,
+            "minimum": -180,
+            "description": "Longitude of the location"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@flynnhou/deep-dive-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "qualifiedName": "@hckhanh/gitlab",
+  "displayName": "Gitlab Utils",
+  "description": "Extend your GitLab workflows with additional utilities to enhance productivity and automation. Seamlessly integrate GitLab data and operations into your applications using this server. Simplify complex GitLab tasks with ready-to-use tools and resources.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@hckhanh/gitlab",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_upload_file",
+      "description": "Get the uploads which are uploaded files in a project that can be referenced as links in Markdown text in an issue, merge request, snippet, or wiki page (https://docs.gitlab.com/security/user_file_uploads/)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "secret",
+          "filename"
+        ],
+        "properties": {
+          "secret": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 32,
+            "description": "32-character secret of the upload"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Filename of the upload"
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "ID or URL-encoded path of the project (https://docs.gitlab.com/api/rest/#namespaced-paths)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "upload_markdown_file",
+      "description": "Upload a file to GitLab project for use in Markdown content. Accepts file content as base64 data URL or plain text. Returns upload details including markdown link format.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "fileContent",
+          "fileName"
+        ],
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "Name of the file to upload (e.g., image.png, document.txt)"
+          },
+          "projectId": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "ID or URL-encoded path of the project (https://docs.gitlab.com/api/rest/#namespaced-paths)"
+          },
+          "fileContent": {
+            "type": "string",
+            "description": "File content as base64 data URL (data:image/png;base64,...) or plain text"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@hckhanh/gitlab/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "gitlabPersonalAccessToken"
+        ],
+        "properties": {
+          "gitlabApiUrl": {
+            "type": "string",
+            "default": "https://gitlab.com/api/v4",
+            "minLength": 1,
+            "description": "GitLab API base URL"
+          },
+          "gitlabPersonalAccessToken": {
+            "type": "string",
+            "minLength": 1,
+            "description": "GitLab personal access token for authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

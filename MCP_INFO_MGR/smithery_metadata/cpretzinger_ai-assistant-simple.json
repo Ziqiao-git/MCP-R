@@ -1,0 +1,652 @@
+{
+  "qualifiedName": "@cpretzinger/ai-assistant-simple",
+  "displayName": "MemoryForge AI with Redis, PostgreSQL, and Qdrant",
+  "description": "Updated 9-16-25 Fixed EV issues Connections should be solid! v3.1.0\nGREAT NEWS: The server will now work for everyone - Railway users, Heroku users, Render users, etc.!\n***ONLY ADD EVS that APPLY TO YOUR OWN INSTANCES - Leave Blank if unused - :) \nUpdate 9-15-25\nv3.0 fixed semantic search\ntemporal tool: Add this at the beginning of n8n workflows to give temporal context\n\nUPDATED 9/1/2025! NEW TOOLS!\n\nUse the Redis Stream tools with n8n MCP Client Node for use anywhere!\n\nThe Ultimate Context Intelligence Engine\nTransform your AI into a memory master with lightning-fast recall and semantic superpowers.\n\nMemoryForge AI is the most advanced context management system ever built for AI assistants. Combining blazing-fast Redis caching, rock-solid PostgreSQL persistence, and cutting-edge Qdrant vector search, it gives your AI perfect memory that never forgets and always finds exactly what you need.\n\n⚡ Why MemoryForge Dominates:\n🚀 Sub-millisecond Context Retrieval - Redis-powered cache makes your AI respond instantly\n🎯 Semantic Memory Search - Find related information even when you can't remember exact words\n💎 Bulletproof Persistence - PostgreSQL ensures your context survives forever\n🔄 Real-time Sync - Pub/sub notifications keep everything perfectly synchronized\n🧬 Auto-Embedding Magic - Automatically converts text into searchable vector embeddings\n🎭 Multi-Session Mastery - Juggle unlimited parallel conversations and contexts\n🎪 Perfect For:\nConversation Continuity - Never lose track of what you were discussing\nDocument Intelligence - Instantly find relevant emails, notes, and files\nProject Memory - Maintain context across complex, long-term projects\nKnowledge Synthesis - Connect related ideas from different conversations\nPersonal AI Assistant - Build an AI that truly knows and remembers you\nStop fighting with forgetful AI. Start building with MemoryForge - where every conversation builds on the last, and every search finds exactly what matters.\n\nYour AI's memory just got a PhD in remembering everything that matters.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/d2a4574c-0685-4ab2-ba2e-f649724db663.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cpretzinger/ai-assistant-simple",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_context",
+      "description": "Get or create context for a topic or project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Topic or project name"
+          },
+          "autoCreate": {
+            "type": "boolean",
+            "default": true,
+            "description": "Automatically create if not found"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_context",
+      "description": "Update or add context for a topic or project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "replace",
+              "append"
+            ],
+            "type": "string",
+            "default": "append",
+            "description": "Update mode"
+          },
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Topic or project name"
+          },
+          "context": {
+            "description": "Context data to store or append"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_topics",
+      "description": "List all available topics/projects",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "default": "*",
+            "description": "Optional filter pattern"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_context",
+      "description": "Delete context for a specific topic",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Topic to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_context",
+      "description": "Search for similar contexts using semantic search",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum results to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_context_history",
+      "description": "Get history of updates for a topic",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum history entries"
+          },
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Topic to get history for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_contexts",
+      "description": "Export all contexts to JSON format",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific topics to export (empty for all)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "configure_auto_save",
+      "description": "Configure automatic context saving with custom frequency",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Topic to auto-save"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable auto-save"
+          },
+          "frequency": {
+            "type": "string",
+            "default": "5min",
+            "description": "Save frequency: 1min, 5min, 10min, 30min, 1hour, daily, or cron expression"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_auto_save_status",
+      "description": "Get current auto-save configuration and status",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Topic to check auto-save status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_stream_context",
+      "description": "Get context data directly from Redis events:raw stream",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum entries to return"
+          },
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Context topic to search for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_stream_context",
+      "description": "Write context data directly to Redis events:raw stream",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-\\.]+$",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Context topic"
+          },
+          "context": {
+            "description": "Context data to store"
+          },
+          "metadata": {
+            "description": "Additional metadata"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_person_history",
+      "description": "Search for all interactions with a specific person",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Person's name or email to search for"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Maximum results to return"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_similar_events",
+      "description": "Find semantically similar events using vector search",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "description"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum results to return"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what to search for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_temporal_patterns",
+      "description": "Analyze temporal patterns in events",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "groupBy": {
+            "type": "string",
+            "default": "hour",
+            "description": "Group by: hour, day, timeOfDay"
+          },
+          "timeframe": {
+            "type": "string",
+            "default": "24h",
+            "description": "Timeframe: 1h, 24h, 7d, 30d"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cleanup_processed_streams",
+      "description": "Clean up processed entries from Redis streams",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "dryRun": {
+            "type": "boolean",
+            "default": true,
+            "description": "Preview cleanup without executing"
+          },
+          "streamName": {
+            "type": "string",
+            "default": "events:raw",
+            "description": "Stream name to clean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_stream_health",
+      "description": "Get health status of Redis streams and processing pipeline",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "streamName": {
+            "type": "string",
+            "default": "events:raw",
+            "description": "Stream name to check"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_processing_status",
+      "description": "Update processing status for a stream entry",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "streamId"
+        ],
+        "properties": {
+          "pgStatus": {
+            "enum": [
+              "pending",
+              "processing",
+              "completed",
+              "failed"
+            ],
+            "type": "string",
+            "description": "PostgreSQL processing status"
+          },
+          "streamId": {
+            "type": "string",
+            "description": "Stream entry ID to update"
+          },
+          "errorDetails": {
+            "type": "string",
+            "description": "Error details if failed"
+          },
+          "qdrantStatus": {
+            "enum": [
+              "pending",
+              "processing",
+              "completed",
+              "failed"
+            ],
+            "type": "string",
+            "description": "Qdrant processing status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "trigger_recovery_scan",
+      "description": "Manually trigger a recovery scan for stuck entries",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "forceReset": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force reset circuit breakers before scan"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_circuit_breaker_status",
+      "description": "Get current circuit breaker status and failure counts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_data_integrity",
+      "description": "Verify data integrity across Redis, PostgreSQL, and Qdrant",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "Specific topic to verify (all if not specified)"
+          },
+          "skipVector": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip vector verification for faster check"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "emergency_backup_stream",
+      "description": "Create emergency backup of Redis stream data to prevent data loss",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "streamName": {
+            "type": "string",
+            "default": "events:raw",
+            "description": "Stream to backup"
+          },
+          "backupLocation": {
+            "type": "string",
+            "default": "emergency_backup",
+            "description": "Backup identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cpretzinger/ai-assistant-simple/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "REDISHOST": {
+            "type": "string",
+            "description": "Redis host (Azure/some providers)"
+          },
+          "REDISPORT": {
+            "type": "string",
+            "description": "Redis port (Azure/some providers)"
+          },
+          "REDISUSER": {
+            "type": "string",
+            "description": "Redis username (if needed)"
+          },
+          "REDIS_URL": {
+            "type": "string",
+            "description": "Redis URL (redis://user:pass@host:port)"
+          },
+          "QDRANT_URL": {
+            "type": "string",
+            "description": "Qdrant URL"
+          },
+          "REDIS_HOST": {
+            "type": "string",
+            "description": "Redis host for direct connection"
+          },
+          "REDIS_PORT": {
+            "type": "string",
+            "default": "6379",
+            "description": "Redis port"
+          },
+          "POSTGRES_DB": {
+            "type": "string",
+            "default": "railway",
+            "description": "PostgreSQL database"
+          },
+          "DATABASE_URL": {
+            "type": "string",
+            "description": "Railway PostgreSQL connection URL"
+          },
+          "POSTGRES_HOST": {
+            "type": "string",
+            "description": "PostgreSQL host for direct connection"
+          },
+          "POSTGRES_PORT": {
+            "type": "string",
+            "default": "5432",
+            "description": "PostgreSQL port"
+          },
+          "POSTGRES_USER": {
+            "type": "string",
+            "default": "postgres",
+            "description": "PostgreSQL user"
+          },
+          "REDISPASSWORD": {
+            "type": "string",
+            "description": "Redis password (Azure/some providers)"
+          },
+          "OPENAI_API_KEY": {
+            "type": "string",
+            "minLength": 32,
+            "description": "OpenAI API key for embeddings"
+          },
+          "QDRANT_API_KEY": {
+            "type": "string",
+            "minLength": 32,
+            "description": "Qdrant API key"
+          },
+          "REDIS_PASSWORD": {
+            "type": "string",
+            "description": "Redis password"
+          },
+          "EMBEDDING_MODEL": {
+            "type": "string",
+            "default": "text-embedding-3-small",
+            "description": "Embedding model to use"
+          },
+          "REDIS_PROXY_URL": {
+            "type": "string",
+            "description": "Redis HTTP proxy URL"
+          },
+          "POSTGRES_API_KEY": {
+            "type": "string",
+            "description": "PostgREST API key"
+          },
+          "REDIS_PUBLIC_URL": {
+            "type": "string",
+            "description": "Redis public URL (alternative name)"
+          },
+          "POSTGRES_PASSWORD": {
+            "type": "string",
+            "description": "PostgreSQL password"
+          },
+          "POSTGRES_REST_URL": {
+            "type": "string",
+            "description": "PostgREST API URL (alternative to direct connection)"
+          },
+          "RAILWAY_REDIS_URL": {
+            "type": "string",
+            "description": "Railway Redis URL"
+          },
+          "RAILWAY_REDIS_HOST": {
+            "type": "string",
+            "description": "Railway Redis host"
+          },
+          "RAILWAY_REDIS_PORT": {
+            "type": "string",
+            "description": "Railway Redis port"
+          },
+          "REDIS_PROXY_API_KEY": {
+            "type": "string",
+            "description": "Redis proxy API key"
+          },
+          "RAILWAY_REDIS_PASSWORD": {
+            "type": "string",
+            "description": "Railway Redis password"
+          },
+          "REDIS_STREAM_MAX_RETRIES": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum retry attempts for failed processing"
+          },
+          "REDIS_AUTO_RECOVERY_ENABLED": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable automatic recovery workers"
+          },
+          "REDIS_CIRCUIT_BREAKER_THRESHOLD": {
+            "type": "number",
+            "default": 10,
+            "description": "Failure threshold for circuit breaker"
+          },
+          "REDIS_STREAM_EMERGENCY_CLEANUP_DAYS": {
+            "type": "number",
+            "default": 7,
+            "description": "Days to keep data before emergency cleanup"
+          },
+          "REDIS_RECOVERY_SCAN_INTERVAL_MINUTES": {
+            "type": "number",
+            "default": 5,
+            "description": "Minutes between recovery scans"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

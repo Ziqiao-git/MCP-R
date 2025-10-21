@@ -1,0 +1,84 @@
+{
+  "qualifiedName": "@antivirusakash/blog-imagegen-mcps",
+  "displayName": "OpenAI Image Generator",
+  "description": "Generate images dynamically using the OpenAI gpt-image-1 model. Enhance your applications with AI-powered image creation capabilities. Easily integrate image generation into your workflows via a standardized MCP server.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@antivirusakash/blog-imagegen-mcps",
+  "security": null,
+  "tools": [
+    {
+      "name": "generate_image",
+      "description": "Generate image(s) using OpenAI's gpt-image-1 model.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "n": {
+            "type": "integer",
+            "maximum": 4,
+            "minimum": 1,
+            "description": "Number of images to generate (1-4)."
+          },
+          "size": {
+            "enum": [
+              "256x256",
+              "512x512",
+              "1024x1024"
+            ],
+            "type": "string",
+            "description": "Size of the generated images."
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Text prompt for the image."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@antivirusakash/blog-imagegen-mcps/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "openaiApiKey"
+        ],
+        "properties": {
+          "defaultN": {
+            "type": "integer",
+            "default": 1,
+            "maximum": 4,
+            "minimum": 1,
+            "description": "Default number of images to generate (1-4)."
+          },
+          "defaultSize": {
+            "enum": [
+              "256x256",
+              "512x512",
+              "1024x1024"
+            ],
+            "type": "string",
+            "default": "1024x1024",
+            "description": "Default image size for generation. Must be one of the allowed values."
+          },
+          "openaiApiKey": {
+            "type": "string",
+            "description": "OpenAI API key"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,2043 @@
+{
+  "qualifiedName": "@GigaChatTester/lichess-mcp",
+  "displayName": "Lichess Integration",
+  "description": "Interact with the Lichess chess platform using natural language to manage your account, play games, analyze positions, and participate in tournaments. Seamlessly control your chess activities and engage with other players through an intuitive conversational interface. Enhance your chess experience by leveraging powerful tools for gameplay and analysis.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/lichess.org.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "set_token",
+      "description": "Set your Lichess API token",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Your Lichess API token"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_my_profile",
+      "description": "Get your Lichess profile information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_user_profile",
+      "description": "Get a user's Lichess profile information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "trophies": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include user trophies"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the player"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_my_email",
+      "description": "Get your email address",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_kid_mode",
+      "description": "Get kid mode status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "set_kid_mode",
+      "description": "Set kid mode status",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "boolean",
+            "description": "Enable or disable kid mode"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_challenge",
+      "description": "Create a new challenge",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "color": {
+            "enum": [
+              "white",
+              "black",
+              "random"
+            ],
+            "type": "string",
+            "default": "random"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the player to challenge"
+          },
+          "timeControl": {
+            "type": "string",
+            "default": "10+0",
+            "description": "Time control (e.g. '10+0' for 10 minutes)"
+          }
+        }
+      }
+    },
+    {
+      "name": "make_move",
+      "description": "Make a move in an ongoing game",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId",
+          "move"
+        ],
+        "properties": {
+          "move": {
+            "type": "string",
+            "description": "Move in UCI format (e.g. 'e2e4')"
+          },
+          "gameId": {
+            "type": "string",
+            "description": "ID of the game"
+          },
+          "offeringDraw": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to offer/accept a draw"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_preferences",
+      "description": "Get your preferences",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_timeline",
+      "description": "Get your timeline",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "nb": {
+            "type": "number",
+            "default": 15,
+            "maximum": 30,
+            "minimum": 1,
+            "description": "Max number of events to fetch (1-30)"
+          },
+          "since": {
+            "type": "number",
+            "description": "Show events since this timestamp"
+          }
+        }
+      }
+    },
+    {
+      "name": "test_tokens",
+      "description": "Test multiple OAuth tokens",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tokens"
+        ],
+        "properties": {
+          "tokens": {
+            "type": "string",
+            "description": "OAuth tokens separated by commas. Up to 1000."
+          }
+        }
+      }
+    },
+    {
+      "name": "revoke_token",
+      "description": "Revoke the current access token",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "upgrade_to_bot",
+      "description": "Upgrade to Bot account. WARNING: This is irreversible and the account must not have played any games.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "add_user_note",
+      "description": "Add a private note about a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The contents of the note"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the player"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_message",
+      "description": "Send a private message to another player",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Message text"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the recipient"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_following",
+      "description": "Get users followed by the logged in user",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "follow_user",
+      "description": "Follow a player",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player to follow"
+          }
+        }
+      }
+    },
+    {
+      "name": "unfollow_user",
+      "description": "Unfollow a player",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player to unfollow"
+          }
+        }
+      }
+    },
+    {
+      "name": "block_user",
+      "description": "Block a player",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player to block"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_users_status",
+      "description": "Get real-time users status",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "string",
+            "description": "User IDs separated by commas. Up to 100 IDs."
+          },
+          "withSignal": {
+            "type": "boolean",
+            "description": "Include network signal strength (1-4)"
+          },
+          "withGameIds": {
+            "type": "boolean",
+            "description": "Include IDs of ongoing games"
+          },
+          "withGameMetas": {
+            "type": "boolean",
+            "description": "Include metadata of ongoing games"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_all_top_10",
+      "description": "Get the top 10 players for each speed and variant",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_leaderboard",
+      "description": "Get the leaderboard for a single speed or variant",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "perfType"
+        ],
+        "properties": {
+          "nb": {
+            "type": "number",
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "description": "How many users to fetch (1-200)"
+          },
+          "perfType": {
+            "enum": [
+              "ultraBullet",
+              "bullet",
+              "blitz",
+              "rapid",
+              "classical",
+              "chess960",
+              "crazyhouse",
+              "antichess",
+              "atomic",
+              "horde",
+              "kingOfTheHill",
+              "racingKings",
+              "threeCheck"
+            ],
+            "type": "string",
+            "description": "The speed or variant"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_public_data",
+      "description": "Get public data of a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player"
+          },
+          "withTrophies": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include user trophies"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_rating_history",
+      "description": "Get rating history of a user for all perf types",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_performance",
+      "description": "Get performance statistics of a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username",
+          "perf"
+        ],
+        "properties": {
+          "perf": {
+            "enum": [
+              "ultraBullet",
+              "bullet",
+              "blitz",
+              "rapid",
+              "classical",
+              "correspondence",
+              "chess960",
+              "crazyhouse",
+              "antichess",
+              "atomic",
+              "horde",
+              "kingOfTheHill",
+              "racingKings",
+              "threeCheck"
+            ],
+            "type": "string",
+            "description": "The speed or variant"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the player"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_activity",
+      "description": "Get activity feed of a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_users_by_id",
+      "description": "Get multiple users by their IDs",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "string",
+            "description": "User IDs separated by commas. Up to 300 IDs."
+          }
+        }
+      }
+    },
+    {
+      "name": "unblock_user",
+      "description": "Unblock a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player to unblock"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_game",
+      "description": "Export one game in PGN or JSON format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId"
+        ],
+        "properties": {
+          "tags": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include the PGN tags"
+          },
+          "evals": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include analysis evaluation comments"
+          },
+          "moves": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include the PGN moves"
+          },
+          "clocks": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include clock comments in the PGN moves"
+          },
+          "gameId": {
+            "type": "string",
+            "description": "The game ID"
+          },
+          "opening": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include opening name"
+          },
+          "accuracy": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include accuracy percentages"
+          },
+          "literate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include textual annotations"
+          },
+          "pgnInJson": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include the full PGN within the JSON response"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_ongoing_game",
+      "description": "Export ongoing game of a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "tags": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include the PGN tags"
+          },
+          "evals": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include analysis evaluation comments"
+          },
+          "moves": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include the PGN moves"
+          },
+          "clocks": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include clock comments in the PGN moves"
+          },
+          "opening": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include opening name"
+          },
+          "username": {
+            "type": "string",
+            "description": "The username"
+          },
+          "pgnInJson": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include the full PGN within the JSON response"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_user_games",
+      "description": "Export all games of a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "vs": {
+            "type": "string",
+            "description": "Only games against this opponent"
+          },
+          "max": {
+            "type": "number",
+            "description": "Maximum number of games to download"
+          },
+          "sort": {
+            "enum": [
+              "dateAsc",
+              "dateDesc"
+            ],
+            "type": "string",
+            "default": "dateDesc",
+            "description": "Sort order of games"
+          },
+          "tags": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include tags"
+          },
+          "color": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "type": "string",
+            "description": "Only games played as this color"
+          },
+          "evals": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include analysis"
+          },
+          "moves": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include moves"
+          },
+          "rated": {
+            "type": "boolean",
+            "description": "Only rated (true) or casual (false) games"
+          },
+          "since": {
+            "type": "number",
+            "description": "Download games played since timestamp"
+          },
+          "until": {
+            "type": "number",
+            "description": "Download games played until timestamp"
+          },
+          "clocks": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include clock comments"
+          },
+          "lastFen": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include last position FEN"
+          },
+          "ongoing": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include ongoing games"
+          },
+          "opening": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include opening"
+          },
+          "accuracy": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include accuracy"
+          },
+          "analysed": {
+            "type": "boolean",
+            "description": "Only games with or without computer analysis"
+          },
+          "finished": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include finished games"
+          },
+          "literate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include textual annotations"
+          },
+          "perfType": {
+            "enum": [
+              "ultraBullet",
+              "bullet",
+              "blitz",
+              "rapid",
+              "classical",
+              "correspondence",
+              "chess960",
+              "crazyhouse",
+              "antichess",
+              "atomic",
+              "horde",
+              "kingOfTheHill",
+              "racingKings",
+              "threeCheck"
+            ],
+            "type": "string",
+            "description": "Only games in these speeds or variants"
+          },
+          "username": {
+            "type": "string",
+            "description": "The username"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_games_by_ids",
+      "description": "Export multiple games by IDs",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "string",
+            "description": "Game IDs separated by commas. Up to 300 IDs."
+          },
+          "tags": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include the PGN tags"
+          },
+          "evals": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include analysis"
+          },
+          "moves": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include the PGN moves"
+          },
+          "clocks": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include clock comments"
+          },
+          "opening": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include opening name"
+          },
+          "pgnInJson": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include the full PGN within the JSON response"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_tv_channels",
+      "description": "Get all TV channels and their current games",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_tv_game",
+      "description": "Get current TV game in PGN format",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "enum": [
+              "bot",
+              "blitz",
+              "racingKings",
+              "ultraBullet",
+              "bullet",
+              "classical",
+              "threeCheck",
+              "antichess",
+              "computer",
+              "horde",
+              "rapid",
+              "atomic",
+              "crazyhouse",
+              "chess960",
+              "kingOfTheHill",
+              "best"
+            ],
+            "type": "string",
+            "description": "Channel name like 'bot', 'blitz', etc."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_puzzle_activity",
+      "description": "Get your puzzle activity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "max": {
+            "type": "number",
+            "maximum": 200,
+            "minimum": 1,
+            "description": "How many entries to download. Leave empty to get all activity."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_puzzle_dashboard",
+      "description": "Get your puzzle dashboard",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "number",
+            "default": 30,
+            "maximum": 30,
+            "minimum": 1,
+            "description": "How many days of history to return (max 30)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_puzzle_race",
+      "description": "Get info about a puzzle race",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "raceId"
+        ],
+        "properties": {
+          "raceId": {
+            "type": "string",
+            "description": "ID of the puzzle race"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_puzzle_race",
+      "description": "Create a puzzle race",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_puzzle_storm_dashboard",
+      "description": "Get your puzzle storm dashboard",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "number",
+            "default": 30,
+            "maximum": 30,
+            "minimum": 1,
+            "description": "How many days of history to return (max 30)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_team_info",
+      "description": "Get team information by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_team_members",
+      "description": "Get members of a team",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId"
+        ],
+        "properties": {
+          "max": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum number of members to fetch"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_team_join_requests",
+      "description": "Get join requests for a team",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "join_team",
+      "description": "Join a team",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          },
+          "message": {
+            "type": "string",
+            "description": "Optional message for team leaders"
+          }
+        }
+      }
+    },
+    {
+      "name": "leave_team",
+      "description": "Leave a team",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "kick_user_from_team",
+      "description": "Kick a user from your team",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId",
+          "userId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The user ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "accept_join_request",
+      "description": "Accept a join request for your team",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId",
+          "userId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The user ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "decline_join_request",
+      "description": "Decline a join request for your team",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "teamId",
+          "userId"
+        ],
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "description": "The team ID"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The user ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_teams",
+      "description": "Search for teams",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number (starting at 1)"
+          },
+          "text": {
+            "type": "string",
+            "description": "Search text"
+          }
+        }
+      }
+    },
+    {
+      "name": "make_board_move",
+      "description": "Make a move in a board game",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId",
+          "move"
+        ],
+        "properties": {
+          "move": {
+            "type": "string",
+            "description": "Move in UCI format (e.g. e2e4)"
+          },
+          "gameId": {
+            "type": "string",
+            "description": "The game ID"
+          },
+          "offeringDraw": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to offer/accept a draw"
+          }
+        }
+      }
+    },
+    {
+      "name": "abort_board_game",
+      "description": "Abort a board game",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId"
+        ],
+        "properties": {
+          "gameId": {
+            "type": "string",
+            "description": "The game ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "resign_board_game",
+      "description": "Resign a board game",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId"
+        ],
+        "properties": {
+          "gameId": {
+            "type": "string",
+            "description": "The game ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "write_in_chat",
+      "description": "Write in the chat of a board game",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId",
+          "room",
+          "text"
+        ],
+        "properties": {
+          "room": {
+            "enum": [
+              "player",
+              "spectator"
+            ],
+            "type": "string",
+            "description": "The chat room"
+          },
+          "text": {
+            "type": "string",
+            "description": "The message to send"
+          },
+          "gameId": {
+            "type": "string",
+            "description": "The game ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "handle_draw_board_game",
+      "description": "Handle draw offers for a board game",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId"
+        ],
+        "properties": {
+          "accept": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to accept or decline the draw offer"
+          },
+          "gameId": {
+            "type": "string",
+            "description": "The game ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "claim_victory",
+      "description": "Claim victory if opponent abandoned the game",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gameId"
+        ],
+        "properties": {
+          "gameId": {
+            "type": "string",
+            "description": "The game ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_challenges",
+      "description": "List incoming and outgoing challenges",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "create_challenge",
+      "description": "Challenge another player",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "description": "Custom initial position in FEN format"
+          },
+          "days": {
+            "type": "number",
+            "description": "Days per turn for correspondence games"
+          },
+          "clock": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "description": "Clock initial time in minutes"
+              },
+              "increment": {
+                "type": "number",
+                "description": "Clock increment in seconds"
+              }
+            },
+            "description": "Clock settings"
+          },
+          "color": {
+            "enum": [
+              "random",
+              "white",
+              "black"
+            ],
+            "type": "string",
+            "description": "Color to play"
+          },
+          "rated": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the game is rated"
+          },
+          "variant": {
+            "enum": [
+              "standard",
+              "chess960",
+              "crazyhouse",
+              "antichess",
+              "atomic",
+              "horde",
+              "kingOfTheHill",
+              "racingKings",
+              "threeCheck"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Game variant"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the player to challenge"
+          }
+        }
+      }
+    },
+    {
+      "name": "accept_challenge",
+      "description": "Accept an incoming challenge",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "challengeId"
+        ],
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "description": "ID of the challenge to accept"
+          }
+        }
+      }
+    },
+    {
+      "name": "decline_challenge",
+      "description": "Decline an incoming challenge",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "challengeId"
+        ],
+        "properties": {
+          "reason": {
+            "enum": [
+              "generic",
+              "later",
+              "tooFast",
+              "tooSlow",
+              "timeControl",
+              "rated",
+              "casual",
+              "standard",
+              "variant",
+              "noBot",
+              "onlyBot"
+            ],
+            "type": "string",
+            "description": "Reason for declining"
+          },
+          "challengeId": {
+            "type": "string",
+            "description": "ID of the challenge to decline"
+          }
+        }
+      }
+    },
+    {
+      "name": "cancel_challenge",
+      "description": "Cancel an outgoing challenge",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "challengeId"
+        ],
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "description": "ID of the challenge to cancel"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_arena_tournaments",
+      "description": "Get current tournaments",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "create_arena",
+      "description": "Create a new arena tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the tournament"
+          },
+          "rated": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the tournament is rated"
+          },
+          "hasChat": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether players can discuss in a chat"
+          },
+          "minutes": {
+            "type": "number",
+            "default": 45,
+            "description": "Tournament duration in minutes"
+          },
+          "variant": {
+            "enum": [
+              "standard",
+              "chess960",
+              "crazyhouse",
+              "antichess",
+              "atomic",
+              "horde",
+              "kingOfTheHill",
+              "racingKings",
+              "threeCheck"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Variant key"
+          },
+          "position": {
+            "type": "string",
+            "description": "Custom initial position in FEN format"
+          },
+          "clockTime": {
+            "type": "number",
+            "default": 3,
+            "description": "Clock initial time in minutes"
+          },
+          "startDate": {
+            "type": "number",
+            "description": "Timestamp to start the tournament at a given date"
+          },
+          "conditions": {
+            "type": "object",
+            "properties": {
+              "allowList": {
+                "type": "string",
+                "description": "List of usernames allowed to join"
+              },
+              "maxRating": {
+                "type": "number",
+                "description": "Maximum rating allowed"
+              },
+              "minRating": {
+                "type": "number",
+                "description": "Minimum rating required"
+              },
+              "teamMember": {
+                "type": "string",
+                "description": "Team ID required to join"
+              },
+              "nbRatedGame": {
+                "type": "number",
+                "description": "Minimum number of rated games required"
+              }
+            },
+            "description": "Restrict participation"
+          },
+          "streakable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether players can get streaks"
+          },
+          "berserkable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether players can use berserk"
+          },
+          "description": {
+            "type": "string",
+            "description": "Tournament description (HTML)"
+          },
+          "waitMinutes": {
+            "type": "number",
+            "default": 5,
+            "description": "Time before tournament starts, in minutes"
+          },
+          "clockIncrement": {
+            "type": "number",
+            "default": 2,
+            "description": "Clock increment in seconds"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_arena_info",
+      "description": "Get info about an arena tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tournamentId"
+        ],
+        "properties": {
+          "tournamentId": {
+            "type": "string",
+            "description": "Tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_arena_games",
+      "description": "Get games of an arena tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tournamentId"
+        ],
+        "properties": {
+          "tournamentId": {
+            "type": "string",
+            "description": "Tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_arena_results",
+      "description": "Get results of an arena tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tournamentId"
+        ],
+        "properties": {
+          "tournamentId": {
+            "type": "string",
+            "description": "Tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "join_arena",
+      "description": "Join an arena tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tournamentId"
+        ],
+        "properties": {
+          "tournamentId": {
+            "type": "string",
+            "description": "Tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "withdraw_from_arena",
+      "description": "Withdraw from an arena tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tournamentId"
+        ],
+        "properties": {
+          "tournamentId": {
+            "type": "string",
+            "description": "Tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_team_battle_results",
+      "description": "Get results of a team battle tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tournamentId"
+        ],
+        "properties": {
+          "tournamentId": {
+            "type": "string",
+            "description": "Tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_swiss",
+      "description": "Create a new Swiss tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "teamId",
+          "clock"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the tournament"
+          },
+          "clock": {
+            "type": "object",
+            "required": [
+              "limit",
+              "increment"
+            ],
+            "properties": {
+              "limit": {
+                "type": "number",
+                "description": "Clock initial time in seconds"
+              },
+              "increment": {
+                "type": "number",
+                "description": "Clock increment in seconds"
+              }
+            },
+            "description": "Clock settings"
+          },
+          "rated": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the tournament is rated"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "ID of the team hosting the tournament"
+          },
+          "variant": {
+            "enum": [
+              "standard",
+              "chess960",
+              "crazyhouse",
+              "antichess",
+              "atomic",
+              "horde",
+              "kingOfTheHill",
+              "racingKings",
+              "threeCheck"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Variant key"
+          },
+          "nbRounds": {
+            "type": "number",
+            "default": 7,
+            "description": "Number of rounds to play"
+          },
+          "description": {
+            "type": "string",
+            "description": "Tournament description (HTML)"
+          },
+          "roundInterval": {
+            "type": "number",
+            "default": 300,
+            "description": "Interval between rounds in seconds"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_swiss_info",
+      "description": "Get info about a Swiss tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "swissId"
+        ],
+        "properties": {
+          "swissId": {
+            "type": "string",
+            "description": "Swiss tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_swiss_games",
+      "description": "Get games of a Swiss tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "swissId"
+        ],
+        "properties": {
+          "swissId": {
+            "type": "string",
+            "description": "Swiss tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_swiss_results",
+      "description": "Get results of a Swiss tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "swissId"
+        ],
+        "properties": {
+          "swissId": {
+            "type": "string",
+            "description": "Swiss tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "join_swiss",
+      "description": "Join a Swiss tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "swissId"
+        ],
+        "properties": {
+          "swissId": {
+            "type": "string",
+            "description": "Swiss tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "withdraw_from_swiss",
+      "description": "Withdraw from a Swiss tournament",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "swissId"
+        ],
+        "properties": {
+          "swissId": {
+            "type": "string",
+            "description": "Swiss tournament ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_current_simuls",
+      "description": "Get recently started simuls",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "create_simul",
+      "description": "Create a new simul",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the simul"
+          },
+          "text": {
+            "type": "string",
+            "description": "Description of the simul"
+          },
+          "color": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "type": "string",
+            "default": "white",
+            "description": "Color the host will play"
+          },
+          "variant": {
+            "enum": [
+              "standard",
+              "chess960",
+              "crazyhouse",
+              "antichess",
+              "atomic",
+              "horde",
+              "kingOfTheHill",
+              "racingKings",
+              "threeCheck"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Variant key"
+          },
+          "clockTime": {
+            "type": "number",
+            "default": 5,
+            "description": "Clock initial time in minutes"
+          },
+          "maxRating": {
+            "type": "number",
+            "description": "Maximum rating to join"
+          },
+          "minRating": {
+            "type": "number",
+            "description": "Minimum rating to join"
+          },
+          "clockIncrement": {
+            "type": "number",
+            "default": 3,
+            "description": "Clock increment in seconds"
+          }
+        }
+      }
+    },
+    {
+      "name": "join_simul",
+      "description": "Join a simul",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "simulId"
+        ],
+        "properties": {
+          "simulId": {
+            "type": "string",
+            "description": "ID of the simul"
+          }
+        }
+      }
+    },
+    {
+      "name": "withdraw_from_simul",
+      "description": "Withdraw from a simul",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "simulId"
+        ],
+        "properties": {
+          "simulId": {
+            "type": "string",
+            "description": "ID of the simul"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_study_chapter",
+      "description": "Export one study chapter in PGN format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "studyId",
+          "chapterId"
+        ],
+        "properties": {
+          "studyId": {
+            "type": "string",
+            "description": "Study ID"
+          },
+          "chapterId": {
+            "type": "string",
+            "description": "Chapter ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_all_study_chapters",
+      "description": "Export all chapters of a study in PGN format",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "studyId"
+        ],
+        "properties": {
+          "studyId": {
+            "type": "string",
+            "description": "Study ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_studies",
+      "description": "Get studies created by a user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the player"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_message",
+      "description": "Send a private message to another player",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Message text"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the recipient"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_thread",
+      "description": "Get a message thread",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User ID of the other person"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_official_broadcasts",
+      "description": "Get official broadcasts (TV shows)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_broadcast",
+      "description": "Get a broadcast by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "broadcastId"
+        ],
+        "properties": {
+          "broadcastId": {
+            "type": "string",
+            "description": "ID of the broadcast"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_broadcast_round",
+      "description": "Get one round of a broadcast",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "broadcastId",
+          "roundId"
+        ],
+        "properties": {
+          "roundId": {
+            "type": "string",
+            "description": "ID of the round"
+          },
+          "broadcastId": {
+            "type": "string",
+            "description": "ID of the broadcast"
+          }
+        }
+      }
+    },
+    {
+      "name": "push_broadcast_round_pgn",
+      "description": "Push PGN to a broadcast round",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "broadcastId",
+          "roundId",
+          "pgn"
+        ],
+        "properties": {
+          "pgn": {
+            "type": "string",
+            "description": "PGN games to push"
+          },
+          "roundId": {
+            "type": "string",
+            "description": "ID of the round"
+          },
+          "broadcastId": {
+            "type": "string",
+            "description": "ID of the broadcast"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_cloud_eval",
+      "description": "Get cloud evaluation for a position",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fen"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "description": "FEN of the position to analyze"
+          },
+          "multiPv": {
+            "type": "number",
+            "default": 1,
+            "maximum": 5,
+            "minimum": 1,
+            "description": "Number of principal variations (1-5)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_fide_player",
+      "description": "Get FIDE player information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "playerId"
+        ],
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "description": "FIDE player ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_fide_players",
+      "description": "Search FIDE players by name",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the player to search"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_ongoing_games",
+      "description": "Get your ongoing games (real-time and correspondence)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "nb": {
+            "type": "integer",
+            "default": 9,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Max number of games to fetch (1-50)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@GigaChatTester/lichess-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "lichessToken": {
+            "type": "string",
+            "description": "Lichess API token"
+          }
+        }
+      }
+    }
+  ]
+}

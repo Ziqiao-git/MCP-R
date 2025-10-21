@@ -1,0 +1,190 @@
+{
+  "qualifiedName": "@florentine-ai/mcp",
+  "displayName": "Florentine.ai - Talk to your MongoDB data",
+  "description": "Natural language to MongoDB aggregations and aggregation results that actually work.\n\nHas a couple of extra features under the hood besides \"only\" providing natural language to aggregation conversion:\n- secure data separation for multi-tenant usage\n- semantic vector search/RAG support with automated embedding creation\n- advanced lookup support\n- exclusion of keys\n- and more...",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/a6eaee52-1a94-43cc-999e-21a66e7cc076.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@florentine-ai/mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "florentine_list_collections",
+      "title": "Florentine List Collections",
+      "description": "Used internally to fetch metadata (name, summary, structure) of database collections **only when needed** to help answer a question via the \"ask\" tool. Should not be used alone.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "florentine_ask",
+      "title": "Florentine Ask",
+      "description": "Creates an aggregation, executes it and returns the resulting data from a MongoDB database for a \n  question asked by the user. It can handle complex questions that require multiple steps, \n  such as filtering, grouping, and sorting data. You should try to put as much information as possible \n  in the question. Only do query decomposition if you are sure that the question is too complex for a \n  single aggregation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "question": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@florentine-ai/mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "mode",
+          "returnTypes",
+          "florentineToken"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "static",
+              "dynamic"
+            ],
+            "type": "string",
+            "description": "The mode to run the MCP server in (must be \"static\" or \"dynamic\")"
+          },
+          "debug": {
+            "enum": [
+              "true",
+              "false"
+            ],
+            "type": "string",
+            "description": "Enable debug mode for logging"
+          },
+          "llmKey": {
+            "type": "string",
+            "description": "Your API key for the chosen LLM service"
+          },
+          "logpath": {
+            "type": "string",
+            "description": "The absolute path to the debug log file"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "An optional session ID for server side chat history"
+          },
+          "llmService": {
+            "enum": [
+              "openai",
+              "deepseek",
+              "google",
+              "anthropic"
+            ],
+            "type": "string",
+            "description": "The LLM service to use, must be one of: \"openai\", \"anthropic\", \"google\", or \"deepseek\""
+          },
+          "returnTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array specifying which response types to return, must be any combination of: \"aggregation\", \"result\", \"answer\""
+          },
+          "requiredInputs": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "keyPath",
+                    "value",
+                    "database"
+                  ],
+                  "properties": {
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "$in"
+                          ],
+                          "properties": {
+                            "$in": {
+                              "type": "array",
+                              "items": {
+                                "type": [
+                                  "string",
+                                  "number"
+                                ]
+                              }
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "keyPath": {
+                      "type": "string"
+                    },
+                    "database": {
+                      "type": "string"
+                    },
+                    "collections": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "keyPath",
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "$ref": "#/properties/requiredInputs/items/anyOf/0/properties/value"
+                    },
+                    "keyPath": {
+                      "$ref": "#/properties/requiredInputs/items/anyOf/0/properties/keyPath"
+                    },
+                    "database": {
+                      "not": {}
+                    },
+                    "collections": {
+                      "not": {}
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "description": "An array of required input objects specifying key paths and their expected values"
+          },
+          "florentineToken": {
+            "type": "string",
+            "description": "Your Florentine API key, get it from https://florentine.ai/settings"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

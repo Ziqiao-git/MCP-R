@@ -1,0 +1,101 @@
+{
+  "qualifiedName": "@buoooou/supaui-mcp",
+  "displayName": "SupaUI MCP",
+  "description": "Automatically generate a variety of UI components to improve development efficiency. Seamlessly integrate with Claude and Windsurf AI assistants to support custom component query and generation.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/buouui.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "fetch-ui",
+      "description": "\n\"Use this tool when the user wants to see component, get inspiration, or /buou or /ui fetch data and previews from buouui.com. \nThis tool ONLY returns the text snippet for that UI component. \nAfter calling this tool, you must edit or add files to integrate the snippet into the codebase.\"\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message",
+          "searchQuery"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Full users message"
+          },
+          "searchQuery": {
+            "type": "string",
+            "description": "Search query for buouui.com(library for searching UI components) to find a UI component that matches the user's message. Must be a two-four words max or phrase"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-ui",
+      "description": "\n\"Use this tool when the user wants to see buouui.com component, or /buou fetch data and previews from buouui.com. \nThis tool returns the JSON data of matching components without generating new code. This tool ONLY returns the text snippet for that UI component. \nAfter calling this tool, you need to display the data in the UI, and finally you need to show the website page of the buouui.com.\"\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message",
+          "searchQuery"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Full users message"
+          },
+          "searchQuery": {
+            "type": "string",
+            "description": "Search query for buouui.com(library for searching UI components) to find a UI component that matches the user's message. Must be a two-four words max or phrase"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-image",
+      "description": "\n\"Use this tool when the user requests a new image, mentions /buou /image or asks for a image.\nIf the customer provides the picture editing operation of the attachment, please send it to the corresponding tool.\nThis tool ONLY returns the url of the image. \nAfter calling this tool, Please show the image returned by this tool and provide it for download.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message",
+          "image"
+        ],
+        "properties": {
+          "image": {
+            "type": "string",
+            "description": "If the customer provides the picture editing operation of the attachment,please send it to the corresponding tool,otherwise, pass an empty string"
+          },
+          "message": {
+            "type": "string",
+            "description": "Translate into English and explain the content of the customer's image."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@buoooou/supaui-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "BUOU_API_KEY"
+        ],
+        "properties": {
+          "BUOU_API_KEY": {
+            "type": "string",
+            "description": "The API key from https://buouui.com/dashboard/key"
+          }
+        }
+      }
+    }
+  ]
+}

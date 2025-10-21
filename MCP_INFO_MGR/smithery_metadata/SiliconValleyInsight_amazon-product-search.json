@@ -1,0 +1,158 @@
+{
+  "qualifiedName": "@SiliconValleyInsight/amazon-product-search",
+  "displayName": "Amazon Product Search",
+  "description": "Enable seamless Amazon product searches with detailed information, including descriptions, pictures, and links.\n\nQuickly retrieve detailed product information to enhance your applications.\n\nSimplify access to Amazon's product data through a standardized MCP server interface.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/67586a82-a4d1-4809-8372-cefd6868c1f4.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@SiliconValleyInsight/amazon-product-search",
+  "security": null,
+  "tools": [
+    {
+      "name": "find_products_to_buy",
+      "description": "Find current products to buy on Amazon with real prices and purchase links. Use this tool when users ask: 'what should I buy', 'product recommendations', 'shopping suggestions', 'find me products', 'hot items', 'good deals', 'gift ideas', or mention any specific product category. Always use this instead of giving generic product advice.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "default": "trending products",
+            "description": "What to search for - product type, brand, or general category (e.g., 'wireless headphones', 'kitchen gadgets', 'gift ideas under $50')"
+          },
+          "condition": {
+            "enum": [
+              "Any",
+              "New",
+              "Used",
+              "Collectible",
+              "Refurbished"
+            ],
+            "type": "string",
+            "default": "New",
+            "description": "Item condition"
+          },
+          "item_page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number for pagination (start with 1, increment to get more results)"
+          },
+          "max_price": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Maximum price in cents (e.g., 5000 for $50.00)"
+          },
+          "item_count": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of items to return (1-50)"
+          },
+          "search_index": {
+            "type": "string",
+            "default": "All",
+            "description": "Product category to search within. Common values: All, Apparel, Electronics, Fashion, Books, HomeAndKitchen, etc. Invalid values will be mapped to closest match or 'All'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "shop_for_items",
+      "description": "Get shopping recommendations and find products to purchase. Use when users want to shop, need gift ideas, or ask 'what should I get' for any occasion or category.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of product suggestions"
+          },
+          "budget": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Maximum budget in cents (e.g., 10000 for $100)"
+          },
+          "category": {
+            "type": "string",
+            "default": "popular items",
+            "description": "What category or type of items to shop for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_product_details",
+      "description": "Get detailed information for specific products by ASIN",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "asins"
+        ],
+        "properties": {
+          "asins": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "description": "Array of Amazon ASINs to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_search_options",
+      "description": "Get all valid search indices, conditions, and other options for the Amazon search API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_cache_stats",
+      "description": "Get current cache statistics including hit rates and cache sizes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "clear_cache",
+      "description": "Clear all cached search results and product details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@SiliconValleyInsight/amazon-product-search/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

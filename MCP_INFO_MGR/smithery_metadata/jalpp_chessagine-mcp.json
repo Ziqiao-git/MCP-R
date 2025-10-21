@@ -1,0 +1,593 @@
+{
+  "qualifiedName": "@jalpp/chessagine-mcp",
+  "displayName": "ChessAgine",
+  "description": "A comprehensive chess analysis (MCP) server that provides advanced chess analysis capabilities by implementing the Chess Context Protocol Server and integrating the Stockfish engine evaluation, positional theme analysis, opening databases, and chess knowledge. Allows LLMs to validate chess moves, visualize chess board via html, and do interactive chess puzzles, this brings the powerful chess analysis ChessAgine powers to your LLM!",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/d962de69-7482-4b69-8f56-b11cb82f24df.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@jalpp/chessagine-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get-lichess-master-games",
+      "description": "Fetch master-level games and opening statistics from Lichess for a given position",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-lichess-games",
+      "description": "Fetch Lichess user games and opening statistics for a given position",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch-lichess-games",
+      "description": "Fetch the 20 most recent games for a Lichess user. Returns game details including player information, ratings, speed format, and PGN notation. Useful for analyzing a player's recent performance, openings, and game history.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Lichess username to fetch games for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch-lichess-game",
+      "description": "Fetch a specific Lichess game in PGN format. Accepts either a full Lichess URL or a game ID. Returns the complete PGN notation with headers and moves, ready for analysis or display.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "gameUrlOrId"
+        ],
+        "properties": {
+          "gameUrlOrId": {
+            "type": "string",
+            "description": "Lichess game URL (e.g., https://lichess.org/abc12345) or game ID (e.g., abc12345)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch-chess-puzzle",
+      "description": "Fetch a random chess puzzle from Lichess database. Can filter by themes and rating range. Use this to start a puzzle session with the user.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "themes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of puzzle theme tags to filter by (e.g., ['fork', 'pin', 'mateIn2'])"
+          },
+          "ratingTo": {
+            "type": "number",
+            "maximum": 2500,
+            "description": "Maximum puzzle rating (e.g., 2000)"
+          },
+          "ratingFrom": {
+            "type": "number",
+            "minimum": 1000,
+            "description": "Minimum puzzle rating (e.g., 1000)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate-chess-board-view-artificat-html",
+      "description": "get HTML code to render chess board for given FEN, and use this code to generate an artificat",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen",
+          "side"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          },
+          "side": {
+            "enum": [
+              "w",
+              "b"
+            ],
+            "type": "string",
+            "description": "Side to evaluate from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate-dynamic-gameview-html",
+      "description": "get HTML code to render chess board for a game with multiple fens to render game view mode",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "is-legal-move",
+      "description": "Check if a given move is legal for the provided FEN position",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen",
+          "move"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "description": "FEN string representing the board position, the fen must be in full form containing which side to move"
+          },
+          "move": {
+            "type": "string",
+            "description": "The move to be played (in SAN or UCI format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "boardstate-to-prompt",
+      "description": "Given a FEN and a move, returns a string describing the resulting board state after the move",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen",
+          "move"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          },
+          "move": {
+            "type": "string",
+            "description": "The move to be played (in SAN or UCI format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-stockfish-analysis",
+      "description": "Analyze a given chess position using Stockfish and provide best move, reasoning, and variation, speech Eval and number Eval",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen",
+          "depth"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          },
+          "depth": {
+            "type": "number",
+            "maximum": 15,
+            "minimum": 12,
+            "description": "Search depth for Stockfish engine"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-stockfish-move-analysis",
+      "description": "Analyze a given chess position after a specific move using Stockfish and provide best move, reasoning, variation, speech eval, and number eval",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen",
+          "move"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          },
+          "move": {
+            "type": "string",
+            "description": "The move to be played (in SAN or UCI format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-chessdb-analysis",
+      "description": "Fetch position analysis and candidate moves from ChessDB",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-theme-scores",
+      "description": "Get chess theme scores (material, mobility, space, positional, king safety) for a given position fen and the side to eval from",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen",
+          "color"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          },
+          "color": {
+            "enum": [
+              "w",
+              "b"
+            ],
+            "type": "string",
+            "description": "Side to evaluate from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-tactical-position-summary",
+      "description": "Get tactical position summary like hanging pieces, semi protected pieces, forks, pins for the given fen",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fen"
+        ],
+        "properties": {
+          "fen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze-variation-themes",
+      "description": "Analyze how chess themes change across a sequence of moves",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rootFen",
+          "moves",
+          "color"
+        ],
+        "properties": {
+          "color": {
+            "enum": [
+              "w",
+              "b"
+            ],
+            "type": "string",
+            "description": "Side to evaluate from"
+          },
+          "moves": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of moves in algebraic notation"
+          },
+          "rootFen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-theme-progression",
+      "description": "Get the progression of a specific chess theme over a variation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rootFen",
+          "moves",
+          "color",
+          "theme"
+        ],
+        "properties": {
+          "color": {
+            "enum": [
+              "w",
+              "b"
+            ],
+            "type": "string",
+            "description": "Side to evaluate from"
+          },
+          "moves": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of moves in algebraic notation"
+          },
+          "theme": {
+            "enum": [
+              "material",
+              "mobility",
+              "space",
+              "pawnStructure",
+              "kingSafety"
+            ],
+            "type": "string",
+            "description": "Theme to track"
+          },
+          "rootFen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare-variations",
+      "description": "Compare multiple chess variations and return their theme analyses",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rootFen",
+          "variations",
+          "color"
+        ],
+        "properties": {
+          "color": {
+            "enum": [
+              "w",
+              "b"
+            ],
+            "type": "string",
+            "description": "Side to evaluate from"
+          },
+          "rootFen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          },
+          "variations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "moves"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "moves": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of variations to compare"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find-critical-moments",
+      "description": "Find moves in a chess variation where there are significant theme changes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rootFen",
+          "moves",
+          "color"
+        ],
+        "properties": {
+          "color": {
+            "enum": [
+              "w",
+              "b"
+            ],
+            "type": "string",
+            "description": "Side to evaluate from"
+          },
+          "moves": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of moves in algebraic notation"
+          },
+          "rootFen": {
+            "type": "string",
+            "pattern": "^([rnbqkpRNBQKP1-8]+\\/){7}[rnbqkpRNBQKP1-8]+ [bw] [KQkq-]+ [a-h][1-8]|[a-h][1-8]|[a-h][1-8]|[a-h][1-8]|- \\d+ \\d+$",
+            "description": "FEN string representing the board position"
+          },
+          "threshold": {
+            "type": "number",
+            "default": 0.5,
+            "description": "Threshold for significant changes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate-game-review",
+      "description": "Generate a comprehensive game review with theme progression analysis from a PGN. Analyzes material, mobility, space, positional play, and king safety for both players throughout the game.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pgn"
+        ],
+        "properties": {
+          "pgn": {
+            "type": "string",
+            "description": "Game PGN"
+          },
+          "format": {
+            "enum": [
+              "json",
+              "text"
+            ],
+            "type": "string",
+            "default": "text",
+            "description": "Output format: 'json' for structured data or 'text' for human-readable report"
+          },
+          "criticalMomentThreshold": {
+            "type": "number",
+            "default": 0.5,
+            "maximum": 2,
+            "minimum": 0.1,
+            "description": "Threshold for identifying critical moments (default: 0.5). Lower values find more moments."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-chess-knowledgebase",
+      "description": "Returns a comprehensive chess knowledgebase including Silman Imbalances, Fine's 30 chess principles, endgame principles, and practical checklists",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-chessagine-stater-prompts",
+      "description": "List all available chess analysis prompt categories with their example prompts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-puzzle-themes",
+      "description": "Get a list of all available puzzle themes that can be used to filter puzzles",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "parse-pgn-into-fens",
+      "description": "Collect a fen list of given game pgn",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pgn"
+        ],
+        "properties": {
+          "pgn": {
+            "type": "string",
+            "description": "Game PGN"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@jalpp/chessagine-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

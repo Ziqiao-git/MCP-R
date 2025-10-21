@@ -1,0 +1,195 @@
+{
+  "qualifiedName": "@geobio/mcp-server-nationalparks",
+  "displayName": "National Parks Information Server",
+  "description": "Provide real-time, detailed information about U.S. National Parks including park details, alerts, visitor centers, campgrounds, and events. Enable users to search parks by location, activities, and other criteria to plan visits effectively. Access up-to-date alerts and operational information to enhance trip planning and safety.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.nps.gov.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "findParks",
+      "description": "Search for national parks based on state, name, activities, or other criteria",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search term to filter parks by name or description"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of parks to return (default: 10, max: 50)"
+          },
+          "start": {
+            "type": "number",
+            "description": "Start position for results (useful for pagination)"
+          },
+          "stateCode": {
+            "type": "string",
+            "description": "Filter parks by state code (e.g., \"CA\" for California, \"NY\" for New York). Multiple states can be comma-separated (e.g., \"CA,OR,WA\")"
+          },
+          "activities": {
+            "type": "string",
+            "description": "Filter by available activities (e.g., \"hiking,camping\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getParkDetails",
+      "description": "Get detailed information about a specific national park",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "parkCode"
+        ],
+        "properties": {
+          "parkCode": {
+            "type": "string",
+            "description": "The park code of the national park (e.g., \"yose\" for Yosemite, \"grca\" for Grand Canyon)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getAlerts",
+      "description": "Get current alerts for national parks including closures, hazards, and important information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search term to filter alerts by title or description"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of alerts to return (default: 10, max: 50)"
+          },
+          "start": {
+            "type": "number",
+            "description": "Start position for results (useful for pagination)"
+          },
+          "parkCode": {
+            "type": "string",
+            "description": "Filter alerts by park code (e.g., \"yose\" for Yosemite). Multiple parks can be comma-separated (e.g., \"yose,grca\")."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getVisitorCenters",
+      "description": "Get information about visitor centers and their operating hours",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search term to filter visitor centers by name or description"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of visitor centers to return (default: 10, max: 50)"
+          },
+          "start": {
+            "type": "number",
+            "description": "Start position for results (useful for pagination)"
+          },
+          "parkCode": {
+            "type": "string",
+            "description": "Filter visitor centers by park code (e.g., \"yose\" for Yosemite). Multiple parks can be comma-separated (e.g., \"yose,grca\")."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getCampgrounds",
+      "description": "Get information about available campgrounds and their amenities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search term to filter campgrounds by name or description"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of campgrounds to return (default: 10, max: 50)"
+          },
+          "start": {
+            "type": "number",
+            "description": "Start position for results (useful for pagination)"
+          },
+          "parkCode": {
+            "type": "string",
+            "description": "Filter campgrounds by park code (e.g., \"yose\" for Yosemite). Multiple parks can be comma-separated (e.g., \"yose,grca\")."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getEvents",
+      "description": "Find upcoming events at parks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search term to filter events by title or description"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of events to return (default: 10, max: 50)"
+          },
+          "start": {
+            "type": "number",
+            "description": "Start position for results (useful for pagination)"
+          },
+          "dateEnd": {
+            "type": "string",
+            "description": "End date for filtering events (format: YYYY-MM-DD)"
+          },
+          "parkCode": {
+            "type": "string",
+            "description": "Filter events by park code (e.g., \"yose\" for Yosemite). Multiple parks can be comma-separated (e.g., \"yose,grca\")."
+          },
+          "dateStart": {
+            "type": "string",
+            "description": "Start date for filtering events (format: YYYY-MM-DD)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@geobio/mcp-server-nationalparks/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "npsApiKey"
+        ],
+        "properties": {
+          "npsApiKey": {
+            "type": "string",
+            "description": "API key for the National Park Service"
+          }
+        }
+      }
+    }
+  ]
+}

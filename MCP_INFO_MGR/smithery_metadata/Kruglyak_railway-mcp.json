@@ -1,0 +1,973 @@
+{
+  "qualifiedName": "@Kruglyak/railway-mcp",
+  "displayName": "Railway Infrastructure Manager",
+  "description": "Manage your Railway.app infrastructure effortlessly through natural language commands. Deploy services, manage environment variables, and monitor deployments seamlessly. Enhance your productivity by integrating Railway operations directly into your AI workflows.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/railway.app.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "database_list_types",
+      "description": "[QUERY] List all available database types that can be deployed using Railway's official templates\n\n⚡️ Best for:\n  ✓ Discovering supported database types\n  ✓ Planning database deployments\n  ✓ Checking template availability\n\n⚠️ Not for:\n  × Listing existing databases\n  × Getting database connection details\n\n→ Alternatives: service_create_from_image\n\n→ Next steps: database_deploy\n\n→ Related: database_deploy, service_create_from_image",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "database_deploy_from_template",
+      "description": "[WORKFLOW] Deploy a pre-configured database using Railway's official templates and best practices\n\n⚡️ Best for:\n  ✓ Standard database deployments\n  ✓ Quick setup with security defaults\n  ✓ Common database types (PostgreSQL, MongoDB, Redis)\n\n⚠️ Not for:\n  × Custom database versions\n  × Complex configurations\n  × Unsupported database types\n\n→ Prerequisites: database_list_types\n\n→ Alternatives: service_create_from_image\n\n→ Next steps: variable_list, service_info\n\n→ Related: volume_create, service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "type",
+          "region",
+          "environmentId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Optional custom name for the database service. Default: {type}-database"
+          },
+          "type": {
+            "enum": [
+              "postgres",
+              "mysql",
+              "mongodb",
+              "redis",
+              "minio",
+              "sqlite3",
+              "pocketbase",
+              "clickhouse",
+              "mariadb",
+              "pgvector"
+            ],
+            "type": "string",
+            "description": "Type of database to deploy (e.g., postgresql, mongodb, redis). Use service_create_from_image for other types."
+          },
+          "region": {
+            "enum": [
+              "asia-southeast1",
+              "asia-southeast1-eqsg3a",
+              "europe-west4",
+              "europe-west4-drams3a",
+              "us-east4",
+              "us-east4-eqdc4a",
+              "us-west1",
+              "us-west2"
+            ],
+            "type": "string",
+            "description": "Region where the database should be deployed, try us-west1 before all other regions"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project where the database will be deployed"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "Environment ID where the database will be deployed (usually obtained from project_info)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deployment_list",
+      "description": "[API] List recent deployments for a service in a specific environment\n\n⚡️ Best for:\n  ✓ Viewing deployment history\n  ✓ Monitoring service updates\n\n→ Prerequisites: service_list\n\n→ Next steps: deployment_logs, deployment_trigger\n\n→ Related: service_info, service_restart",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "serviceId",
+          "environmentId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Optional: Maximum number of deployments to return (default: 10)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to list deployments for"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment to list deployments from (usually obtained from service_list)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deployment_trigger",
+      "description": "[API] Trigger a new deployment for a service\n\n⚡️ Best for:\n  ✓ Deploying code changes\n  ✓ Applying configuration updates\n  ✓ Rolling back to previous states\n\n⚠️ Not for:\n  × Restarting services (use service_restart)\n  × Updating service config (use service_update)\n  × Database changes\n\n→ Prerequisites: service_list\n\n→ Alternatives: service_restart\n\n→ Next steps: deployment_logs, deployment_status\n\n→ Related: variable_set, service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "serviceId",
+          "environmentId",
+          "commitSha"
+        ],
+        "properties": {
+          "commitSha": {
+            "type": "string",
+            "description": "Specific commit SHA from the Git repository"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deployment_logs",
+      "description": "[API] Get logs for a specific deployment\n\n⚡️ Best for:\n  ✓ Debugging deployment issues\n  ✓ Monitoring deployment progress\n  ✓ Checking build output\n\n⚠️ Not for:\n  × Service runtime logs\n  × Database logs\n\n→ Prerequisites: deployment_list\n\n→ Next steps: deployment_status\n\n→ Related: service_info, deployment_trigger",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deploymentId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of log entries to fetch"
+          },
+          "deploymentId": {
+            "type": "string",
+            "description": "ID of the deployment to get logs for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deployment_status",
+      "description": "[API] Check the current status of a deployment\n\n⚡️ Best for:\n  ✓ Monitoring deployment progress\n  ✓ Verifying successful deployments\n  ✓ Checking for deployment failures\n\n⚠️ Not for:\n  × Service runtime logs\n  × Database logs\n\n→ Prerequisites: deployment_list, deployment_trigger\n\n→ Next steps: deployment_logs\n\n→ Related: service_info, service_restart, deployment_wait",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deploymentId"
+        ],
+        "properties": {
+          "deploymentId": {
+            "type": "string",
+            "description": "ID of the deployment to check status for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "domain_list",
+      "description": "[API] List all domains (both service and custom) for a service\n\n⚡️ Best for:\n  ✓ Viewing service endpoints\n  ✓ Managing domain configurations\n  ✓ Auditing domain settings\n\n→ Prerequisites: service_list\n\n→ Next steps: domain_create, domain_update\n\n→ Related: service_info, tcp_proxy_list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "environmentId",
+          "serviceId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to list domains for"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment that the service is in to list domains from (usually obtained from service_list)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "domain_create",
+      "description": "[API] Create a new domain for a service\n\n⚡️ Best for:\n  ✓ Setting up custom domains\n  ✓ Configuring service endpoints\n  ✓ Adding HTTPS endpoints\n\n⚠️ Not for:\n  × TCP proxy setup (use tcp_proxy_create)\n  × Internal service communication\n\n→ Prerequisites: service_list, domain_check\n\n→ Alternatives: tcp_proxy_create\n\n→ Next steps: domain_update\n\n→ Related: service_info, domain_list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "environmentId",
+          "serviceId"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Custom domain name (optional, as railway will generate one for you and is generally better to leave it up to railway to generate one. There's usually no need to specify this and there are no use cases for overriding it.)"
+          },
+          "suffix": {
+            "type": "string",
+            "description": "Suffix for the domain (optional, railway will generate one for you and is generally better to leave it up to railway to generate one.)"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service"
+          },
+          "targetPort": {
+            "type": "number",
+            "description": "Target port for the domain (optional, as railway will use the default port for the service and detect it automatically.)"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "domain_check",
+      "description": "[API] Check if a domain is available for use\n\n⚡️ Best for:\n  ✓ Validating domain availability\n  ✓ Pre-deployment checks\n  ✓ Domain planning\n\n→ Next steps: domain_create\n\n→ Related: domain_list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Domain name to check availability for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "domain_update",
+      "description": "[API] Update a domain's configuration\n\n⚡️ Best for:\n  ✓ Changing target ports\n  ✓ Updating domain settings\n  ✓ Reconfiguring endpoints\n\n⚠️ Not for:\n  × Changing domain names (delete and recreate instead)\n  × TCP proxy configuration\n\n→ Prerequisites: domain_list\n\n→ Next steps: domain_list\n\n→ Related: service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id",
+          "targetPort"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the domain to update"
+          },
+          "targetPort": {
+            "type": "number",
+            "description": "New port number to route traffic to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "domain_delete",
+      "description": "[API] Delete a domain from a service\n\n⚡️ Best for:\n  ✓ Removing unused domains\n  ✓ Cleaning up configurations\n  ✓ Domain management\n\n⚠️ Not for:\n  × Temporary domain disabling\n  × Port updates (use domain_update)\n\n→ Prerequisites: domain_list\n\n→ Alternatives: domain_update\n\n→ Related: service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the domain to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "project_list",
+      "description": "[API] List all projects in your Railway account\n\n⚡️ Best for:\n  ✓ Getting an overview of all projects\n  ✓ Finding project IDs\n  ✓ Project discovery and management\n\n→ Next steps: project_info, service_list\n\n→ Related: project_create, project_delete",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "project_info",
+      "description": "[API] Get detailed information about a specific Railway project\n\n⚡️ Best for:\n  ✓ Viewing project details and status\n  ✓ Checking environments and services\n  ✓ Project configuration review\n\n→ Prerequisites: project_list\n\n→ Next steps: service_list, variable_list\n\n→ Related: project_update, project_delete",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project to get information about"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "project_create",
+      "description": "[API] Create a new Railway project\n\n⚡️ Best for:\n  ✓ Starting new applications\n  ✓ Setting up development environments\n  ✓ Creating project spaces\n\n⚠️ Not for:\n  × Duplicating existing projects\n\n→ Next steps: service_create_from_repo, service_create_from_image, database_deploy\n\n→ Related: project_delete, project_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the new project"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Optional team ID to create the project under"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "project_delete",
+      "description": "[API] Delete a Railway project and all its resources\n\n⚡️ Best for:\n  ✓ Removing unused projects\n  ✓ Cleaning up test projects\n\n⚠️ Not for:\n  × Temporary project deactivation\n  × Service-level cleanup (use service_delete)\n\n→ Prerequisites: project_list, project_info\n\n→ Alternatives: service_delete\n\n→ Related: project_create",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "project_environments",
+      "description": "List all environments in a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_list",
+      "description": "[API] List all services in a specific Railway project\n\n⚡️ Best for:\n  ✓ Getting an overview of a project's services\n  ✓ Finding service IDs\n  ✓ Checking service status\n\n→ Prerequisites: project_list\n\n→ Next steps: service_info, deployment_list\n\n→ Related: project_info, variable_list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project to list services from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_info",
+      "description": "[API] Get detailed information about a specific service\n\n⚡️ Best for:\n  ✓ Viewing service configuration and status\n  ✓ Checking deployment details\n  ✓ Monitoring service health\n\n→ Prerequisites: service_list\n\n→ Next steps: deployment_list, variable_list\n\n→ Related: service_update, deployment_trigger",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "serviceId",
+          "environmentId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to get information about"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment to check (usually obtained from service_list)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_create_from_repo",
+      "description": "[API] Create a new service from a GitHub repository\n\n⚡️ Best for:\n  ✓ Deploying applications from source code\n  ✓ Services that need build processes\n  ✓ GitHub-hosted projects\n\n⚠️ Not for:\n  × Pre-built Docker images (use service_create_from_image)\n  × Database deployments (use database_deploy)\n  × Static file hosting\n\n→ Prerequisites: project_list\n\n→ Alternatives: service_create_from_image, database_deploy\n\n→ Next steps: variable_set, service_update\n\n→ Related: deployment_trigger, service_info",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "repo"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Optional custom name for the service"
+          },
+          "repo": {
+            "type": "string",
+            "description": "GitHub repository URL or name (e.g., 'owner/repo')"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project to create the service in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_create_from_image",
+      "description": "[API] Create a new service from a Docker image\n\n⚡️ Best for:\n  ✓ Custom database deployments\n  ✓ Pre-built container deployments\n  ✓ Specific version requirements\n\n⚠️ Not for:\n  × Standard database deployments (use database_deploy)\n  × GitHub repository deployments (use service_create_from_repo)\n  × Services needing build process\n\n→ Prerequisites: project_list\n\n→ Alternatives: database_deploy, service_create_from_repo\n\n→ Next steps: variable_set, service_update, tcp_proxy_create\n\n→ Related: volume_create, deployment_trigger",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "image"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Optional custom name for the service"
+          },
+          "image": {
+            "type": "string",
+            "description": "Docker image to use (e.g., 'postgres:13-alpine')"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project to create the service in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_update",
+      "description": "[API] Update a service's configuration\n\n⚡️ Best for:\n  ✓ Changing service settings\n  ✓ Updating resource limits\n  ✓ Modifying deployment configuration\n\n⚠️ Not for:\n  × Updating environment variables (use variable_set)\n  × Restarting services (use service_restart)\n  × Triggering new deployments (use deployment_trigger)\n\n→ Prerequisites: service_list, service_info\n\n→ Next steps: deployment_trigger\n\n→ Related: service_restart, variable_set",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "serviceId",
+          "environmentId"
+        ],
+        "properties": {
+          "region": {
+            "enum": [
+              "asia-southeast1",
+              "asia-southeast1-eqsg3a",
+              "europe-west4",
+              "europe-west4-drams3a",
+              "us-east4",
+              "us-east4-eqdc4a",
+              "us-west1",
+              "us-west2"
+            ],
+            "type": "string",
+            "description": "Optional: Region to deploy the service in"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to update"
+          },
+          "numReplicas": {
+            "type": "number",
+            "description": "Optional: Number of service replicas to run"
+          },
+          "buildCommand": {
+            "type": "string",
+            "description": "Optional: Command to build the service"
+          },
+          "startCommand": {
+            "type": "string",
+            "description": "Optional: Command to start the service"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment to update (usually obtained from service_info)"
+          },
+          "rootDirectory": {
+            "type": "string",
+            "description": "Optional: Root directory containing the service code"
+          },
+          "healthcheckPath": {
+            "type": "string",
+            "description": "Optional: Path for health checks"
+          },
+          "sleepApplication": {
+            "type": "boolean",
+            "description": "Optional: Whether to enable sleep mode"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_delete",
+      "description": "[API] Delete a service from a project\n\n⚡️ Best for:\n  ✓ Removing unused services\n  ✓ Cleaning up test services\n  ✓ Project reorganization\n\n⚠️ Not for:\n  × Temporary service stoppage (use service_restart)\n  × Updating service configuration (use service_update)\n\n→ Prerequisites: service_list, service_info\n\n→ Alternatives: service_restart\n\n→ Related: project_delete",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "serviceId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_restart",
+      "description": "[API] Restart a service in a specific environment\n\n⚡️ Best for:\n  ✓ Applying configuration changes\n  ✓ Clearing service state\n  ✓ Resolving runtime issues\n\n⚠️ Not for:\n  × Deploying new code (use deployment_trigger)\n  × Updating service config (use service_update)\n  × Long-term service stoppage (use service_delete)\n\n→ Prerequisites: service_list\n\n→ Alternatives: deployment_trigger\n\n→ Related: service_info, deployment_logs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "serviceId",
+          "environmentId"
+        ],
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to restart"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment where the service should be restarted (usually obtained from service_info)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tcp_proxy_list",
+      "description": "[API] List all TCP proxies for a service in a specific environment\n\n⚡️ Best for:\n  ✓ Viewing TCP proxy configurations\n  ✓ Managing external access\n  ✓ Auditing service endpoints\n\n→ Prerequisites: service_list\n\n→ Next steps: tcp_proxy_create\n\n→ Related: domain_list, service_info",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "environmentId",
+          "serviceId"
+        ],
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to list TCP proxies for"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment containing the service"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tcp_proxy_create",
+      "description": "[API] Create a new TCP proxy for a service\n\n⚡️ Best for:\n  ✓ Setting up database access\n  ✓ Configuring external connections\n  ✓ Exposing TCP services\n\n⚠️ Not for:\n  × HTTP/HTTPS endpoints (use domain_create)\n  × Internal service communication\n\n→ Prerequisites: service_list\n\n→ Alternatives: domain_create\n\n→ Next steps: tcp_proxy_list\n\n→ Related: service_info, service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "environmentId",
+          "serviceId",
+          "applicationPort"
+        ],
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment (usually obtained from service_info)"
+          },
+          "applicationPort": {
+            "type": "number",
+            "description": "Port of application/service to proxy, usually based off of the service's Dockerfile or designated running port."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tcp_proxy_delete",
+      "description": "[API] Delete a TCP proxy\n\n⚡️ Best for:\n  ✓ Removing unused proxies\n  ✓ Security management\n  ✓ Endpoint cleanup\n\n⚠️ Not for:\n  × Temporary proxy disabling\n  × Port updates\n\n→ Prerequisites: tcp_proxy_list\n\n→ Related: service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "proxyId"
+        ],
+        "properties": {
+          "proxyId": {
+            "type": "string",
+            "description": "ID of the TCP proxy to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_service_variables",
+      "description": "[API] List all environment variables for a service\n\n⚡️ Best for:\n  ✓ Viewing service configuration\n  ✓ Auditing environment variables\n  ✓ Checking connection strings\n\n→ Prerequisites: service_list\n\n→ Next steps: variable_set, variable_delete\n\n→ Related: service_info, variable_bulk_set",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "environmentId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "Optional: ID of the service to list variables for, if not provided, shared variables across all services will be listed"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment to list variables from (usually obtained from service_list)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "variable_set",
+      "description": "[API] Create or update an environment variable\n\n⚡️ Best for:\n  ✓ Setting configuration values\n  ✓ Updating connection strings\n  ✓ Managing service secrets\n\n⚠️ Not for:\n  × Bulk variable updates (use variable_bulk_set)\n  × Temporary configuration changes\n\n→ Prerequisites: service_list\n\n→ Alternatives: variable_bulk_set\n\n→ Next steps: deployment_trigger, service_restart\n\n→ Related: variable_list, variable_delete",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "environmentId",
+          "name",
+          "value"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the environment variable"
+          },
+          "value": {
+            "type": "string",
+            "description": "Value to set for the variable"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "Optional: ID of the service for the variable, if omitted creates/updates a shared variable"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment for the variable (usually obtained from service_list)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "variable_delete",
+      "description": "[API] Delete a variable for a service in a specific environment\n\n⚡️ Best for:\n  ✓ Removing unused configuration\n  ✓ Security cleanup\n  ✓ Configuration management\n\n⚠️ Not for:\n  × Temporary variable disabling\n  × Bulk variable removal\n\n→ Prerequisites: service_list\n\n→ Next steps: deployment_trigger, service_restart\n\n→ Related: variable_list, variable_set",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "environmentId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the variable to delete"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service (optional, if omitted deletes a shared variable)"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment to delete the variable from (usually obtained from service_list)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "variable_bulk_set",
+      "description": "[WORKFLOW] Create or update multiple environment variables at once\n\n⚡️ Best for:\n  ✓ Migrating configuration between services\n  ✓ Initial service setup\n  ✓ Bulk configuration updates\n\n⚠️ Not for:\n  × Single variable updates (use variable_set)\n  × Temporary configuration changes\n\n→ Prerequisites: service_list\n\n→ Alternatives: variable_set\n\n→ Next steps: deployment_trigger, service_restart\n\n→ Related: variable_list, service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "environmentId",
+          "variables"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "Optional: ID of the service for the variables, if omitted updates shared variables)"
+          },
+          "variables": {
+            "type": "object",
+            "description": "Object mapping variable names to values",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment for the variables (usually obtained from service_list)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "variable_copy",
+      "description": "[WORKFLOW] Copy variables from one environment to another\n\n⚡️ Best for:\n  ✓ Environment migration\n  ✓ Configuration sharing\n  ✓ Environment duplication\n\n⚠️ Not for:\n  × Single variable updates (use variable_set)\n  × Temporary configuration changes\n\n→ Prerequisites: service_list\n\n→ Alternatives: variable_set\n\n→ Next steps: deployment_trigger, service_restart\n\n→ Related: variable_list, service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "sourceEnvironmentId",
+          "targetEnvironmentId"
+        ],
+        "properties": {
+          "overwrite": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to overwrite existing variables in the target environment"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service (optional, if omitted copies shared variables)"
+          },
+          "sourceEnvironmentId": {
+            "type": "string",
+            "description": "ID of the source environment (usually obtained from project_info)"
+          },
+          "targetEnvironmentId": {
+            "type": "string",
+            "description": "ID of the target environment (usually obtained from project_info)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "configure_api_token",
+      "description": "[UTILITY] Configure the Railway API token for authentication (only needed if not set in environment variables)\n\n⚡️ Best for:\n  ✓ Initial setup\n  ✓ Token updates\n  ✓ Authentication configuration\n\n⚠️ Not for:\n  × Project configuration\n  × Service settings\n  × Environment variables\n\n→ Next steps: project_list, service_list\n\n→ Related: project_create",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Railway API token (create one at https://railway.app/account/tokens)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "volume_list",
+      "description": "[API] List all volumes in a project\n\n⚡️ Best for:\n  ✓ Viewing persistent storage configurations\n  ✓ Managing data volumes\n  ✓ Auditing storage usage\n\n→ Prerequisites: project_list\n\n→ Next steps: volume_create\n\n→ Related: service_info, database_deploy",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project to list volumes for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "volume_create",
+      "description": "[API] Create a new persistent volume for a service\n\n⚡️ Best for:\n  ✓ Setting up database storage\n  ✓ Configuring persistent data\n  ✓ Adding file storage\n\n⚠️ Not for:\n  × Temporary storage needs\n  × Static file hosting\n  × Memory caching\n\n→ Prerequisites: service_list\n\n→ Next steps: volume_list\n\n→ Related: service_update, database_deploy",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "environmentId",
+          "serviceId",
+          "mountPath"
+        ],
+        "properties": {
+          "mountPath": {
+            "type": "string",
+            "description": "Path where the volume should be mounted in the container"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project containing the service"
+          },
+          "serviceId": {
+            "type": "string",
+            "description": "ID of the service to attach volume to"
+          },
+          "environmentId": {
+            "type": "string",
+            "description": "ID of the environment for the volume (usually obtained from service_info)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "volume_update",
+      "description": "Update a volume's properties",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "volumeId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the volume"
+          },
+          "volumeId": {
+            "type": "string",
+            "description": "ID of the volume to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "volume_delete",
+      "description": "[API] Delete a volume from a service\n\n⚡️ Best for:\n  ✓ Removing unused storage\n  ✓ Storage cleanup\n  ✓ Resource management\n\n⚠️ Not for:\n  × Temporary data removal\n  × Data backup (use volume_backup first)\n\n→ Prerequisites: volume_list\n\n→ Related: service_update",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "volumeId"
+        ],
+        "properties": {
+          "volumeId": {
+            "type": "string",
+            "description": "ID of the volume to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Kruglyak/railway-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "railwayApiToken"
+        ],
+        "properties": {
+          "railwayApiToken": {
+            "type": "string",
+            "description": "Your Railway API token for authentication. If not provided here, ensure it's available in the environment."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,682 @@
+{
+  "qualifiedName": "@INSIDE-HAIR/mcp-google-meet-and-calendar",
+  "displayName": "Google Calendar and Meet",
+  "description": "Manage and automate your Google Meet workflows with enterprise-grade tools for calendar event management, meeting moderation, attendance tracking, and smart notes. Deploy easily via Docker, Smithery, or manual setup with secure token authentication and team-friendly features. Enhance productivity with advanced Google Meet space management and AI-powered meeting summaries.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@INSIDE-HAIR/mcp-google-meet-and-calendar",
+  "security": null,
+  "tools": [
+    {
+      "name": "health_check",
+      "description": "Check if the Google Meet MCP Server is healthy",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "calendar_v3_list_calendars",
+      "description": "[Calendar API v3] List all calendars available to the user",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "calendar_v3_list_events",
+      "description": "[Calendar API v3] List upcoming calendar events with Google Meet conferences",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "time_max": {
+            "type": "string",
+            "description": "End time in ISO format (optional)"
+          },
+          "time_min": {
+            "type": "string",
+            "description": "Start time in ISO format (default: now)"
+          },
+          "calendar_id": {
+            "type": "string",
+            "description": "Calendar ID to list events from (default: 'primary')"
+          },
+          "max_results": {
+            "type": "number",
+            "description": "Maximum number of results to return (default: 10)"
+          }
+        }
+      }
+    },
+    {
+      "name": "calendar_v3_get_event",
+      "description": "[Calendar API v3] Get details of a specific calendar event",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "event_id"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "ID of the calendar event to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "calendar_v3_create_event",
+      "description": "[Calendar API v3] Create a new calendar event with Google Meet conference and guest permissions",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "summary",
+          "start_time",
+          "end_time"
+        ],
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "Title of the event"
+          },
+          "end_time": {
+            "type": "string",
+            "description": "End time in ISO format"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location for the event (optional)"
+          },
+          "attendees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of email addresses for attendees (optional)"
+          },
+          "time_zone": {
+            "type": "string",
+            "description": "Time zone (default: UTC)"
+          },
+          "start_time": {
+            "type": "string",
+            "description": "Start time in ISO format"
+          },
+          "calendar_id": {
+            "type": "string",
+            "description": "Calendar ID to create event in (default: 'primary')"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the event (optional)"
+          },
+          "guest_can_modify": {
+            "type": "boolean",
+            "description": "Allow guests to modify the event (default: false)"
+          },
+          "create_meet_conference": {
+            "type": "boolean",
+            "description": "Create Google Meet conference for this event (default: false)"
+          },
+          "guest_can_invite_others": {
+            "type": "boolean",
+            "description": "Allow guests to invite other people (default: true)"
+          },
+          "guest_can_see_other_guests": {
+            "type": "boolean",
+            "description": "Allow guests to see other attendees (default: true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "calendar_v3_update_event",
+      "description": "[Calendar API v3] Update an existing calendar event",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "event_id"
+        ],
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "Updated title of the event (optional)"
+          },
+          "end_time": {
+            "type": "string",
+            "description": "Updated end time in ISO format (optional)"
+          },
+          "event_id": {
+            "type": "string",
+            "description": "ID of the event to update"
+          },
+          "location": {
+            "type": "string",
+            "description": "Updated location for the event (optional)"
+          },
+          "attendees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Updated list of email addresses for attendees (optional)"
+          },
+          "time_zone": {
+            "type": "string",
+            "description": "Updated time zone (optional)"
+          },
+          "start_time": {
+            "type": "string",
+            "description": "Updated start time in ISO format (optional)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Updated description for the event (optional)"
+          },
+          "guest_can_modify": {
+            "type": "boolean",
+            "description": "Updated guest modify permission (optional)"
+          },
+          "guest_can_invite_others": {
+            "type": "boolean",
+            "description": "Updated guest invite permission (optional)"
+          },
+          "guest_can_see_other_guests": {
+            "type": "boolean",
+            "description": "Updated guest visibility permission (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "calendar_v3_delete_event",
+      "description": "[Calendar API v3] Delete a calendar event",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "event_id"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "ID of the event to delete"
+          },
+          "calendar_id": {
+            "type": "string",
+            "default": "primary",
+            "description": "ID of the calendar containing the event (defaults to 'primary')"
+          }
+        }
+      }
+    },
+    {
+      "name": "calendar_v3_move_event",
+      "description": "[Calendar API v3] Move a calendar event from one calendar to another",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "event_id",
+          "source_calendar_id",
+          "destination_calendar_id"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "ID of the event to move"
+          },
+          "source_calendar_id": {
+            "type": "string",
+            "description": "ID of the calendar where the event currently exists"
+          },
+          "destination_calendar_id": {
+            "type": "string",
+            "description": "ID of the calendar to move the event to"
+          }
+        }
+      }
+    },
+    {
+      "name": "calendar_v3_freebusy_query",
+      "description": "[Calendar API v3] Query free/busy information for calendars",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "calendar_ids",
+          "time_min",
+          "time_max"
+        ],
+        "properties": {
+          "time_max": {
+            "type": "string",
+            "description": "End time in ISO 8601 format (e.g., '2024-01-01T23:59:59Z')"
+          },
+          "time_min": {
+            "type": "string",
+            "description": "Start time in ISO 8601 format (e.g., '2024-01-01T00:00:00Z')"
+          },
+          "calendar_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of calendar IDs to query"
+          }
+        }
+      }
+    },
+    {
+      "name": "calendar_v3_quick_add",
+      "description": "[Calendar API v3] Create event using natural language",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Natural language description (e.g., 'Lunch with John tomorrow at 2pm')"
+          },
+          "calendar_id": {
+            "type": "string",
+            "description": "Calendar ID to add event to (default: 'primary')"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_create_space",
+      "description": "[Meet API v2 GA] Create a Google Meet space with advanced configuration",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "access_type": {
+            "enum": [
+              "OPEN",
+              "TRUSTED",
+              "RESTRICTED"
+            ],
+            "type": "string",
+            "description": "Access type for the space (default: TRUSTED)"
+          },
+          "moderation_mode": {
+            "enum": [
+              "ON",
+              "OFF"
+            ],
+            "type": "string",
+            "description": "Enable moderation for the space (default: OFF)"
+          },
+          "chat_restriction": {
+            "enum": [
+              "HOSTS_ONLY",
+              "NO_RESTRICTION"
+            ],
+            "type": "string",
+            "description": "Chat restriction level (default: NO_RESTRICTION)"
+          },
+          "enable_recording": {
+            "type": "boolean",
+            "description": "Enable automatic recording (requires Google Workspace Business Standard+)"
+          },
+          "attendance_report": {
+            "type": "boolean",
+            "description": "Enable attendance report generation"
+          },
+          "enable_smart_notes": {
+            "type": "boolean",
+            "description": "Enable automatic smart notes with Gemini (requires Gemini license)"
+          },
+          "present_restriction": {
+            "enum": [
+              "HOSTS_ONLY",
+              "NO_RESTRICTION"
+            ],
+            "type": "string",
+            "description": "Presentation restriction level (default: NO_RESTRICTION)"
+          },
+          "enable_transcription": {
+            "type": "boolean",
+            "description": "Enable automatic transcription (requires Google Workspace)"
+          },
+          "default_join_as_viewer": {
+            "type": "boolean",
+            "description": "Join participants as viewers by default (default: false)"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_get_space",
+      "description": "[Meet API v2 GA] Get details of a Google Meet space",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_name"
+        ],
+        "properties": {
+          "space_name": {
+            "type": "string",
+            "description": "Name of the space (spaces/{space_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_update_space",
+      "description": "[Meet API v2 GA] Update configuration of a Google Meet space",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_name"
+        ],
+        "properties": {
+          "space_name": {
+            "type": "string",
+            "description": "Name of the space (spaces/{space_id})"
+          },
+          "access_type": {
+            "enum": [
+              "OPEN",
+              "TRUSTED",
+              "RESTRICTED"
+            ],
+            "type": "string",
+            "description": "Updated access type for the space (optional)"
+          },
+          "moderation_mode": {
+            "enum": [
+              "ON",
+              "OFF"
+            ],
+            "type": "string",
+            "description": "Updated moderation mode (optional)"
+          },
+          "chat_restriction": {
+            "enum": [
+              "HOSTS_ONLY",
+              "NO_RESTRICTION"
+            ],
+            "type": "string",
+            "description": "Updated chat restriction level (optional)"
+          },
+          "present_restriction": {
+            "enum": [
+              "HOSTS_ONLY",
+              "NO_RESTRICTION"
+            ],
+            "type": "string",
+            "description": "Updated presentation restriction level (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_end_active_conference",
+      "description": "[Meet API v2 GA] End the active conference in a Google Meet space",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "space_name"
+        ],
+        "properties": {
+          "space_name": {
+            "type": "string",
+            "description": "Name of the space (spaces/{space_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_list_conference_records",
+      "description": "[Meet API v2 GA] List conference records for historical meetings",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "filter": {
+            "type": "string",
+            "description": "Filter for conference records (e.g., space.name=\"spaces/{space_id}\")"
+          },
+          "page_size": {
+            "type": "number",
+            "description": "Maximum number of results to return (default: 10, max: 50)"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_get_conference_record",
+      "description": "[Meet API v2 GA] Get details of a specific conference record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conference_record_name"
+        ],
+        "properties": {
+          "conference_record_name": {
+            "type": "string",
+            "description": "Name of the conference record (conferenceRecords/{record_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_list_recordings",
+      "description": "[Meet API v2 GA] List recordings for a conference record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conference_record_name"
+        ],
+        "properties": {
+          "conference_record_name": {
+            "type": "string",
+            "description": "Name of the conference record (conferenceRecords/{record_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_get_recording",
+      "description": "[Meet API v2 GA] Get details of a specific recording",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recording_name"
+        ],
+        "properties": {
+          "recording_name": {
+            "type": "string",
+            "description": "Name of the recording (conferenceRecords/{record_id}/recordings/{recording_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_list_transcripts",
+      "description": "[Meet API v2 GA] List transcripts for a conference record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conference_record_name"
+        ],
+        "properties": {
+          "conference_record_name": {
+            "type": "string",
+            "description": "Name of the conference record (conferenceRecords/{record_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_get_transcript",
+      "description": "[Meet API v2 GA] Get details of a specific transcript",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "transcript_name"
+        ],
+        "properties": {
+          "transcript_name": {
+            "type": "string",
+            "description": "Name of the transcript (conferenceRecords/{record_id}/transcripts/{transcript_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_list_transcript_entries",
+      "description": "[Meet API v2 GA] List transcript entries (individual speech segments)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "transcript_name"
+        ],
+        "properties": {
+          "page_size": {
+            "type": "number",
+            "description": "Maximum number of entries to return (default: 100, max: 1000)"
+          },
+          "transcript_name": {
+            "type": "string",
+            "description": "Name of the transcript (conferenceRecords/{record_id}/transcripts/{transcript_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_get_participant",
+      "description": "[Meet API v2 GA] Get details of a specific participant",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "participant_name"
+        ],
+        "properties": {
+          "participant_name": {
+            "type": "string",
+            "description": "Name of the participant (conferenceRecords/{record_id}/participants/{participant_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_list_participants",
+      "description": "[Meet API v2 GA] List participants for a conference record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "conference_record_name"
+        ],
+        "properties": {
+          "page_size": {
+            "type": "number",
+            "description": "Maximum number of participants to return (default: 10, max: 100)"
+          },
+          "conference_record_name": {
+            "type": "string",
+            "description": "Name of the conference record (conferenceRecords/{record_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_get_participant_session",
+      "description": "[Meet API v2 GA] Get details of a specific participant session",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "participant_session_name"
+        ],
+        "properties": {
+          "participant_session_name": {
+            "type": "string",
+            "description": "Name of the participant session (conferenceRecords/{record_id}/participants/{participant_id}/sessions/{session_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "meet_v2_list_participant_sessions",
+      "description": "[Meet API v2 GA] List sessions for a specific participant",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "participant_name"
+        ],
+        "properties": {
+          "page_size": {
+            "type": "number",
+            "description": "Maximum number of sessions to return (default: 10, max: 100)"
+          },
+          "participant_name": {
+            "type": "string",
+            "description": "Name of the participant (conferenceRecords/{record_id}/participants/{participant_id})"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_current_time",
+      "description": "Get the current time in UTC or specific timezone",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "timeZone": {
+            "type": "string",
+            "description": "IANA timezone identifier"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@INSIDE-HAIR/mcp-google-meet-and-calendar/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "CLIENT_ID": {
+            "type": "string",
+            "description": "Google OAuth2 Client ID for direct token authentication"
+          },
+          "CLIENT_SECRET": {
+            "type": "string",
+            "description": "Google OAuth2 Client Secret"
+          },
+          "REFRESH_TOKEN": {
+            "type": "string",
+            "description": "Google OAuth2 Refresh Token"
+          },
+          "googleMeetTokenPath": {
+            "type": "string",
+            "description": "Path to token file (legacy)"
+          },
+          "googleOAuthCredentials": {
+            "type": "string",
+            "description": "Path to Google OAuth credentials JSON file (legacy)"
+          },
+          "googleMeetCredentialsPath": {
+            "type": "string",
+            "description": "Path to credentials file (legacy)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

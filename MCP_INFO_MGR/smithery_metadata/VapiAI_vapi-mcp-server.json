@@ -1,0 +1,1137 @@
+{
+  "qualifiedName": "@VapiAI/vapi-mcp-server",
+  "displayName": "Vapi MCP Server",
+  "description": "Integrate your applications with Vapi APIs through seamless function calling. Enable scheduling and managing calls, assistants, and phone numbers directly from your MCP-enabled environment. Access Vapi's capabilities locally or remotely with ease and security.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/vapi.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list_assistants",
+      "description": "Lists all Vapi assistants",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_assistant",
+      "description": "Creates a new Vapi assistant",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "llm": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "enum": [
+                          "gpt-4o",
+                          "gpt-4o-mini"
+                        ],
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "const": "openai"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "enum": [
+                          "claude-3-7-sonnet-20250219",
+                          "claude-3-5-haiku-20241022"
+                        ],
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "const": "anthropic"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "enum": [
+                          "gemini-1.5-pro",
+                          "gemini-1.5-flash",
+                          "gemini-2.0-flash",
+                          "gemini-2.0-pro"
+                        ],
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "const": "google"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": {
+              "model": "gpt-4o",
+              "provider": "openai"
+            },
+            "description": "LLM configuration"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the assistant"
+          },
+          "voice": {
+            "type": "object",
+            "default": {
+              "voiceId": "sarah",
+              "provider": "11labs"
+            },
+            "required": [
+              "provider",
+              "voiceId"
+            ],
+            "properties": {
+              "model": {
+                "type": "string",
+                "description": "Voice model to use"
+              },
+              "voiceId": {
+                "type": "string",
+                "description": "Voice ID to use"
+              },
+              "provider": {
+                "enum": [
+                  "vapi",
+                  "11labs",
+                  "azure",
+                  "cartesia",
+                  "custom-voice",
+                  "deepgram",
+                  "11labs",
+                  "hume",
+                  "lmnt",
+                  "neuphonic",
+                  "openai",
+                  "playht",
+                  "rime-ai",
+                  "smallest-ai",
+                  "tavus",
+                  "sesame"
+                ],
+                "type": "string",
+                "description": "Provider to use for voice"
+              }
+            },
+            "description": "Voice configuration",
+            "additionalProperties": false
+          },
+          "toolIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs of tools to use with this assistant"
+          },
+          "transcriber": {
+            "type": "object",
+            "default": {
+              "model": "nova-3",
+              "provider": "deepgram"
+            },
+            "required": [
+              "provider",
+              "model"
+            ],
+            "properties": {
+              "model": {
+                "type": "string",
+                "description": "Transcription model to use"
+              },
+              "provider": {
+                "type": "string",
+                "description": "Provider to use for transcription"
+              }
+            },
+            "description": "Transcription configuration",
+            "additionalProperties": false
+          },
+          "firstMessage": {
+            "type": "string",
+            "default": "Hello, how can I help you today?",
+            "description": "First message to say to the user"
+          },
+          "instructions": {
+            "type": "string",
+            "default": "You are a helpful assistant.",
+            "description": "Instructions for the assistant"
+          },
+          "firstMessageMode": {
+            "enum": [
+              "assistant-speaks-first",
+              "assistant-waits-for-user",
+              "assistant-speaks-first-with-model-generated-message"
+            ],
+            "type": "string",
+            "default": "assistant-speaks-first",
+            "description": "This determines who speaks first, either assistant or user"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_assistant",
+      "description": "Gets a Vapi assistant by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "assistantId"
+        ],
+        "properties": {
+          "assistantId": {
+            "type": "string",
+            "description": "ID of the assistant to get"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_assistant",
+      "description": "Updates an existing Vapi assistant",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "assistantId"
+        ],
+        "properties": {
+          "llm": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "enum": [
+                          "gpt-4o",
+                          "gpt-4o-mini"
+                        ],
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "const": "openai"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "enum": [
+                          "claude-3-7-sonnet-20250219",
+                          "claude-3-5-haiku-20241022"
+                        ],
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "const": "anthropic"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "enum": [
+                          "gemini-1.5-pro",
+                          "gemini-1.5-flash",
+                          "gemini-2.0-flash",
+                          "gemini-2.0-pro"
+                        ],
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "const": "google"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "model"
+                    ],
+                    "properties": {
+                      "model": {
+                        "type": "string"
+                      },
+                      "provider": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "New LLM configuration"
+          },
+          "name": {
+            "type": "string",
+            "description": "New name for the assistant"
+          },
+          "voice": {
+            "type": "object",
+            "required": [
+              "provider",
+              "voiceId"
+            ],
+            "properties": {
+              "model": {
+                "type": "string",
+                "description": "Voice model to use"
+              },
+              "voiceId": {
+                "type": "string",
+                "description": "Voice ID to use"
+              },
+              "provider": {
+                "enum": [
+                  "vapi",
+                  "11labs",
+                  "azure",
+                  "cartesia",
+                  "custom-voice",
+                  "deepgram",
+                  "11labs",
+                  "hume",
+                  "lmnt",
+                  "neuphonic",
+                  "openai",
+                  "playht",
+                  "rime-ai",
+                  "smallest-ai",
+                  "tavus",
+                  "sesame"
+                ],
+                "type": "string",
+                "description": "Provider to use for voice"
+              }
+            },
+            "description": "New voice configuration",
+            "additionalProperties": false
+          },
+          "toolIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "New IDs of tools to use with this assistant"
+          },
+          "assistantId": {
+            "type": "string",
+            "description": "ID of the assistant to update"
+          },
+          "transcriber": {
+            "type": "object",
+            "required": [
+              "provider",
+              "model"
+            ],
+            "properties": {
+              "model": {
+                "type": "string",
+                "description": "Transcription model to use"
+              },
+              "provider": {
+                "type": "string",
+                "description": "Provider to use for transcription"
+              }
+            },
+            "description": "New transcription configuration",
+            "additionalProperties": false
+          },
+          "firstMessage": {
+            "type": "string",
+            "description": "First message to say to the user"
+          },
+          "instructions": {
+            "type": "string",
+            "description": "New instructions for the assistant"
+          },
+          "firstMessageMode": {
+            "enum": [
+              "assistant-speaks-first",
+              "assistant-waits-for-user",
+              "assistant-speaks-first-with-model-generated-message"
+            ],
+            "type": "string",
+            "description": "This determines who speaks first, either assistant or user"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_calls",
+      "description": "Lists all Vapi calls",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_call",
+      "description": "Creates a outbound call",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "customer": {
+            "type": "object",
+            "required": [
+              "number"
+            ],
+            "properties": {
+              "number": {
+                "type": "string",
+                "description": "Customer phone number"
+              }
+            },
+            "description": "Customer information",
+            "additionalProperties": false
+          },
+          "assistantId": {
+            "type": "string",
+            "description": "ID of the assistant to use for the call"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "description": "ISO datetime string for when the call should be scheduled (e.g. \"2025-03-25T22:39:27.771Z\")"
+          },
+          "phoneNumberId": {
+            "type": "string",
+            "description": "ID of the phone number to use for the call"
+          },
+          "assistantOverrides": {
+            "type": "object",
+            "properties": {
+              "variableValues": {
+                "type": "object",
+                "description": "Key-value pairs for dynamic variables to use in the assistant's prompts (e.g. {\"name\": \"Joe\", \"age\": \"24\"})",
+                "additionalProperties": {}
+              }
+            },
+            "description": "Overrides for the assistant configuration",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_call",
+      "description": "Gets details of a specific call",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "callId"
+        ],
+        "properties": {
+          "callId": {
+            "type": "string",
+            "description": "ID of the call to get"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_phone_numbers",
+      "description": "Lists all Vapi phone numbers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_phone_number",
+      "description": "Gets details of a specific phone number",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phoneNumberId"
+        ],
+        "properties": {
+          "phoneNumberId": {
+            "type": "string",
+            "description": "ID of the phone number to get"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_tools",
+      "description": "Lists all Vapi tools",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_tool",
+      "description": "Gets details of a specific tool",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "toolId"
+        ],
+        "properties": {
+          "toolId": {
+            "type": "string",
+            "description": "ID of the tool to get"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_tool",
+      "description": "Creates a new Vapi tool",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "sms": {
+            "type": "object",
+            "required": [
+              "metadata"
+            ],
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "required": [
+                  "from"
+                ],
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "description": "Phone number to send SMS from (e.g., \"+15551234567\"). It must be a twilio number in E.164 format."
+                  }
+                },
+                "description": "SMS configuration metadata",
+                "additionalProperties": false
+              }
+            },
+            "description": "SMS tool configuration - to send text messages",
+            "additionalProperties": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the function/tool"
+          },
+          "type": {
+            "enum": [
+              "sms",
+              "transferCall",
+              "function",
+              "apiRequest"
+            ],
+            "type": "string",
+            "description": "Type of the tool to create"
+          },
+          "function": {
+            "type": "object",
+            "required": [
+              "parameters",
+              "server"
+            ],
+            "properties": {
+              "server": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Server URL where the function will be called"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "description": "Headers to send with the request",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "description": "Server configuration with URL where the function will be called",
+                "additionalProperties": false
+              },
+              "parameters": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "properties"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "object"
+                  },
+                  "required": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "properties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "enum": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "items": {},
+                        "required": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "properties": {
+                          "type": "object",
+                          "additionalProperties": {}
+                        },
+                        "description": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "description": "JSON schema for function parameters",
+                "additionalProperties": false
+              }
+            },
+            "description": "Custom function tool configuration - for custom server-side functions",
+            "additionalProperties": false
+          },
+          "apiRequest": {
+            "type": "object",
+            "required": [
+              "url"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL to make the API request to"
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "properties"
+                ],
+                "properties": {
+                  "type": {
+                    "$ref": "#/properties/function/properties/parameters/properties/type"
+                  },
+                  "required": {
+                    "$ref": "#/properties/function/properties/parameters/properties/required"
+                  },
+                  "properties": {
+                    "$ref": "#/properties/function/properties/parameters/properties/properties"
+                  }
+                },
+                "description": "Body schema for the API request in JSON Schema format",
+                "additionalProperties": false
+              },
+              "method": {
+                "enum": [
+                  "GET",
+                  "POST"
+                ],
+                "type": "string",
+                "default": "POST",
+                "description": "HTTP method for the API request"
+              },
+              "headers": {
+                "type": "object",
+                "description": "Headers to send with the request (key-value pairs)",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "backoffPlan": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "fixed",
+                      "exponential"
+                    ],
+                    "type": "string",
+                    "default": "fixed"
+                  },
+                  "maxRetries": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Maximum number of retries"
+                  },
+                  "baseDelaySeconds": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Base delay between retries in seconds"
+                  }
+                },
+                "description": "Retry configuration for failed API requests",
+                "additionalProperties": false
+              },
+              "timeoutSeconds": {
+                "type": "number",
+                "default": 20,
+                "description": "Request timeout in seconds"
+              }
+            },
+            "description": "API Request tool configuration - for HTTP API integration",
+            "additionalProperties": false
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what the function/tool does"
+          },
+          "transferCall": {
+            "type": "object",
+            "required": [
+              "destinations"
+            ],
+            "properties": {
+              "destinations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "number"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "number"
+                    },
+                    "number": {
+                      "type": "string",
+                      "description": "Phone number to transfer to (e.g., \"+16054440129\"). It can be any phone number in E.164 format."
+                    },
+                    "callerId": {
+                      "type": "string",
+                      "description": "Caller ID to use for the transfer"
+                    },
+                    "extension": {
+                      "type": "string",
+                      "description": "Extension number if applicable"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Description of the transfer destination"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "description": "Array of possible transfer destinations"
+              }
+            },
+            "description": "Transfer call tool configuration - to transfer calls to destinations",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_tool",
+      "description": "Updates an existing Vapi tool",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "toolId"
+        ],
+        "properties": {
+          "sms": {
+            "type": "object",
+            "required": [
+              "metadata"
+            ],
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "required": [
+                  "from"
+                ],
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "description": "Phone number to send SMS from (e.g., \"+15551234567\"). It must be a twilio number in E.164 format."
+                  }
+                },
+                "description": "SMS configuration metadata",
+                "additionalProperties": false
+              }
+            },
+            "description": "SMS tool configuration - to send text messages",
+            "additionalProperties": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the function/tool"
+          },
+          "toolId": {
+            "type": "string",
+            "description": "ID of the tool to update"
+          },
+          "function": {
+            "type": "object",
+            "required": [
+              "parameters",
+              "server"
+            ],
+            "properties": {
+              "server": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Server URL where the function will be called"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "description": "Headers to send with the request",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "description": "Server configuration with URL where the function will be called",
+                "additionalProperties": false
+              },
+              "parameters": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "properties"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "object"
+                  },
+                  "required": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "properties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "enum": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "items": {},
+                        "required": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "properties": {
+                          "type": "object",
+                          "additionalProperties": {}
+                        },
+                        "description": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "description": "JSON schema for function parameters",
+                "additionalProperties": false
+              }
+            },
+            "description": "Custom function tool configuration - for custom server-side functions",
+            "additionalProperties": false
+          },
+          "apiRequest": {
+            "type": "object",
+            "required": [
+              "url"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL to make the API request to"
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "properties"
+                ],
+                "properties": {
+                  "type": {
+                    "$ref": "#/properties/function/properties/parameters/properties/type"
+                  },
+                  "required": {
+                    "$ref": "#/properties/function/properties/parameters/properties/required"
+                  },
+                  "properties": {
+                    "$ref": "#/properties/function/properties/parameters/properties/properties"
+                  }
+                },
+                "description": "Body schema for the API request in JSON Schema format",
+                "additionalProperties": false
+              },
+              "method": {
+                "enum": [
+                  "GET",
+                  "POST"
+                ],
+                "type": "string",
+                "default": "POST",
+                "description": "HTTP method for the API request"
+              },
+              "headers": {
+                "type": "object",
+                "description": "Headers to send with the request (key-value pairs)",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "backoffPlan": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "fixed",
+                      "exponential"
+                    ],
+                    "type": "string",
+                    "default": "fixed"
+                  },
+                  "maxRetries": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Maximum number of retries"
+                  },
+                  "baseDelaySeconds": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Base delay between retries in seconds"
+                  }
+                },
+                "description": "Retry configuration for failed API requests",
+                "additionalProperties": false
+              },
+              "timeoutSeconds": {
+                "type": "number",
+                "default": 20,
+                "description": "Request timeout in seconds"
+              }
+            },
+            "description": "API Request tool configuration - for HTTP API integration",
+            "additionalProperties": false
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what the function/tool does"
+          },
+          "transferCall": {
+            "type": "object",
+            "required": [
+              "destinations"
+            ],
+            "properties": {
+              "destinations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "number"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "number"
+                    },
+                    "number": {
+                      "type": "string",
+                      "description": "Phone number to transfer to (e.g., \"+16054440129\"). It can be any phone number in E.164 format."
+                    },
+                    "callerId": {
+                      "type": "string",
+                      "description": "Caller ID to use for the transfer"
+                    },
+                    "extension": {
+                      "type": "string",
+                      "description": "Extension number if applicable"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Description of the transfer destination"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "description": "Array of possible transfer destinations"
+              }
+            },
+            "description": "Transfer call tool configuration - to transfer calls to destinations",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@VapiAI/vapi-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "VAPI_TOKEN"
+        ],
+        "properties": {
+          "VAPI_TOKEN": {
+            "type": "string",
+            "default": "",
+            "description": "Vapi API token used for making API calls"
+          }
+        }
+      }
+    }
+  ]
+}

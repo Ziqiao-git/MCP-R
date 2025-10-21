@@ -1,0 +1,584 @@
+{
+  "qualifiedName": "@fahadBSTech/clockify-mcp",
+  "displayName": "Clockify Time Tracking Integration Server",
+  "description": "Provide seamless integration with Clockify's time tracking API through a comprehensive set of MCP tools. Manage workspaces, users, projects, tasks, time entries, tags, reports, user groups, and custom fields efficiently. Enable AI assistants and automation workflows to interact with Clockify data securely and effectively.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/clockify.me.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@fahadBSTech/clockify-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_workspaces",
+      "description": "Get all workspaces for the authenticated user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_workspace",
+      "description": "Get details of a specific workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user",
+      "description": "Get information about the authenticated user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_users",
+      "description": "Get all users in a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Filter users by email"
+          },
+          "status": {
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "type": "string",
+            "description": "Filter by user status"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_clients",
+      "description": "Get all clients in a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "description": "Include archived clients"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_client",
+      "description": "Create a new client",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Client name"
+          },
+          "note": {
+            "type": "string",
+            "description": "Client note/description"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_projects",
+      "description": "Get all projects in a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Filter by project name"
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Include archived projects"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_project",
+      "description": "Create a new project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "note": {
+            "type": "string",
+            "description": "Project note/description"
+          },
+          "color": {
+            "type": "string",
+            "description": "Project color"
+          },
+          "billable": {
+            "type": "boolean",
+            "description": "Is project billable"
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Client ID"
+          },
+          "isPublic": {
+            "type": "boolean",
+            "description": "Is project public"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_tasks",
+      "description": "Get all tasks for a project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "projectId"
+        ],
+        "properties": {
+          "isActive": {
+            "type": "boolean",
+            "description": "Filter by active status"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_task",
+      "description": "Create a new task",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "projectId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Task name"
+          },
+          "status": {
+            "enum": [
+              "ACTIVE",
+              "DONE"
+            ],
+            "type": "string",
+            "description": "Task status"
+          },
+          "estimate": {
+            "type": "string",
+            "description": "Task estimate (PT1H30M format)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID"
+          },
+          "assigneeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of user IDs to assign to task"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_time_entries",
+      "description": "Get time entries for a user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "userId"
+        ],
+        "properties": {
+          "end": {
+            "type": "string",
+            "description": "End date filter (ISO 8601)"
+          },
+          "task": {
+            "type": "string",
+            "description": "Filter by task ID"
+          },
+          "start": {
+            "type": "string",
+            "description": "Start date filter (ISO 8601)"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "project": {
+            "type": "string",
+            "description": "Filter by project ID"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "Number of entries per page (max 5000)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Filter by description"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_time_entry",
+      "description": "Create a new time entry",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "start"
+        ],
+        "properties": {
+          "end": {
+            "type": "string",
+            "description": "End time (ISO 8601)"
+          },
+          "start": {
+            "type": "string",
+            "description": "Start time (ISO 8601)"
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tag IDs"
+          },
+          "taskId": {
+            "type": "string",
+            "description": "Task ID"
+          },
+          "billable": {
+            "type": "boolean",
+            "description": "Is time entry billable"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "Time entry description"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "start_timer",
+      "description": "Start a timer (create a running time entry)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "Task ID"
+          },
+          "billable": {
+            "type": "boolean",
+            "description": "Is time entry billable"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "Time entry description"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "stop_timer",
+      "description": "Stop current running timer",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_tags",
+      "description": "Get all tags in a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "description": "Include archived tags"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_tag",
+      "description": "Create a new tag",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Tag name"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "detailed_report",
+      "description": "Generate detailed time report",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "dateRangeStart",
+          "dateRangeEnd"
+        ],
+        "properties": {
+          "exportType": {
+            "enum": [
+              "JSON",
+              "PDF",
+              "CSV",
+              "XLSX"
+            ],
+            "type": "string",
+            "description": "Export type"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          },
+          "dateRangeEnd": {
+            "type": "string",
+            "description": "Report end date (ISO 8601)"
+          },
+          "dateRangeStart": {
+            "type": "string",
+            "description": "Report start date (ISO 8601)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "summary_report",
+      "description": "Generate summary time report",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "dateRangeStart",
+          "dateRangeEnd"
+        ],
+        "properties": {
+          "exportType": {
+            "enum": [
+              "JSON",
+              "PDF",
+              "CSV",
+              "XLSX"
+            ],
+            "type": "string",
+            "description": "Export type"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID"
+          },
+          "dateRangeEnd": {
+            "type": "string",
+            "description": "Report end date (ISO 8601)"
+          },
+          "dateRangeStart": {
+            "type": "string",
+            "description": "Report start date (ISO 8601)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "test_clockify_connection",
+      "description": "Test connection to Clockify API and get user information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@fahadBSTech/clockify-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Clockify API Key (X-Api-Key header)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

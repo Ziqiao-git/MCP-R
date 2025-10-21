@@ -1,0 +1,102 @@
+{
+  "qualifiedName": "@gilberth/mcp-adguard-home",
+  "displayName": "AdGuard Home Server",
+  "description": "Manage and query your AdGuard Home DNS records and filtering rules through AI agents. Simplify DNS management by integrating with AI workflows. Enable seamless control over your AdGuard Home instance via a standardized protocol.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/adguard.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@gilberth/mcp-adguard-home",
+  "security": null,
+  "tools": [
+    {
+      "name": "check_connection",
+      "description": "Check AdGuard Home connection status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_dns_records",
+      "description": "List all DNS rewrite records",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "add_dns_record",
+      "description": "Add a DNS rewrite record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "domain",
+          "ip"
+        ],
+        "properties": {
+          "ip": {
+            "type": "string",
+            "description": "IP address"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Domain name"
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_dns_record",
+      "description": "Remove a DNS rewrite record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "domain",
+          "ip"
+        ],
+        "properties": {
+          "ip": {
+            "type": "string",
+            "description": "IP address"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Domain name"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@gilberth/mcp-adguard-home/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "adguardUsername",
+          "adguardPassword",
+          "adguardUrl"
+        ],
+        "properties": {
+          "adguardUrl": {
+            "type": "string",
+            "description": "Base URL of your AdGuard Home instance"
+          },
+          "adguardPassword": {
+            "type": "string",
+            "description": "Password for AdGuard Home authentication"
+          },
+          "adguardUsername": {
+            "type": "string",
+            "description": "Username for AdGuard Home authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

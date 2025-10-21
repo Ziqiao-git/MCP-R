@@ -1,0 +1,100 @@
+{
+  "qualifiedName": "@gen-pdf/mcp",
+  "displayName": "Gen-PDF Server",
+  "description": "Generate professional PDF documents from markdown content with customizable styling options including dark mode and advanced page settings.\n\nConvert any github flavored markdown to high-quality PDFs using the Gen-PDF API.\n- page cover\n- TOC\n- complex tables\n- Callouts\n- Footnotes\n- Code hightlighting\n\nEnhance AI assistants with seamless PDF creation capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/gen-pdf.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@gen-pdf/mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "generate_pdf",
+      "description": "Generate a professional PDF document from markdown content using Gen-PDF. Supports advanced formatting, code highlighting, math expressions, tables, and customizable styling options including dark mode.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "markdownDocument",
+          "title"
+        ],
+        "properties": {
+          "toc": {
+            "type": "boolean",
+            "default": false,
+            "description": "Add a table of contents to the PDF document at the beginning of the document. You may want to add it if the document is long and you want to be able to navigate through it easily."
+          },
+          "cover": {
+            "type": "boolean",
+            "default": false,
+            "description": "Add a cover page to the PDF document that includes the title and subtitle date and a cover image"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title for the PDF document"
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Author of the document. They will be mention on the cover page, therefore this options is not needed if you do not use the cover page."
+          },
+          "darkMode": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable dark theme for the document"
+          },
+          "subtitle": {
+            "type": "string",
+            "description": "Subtitle for the PDF document"
+          },
+          "pageMargin": {
+            "enum": [
+              "small",
+              "medium",
+              "large"
+            ],
+            "type": "string",
+            "default": "large",
+            "description": "Page margins"
+          },
+          "markdownDocument": {
+            "type": "string",
+            "description": "Markdown content to convert to PDF"
+          },
+          "enablePageNumbering": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable page numbering"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@gen-pdf/mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "genPdfApiKey": {
+            "type": "string",
+            "description": "Gen-PDF API key for PDF generation operations"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

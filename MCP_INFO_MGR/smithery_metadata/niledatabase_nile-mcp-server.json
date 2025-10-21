@@ -1,0 +1,258 @@
+{
+  "qualifiedName": "@niledatabase/nile-mcp-server",
+  "displayName": "Nile MCP Server",
+  "description": "Interact with the Nile database platform through a standardized interface. Manage databases, execute SQL queries, and handle credentials seamlessly. Enhance your LLM applications with powerful database capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/thenile.dev.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "list-resources",
+      "description": "Lists all tables and their descriptions in the specified database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName"
+        ],
+        "properties": {
+          "databaseName": {
+            "type": "string",
+            "description": "Name of the database to list resources from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-database",
+      "description": "Creates a new Nile database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "region"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the database"
+          },
+          "region": {
+            "enum": [
+              "AWS_US_WEST_2",
+              "AWS_EU_CENTRAL_1"
+            ],
+            "type": "string",
+            "description": "Region where the database should be created"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-databases",
+      "description": "Lists all databases in the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-database",
+      "description": "Gets details of a specific database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the database to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-database",
+      "description": "Deletes a database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the database to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-connection-string",
+      "description": "Gets a PostgreSQL connection string with fresh credentials",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName"
+        ],
+        "properties": {
+          "databaseName": {
+            "type": "string",
+            "description": "Name of the database to get connection string for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute-sql",
+      "description": "Executes a SQL query on a Nile database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName",
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "SQL query to execute"
+          },
+          "databaseName": {
+            "type": "string",
+            "description": "Name of the database to query"
+          },
+          "connectionString": {
+            "type": "string",
+            "description": "Connection string to use for the query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-tenant",
+      "description": "Creates a new tenant in the specified database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the tenant"
+          },
+          "databaseName": {
+            "type": "string",
+            "description": "Name of the database to create tenant in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-tenant",
+      "description": "Deletes a tenant from the specified database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName",
+          "tenantId"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "description": "ID of the tenant to delete"
+          },
+          "databaseName": {
+            "type": "string",
+            "description": "Name of the database"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-tenants",
+      "description": "Lists all tenants in the specified database",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName"
+        ],
+        "properties": {
+          "databaseName": {
+            "type": "string",
+            "description": "Name of the database to list tenants from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "read-resource",
+      "description": "Gets detailed schema information for a specific table",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "databaseName",
+          "tableName"
+        ],
+        "properties": {
+          "tableName": {
+            "type": "string",
+            "description": "Name of the table to get schema for"
+          },
+          "databaseName": {
+            "type": "string",
+            "description": "Name of the database"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@niledatabase/nile-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "nileApiKey",
+          "nileWorkspaceSlug"
+        ],
+        "properties": {
+          "nileApiKey": {
+            "type": "string",
+            "description": "Your Nile API key."
+          },
+          "nileWorkspaceSlug": {
+            "type": "string",
+            "description": "Your Nile workspace slug."
+          }
+        }
+      }
+    }
+  ]
+}

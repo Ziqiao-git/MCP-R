@@ -1,0 +1,587 @@
+{
+  "qualifiedName": "@khizar-anjum/courtlistener-mcp",
+  "displayName": "CourtListener Case Law Explorer",
+  "description": "Search and analyze U.S. case law across thousands of courts using CourtListener’s open database. Find precedents, read full opinions, validate citations, study judge patterns, and check procedural requirements and legal trends. Search federal dockets, track case status, and analyze case timelines and documents when available.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@khizar-anjum/courtlistener-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_cases_by_problem",
+      "description": "Find relevant cases using LLM-generated search keywords. The LLM should extract legal keywords from the problem description and provide them for precise case law search.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "search_keywords"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Number of cases to return (1-20)"
+          },
+          "case_type": {
+            "enum": [
+              "consumer",
+              "small-claims",
+              "landlord-tenant",
+              "contract",
+              "warranty",
+              "debt-collection",
+              "auto",
+              "employment",
+              "civil-rights",
+              "corporate",
+              "criminal",
+              "family",
+              "immigration",
+              "intellectual-property",
+              "personal-injury",
+              "real-estate",
+              "tax"
+            ],
+            "type": "string",
+            "description": "Type of legal issue"
+          },
+          "date_range": {
+            "enum": [
+              "recent-2years",
+              "established-precedent",
+              "all-time"
+            ],
+            "type": "string",
+            "default": "recent-2years",
+            "description": "Time range preference for cases"
+          },
+          "court_level": {
+            "enum": [
+              "trial",
+              "appellate",
+              "supreme",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Level of courts to search"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "description": "Jurisdiction to search. Options:\n                  - \"all\" (search all courts)\n                  - \"federal\" (all federal courts)\n                  - \"state\" (all state courts)\n                  - \"federal-bankruptcy\" (bankruptcy courts)\n                  - \"military\" (military courts)\n                  - State names: \"california\", \"texas\", \"florida\", etc.\n                  - Specific court IDs: \"scotus\", \"ca9\", \"ca11\", etc.\n                  - Multiple courts: \"ca9,ca11,scotus\" (comma-separated)"
+          },
+          "problem_summary": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Brief summary of the legal problem for context (1-2 sentences)"
+          },
+          "search_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "description": "Array of legal search terms extracted by LLM from problem description (e.g., [\"breach of contract\", \"negligence\", \"damages\"])"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_case_details",
+      "description": "Deep dive into specific case for precedent analysis with full legal reasoning",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "case_id"
+        ],
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "description": "Case ID from search results (cluster ID or docket ID)"
+          },
+          "content_mode": {
+            "enum": [
+              "summary",
+              "full"
+            ],
+            "type": "string",
+            "default": "summary",
+            "description": "Content mode: 'summary' returns API syllabus or 'N/A - use full mode', 'full' returns complete opinion text"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_similar_precedents",
+      "description": "Find cases with similar legal reasoning or outcomes to a reference case",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "reference_case_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 8,
+            "maximum": 15,
+            "minimum": 1,
+            "description": "Number of similar cases to return (1-15)"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "description": "Jurisdiction to search for similar cases. Options:\n                  - \"all\" (search all courts)\n                  - \"federal\" (all federal courts)\n                  - \"state\" (all state courts)\n                  - State names: \"california\", \"texas\", \"florida\", etc.\n                  - Specific court IDs: \"scotus\", \"ca9\", \"ca11\", etc.\n                  - Multiple courts: \"ca9,ca11,scotus\" (comma-separated)"
+          },
+          "legal_concepts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Key legal concepts to match (e.g., [\"breach of contract\", \"negligence\"])"
+          },
+          "reference_case_id": {
+            "type": "string",
+            "description": "ID of base case to find similar cases"
+          },
+          "citation_threshold": {
+            "type": "number",
+            "default": 1,
+            "description": "Minimum citation count for authoritative cases"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_case_outcomes",
+      "description": "Analyze outcome patterns for similar cases to predict success likelihood",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "case_type"
+        ],
+        "properties": {
+          "case_type": {
+            "type": "string",
+            "description": "Type of legal issue to analyze"
+          },
+          "date_range": {
+            "enum": [
+              "last-year",
+              "last-2years",
+              "last-5years"
+            ],
+            "type": "string",
+            "default": "last-2years",
+            "description": "Time period for analysis"
+          },
+          "court_level": {
+            "enum": [
+              "trial",
+              "appellate",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Court level to analyze"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "description": "Jurisdiction to analyze cases in. Options:\n                  - \"all\" (analyze all courts)\n                  - \"federal\" (all federal courts)\n                  - \"state\" (all state courts)\n                  - State names: \"california\", \"new-york\", \"texas\", etc.\n                  - Specific court IDs: \"scotus\", \"ca9\", \"cal\", etc."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_judge_analysis",
+      "description": "Analyze judge's typical rulings on similar issues for strategic insights",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "judge_name",
+          "case_type"
+        ],
+        "properties": {
+          "court": {
+            "type": "string",
+            "description": "Specific court identifier (optional, narrows down the search)"
+          },
+          "case_type": {
+            "type": "string",
+            "description": "Area of law to analyze (e.g., contract disputes, small claims, employment law)"
+          },
+          "judge_name": {
+            "type": "string",
+            "description": "Full name of the judge"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "description": "Optional jurisdiction to help identify the correct judge. Options:\n                  - \"federal\" (all federal courts)\n                  - \"state\" (all state courts)\n                  - State names: \"california\", \"texas\", \"florida\", etc.\n                  - Specific court IDs: \"scotus\", \"ca9\", \"ca11\", etc.\n                  Helps disambiguate common judge names."
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_citations",
+      "description": "Verify and expand legal citations with related case discovery",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "citations"
+        ],
+        "properties": {
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of citations to verify (e.g., [\"123 F.3d 456\", \"Smith v. Jones\"])"
+          },
+          "context_text": {
+            "type": "string",
+            "description": "Surrounding legal argument context for better validation"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "description": "Optional jurisdiction to improve search accuracy. Options:\n                  - \"federal\" (all federal courts)\n                  - \"state\" (all state courts)\n                  - State names: \"california\", \"texas\", \"florida\", etc.\n                  - Specific court IDs: \"scotus\", \"ca9\", \"ca11\", etc.\n                  If omitted, searches all courts."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_procedural_requirements",
+      "description": "Find procedural rules and filing requirements for specific case types in any jurisdiction",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "case_type",
+          "jurisdiction"
+        ],
+        "properties": {
+          "court": {
+            "type": "string",
+            "description": "Specific court identifier (optional, narrows down the search)"
+          },
+          "case_type": {
+            "type": "string",
+            "description": "Type of legal complaint or case"
+          },
+          "claim_amount": {
+            "type": "number",
+            "description": "Dollar amount of dispute (helps determine appropriate court level)"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "description": "Jurisdiction to search for procedural requirements. Options:\n                  - \"federal\" (all federal courts)\n                  - \"state\" (all state courts)\n                  - State names: \"california\", \"new-york\", \"texas\", etc.\n                  - Specific court IDs: \"scotus\", \"ca9\", \"cal\", etc."
+          }
+        }
+      }
+    },
+    {
+      "name": "track_legal_trends",
+      "description": "Identify recent trends in similar cases for strategic advantage",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "legal_area"
+        ],
+        "properties": {
+          "legal_area": {
+            "enum": [
+              "consumer-protection",
+              "small-claims",
+              "landlord-tenant",
+              "contract-disputes",
+              "warranty-claims"
+            ],
+            "type": "string",
+            "description": "Area of law to analyze trends"
+          },
+          "trend_type": {
+            "enum": [
+              "outcomes",
+              "filing-patterns",
+              "new-precedents",
+              "settlement-rates"
+            ],
+            "type": "string",
+            "default": "outcomes",
+            "description": "Type of trend to analyze"
+          },
+          "time_period": {
+            "enum": [
+              "last-6months",
+              "last-year",
+              "last-2years"
+            ],
+            "type": "string",
+            "default": "last-year",
+            "description": "Time period for trend analysis"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_pacer_dockets",
+      "description": "📊 PACER SEARCH: Search federal court dockets from PACER via CourtListener's RECAP Archive. Find active and terminated cases with comprehensive party, attorney, and filing information. Search by case name, party name, or nature of suit across all federal courts or specific jurisdictions.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "court": {
+            "type": "string",
+            "description": "Specific court identifier (e.g., 'ca3', 'cacd', 'nysd', 'dcd') OR jurisdiction name (e.g., 'federal', 'california', 'bankruptcy'). Court IDs are passed directly, jurisdiction names are resolved to multiple courts."
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of dockets to return"
+          },
+          "case_name": {
+            "type": "string",
+            "description": "Case name or title to search for"
+          },
+          "case_type": {
+            "enum": [
+              "civil",
+              "criminal",
+              "bankruptcy",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Type of case to search for"
+          },
+          "date_range": {
+            "type": "object",
+            "properties": {
+              "end_date": {
+                "type": "string",
+                "description": "End date in ISO format (YYYY-MM-DD)"
+              },
+              "start_date": {
+                "type": "string",
+                "description": "Start date in ISO format (YYYY-MM-DD)"
+              }
+            },
+            "description": "Date range for case filing or termination dates"
+          },
+          "party_name": {
+            "type": "string",
+            "description": "Name of a party involved in the case (plaintiff, defendant, etc.). Examples: 'Sean Combs', 'Microsoft Corporation', 'United States'"
+          },
+          "nature_of_suit": {
+            "type": "string",
+            "description": "Nature of suit code or description (e.g., 'Contract', 'Tort', 'Civil Rights')"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_docket_entries",
+      "description": "🔒 PREMIUM ACCESS REQUIRED | EXPERIMENTAL: Get detailed docket entries for a specific case, including all filings, orders, and document references from PACER. Note: This function requires CourtListener premium API access and is experimental - may not work with basic API keys.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "docket_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of entries to return"
+          },
+          "docket_id": {
+            "type": "string",
+            "description": "Docket ID from search results"
+          },
+          "entry_type": {
+            "enum": [
+              "all",
+              "documents",
+              "orders",
+              "filings"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Type of docket entries to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_parties_attorneys",
+      "description": "📊 BASIC ACCESS: Search for parties and attorneys across PACER cases. Track representation patterns and attorney success rates. Note: Basic API access provides limited data - premium access required for full attorney/party details.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "court": {
+            "type": "string",
+            "description": "Court identifier to limit search (optional)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "firm_name": {
+            "type": "string",
+            "description": "Law firm name to search for"
+          },
+          "date_range": {
+            "type": "object",
+            "properties": {
+              "end_date": {
+                "type": "string",
+                "description": "End date in ISO format"
+              },
+              "start_date": {
+                "type": "string",
+                "description": "Start date in ISO format"
+              }
+            },
+            "description": "Date range for case activity"
+          },
+          "party_name": {
+            "type": "string",
+            "description": "Name of party to search for (plaintiff, defendant, etc.)"
+          },
+          "attorney_name": {
+            "type": "string",
+            "description": "Attorney name to search for"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_case_timeline",
+      "description": "🔒 PREMIUM ACCESS REQUIRED | EXPERIMENTAL: Analyze case progression timeline from PACER docket entries. Track delays, activity patterns, and case development. Note: Requires premium access to docket-entries endpoint - basic API access provides limited timeline data only.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "docket_id"
+        ],
+        "properties": {
+          "docket_id": {
+            "type": "string",
+            "description": "Docket ID to analyze"
+          },
+          "analysis_type": {
+            "enum": [
+              "progression",
+              "delays",
+              "activity",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Type of timeline analysis to perform"
+          },
+          "include_documents": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include document filing analysis in timeline"
+          }
+        }
+      }
+    },
+    {
+      "name": "track_case_status",
+      "description": "📊 BASIC ACCESS: Track current status and recent activity for PACER cases. Monitor active litigation progress. Note: Basic access provides case metadata only - premium access required for detailed activity tracking.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "docket_id"
+        ],
+        "properties": {
+          "docket_id": {
+            "type": "string",
+            "description": "Docket ID to track"
+          },
+          "status_history": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include historical status changes"
+          },
+          "include_recent_activity": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include recent docket activity in status report"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_case_documents",
+      "description": "🔒 PREMIUM ACCESS REQUIRED | EXPERIMENTAL: Retrieve case documents from PACER with full text extraction. Access orders, motions, briefs, and opinions. Note: This function requires CourtListener premium API access and is experimental - may not work with basic API keys.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "docket_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of documents to return"
+          },
+          "docket_id": {
+            "type": "string",
+            "description": "Docket ID to get documents for"
+          },
+          "include_text": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include extracted full text content (may be large)"
+          },
+          "document_type": {
+            "enum": [
+              "all",
+              "orders",
+              "motions",
+              "briefs",
+              "opinions"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Type of documents to retrieve"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@khizar-anjum/courtlistener-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "courtlistener_api_key": {
+            "type": "string",
+            "description": "CourtListener API key for enhanced access"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

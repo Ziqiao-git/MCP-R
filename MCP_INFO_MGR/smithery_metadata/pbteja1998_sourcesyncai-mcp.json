@@ -1,0 +1,1941 @@
+{
+  "qualifiedName": "@pbteja1998/sourcesyncai-mcp",
+  "displayName": "SourceSync.ai MCP Server",
+  "description": "Integrate your AI models with SourceSync.ai's knowledge management platform. Seamlessly manage, ingest, and search your documents while leveraging external services for enhanced data retrieval. Empower your AI with organized knowledge and efficient document management.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/sourcesync.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "validateApiKey",
+      "description": "Validates the API key by attempting to list namespaces. Returns the list of namespaces if successful.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createNamespace",
+      "description": "Creates a new namespace with the provided configuration. Requires a name, file storage configuration, vector storage configuration, and embedding model configuration.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "fileStorageConfig",
+          "vectorStorageConfig",
+          "embeddingModelConfig"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "webScraperConfig": {
+            "type": "object",
+            "required": [
+              "provider",
+              "apiKey"
+            ],
+            "properties": {
+              "apiKey": {
+                "type": "string"
+              },
+              "provider": {
+                "enum": [
+                  "FIRECRAWL",
+                  "JINA",
+                  "SCRAPINGBEE"
+                ],
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "fileStorageConfig": {
+            "type": "object",
+            "required": [
+              "type",
+              "bucket",
+              "region",
+              "endpoint",
+              "credentials"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "S3_COMPATIBLE"
+                ],
+                "type": "string"
+              },
+              "bucket": {
+                "type": "string"
+              },
+              "region": {
+                "type": "string"
+              },
+              "endpoint": {
+                "type": "string"
+              },
+              "credentials": {
+                "type": "object",
+                "required": [
+                  "accessKeyId",
+                  "secretAccessKey"
+                ],
+                "properties": {
+                  "accessKeyId": {
+                    "type": "string"
+                  },
+                  "secretAccessKey": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "vectorStorageConfig": {
+            "type": "object",
+            "required": [
+              "provider",
+              "apiKey",
+              "indexHost"
+            ],
+            "properties": {
+              "apiKey": {
+                "type": "string"
+              },
+              "provider": {
+                "enum": [
+                  "PINECONE"
+                ],
+                "type": "string"
+              },
+              "indexHost": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "embeddingModelConfig": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "model",
+                  "apiKey"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "text-embedding-3-small",
+                      "text-embedding-3-large",
+                      "text-embedding-ada-002"
+                    ],
+                    "type": "string"
+                  },
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "const": "OPENAI"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "model",
+                  "apiKey"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "embed-english-v3.0",
+                      "embed-multilingual-v3.0",
+                      "embed-english-light-v3.0",
+                      "embed-multilingual-light-v3.0",
+                      "embed-english-v2.0",
+                      "embed-english-light-v2.0",
+                      "embed-multilingual-v2.0"
+                    ],
+                    "type": "string"
+                  },
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "const": "COHERE"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "model",
+                  "apiKey"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "jina-embeddings-v3"
+                    ],
+                    "type": "string"
+                  },
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "const": "JINA"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "listNamespaces",
+      "description": "Lists all namespaces available for the current API key and optional tenant ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getNamespace",
+      "description": "Retrieves a specific namespace by its ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateNamespace",
+      "description": "Updates an existing namespace with the provided configuration parameters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "boxConfig": {
+            "type": "object",
+            "required": [
+              "clientId",
+              "clientSecret"
+            ],
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "notionConfig": {
+            "type": "object",
+            "required": [
+              "clientId",
+              "clientSecret"
+            ],
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "dropboxConfig": {
+            "type": "object",
+            "required": [
+              "clientId",
+              "clientSecret"
+            ],
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "onedriveConfig": {
+            "type": "object",
+            "required": [
+              "clientId",
+              "clientSecret"
+            ],
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "sharepointConfig": {
+            "type": "object",
+            "required": [
+              "clientId",
+              "clientSecret"
+            ],
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "webScraperConfig": {
+            "type": "object",
+            "required": [
+              "provider",
+              "apiKey"
+            ],
+            "properties": {
+              "apiKey": {
+                "type": "string"
+              },
+              "provider": {
+                "enum": [
+                  "FIRECRAWL",
+                  "JINA",
+                  "SCRAPINGBEE"
+                ],
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "fileStorageConfig": {
+            "type": "object",
+            "required": [
+              "type",
+              "bucket",
+              "region",
+              "endpoint",
+              "credentials"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "S3_COMPATIBLE"
+                ],
+                "type": "string"
+              },
+              "bucket": {
+                "type": "string"
+              },
+              "region": {
+                "type": "string"
+              },
+              "endpoint": {
+                "type": "string"
+              },
+              "credentials": {
+                "type": "object",
+                "required": [
+                  "accessKeyId",
+                  "secretAccessKey"
+                ],
+                "properties": {
+                  "accessKeyId": {
+                    "type": "string"
+                  },
+                  "secretAccessKey": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "googleDriveConfig": {
+            "type": "object",
+            "required": [
+              "clientId",
+              "clientSecret",
+              "apiKey"
+            ],
+            "properties": {
+              "apiKey": {
+                "type": "string"
+              },
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "vectorStorageConfig": {
+            "type": "object",
+            "required": [
+              "provider",
+              "apiKey",
+              "indexHost"
+            ],
+            "properties": {
+              "apiKey": {
+                "type": "string"
+              },
+              "provider": {
+                "enum": [
+                  "PINECONE"
+                ],
+                "type": "string"
+              },
+              "indexHost": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "embeddingModelConfig": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "model",
+                  "apiKey"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "text-embedding-3-small",
+                      "text-embedding-3-large",
+                      "text-embedding-ada-002"
+                    ],
+                    "type": "string"
+                  },
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "const": "OPENAI"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "model",
+                  "apiKey"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "embed-english-v3.0",
+                      "embed-multilingual-v3.0",
+                      "embed-english-light-v3.0",
+                      "embed-multilingual-light-v3.0",
+                      "embed-english-v2.0",
+                      "embed-english-light-v2.0",
+                      "embed-multilingual-v2.0"
+                    ],
+                    "type": "string"
+                  },
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "const": "COHERE"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "model",
+                  "apiKey"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "jina-embeddings-v3"
+                    ],
+                    "type": "string"
+                  },
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "const": "JINA"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteNamespace",
+      "description": "Permanently deletes a namespace by its ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ingestText",
+      "description": "Ingests raw text content into the namespace. Supports optional metadata and chunk configuration.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ingestConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "ingestConfig": {
+            "type": "object",
+            "required": [
+              "source",
+              "config"
+            ],
+            "properties": {
+              "config": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "source": {
+                "type": "string",
+                "const": "TEXT"
+              },
+              "chunkConfig": {
+                "type": "object",
+                "required": [
+                  "chunkSize",
+                  "chunkOverlap"
+                ],
+                "properties": {
+                  "chunkSize": {
+                    "type": "number"
+                  },
+                  "chunkOverlap": {
+                    "type": "number"
+                  }
+                },
+                "description": "Optional Chunk config. When not passed, default chunk config will be used.",
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ingestFile",
+      "description": "Ingests a file into the namespace. Supports various file formats with automatic parsing.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "file"
+        ],
+        "properties": {
+          "file": {},
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            }
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "chunkConfig": {
+            "type": "object",
+            "required": [
+              "chunkSize",
+              "chunkOverlap"
+            ],
+            "properties": {
+              "chunkSize": {
+                "type": "number"
+              },
+              "chunkOverlap": {
+                "type": "number"
+              }
+            },
+            "description": "Optional Chunk config. When not passed, default chunk config will be used.",
+            "additionalProperties": false
+          },
+          "namespaceId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ingestUrls",
+      "description": "Ingests content from a list of URLs. Supports scraping options and metadata.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ingestConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "ingestConfig": {
+            "type": "object",
+            "required": [
+              "source",
+              "config"
+            ],
+            "properties": {
+              "config": {
+                "type": "object",
+                "required": [
+                  "urls"
+                ],
+                "properties": {
+                  "urls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "scrapeOptions": {
+                    "type": "object",
+                    "properties": {
+                      "excludeSelectors": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "includeSelectors": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "source": {
+                "type": "string",
+                "const": "URLS_LIST"
+              },
+              "chunkConfig": {
+                "type": "object",
+                "required": [
+                  "chunkSize",
+                  "chunkOverlap"
+                ],
+                "properties": {
+                  "chunkSize": {
+                    "type": "number"
+                  },
+                  "chunkOverlap": {
+                    "type": "number"
+                  }
+                },
+                "description": "Optional Chunk config. When not passed, default chunk config will be used.",
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ingestSitemap",
+      "description": "Ingests content from a website using its sitemap.xml. Supports path filtering and link limits.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ingestConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "ingestConfig": {
+            "type": "object",
+            "required": [
+              "source",
+              "config"
+            ],
+            "properties": {
+              "config": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "maxLinks": {
+                    "type": "number"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "excludePaths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "includePaths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "source": {
+                "type": "string",
+                "const": "SITEMAP"
+              },
+              "chunkConfig": {
+                "type": "object",
+                "required": [
+                  "chunkSize",
+                  "chunkOverlap"
+                ],
+                "properties": {
+                  "chunkSize": {
+                    "type": "number"
+                  },
+                  "chunkOverlap": {
+                    "type": "number"
+                  }
+                },
+                "description": "Optional Chunk config. When not passed, default chunk config will be used.",
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ingestWebsite",
+      "description": "Crawls and ingests content from a website recursively. Supports depth control and path filtering.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ingestConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "ingestConfig": {
+            "type": "object",
+            "required": [
+              "source",
+              "config"
+            ],
+            "properties": {
+              "config": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "maxDepth": {
+                    "type": "number"
+                  },
+                  "maxLinks": {
+                    "type": "number"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "excludePaths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "includePaths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "source": {
+                "type": "string",
+                "const": "WEBSITE"
+              },
+              "chunkConfig": {
+                "type": "object",
+                "required": [
+                  "chunkSize",
+                  "chunkOverlap"
+                ],
+                "properties": {
+                  "chunkSize": {
+                    "type": "number"
+                  },
+                  "chunkOverlap": {
+                    "type": "number"
+                  }
+                },
+                "description": "Optional Chunk config. When not passed, default chunk config will be used.",
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ingestConnector",
+      "description": "Ingests all documents in the connector that are in backlog or failed status. No need to provide the document ids or file ids for the ingestion. Ids are already in the backlog when picked thorough the picker. If not, the user has to go through the authorization flow again, where they will be asked to pick the documents again.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ingestConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "ingestConfig": {
+            "type": "object",
+            "required": [
+              "source",
+              "config"
+            ],
+            "properties": {
+              "config": {
+                "type": "object",
+                "required": [
+                  "connectionId"
+                ],
+                "properties": {
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "connectionId": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "source": {
+                "type": "string"
+              },
+              "chunkConfig": {
+                "type": "object",
+                "required": [
+                  "chunkSize",
+                  "chunkOverlap"
+                ],
+                "properties": {
+                  "chunkSize": {
+                    "type": "number"
+                  },
+                  "chunkOverlap": {
+                    "type": "number"
+                  }
+                },
+                "description": "Optional Chunk config. When not passed, default chunk config will be used.",
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getIngestJobRunStatus",
+      "description": "Checks the status of a previously submitted ingestion job.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ingestJobRunId"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "ingestJobRunId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetchDocuments",
+      "description": "Fetches documents from the namespace based on filter criteria. Supports pagination and including specific document properties.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filterConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "cursor": {
+                "type": "string"
+              },
+              "pageSize": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "documentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "filterConfig": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "documentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentTypes": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URL",
+                    "FILE",
+                    "NOTION_DOCUMENT",
+                    "GOOGLE_DRIVE_DOCUMENT",
+                    "DROPBOX_DOCUMENT",
+                    "ONEDRIVE_DOCUMENT",
+                    "BOX_DOCUMENT",
+                    "SHAREPOINT_DOCUMENT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentExternalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentConnectionIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentIngestionSources": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URLS_LIST",
+                    "SITEMAP",
+                    "WEBSITE",
+                    "LOCAL_FILE",
+                    "NOTION",
+                    "GOOGLE_DRIVE",
+                    "DROPBOX",
+                    "ONEDRIVE",
+                    "BOX",
+                    "SHAREPOINT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentIngestionStatuses": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "BACKLOG",
+                    "QUEUED",
+                    "QUEUED_FOR_RESYNC",
+                    "PROCESSING",
+                    "SUCCESS",
+                    "FAILED",
+                    "CANCELLED"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "includeConfig": {
+            "type": "object",
+            "properties": {
+              "stats": {
+                "type": "boolean"
+              },
+              "documents": {
+                "type": "boolean"
+              },
+              "rawFileUrl": {
+                "type": "boolean"
+              },
+              "statsBySource": {
+                "type": "boolean"
+              },
+              "statsByStatus": {
+                "type": "boolean"
+              },
+              "parsedTextFileUrl": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateDocuments",
+      "description": "Updates metadata for documents that match the specified filter criteria.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "documents",
+          "filterConfig",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "$metadata": {
+                "type": "object",
+                "properties": {
+                  "$set": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "$append": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "$remove": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "documentId"
+              ],
+              "properties": {
+                "metadata": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "documentId": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "filterConfig": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "documentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentTypes": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URL",
+                    "FILE",
+                    "NOTION_DOCUMENT",
+                    "GOOGLE_DRIVE_DOCUMENT",
+                    "DROPBOX_DOCUMENT",
+                    "ONEDRIVE_DOCUMENT",
+                    "BOX_DOCUMENT",
+                    "SHAREPOINT_DOCUMENT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentExternalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentConnectionIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentIngestionSources": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URLS_LIST",
+                    "SITEMAP",
+                    "WEBSITE",
+                    "LOCAL_FILE",
+                    "NOTION",
+                    "GOOGLE_DRIVE",
+                    "DROPBOX",
+                    "ONEDRIVE",
+                    "BOX",
+                    "SHAREPOINT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentIngestionStatuses": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "BACKLOG",
+                    "QUEUED",
+                    "QUEUED_FOR_RESYNC",
+                    "PROCESSING",
+                    "SUCCESS",
+                    "FAILED",
+                    "CANCELLED"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteDocuments",
+      "description": "Permanently deletes documents that match the specified filter criteria.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filterConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "documentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "filterConfig": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "documentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentTypes": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URL",
+                    "FILE",
+                    "NOTION_DOCUMENT",
+                    "GOOGLE_DRIVE_DOCUMENT",
+                    "DROPBOX_DOCUMENT",
+                    "ONEDRIVE_DOCUMENT",
+                    "BOX_DOCUMENT",
+                    "SHAREPOINT_DOCUMENT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentExternalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentConnectionIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentIngestionSources": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URLS_LIST",
+                    "SITEMAP",
+                    "WEBSITE",
+                    "LOCAL_FILE",
+                    "NOTION",
+                    "GOOGLE_DRIVE",
+                    "DROPBOX",
+                    "ONEDRIVE",
+                    "BOX",
+                    "SHAREPOINT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentIngestionStatuses": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "BACKLOG",
+                    "QUEUED",
+                    "QUEUED_FOR_RESYNC",
+                    "PROCESSING",
+                    "SUCCESS",
+                    "FAILED",
+                    "CANCELLED"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "resyncDocuments",
+      "description": "Reprocesses documents that match the specified filter criteria. Useful for updating after schema changes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filterConfig"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "documentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "filterConfig": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "documentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentTypes": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URL",
+                    "FILE",
+                    "NOTION_DOCUMENT",
+                    "GOOGLE_DRIVE_DOCUMENT",
+                    "DROPBOX_DOCUMENT",
+                    "ONEDRIVE_DOCUMENT",
+                    "BOX_DOCUMENT",
+                    "SHAREPOINT_DOCUMENT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentExternalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentConnectionIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentIngestionSources": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "TEXT",
+                    "URLS_LIST",
+                    "SITEMAP",
+                    "WEBSITE",
+                    "LOCAL_FILE",
+                    "NOTION",
+                    "GOOGLE_DRIVE",
+                    "DROPBOX",
+                    "ONEDRIVE",
+                    "BOX",
+                    "SHAREPOINT"
+                  ],
+                  "type": "string"
+                }
+              },
+              "documentIngestionStatuses": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "BACKLOG",
+                    "QUEUED",
+                    "QUEUED_FOR_RESYNC",
+                    "PROCESSING",
+                    "SUCCESS",
+                    "FAILED",
+                    "CANCELLED"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "semanticSearch",
+      "description": "Performs semantic search across the namespace to find relevant content based on meaning rather than exact keyword matches.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "topK": {
+            "type": "number"
+          },
+          "query": {
+            "type": "string"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "searchType": {
+            "enum": [
+              "SEMANTIC",
+              "HYBRID"
+            ],
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "scoreThreshold": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hybridSearch",
+      "description": "Performs a combined keyword and semantic search, balancing between exact matches and semantic similarity. Requires hybridConfig with weights for both search types.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query",
+          "hybridConfig"
+        ],
+        "properties": {
+          "topK": {
+            "type": "number"
+          },
+          "query": {
+            "type": "string"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "searchType": {
+            "enum": [
+              "SEMANTIC",
+              "HYBRID"
+            ],
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "hybridConfig": {
+            "type": "object",
+            "required": [
+              "semanticWeight",
+              "keywordWeight"
+            ],
+            "properties": {
+              "keywordWeight": {
+                "type": "number"
+              },
+              "semanticWeight": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "scoreThreshold": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createConnection",
+      "description": "Creates a new connection to a specific source. The connector parameter should be a valid SourceSync connector enum value. The clientRedirectUrl parameter is optional and can be used to specify a custom redirect URL for the connection. This will give you a authorization url which you can redirect the user to. The user will then be asked to pick the documents they want to ingest.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "connector"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "connector": {
+            "enum": [
+              "NOTION",
+              "GOOGLE_DRIVE",
+              "DROPBOX",
+              "ONEDRIVE",
+              "BOX",
+              "SHAREPOINT"
+            ],
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "clientRedirectUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "listConnections",
+      "description": "Lists all connections for the current namespace, optionally filtered by connector type.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "connector": {
+            "enum": [
+              "NOTION",
+              "GOOGLE_DRIVE",
+              "DROPBOX",
+              "ONEDRIVE",
+              "BOX",
+              "SHAREPOINT"
+            ],
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getConnection",
+      "description": "Retrieves details for a specific connection by its ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "connectionId"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "connectionId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateConnection",
+      "description": "Updates a connection to a specific source. The connector parameter should be a valid SourceSync connector enum value. The clientRedirectUrl parameter is optional and can be used to specify a custom redirect URL for the connection. This will give you a authorization url which you can redirect the user to. The user will then be asked to pick the documents they want to ingest. This is useful if you want to update the connection to a different source or if you want to update the clientRedirectUrl or if you want to pick a different or new set of documents.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "connectionId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "connectionId": {
+            "type": "string"
+          },
+          "clientRedirectUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "revokeConnection",
+      "description": "Revokes access for a specific connection, removing the integration with the external service.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "connectionId"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "connectionId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetchUrlContent",
+      "description": "Fetches the content of a URL. Particularly useful for fetching parsed text file URLs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "apiKey": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@pbteja1998/sourcesyncai-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "sourcesyncApiKey"
+        ],
+        "properties": {
+          "sourcesyncApiKey": {
+            "type": "string",
+            "description": "Your SourceSync.ai API key"
+          },
+          "sourcesyncTenantId": {
+            "type": "string",
+            "description": "Optional Your SourceSync.ai tenant ID"
+          },
+          "sourcesyncNamespaceId": {
+            "type": "string",
+            "description": "Optional SourceSync.ai namespace ID"
+          }
+        }
+      }
+    }
+  ]
+}

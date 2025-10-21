@@ -1,0 +1,819 @@
+{
+  "qualifiedName": "@isnow890/data4library-mcp",
+  "displayName": "정보나루 도서 책(Data4Library)",
+  "description": "책 싫어하는 제가 책에 대해 아는척하고 싶어서 만들었습니다..\n\n내 주변 도서관 실시간 대출 확인\n읽고 싶은 책을 검색하면 주변 도서관 대출 가능 여부를 즉시 확인\n굳이 도서관 홈페이지 여러 곳을 돌아다닐 필요 없이 한 번에 해결\n\n취향 맞춤 도서 발견\n마니아와 다독자들이 추천하는 숨은 명작들을 AI가 골라서 추천\n평소 내가 좋아하는 장르와 비슷한 새로운 책들을 자동으로 찾아줌\n\n지금 뜨는 책이 뭔지 한눈에\n우리 동네에서 지금 가장 많이 빌려가는 인기도서 실시간 확인\n트렌드에 민감한 사람들이 지금 무슨 책을 읽는지 바로 파악\n\nai와 바로 연결\n\"오늘 비 오는데 읽을 만한 책 추천해줘\" 하면 실제 빌릴 수 있는 책까지 알려줌",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/ae193628-3f4a-474e-bf3f-1a4549388af0.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@isnow890/data4library-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_libraries",
+      "description": "전국의 공공도서관 정보를 검색합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "pageNo": {
+            "type": "number",
+            "description": "페이지번호"
+          },
+          "region": {
+            "type": "string",
+            "description": "지역코드 (11=서울, 21=부산, 22=대구, 23=인천, 24=광주, 25=대전, 26=울산, 29=세종, 31=경기, 32=강원, 33=충북, 34=충남, 35=전북, 36=전남, 37=경북, 38=경남, 39=제주)"
+          },
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "페이지크기"
+          },
+          "dtl_region": {
+            "type": "string",
+            "description": "세부지역코드 - search_detailed_region_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_books",
+      "description": "도서관 소장 도서를 검색합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "sort": {
+            "enum": [
+              "title",
+              "author",
+              "pub",
+              "pubYear",
+              "isbn",
+              "loan"
+            ],
+            "type": "string",
+            "description": "정렬필드 (title=도서명, author=저자명, pub=출판사, pubYear=출판년도, isbn=ISBN, loan=대출횟수)"
+          },
+          "order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "정렬순서 (asc=오름차순, desc=내림차순)"
+          },
+          "title": {
+            "type": "string",
+            "description": "도서명"
+          },
+          "author": {
+            "type": "string",
+            "description": "저자명"
+          },
+          "isbn13": {
+            "type": "string",
+            "description": "13자리 ISBN"
+          },
+          "pageNo": {
+            "type": "number",
+            "description": "페이지번호"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "키워드"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "페이지크기"
+          },
+          "publisher": {
+            "type": "string",
+            "description": "출판사"
+          },
+          "exactMatch": {
+            "type": "boolean",
+            "description": "일치검색여부 (true=완전일치, false=부분일치)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_popular_books",
+      "description": "인기대출도서를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "age": {
+            "type": "string",
+            "description": "연령코드 (0=영유아, 6=유아, 8=초등, 14=청소년, 20=20대, 30=30대, 40=40대, 50=50대, 60=60세이상)"
+          },
+          "kdc": {
+            "type": "string",
+            "description": "대주제분류 (0=총류, 1=철학, 2=종교, 3=사회과학, 4=자연과학, 5=기술과학, 6=예술, 7=언어, 8=문학, 9=역사)"
+          },
+          "endDt": {
+            "type": "string",
+            "description": "검색종료일자 (대출기간) - YYYY-MM-DD 형식"
+          },
+          "gender": {
+            "type": "string",
+            "description": "성별코드 (0=남성, 1=여성, 2=미상)"
+          },
+          "pageNo": {
+            "type": "number",
+            "description": "페이지번호"
+          },
+          "region": {
+            "type": "string",
+            "description": "지역코드 (11=서울, 21=부산, 22=대구, 23=인천, 24=광주, 25=대전, 26=울산, 29=세종, 31=경기, 32=강원, 33=충북, 34=충남, 35=전북, 36=전남, 37=경북, 38=경남, 39=제주)"
+          },
+          "to_age": {
+            "type": "number",
+            "description": "종료연령"
+          },
+          "addCode": {
+            "type": "string",
+            "description": "ISBN부가기호 (0=교양, 1=실용, 2=여성, 4=청소년, 5=학습참고서(중고), 6=학습참고서(초등), 7=아동, 9=전문)"
+          },
+          "dtl_kdc": {
+            "type": "string",
+            "description": "세부주제코드 - search_detailed_kdc_codes 도구로 검색하세요"
+          },
+          "startDt": {
+            "type": "string",
+            "description": "검색시작일자 (대출기간) - YYYY-MM-DD 형식"
+          },
+          "from_age": {
+            "type": "number",
+            "description": "시작연령"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "페이지크기"
+          },
+          "book_dvsn": {
+            "enum": [
+              "big",
+              "oversea"
+            ],
+            "type": "string",
+            "description": "도서구분 (big=큰글씨도서, oversea=국외도서)"
+          },
+          "dtl_region": {
+            "type": "string",
+            "description": "세부지역코드 - search_detailed_region_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_library_codes",
+      "description": "도서관명이나 지역명으로 도서관 코드를 검색합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "최대 검색 결과 수"
+          },
+          "regionName": {
+            "type": "string",
+            "description": "지역명으로 검색 (예: 서울, 강남구, 부산, 경기도)"
+          },
+          "libraryName": {
+            "type": "string",
+            "description": "도서관명으로 검색 (부분 검색 및 유사검색 지원, 예: '중앙도서관', '강남', '시립') - 오타나 불완전한 이름도 검색 가능"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_nearby_libraries",
+      "description": "사용자의 위치를 기반으로 가까운 도서관들을 거리순으로 검색합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "count": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "반환할 도서관 개수 (기본값: 15, 최대: 100)"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90,
+            "minimum": -90,
+            "description": "사용자의 위도 (-90 ~ 90)"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180,
+            "minimum": -180,
+            "description": "사용자의 경도 (-180 ~ 180)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_book_detail",
+      "description": "ISBN으로 도서의 상세 정보를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "isbn13"
+        ],
+        "properties": {
+          "isbn13": {
+            "type": "string",
+            "description": "13자리 ISBN"
+          },
+          "loaninfoYN": {
+            "enum": [
+              "Y",
+              "N"
+            ],
+            "type": "string",
+            "description": "대출상세정보 제공여부 (Y=제공, N=미제공)"
+          },
+          "displayInfo": {
+            "enum": [
+              "gender",
+              "age",
+              "region"
+            ],
+            "type": "string",
+            "description": "대출정보 조회대상 (gender=성별, age=연령별, region=지역별)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_book_availability",
+      "description": "특정 도서관에서 도서의 소장여부 및 대출 가능여부를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "libCode",
+          "isbn13"
+        ],
+        "properties": {
+          "isbn13": {
+            "type": "string",
+            "description": "13자리 ISBN"
+          },
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_hot_trend",
+      "description": "대출 급상승 도서를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "searchDt"
+        ],
+        "properties": {
+          "searchDt": {
+            "type": "string",
+            "description": "검색일자 (YYYY-MM-DD 형식)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_libraries_by_book",
+      "description": "특정 도서를 소장한 도서관을 검색합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "isbn",
+          "region"
+        ],
+        "properties": {
+          "isbn": {
+            "type": "string",
+            "description": "13자리 ISBN"
+          },
+          "pageNo": {
+            "type": "number",
+            "description": "페이지 번호"
+          },
+          "region": {
+            "type": "string",
+            "description": "지역코드 (11=서울, 21=부산, 22=대구, 23=인천, 24=광주, 25=대전, 26=울산, 29=세종, 31=경기, 32=강원, 33=충북, 34=충남, 35=전북, 36=전남, 37=경북, 38=경남, 39=제주)"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "페이지 크기"
+          },
+          "dtl_region": {
+            "type": "string",
+            "description": "세부지역코드 - search_detailed_region_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_usage_trend",
+      "description": "도서관별 대출반납 추이를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "libCode",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "D",
+              "H"
+            ],
+            "type": "string",
+            "description": "조회기준 (D=요일별, H=시간대별)"
+          },
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_new_arrival_books",
+      "description": "도서관별 신착도서를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "libCode"
+        ],
+        "properties": {
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          },
+          "searchDt": {
+            "type": "string",
+            "description": "검색일자 (YYYY-MM 형식)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_reading_quantity",
+      "description": "지역별 독서량/독서율을 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "year": {
+            "type": "string",
+            "description": "분석연도 (YYYY 형식)"
+          },
+          "month": {
+            "type": "string",
+            "description": "분석월 (MM 형식)"
+          },
+          "region": {
+            "type": "string",
+            "description": "지역코드 (11=서울, 21=부산, 22=대구, 23=인천, 24=광주, 25=대전, 26=울산, 29=세종, 31=경기, 32=강원, 33=충북, 34=충남, 35=전북, 36=전남, 37=경북, 38=경남, 39=제주)"
+          },
+          "dtl_region": {
+            "type": "string",
+            "description": "세부지역코드 - search_detailed_region_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_monthly_keywords",
+      "description": "이달의 키워드를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "month": {
+            "type": "string",
+            "description": "검색월 (YYYY-MM 형식)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_detailed_region_codes",
+      "description": "세부지역 코드를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "region"
+        ],
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "상위 지역코드 (11=서울, 21=부산, 22=대구, 23=인천, 24=광주, 25=대전, 26=울산, 29=세종, 31=경기, 32=강원, 33=충북, 34=충남, 35=전북, 36=전남, 37=경북, 38=경남, 39=제주)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_region_codes",
+      "description": "지역 코드 목록을 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_detailed_subject_codes",
+      "description": "세부주제 코드를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "kdc"
+        ],
+        "properties": {
+          "kdc": {
+            "type": "string",
+            "description": "대주제분류코드 (0=총류, 1=철학, 2=종교, 3=사회과학, 4=자연과학, 5=기술과학, 6=예술, 7=언어, 8=문학, 9=역사)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_subject_codes",
+      "description": "KDC 대주제분류 코드 목록을 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "majorCode": {
+            "type": "string",
+            "description": "대분류 코드 (0-9)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_detailed_kdc_codes",
+      "description": "세부주제코드를 검색합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "결과 개수 제한 (기본값: 20)"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "검색할 주제 키워드 (예: '의학', '컴퓨터', '문학', '역사')"
+          },
+          "majorCode": {
+            "type": "string",
+            "description": "대분류 코드 (0-9)로 필터링"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_detailed_region_codes",
+      "description": "세부지역코드를 검색합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "결과 개수 제한 (기본값: 20)"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "검색할 지역 키워드 (예: '강남', '부산', '수원', '서대문')"
+          },
+          "provinceCode": {
+            "type": "string",
+            "description": "광역시도 코드 (11=서울, 21=부산, 31=경기 등)로 필터링"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_items",
+      "description": "도서관별 장서/대출 데이터를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "libCode"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "ALL"
+            ],
+            "type": "string",
+            "description": "검색조건 (ALL=전체 데이터)"
+          },
+          "endDt": {
+            "type": "string",
+            "description": "검색종료일자 (도서 등록일) - YYYY-MM-DD 형식"
+          },
+          "isbn13": {
+            "type": "string",
+            "description": "13자리 ISBN"
+          },
+          "pageNo": {
+            "type": "number",
+            "description": "페이지번호"
+          },
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          },
+          "startDt": {
+            "type": "string",
+            "description": "검색시작일자 (도서 등록일) - YYYY-MM-DD 형식"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "페이지크기"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_mania_recommendations",
+      "description": "마니아 추천도서를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "isbn13"
+        ],
+        "properties": {
+          "isbn13": {
+            "type": "string",
+            "description": "10자리 또는 13자리 ISBN"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_reader_recommendations",
+      "description": "다독자 추천도서를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "isbn13"
+        ],
+        "properties": {
+          "isbn13": {
+            "type": "string",
+            "description": "10자리 또는 13자리 ISBN"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_book_keywords",
+      "description": "도서 키워드 목록을 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "isbn13"
+        ],
+        "properties": {
+          "isbn13": {
+            "type": "string",
+            "description": "13자리 ISBN"
+          },
+          "additionalYN": {
+            "enum": [
+              "Y",
+              "N"
+            ],
+            "type": "string",
+            "description": "부가정보 적용여부 (Y=제공, N=미제공)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_book_usage_analysis",
+      "description": "도서별 이용 분석을 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "isbn13"
+        ],
+        "properties": {
+          "isbn13": {
+            "type": "string",
+            "description": "13자리 ISBN"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_popular_books_by_library",
+      "description": "도서관/지역별 인기대출 도서를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "age": {
+            "type": "string",
+            "description": "연령코드 (0=영유아, 6=유아, 8=초등, 14=청소년, 20=20대, 30=30대, 40=40대, 50=50대, 60=60세이상)"
+          },
+          "kdc": {
+            "type": "string",
+            "description": "대주제분류 (0=총류, 1=철학, 2=종교, 3=사회과학, 4=자연과학, 5=기술과학, 6=예술, 7=언어, 8=문학, 9=역사)"
+          },
+          "endDt": {
+            "type": "string",
+            "description": "검색종료일자 (대출기간) - YYYY-MM-DD 형식"
+          },
+          "gender": {
+            "type": "string",
+            "description": "성별코드 (0=남성, 1=여성, 2=미상)"
+          },
+          "pageNo": {
+            "type": "number",
+            "description": "페이지번호"
+          },
+          "region": {
+            "type": "string",
+            "description": "지역코드 (11=서울, 21=부산, 22=대구, 23=인천, 24=광주, 25=대전, 26=울산, 29=세종, 31=경기, 32=강원, 33=충북, 34=충남, 35=전북, 36=전남, 37=경북, 38=경남, 39=제주)"
+          },
+          "to_age": {
+            "type": "number",
+            "description": "종료연령"
+          },
+          "addCode": {
+            "type": "string",
+            "description": "ISBN부가기호 (0=교양, 1=실용, 2=여성, 4=청소년, 5=학습참고서(중고), 6=학습참고서(초등), 7=아동, 9=전문)"
+          },
+          "dtl_kdc": {
+            "type": "string",
+            "description": "세부주제코드 - search_detailed_kdc_codes 도구로 검색하세요"
+          },
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          },
+          "startDt": {
+            "type": "string",
+            "description": "검색시작일자 (대출기간) - YYYY-MM-DD 형식"
+          },
+          "from_age": {
+            "type": "number",
+            "description": "시작연령"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "페이지크기"
+          },
+          "book_dvsn": {
+            "enum": [
+              "big",
+              "oversea"
+            ],
+            "type": "string",
+            "description": "도서구분 (big=큰글씨도서, oversea=국외도서)"
+          },
+          "dtl_region": {
+            "type": "string",
+            "description": "세부지역코드 - search_detailed_region_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_library_info",
+      "description": "도서관별 통합정보를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "pageNo": {
+            "type": "number",
+            "description": "페이지번호"
+          },
+          "region": {
+            "type": "string",
+            "description": "지역코드 (11=서울, 21=부산, 22=대구, 23=인천, 24=광주, 25=대전, 26=울산, 29=세종, 31=경기, 32=강원, 33=충북, 34=충남, 35=전북, 36=전남, 37=경북, 38=경남, 39=제주)"
+          },
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "페이지크기"
+          },
+          "dtl_region": {
+            "type": "string",
+            "description": "세부지역코드 - search_detailed_region_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_popular_books_by_library",
+      "description": "도서관별 인기대출도서를 조회합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "libCode"
+        ],
+        "properties": {
+          "libCode": {
+            "type": "string",
+            "description": "도서관코드 - search_library_codes 도구로 검색하세요"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@isnow890/data4library-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "LIBRARY_API_KEY"
+        ],
+        "properties": {
+          "LIBRARY_API_KEY": {
+            "type": "string",
+            "description": "도서관정보나루 API Key"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

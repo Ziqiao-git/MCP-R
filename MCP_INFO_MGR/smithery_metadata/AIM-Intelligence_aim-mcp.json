@@ -1,0 +1,191 @@
+{
+  "qualifiedName": "@AIM-Intelligence/aim-mcp",
+  "displayName": "AIM Guard",
+  "description": "Provide AI-powered security analysis and safety instruction tools to protect AI agents during MCP interactions. Analyze text content for harmful or inappropriate material and enhance user prompts with security instructions. Ensure safer AI interactions with contextual security guidelines and real-time threat detection.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/aim-intelligence.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "ai-safety-guard",
+      "description": "AI Safety Guard - MCP Caution Instructions for AI Agents",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "mcp_type": {
+            "enum": [
+              "email",
+              "slack",
+              "database",
+              "file",
+              "web",
+              "general"
+            ],
+            "type": "string",
+            "default": "general",
+            "description": "Type of MCP the AI Agent is about to call"
+          },
+          "operation_type": {
+            "enum": [
+              "read",
+              "write",
+              "execute",
+              "delete",
+              "send",
+              "query"
+            ],
+            "type": "string",
+            "default": "read",
+            "description": "Type of operation being requested"
+          },
+          "sensitivity_level": {
+            "enum": [
+              "public",
+              "internal",
+              "confidential",
+              "restricted"
+            ],
+            "type": "string",
+            "default": "internal",
+            "description": "Sensitivity level of the data/operation"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "aim-text-guard",
+      "description": "AIM-Intelligence Text Guard Tool",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text to analyze for harmful content"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "aim-security-prompt-tool",
+      "description": "Security Prompt Enhancement Tool",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_prompt"
+        ],
+        "properties": {
+          "user_prompt": {
+            "type": "string",
+            "description": "The original user prompt to enhance with security instructions"
+          },
+          "security_level": {
+            "enum": [
+              "basic",
+              "standard",
+              "strict"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Security enhancement level"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "prompt-injection-detector",
+      "description": "Detect prompt injection attempts based on OWASP LLM01:2025 patterns",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text to analyze for prompt injection patterns"
+          },
+          "sensitivity": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "type": "string",
+            "default": "medium",
+            "description": "Detection sensitivity level"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "credential-scanner",
+      "description": "Scan text for exposed credentials (API keys, passwords, tokens, SSH keys)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text to scan for credentials"
+          },
+          "mask_findings": {
+            "type": "boolean",
+            "default": true,
+            "description": "Mask detected credentials in output"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "url-security-validator",
+      "description": "Validate URL safety (phishing, malware, HTTPS enforcement)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to validate for security"
+          },
+          "strict_mode": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable strict security checks"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@AIM-Intelligence/aim-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

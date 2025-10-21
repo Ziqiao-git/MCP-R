@@ -1,0 +1,163 @@
+{
+  "qualifiedName": "@manasp21/eventhorizon",
+  "displayName": "Event Horizon Evolutionary Solution Server",
+  "description": "Evolve and optimize solutions across multiple generations using genetic algorithm principles and consistency checks. Monitor progress and receive crossover recommendations to iteratively improve solutions until convergence. Customize configurations to tailor the evolutionary process to your problem-solving needs.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@manasp21/eventhorizon",
+  "security": null,
+  "tools": [
+    {
+      "name": "start_evolution",
+      "description": "Initialize an evolutionary solution system for a given problem with consistency checks.\n\nThis tool sets up the framework for evolving solutions across multiple generations. The LLM will:\n1. Generate initial population of solutions\n2. Evaluate solutions against consistency checks\n3. Use crossover recommendations to create better solutions\n4. Repeat until convergence or max generations\n\nUse this tool to begin the evolutionary process with a clear problem statement and evaluation criteria.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problemStatement",
+          "consistencyChecks"
+        ],
+        "properties": {
+          "maxGenerations": {
+            "type": "integer",
+            "default": 5,
+            "minimum": 1,
+            "description": "Maximum number of generations (default: 5)"
+          },
+          "populationSize": {
+            "type": "integer",
+            "default": 3,
+            "minimum": 1,
+            "description": "Number of solutions per generation (default: 3)"
+          },
+          "problemStatement": {
+            "type": "string",
+            "description": "The problem or challenge to solve"
+          },
+          "consistencyChecks": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "description"
+                  ],
+                  "properties": {
+                    "weight": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            },
+            "description": "Array of consistency checks (strings or objects with description and weight)"
+          },
+          "convergenceThreshold": {
+            "type": "number",
+            "default": 0.95,
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Score threshold for convergence (default: 0.95)"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_solution",
+      "description": "Add a new solution to the current generation of the evolutionary system.\n\nUse this tool to contribute solutions to the current generation. Solutions can be:\n- Initial solutions (generation 0)\n- Evolved solutions based on crossover recommendations\n- Variations or mutations of existing solutions\n\nThe solution content should directly address the problem statement.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The solution content addressing the problem statement"
+          },
+          "parentSolutions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional array of parent solution IDs if this is a crossover"
+          }
+        }
+      }
+    },
+    {
+      "name": "score_solution",
+      "description": "Score a solution against a specific consistency check.\n\nUse this tool to evaluate how well a solution performs against each consistency check.\nScores should be between 0.0 (poor) and 1.0 (excellent).\n\nThe LLM should evaluate the solution content against the consistency check description and provide an objective score.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "solutionId",
+          "checkId",
+          "score"
+        ],
+        "properties": {
+          "score": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Score between 0.0 and 1.0"
+          },
+          "checkId": {
+            "type": "string",
+            "description": "ID of the consistency check to evaluate against"
+          },
+          "reasoning": {
+            "type": "string",
+            "description": "Optional explanation of the scoring rationale"
+          },
+          "solutionId": {
+            "type": "string",
+            "description": "ID of the solution to score"
+          }
+        }
+      }
+    },
+    {
+      "name": "evolve_generation",
+      "description": "Evolve to the next generation using crossover analysis.\n\nThis tool analyzes the current generation's performance and provides crossover recommendations.\nIt identifies the best-performing solution for each consistency check and suggests how to combine\nthese aspects into new solutions for the next generation.\n\nUse this after all solutions in the current generation have been fully scored.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_evolution_status",
+      "description": "Get the current status of the evolutionary system.\n\nReturns detailed information about the current state including:\n- Current generation and progress\n- Population statistics\n- Best solution found so far\n- Evolution history\n\nUse this tool to track progress and understand the current state of the evolution.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@manasp21/eventhorizon/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "disableLogging": {
+            "type": "boolean",
+            "default": false,
+            "description": "Disable evolution progress logging"
+          }
+        }
+      }
+    }
+  ]
+}

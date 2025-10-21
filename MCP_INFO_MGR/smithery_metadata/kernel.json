@@ -1,0 +1,217 @@
+{
+  "qualifiedName": "kernel",
+  "displayName": "Kernel",
+  "description": "Deploy and manage Kernel apps, automate browsers, and search documentation with Kernel. Securely run workflows, monitor deployments, and spin up sandboxed browser sessions, all instantly accessible through a hosted service built for AI-native automation.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/416772e3-3158-423a-b671-5272c881407f.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/kernel",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_docs",
+      "description": "Fast vector search through Kernel platform documentation to find relevant information, guides, tutorials, and API references. Returns ranked documentation chunks with titles, URLs, and content snippets. Use this tool when you need to understand how Kernel features work, troubleshoot issues, or provide accurate information about the platform capabilities.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query to find relevant documentation. Use natural language like \"how to deploy an app\" or \"browser automation examples\""
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_apps",
+      "description": "List all apps deployed in the Kernel platform. Use this to discover available apps, check their versions, or filter by specific criteria. Helpful for understanding what apps are available before invoking actions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Filter results to show only apps with this exact version label (e.g., \"v1.0.0\", \"latest\")"
+          },
+          "app_name": {
+            "type": "string",
+            "description": "Filter results to show only apps with this exact name (e.g., \"my-web-scraper\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "invoke_action",
+      "description": "Execute a specific action within a Kernel app. This is the primary way to interact with deployed apps - use this to trigger workflows, run computations, or perform operations. The action will run asynchronously and you can track its progress with the returned invocation ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "app_name",
+          "action_name"
+        ],
+        "properties": {
+          "payload": {
+            "type": "string",
+            "description": "JSON string containing parameters for the action. Format depends on the specific action being invoked."
+          },
+          "version": {
+            "type": "string",
+            "description": "Specific version of the app to use"
+          },
+          "app_name": {
+            "type": "string",
+            "description": "Name of the Kernel app (e.g., \"my-web-scraper\", \"data-processor\")"
+          },
+          "action_name": {
+            "type": "string",
+            "description": "Name of the specific action to invoke within the app (e.g., \"scrape_website\", \"process_data\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_browser",
+      "description": "Retrieve detailed information about a specific browser session including its current status, configuration, and metadata. Use this to check if a browser is still active, get its access URLs, or understand its current state before performing operations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the browser session to retrieve information about. You can get this from list_browsers or create_browser responses."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_browser",
+      "description": "Launch a new browser session in the Kernel platform. This creates a managed browser instance that can be used for web automation, testing, or interactive browsing. The browser runs in a secure sandbox environment and can be configured with various options like headless mode, stealth mode, and session recording.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "stealth": {
+            "type": "boolean",
+            "description": "If true, configures browser to avoid detection by anti-bot systems. Recommended for web scraping and automation."
+          },
+          "headless": {
+            "type": "boolean",
+            "description": "If true, launches the browser without GUI/VNC access (faster, less resource intensive). Use false for interactive browsing or debugging."
+          },
+          "invocation_id": {
+            "type": "string",
+            "description": "Link this browser session to a specific action invocation for tracking and resource management."
+          },
+          "persistence_id": {
+            "type": "string",
+            "description": "Unique string identifier for browser session persistence. If a browser with this ID exists, Kernel reuses it with all saved state (cookies, authentication, cache). If not found, creates a new browser with this ID for future reuse. Can be any string to match users, environments, websites, etc."
+          },
+          "timeout_seconds": {
+            "type": "number",
+            "description": "The number of seconds of inactivity before the browser session is terminated. Only applicable to non-persistent browsers. Activity includes CDP connections and live view connections. Defaults to 60 seconds."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_browser",
+      "description": "Permanently terminate and clean up a browser session. This will stop the browser instance, free up resources, and remove any associated data. Use this when you no longer need a browser session or want to clean up after completing automation tasks.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "persistence_id"
+        ],
+        "properties": {
+          "persistence_id": {
+            "type": "string",
+            "description": "Unique string identifier for browser session persistence. This is the same ID used when creating browsers to maintain state across sessions. You can find this value in the persistence.id field from list_browsers responses."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_deployment",
+      "description": "Retrieve comprehensive information about a specific deployment including its current status, build logs, configuration, and health metrics. Use this to monitor deployment progress, troubleshoot deployment issues, or verify that an app was deployed successfully.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the deployment to retrieve information about. You can get this from list_deployments responses."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_invocation",
+      "description": "Retrieve detailed information about a specific action invocation including its execution status, output data, error messages, and runtime metrics. Use this to check if an invoked action completed successfully, get its results, or troubleshoot failed executions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the action invocation to retrieve information about. You get this from invoke_action responses."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_browsers",
+      "description": "Retrieve a list of all currently active browser sessions in the Kernel platform. This shows you which browsers are running, their session IDs, creation times, and basic configuration. Use this to discover existing browser sessions before creating new ones or to audit current browser usage.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_deployments",
+      "description": "Retrieve a comprehensive list of all deployments in the Kernel platform, with optional filtering by app name. This provides an overview of deployment history, current status, and allows you to track the deployment lifecycle of your apps. Use this to monitor deployment activity or find specific deployments.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "app_name"
+        ],
+        "properties": {
+          "app_name": {
+            "type": "string",
+            "description": "Filter results to show only deployments for this specific app name (e.g., \"my-web-scraper\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/kernel/mcp",
+      "configSchema": {}
+    }
+  ]
+}

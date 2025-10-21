@@ -1,0 +1,868 @@
+{
+  "qualifiedName": "@ArsenalPAC/switchboardmcp",
+  "displayName": "Switchboard API Integration Server",
+  "description": "Enable AI assistants to manage broadcast messaging, email campaigns, and contacts through the Switchboard API. Access tools for campaign management, contact organization, CSV exports, and job monitoring seamlessly. Simplify outreach and communication workflows by integrating Switchboard's capabilities directly into your AI environment.\n\nBuilt, maintained & paid for by Arsenal PAC and not endorsed by any candidate or candidate's committee. This project is neither endorsed nor supported by Switchboard Public Benefit Corp.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/oneswitchboard.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ArsenalPAC/switchboardmcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_broadcasts",
+      "description": "List all broadcasts in your organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination"
+          },
+          "per_page": {
+            "type": "number",
+            "default": 25,
+            "description": "Number of results per page"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_broadcast",
+      "description": "Get details of a specific broadcast",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "broadcast_id"
+        ],
+        "properties": {
+          "broadcast_id": {
+            "type": "string",
+            "description": "The ID of the broadcast to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_phone_contact",
+      "description": "Create a new phone number contact",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phone_number"
+        ],
+        "properties": {
+          "last_name": {
+            "type": "string",
+            "description": "Contact last name"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Contact first name"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of label names to assign"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "Phone number in E.164 format (e.g., +12025551234)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_labels",
+      "description": "List all labels in your organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_label",
+      "description": "Create a new label for organizing contacts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the label to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_broadcasts",
+      "description": "Export broadcast data. Returns a signed URL for downloading the export.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "whoami",
+      "description": "Get information about the current API credentials and permissions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_phone_contacts",
+      "description": "List all phone contacts in your organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor from previous response"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_phone_labels",
+      "description": "Add or remove labels from a phone contact",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phone_number",
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "add",
+              "remove"
+            ],
+            "type": "string",
+            "description": "Whether to add or remove labels"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label IDs to add/remove"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label names to add/remove"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "Phone number in E.164 format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_email_contact",
+      "description": "Create a new email contact",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email_address"
+        ],
+        "properties": {
+          "zip_code": {
+            "type": "string",
+            "description": "US zip code"
+          },
+          "custom_id": {
+            "type": "string",
+            "description": "Custom ID"
+          },
+          "full_name": {
+            "type": "string",
+            "description": "Contact full name"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Contact last name"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Contact first name"
+          },
+          "state_abbr": {
+            "type": "string",
+            "description": "US state abbreviation"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label names to assign"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "Associated phone number"
+          },
+          "custom_source": {
+            "type": "string",
+            "description": "Custom source identifier"
+          },
+          "email_address": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_email_contacts",
+      "description": "List all email contacts in your organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_email_blasts",
+      "description": "List all email blasts/campaigns",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_email_blast",
+      "description": "Get details of a specific email blast",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "blast_id"
+        ],
+        "properties": {
+          "blast_id": {
+            "type": "string",
+            "description": "The ID of the email blast"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_broadcast_messages",
+      "description": "List all messages sent in a specific broadcast",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "broadcast_id"
+        ],
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor"
+          },
+          "broadcast_id": {
+            "type": "string",
+            "description": "The ID of the broadcast"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_phone_list",
+      "description": "Create a phone list from a CSV file URL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "resource_url",
+          "fields_to_headers"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the phone list"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the list"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels to apply to all contacts"
+          },
+          "resource_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of CSV file to import"
+          },
+          "fields_to_headers": {
+            "type": "object",
+            "required": [
+              "phone_number"
+            ],
+            "properties": {
+              "zip_code": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "phone_number": {
+                "type": "string",
+                "description": "CSV header for phone numbers"
+              },
+              "email_address": {
+                "type": "string"
+              }
+            },
+            "description": "Map CSV headers to contact fields",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_phone_contacts",
+      "description": "Export all phone contacts. Returns a signed URL for downloading the export.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_email_contacts",
+      "description": "Export all email contacts. Returns a signed URL for downloading the export.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_phone_lists",
+      "description": "List all phone lists in your organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_email_blasts",
+      "description": "Export all email blast data. Returns a signed URL for downloading.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_inbox",
+      "description": "Export inbox messages with various filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "has_replied": {
+            "type": "boolean",
+            "default": true,
+            "description": "Filter to messages where user has replied"
+          },
+          "is_reply_needed": {
+            "type": "boolean",
+            "default": true,
+            "description": "Only messages awaiting response"
+          },
+          "include_outgoing": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include outgoing messages"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_email_labels",
+      "description": "Add or remove labels from an email contact",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email_address",
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "add",
+              "remove"
+            ],
+            "type": "string",
+            "description": "Whether to add or remove labels"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label IDs to add/remove"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label names to add/remove"
+          },
+          "email_address": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_email_list",
+      "description": "Create an email list from a CSV file URL",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "resource_url",
+          "fields_to_headers"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the email list"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the list"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels to apply to all contacts"
+          },
+          "resource_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of CSV file to import"
+          },
+          "fields_to_headers": {
+            "type": "object",
+            "required": [
+              "email_address"
+            ],
+            "properties": {
+              "zip_code": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "phone_number": {
+                "type": "string"
+              },
+              "email_address": {
+                "type": "string",
+                "description": "CSV header for email addresses"
+              }
+            },
+            "description": "Map CSV headers to contact fields",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_broadcast_messages",
+      "description": "Export all messages for a specific broadcast",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "broadcast_id"
+        ],
+        "properties": {
+          "broadcast_id": {
+            "type": "string",
+            "description": "The ID of the broadcast"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_label",
+      "description": "Get details of a specific label",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "label_id"
+        ],
+        "properties": {
+          "label_id": {
+            "type": "string",
+            "description": "The ID of the label"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "edit_label",
+      "description": "Edit/rename an existing label",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "label_id",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the label"
+          },
+          "label_id": {
+            "type": "string",
+            "description": "The ID of the label to edit"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_email_blast_messages",
+      "description": "List all messages sent in a specific email blast",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "blast_id"
+        ],
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor"
+          },
+          "blast_id": {
+            "type": "string",
+            "description": "The ID of the email blast"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_email_blast_messages",
+      "description": "Export all messages for a specific email blast",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "blast_id"
+        ],
+        "properties": {
+          "blast_id": {
+            "type": "string",
+            "description": "The ID of the email blast"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_email_list",
+      "description": "Get details of a specific email list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email_list_id"
+        ],
+        "properties": {
+          "email_list_id": {
+            "type": "string",
+            "description": "The ID of the email list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_email_list",
+      "description": "Export a specific email list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email_list_id"
+        ],
+        "properties": {
+          "email_list_id": {
+            "type": "string",
+            "description": "The ID of the email list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_email_list_labels",
+      "description": "Add or remove labels from all contacts in an email list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email_list_id",
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "add",
+              "remove"
+            ],
+            "type": "string",
+            "description": "Whether to add or remove labels"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label IDs to add/remove"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label names to add/remove"
+          },
+          "email_list_id": {
+            "type": "string",
+            "description": "The ID of the email list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_phone_list",
+      "description": "Get details of a specific phone list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phone_list_id"
+        ],
+        "properties": {
+          "phone_list_id": {
+            "type": "string",
+            "description": "The ID of the phone list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_phone_list",
+      "description": "Export a specific phone list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phone_list_id"
+        ],
+        "properties": {
+          "phone_list_id": {
+            "type": "string",
+            "description": "The ID of the phone list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_phone_list_labels",
+      "description": "Add or remove labels from all contacts in a phone list",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phone_list_id",
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "add",
+              "remove"
+            ],
+            "type": "string",
+            "description": "Whether to add or remove labels"
+          },
+          "label_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label IDs to add/remove"
+          },
+          "label_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label names to add/remove"
+          },
+          "phone_list_id": {
+            "type": "string",
+            "description": "The ID of the phone list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_jobs",
+      "description": "List async jobs (imports, exports, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Filter by job type"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_job",
+      "description": "Get status of a specific async job",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "job_id"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "description": "The ID of the job"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ArsenalPAC/switchboardmcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "account_id",
+          "secret_key"
+        ],
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "Your Switchboard API Account ID (from https://oneswitchboard.com/organization/settings?tab=api)"
+          },
+          "secret_key": {
+            "type": "string",
+            "description": "Your Switchboard API Secret Key (from https://oneswitchboard.com/organization/settings?tab=api)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

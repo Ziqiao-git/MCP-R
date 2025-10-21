@@ -1,0 +1,662 @@
+{
+  "qualifiedName": "@itorisaias/mcp-poc",
+  "displayName": "MCP Server Proof of Concept",
+  "description": "Demonstrate and validate the Model Context Protocol server implementation with flexible transport options. Run the server locally via STDIO or HTTP, or deploy it as an AWS Lambda function for scalable MCP request handling. Facilitate integration testing and development of MCP-based applications.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@itorisaias/mcp-poc",
+  "security": null,
+  "tools": [
+    {
+      "name": "benchmarks",
+      "description": "This tool provides benchmarks for various common reporting metrics.\n        The benchmarks data are derived from the data of select CustomerGauge B2B Accounts for the current period.\n        Only existing accounts that sent more than 100 survey invitations in the period are included in the benchmark.\n        Benchmarks data has a fixed date range of the last two semesters. The benchmarks data is updated every 6 months.\n\n        Avaliable filters:\n            - metric: The metric to receive benchmark data for.\n            - industry: The industry of the Accounts to receive benchmark data for, for the selected metric.\n\n        Parameters:\n            - metric: Choose the metric to receive benchmark data for. Allowed values: Account Response %, Detractor Follow Up %, Detractor Follow Up Speed, Email Bounce %, Email Delivery %, Email Open %, NPS, Response %, Survey Abandonment %, Survey Click %.\n            - industry: Allowed values: B2B, Consumer Goods, Manufacturing, Software / IT.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "metric",
+          "industry"
+        ],
+        "properties": {
+          "metric": {
+            "enum": [
+              "Email Bounce %",
+              "Email Delivery %",
+              "Email Open %",
+              "Survey Click %",
+              "Survey Abandonment %",
+              "Account Response %",
+              "Response %",
+              "Detractor Follow Up %",
+              "Detractor Follow Up Speed",
+              "NPS"
+            ],
+            "type": "string",
+            "description": "Choose the metric to receive benchmark data for."
+          },
+          "industry": {
+            "enum": [
+              "B2B",
+              "Software / IT",
+              "Manufacturing",
+              "Consumer Goods"
+            ],
+            "type": "string",
+            "description": "The industry of the Accounts to receive benchmark data for, for the selected metric."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drivers_loyalty",
+      "description": "This tool returns your Drivers and how many selections each Driver received per NPS loyalty group (promoters, passives, detractors).\n        Promoters select the Drivers that they are happy with or would recommend.\n        Passives and Detractors select the Drivers they feel could use improvement or are not happy with.\n        Drivers are a two-tiered checkbox question on the survey which contain a list of primary Drivers, with each Driver containing a sub-list of secondary Drivers.\n\n        Avaliable filters:\n            - period_start: The start date of the period.\n            - period_end: The end date of the period.\n            - period_field: The field to filter by.\n            - criterias: Filters to apply when we want results limited to a specific criteria\n            - driver_level: Choose between retrieving the data for primary or secondary drivers.\n\n        You can use the tool 'fields' to get a list of possible fields to filter in criterias.\n        You can use the tool 'field_values' to get a list of possible values for a field_values in criterias.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "default": "=",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "driver_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The ID of the driver to filter by. Use the tool `drivers` to get the possible values."
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-08-14",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "driver_level": {
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "type": "string",
+            "default": "primary",
+            "description": "Choose between retrieving the data for primary or secondary drivers"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-02-15",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drivers",
+      "description": "Return a list of all drivers.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "field_values",
+      "description": "Return a list of all the possible values that can be used for a field in criterias values.\n        Optionally, you can provide a search string to filter the values returned.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "field"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The field to get the values for. The possible fields can be retrieved with the tool `fields`, using their `field` property here. "
+          },
+          "search": {
+            "type": "string",
+            "description": "A search string to filter the possible values."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fields",
+      "description": "Return a list of all the possible fields that can be used for a criteria field.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "loyalty_movement",
+      "description": "This tool provides a breakdown into changes in NPS loyalty among cohorts of individual survey respondents who have responded\n        to multiple surveys within the defined time period. It also can provide a breakdown of the NPS loyalty changes of Accounts from\n        one period to the next, and allows you to view that as a count of the Accounts or as a sum of the revenue for all Accounts in\n        each loyalty movement category.\n\n        Avaliable filters:\n        - period_start: The start date of the period.\n        - period_end: The end date of the period.\n        - period_field: The field to filter by.\n        - criterias: Filters to apply when we want results limited to a specific criteria.\n        - type: Choose between retrieving the data for Contacts, Accounts, or Revenue.\n        - revenue_year: Any valid calendar year.\n\n        You can use the tool 'fields' to get a list of possible fields to filter in criterias.\n        You can use the tool 'field_values' to get a list of possible values for a field_values in criterias.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "type": {
+            "enum": [
+              "contact",
+              "account",
+              "revenue"
+            ],
+            "type": "string",
+            "default": "account",
+            "description": "Choose between retrieving the data for Contacts, Accounts, or Revenue"
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-08-14",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-02-15",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "revenue_year": {
+            "type": "number",
+            "description": "Required when type is revenue. Any valid calendar year"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nps_segment",
+      "description": "This tool returns your NPS for a specific segment.\n\n        Avaliable filters:\n            - period_start: The start date of the period.\n            - period_end: The end date of the period.\n            - period_field: The field to filter by.\n            - criterias: Filters to apply when we want results limited to a specific criteria\n            - segment_field: The field to group by. Use the tool 'fields' to get a list of possible fields, and use the 'field' property from them.\n\n        You can use the tool 'fields' to get a list of possible segment fields.\n        You can use the tool 'fields' to get a list of possible fields to filter in criterias.\n        You can use the tool 'field_values' to get a list of possible values for a field_values in criterias.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-08-14",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-07-15",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "segment_field": {
+            "type": "string",
+            "default": "company",
+            "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nps_summary",
+      "description": "This tool returns your NPS summary.\n\n    It shows the following attributes:\n      - NPS (Net Promoter Score)\n      - count and percentage of comments\n      - count and percentage of loyalty detractors\n      - count and percentage of loyalty passives\n      - count and percentage of loyalty promoters\n      - count of transport delivered\n      - count and percentage of transport responses\n      - count of non responses\n\n    Avaliable filters:\n      - period_start: The start date of the period.\n      - period_end: The end date of the period.\n      - period_field: The field to filter by.\n      - criterias: Filters to apply when we want results limited to a specific criteria\n\n    You can use the tool 'fields' to get a list of possible fields.\n    You can use the tool 'field_values' to get a list of possible values for a field.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-08-14",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-07-15",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nps_trend",
+      "description": "This tool returns your NPS grouped by an interval.\n\n        Avaliable filters:\n            - period_start: The start date of the period.\n            - period_end: The end date of the period.\n            - period_field: The field to filter by.\n            - criterias: Filters to apply when we want results limited to a specific criteria\n            - interval: The granularity of the time grouping.\n\n        You can use the tool 'fields' to get a list of possible fields to filter in criterias.\n        You can use the tool 'field_values' to get a list of possible values for a field_values in criterias.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "interval": {
+            "enum": [
+              "day",
+              "week",
+              "month",
+              "quarter",
+              "year"
+            ],
+            "type": "string",
+            "default": "week",
+            "description": "The granularity of the time grouping."
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-08-14",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-07-15",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_responses",
+      "description": "This tool provides a list of the individual survey responses from Contacts.\n\n        IMPORTANT: At least one criteria or search parameter must be provided to perform a search.\n\n        Available filters:\n            - period_start: The start date of the period.\n            - period_end: The end date of the period.\n            - period_field: The field to filter by.\n            - criterias: Filters to apply when we want results limited to a specific criteria.\n            - search: Additional parameters that can be used to filter the results. Accepted fields: CGID, First Name, Last Name, Email, Telephone, Comment.\n\n        You can use the tool 'fields' to get a list of possible fields to filter in criterias.\n        You can use the tool 'field_values' to get a list of possible values for a field_values in criterias.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "search": {
+            "type": "object",
+            "properties": {
+              "CGID": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "email": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "comment": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "last_name": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "telephone": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "first_name": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Additional filters that can be used for searching. Accepted fields: CGID, First Name, Last Name, Email, Telephone, Comment",
+            "additionalProperties": false
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "support",
+      "description": "A Retrieval-Augmented Generation (RAG) powered MCP tool that enables users to search and interact \n      with CustomerGauge’s Best Practices and Knowledge Base content. \n      This agent uses semantic search and context-aware retrieval to find relevant information from support articles,\n      guides, and internal expertise, providing accurate, conversational answers enriched with source references.\n      \n      Key Features:\n        Best Practices Access: Quickly retrieve step-by-step guidance and proven strategies \n          for running an Account Experience / Customer Experience Program effectively.\n        Knowledge Base Search: Understands and navigates CustomerGauge’s support articles, FAQs, and technical documentation.\n        Context-Aware Answers: Combines retrieved knowledge with LLM reasoning to provide clear, tailored responses.\n        Source Linking: Returns relevant article links and excerpts for transparency and follow-up.\n        Multi-Language Support: Capable of finding and summarizing information in multiple languages when available.\n\n      Intended Use Cases:\n        Helping CustomerGauge users troubleshoot issues.\n        Assisting Customer Experience teams with best practice recommendations.\n        Providing onboarding guidance for new users.\n        Acting as a quick-reference tool for support and implementation teams.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The question to ask the q business support ai chat."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "topics_by_sentiment",
+      "description": "This tool provides a comprehensive analysis of Topics by Sentiment from survey responses.\n        It identifies topics mentioned in open-text comments and categorizes them by sentiment (positive, negative, neutral, mixed).\n        This helps understand what aspects of your service or product are being praised or criticized.\n\n        Each topic shows:\n            - Total number of responses mentioning the topic\n            - Breakdown by sentiment (positive, negative, neutral, mixed)\n            - Sentiment distribution percentages\n\n        Available filters:\n            - period_start: The start date of the period.\n            - period_end: The end date of the period.\n            - period_field: The field to filter by.\n            - criterias: Filters to apply when we want results limited to a specific criteria.\n\n        You can use the tool 'fields' to get a list of possible fields to filter in criterias.\n        You can use the tool 'field_values' to get a list of possible values for a field_values in criterias.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-08-14",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-02-15",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@itorisaias/mcp-poc/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "cookieToken"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "cookieToken": {
+            "type": "string",
+            "description": "Cookie token for authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

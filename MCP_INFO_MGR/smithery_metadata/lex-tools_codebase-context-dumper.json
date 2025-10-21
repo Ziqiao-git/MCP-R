@@ -1,0 +1,53 @@
+{
+  "qualifiedName": "@lex-tools/codebase-context-dumper",
+  "displayName": "Codebase Context Dumper",
+  "description": "Automate the extraction of your codebase context for Large Language Models. This tool scans your project directory, respects .gitignore rules, and formats the output for seamless integration with MCP-compatible clients. Save time and enhance your LLM's context with structured codebase information.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "dump_codebase_context",
+      "description": "Recursively reads text files from a specified directory, respecting .gitignore rules and skipping binary files. Concatenates content with file path headers/footers. Supports chunking the output for large codebases.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "base_path"
+        ],
+        "properties": {
+          "base_path": {
+            "type": "string",
+            "description": "The absolute path to the project directory to scan."
+          },
+          "num_chunks": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "description": "Optional total number of chunks to divide the output into (default: 1)."
+          },
+          "chunk_index": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "description": "Optional 1-based index of the chunk to return (default: 1). Requires num_chunks > 1."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@lex-tools/codebase-context-dumper/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

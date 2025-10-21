@@ -1,0 +1,154 @@
+{
+  "qualifiedName": "@ThirdGuard/mcp-etherscan-server",
+  "displayName": "Etherscan Tools",
+  "description": "Access Ethereum blockchain data effortlessly. Check balances, view transaction history, track token transfers, and fetch contract ABIs with ease. Enhance your Ethereum interactions with real-time gas prices and ENS name resolution.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/etherscan.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "check-balance",
+      "description": "Check the ETH balance of an Ethereum address",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Ethereum address (0x format)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-transactions",
+      "description": "Get recent transactions for an Ethereum address",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of transactions to return (max 100)"
+          },
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Ethereum address (0x format)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-token-transfers",
+      "description": "Get ERC20 token transfers for an Ethereum address",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of transfers to return (max 100)"
+          },
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Ethereum address (0x format)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-contract-abi",
+      "description": "Get the ABI for a smart contract",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Contract address (0x format)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-contract-code",
+      "description": "Get the source code for a smart contract",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Contract address (0x format)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-gas-prices",
+      "description": "Get current gas prices in Gwei",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get-ens-name",
+      "description": "Get the ENS name for an Ethereum address",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Ethereum address (0x format)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@ThirdGuard/mcp-etherscan-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "etherscanApiKey"
+        ],
+        "properties": {
+          "etherscanApiKey": {
+            "type": "string",
+            "description": "Your Etherscan API key."
+          }
+        }
+      }
+    }
+  ]
+}

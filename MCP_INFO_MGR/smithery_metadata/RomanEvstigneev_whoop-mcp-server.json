@@ -1,0 +1,193 @@
+{
+  "qualifiedName": "@RomanEvstigneev/whoop-mcp-server",
+  "displayName": "WHOOP Fitness Data Server",
+  "description": " Get you WHOOP accessToken here:\n 👉 https://personal-integrations-462307.uc.r.appspot.com/\n\nConnect your WHOOP fitness data to Claude Desktop and transform it into actionable insights through natural language queries. Securely access your workouts, recovery, sleep, cycles, and profile information with smart caching and seamless OAuth integration. Keep your data private and local while enjoying an optimized and interactive fitness data experience.\n\n",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@RomanEvstigneev/whoop-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_whoop_auth_status",
+      "description": "Get WHOOP authentication status and connection info",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_whoop_profile",
+      "description": "Get WHOOP user profile information including name and basic details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_whoop_workouts",
+      "description": "Get WHOOP workout data with optional date range and limit",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of workouts to return (1-50)"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_whoop_recovery",
+      "description": "Get WHOOP recovery data with optional date range and limit",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of recovery records to return (1-50)"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_whoop_sleep",
+      "description": "Get WHOOP sleep data with optional date range and limit",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of sleep records to return (1-50)"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_whoop_cycles",
+      "description": "Get WHOOP physiological cycle data (daily summaries) with optional date range and limit",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of cycles to return (1-50)"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "clear_whoop_cache",
+      "description": "Clear all cached WHOOP data to force fresh API calls",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@RomanEvstigneev/whoop-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "accessToken"
+        ],
+        "properties": {
+          "baseUrl": {
+            "type": "string",
+            "format": "uri",
+            "default": "https://api.prod.whoop.com/developer/v1",
+            "description": "WHOOP API base URL"
+          },
+          "accessToken": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Your WHOOP API access token from OAuth authorization"
+          },
+          "cacheTimeout": {
+            "type": "number",
+            "default": 300,
+            "maximum": 3600,
+            "minimum": 60,
+            "description": "How long to cache API responses (seconds)"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Your WHOOP API refresh token for automatic renewal"
+          },
+          "rateLimitPerMinute": {
+            "type": "number",
+            "default": 100,
+            "maximum": 1000,
+            "minimum": 10,
+            "description": "Maximum API requests per minute"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

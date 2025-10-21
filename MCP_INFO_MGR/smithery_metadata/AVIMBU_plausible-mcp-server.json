@@ -1,0 +1,66 @@
+{
+  "qualifiedName": "@AVIMBU/plausible-mcp-server",
+  "displayName": "Plausible Analytics Server",
+  "description": "Query your analytics data effortlessly. Generate insightful reports and daily overviews from your Plausible account with ease. Enhance your AI models' capabilities by integrating real-time analytics data.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/avimbu.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "plausible_query",
+      "description": "Query analytics data from Plausible",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "site_id",
+          "metrics",
+          "date_range"
+        ],
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "String list of metrics to query with the following options: 'visitors' 'int' The number of unique visitors | 'visits' 'int' The number of visits/sessions | 'pageviews'\t'int' The number of pageview events\t | 'views_per_visit'\t'float' The number of pageviews divided by the number of visits.\t | 'bounce_rate'\t'float' Bounce rate percentage\t | 'visit_duration'\t'int' Visit duration in seconds\t | 'events'\t'int' The number of events (pageviews + custom events). When filtering by a goal, this metric corresponds to 'Total Conversions' in the dashboard.\t | 'scroll_depth'\t'int' Page scroll depth averaged per session\tRequires event:page filter or dimension being set | 'percentage'\t'float' The percentage of visitors of total who fall into this category\tRequires non-empty dimensions | 'conversion_rate'\t'float' The percentage of visitors who completed the goal.\tRequires non-empty dimensions, event:goal filter or dimension being set | 'group_conversion_rate'\t'float' The percentage of visitors who completed the goal with the same dimension. Requires: dimension list passed, an event:goal filter or event:goal dimension\tRequires non-empty dimensions, event:goal filter or dimension being set | 'average_revenue'\t'Revenue' or null\tAverage revenue per revenue goal conversion\tRequires revenue goals, event:goal filter or dimension for a relevant revenue goal. | 'total_revenue'\t'Revenue' or null\tTotal revenue from revenue goal conversions\tRequires revenue goals, event:goal filter or dimension for a relevant revenue goal."
+          },
+          "site_id": {
+            "type": "string",
+            "description": "The domain of the site to query data for"
+          },
+          "date_range": {
+            "type": "string",
+            "description": "Date range for the query, with the following options: [\"2024-01-01\", \"2024-07-01\"] Custom date range (ISO8601) | [\"2024-01-01T12:00:00+02:00\", \"2024-01-01T15:59:59+02:00\"] Custom date-time range (ISO8601) | \"day\"\tCurrent day (e.g. 2024-07-01) | \"7d\"\tLast 7 days relative to today | \"30d\"\tLast 30 days relative to today | \"month\" Since the start of the current month | \"6mo\" Last 6 months relative to start of this month | \"12mo\" Last 12 months relative to start of this month | \"year\" Since the start of this year | \"all\""
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@AVIMBU/plausible-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "plausibleAPIKey",
+          "plausibleAPIURL"
+        ],
+        "properties": {
+          "plausibleAPIKey": {
+            "type": "string",
+            "description": "The API Key of your Plausible account."
+          },
+          "plausibleAPIURL": {
+            "type": "string",
+            "description": "The URL of your Plausible server, default to https://plausible.io/api/v2"
+          }
+        }
+      }
+    }
+  ]
+}

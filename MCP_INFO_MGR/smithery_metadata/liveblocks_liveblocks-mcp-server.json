@@ -1,0 +1,1538 @@
+{
+  "qualifiedName": "@liveblocks/liveblocks-mcp-server",
+  "displayName": "Liveblocks",
+  "description": "Enable AI agents to interact with Liveblocks by creating, modifying, and deleting rooms, threads, comments, notifications, and more. Provide AI with read access to Liveblocks Storage and Yjs for enhanced collaborative capabilities. Simplify integration of Liveblocks features into AI workflows for real-time collaboration and data management.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/liveblocks.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-rooms",
+      "description": "Get recent Liveblocks rooms",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "limit"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100
+          },
+          "query": {
+            "type": "object",
+            "properties": {
+              "roomId": {
+                "type": "object",
+                "required": [
+                  "startsWith"
+                ],
+                "properties": {
+                  "startsWith": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "userId": {
+            "type": "string"
+          },
+          "groupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "startingAfter": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-room",
+      "description": "Create a Liveblocks room",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "defaultAccesses"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "usersAccesses": {
+            "type": "object",
+            "description": "\n      The user ID accesses for the room. Permissions can be: \n        \n        1. [\"room:write\"] // public\n        2. [\"room:read\", \"room:presence:write\"] // read-only\n        3. [] // private   \n\n         For example, when setting \"charlie\" user ID to have full/public access:\n\n         {\n           charlie: [\"room:write\"]\n         }\n\n         Setting to null is used to remove an existing access level:\n\n         {\n           charlie: null\n         }\n      ",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "groupsAccesses": {
+            "type": "object",
+            "description": "\n      The group ID accesses for the room. Permissions can be: \n        \n        1. [\"room:write\"] // public\n        2. [\"room:read\", \"room:presence:write\"] // read-only\n        3. [] // private   \n\n         For example, when setting a \"design\" group to have full/public access:\n\n         {\n           design: [\"room:write\"]\n         }\n\n         Setting to null is used to remove an existing access level:\n\n         {\n           design: null\n         }\n      ",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "defaultAccesses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The default access permissions for the room. Permissions can be: \n        \n        1. [\"room:write\"] // public\n        2. [\"room:read\", \"room:presence:write\"] // read-only\n        3. [] // private        \n    "
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-room",
+      "description": "Get a Liveblocks room",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-room",
+      "description": "Update a Liveblocks room",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "defaultAccesses"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "usersAccesses": {
+            "type": "object",
+            "description": "\n      The user ID accesses for the room. Permissions can be: \n        \n        1. [\"room:write\"] // public\n        2. [\"room:read\", \"room:presence:write\"] // read-only\n        3. [] // private   \n\n         For example, when setting \"charlie\" user ID to have full/public access:\n\n         {\n           charlie: [\"room:write\"]\n         }\n\n         Setting to null is used to remove an existing access level:\n\n         {\n           charlie: null\n         }\n      ",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "groupsAccesses": {
+            "type": "object",
+            "description": "\n      The group ID accesses for the room. Permissions can be: \n        \n        1. [\"room:write\"] // public\n        2. [\"room:read\", \"room:presence:write\"] // read-only\n        3. [] // private   \n\n         For example, when setting a \"design\" group to have full/public access:\n\n         {\n           design: [\"room:write\"]\n         }\n\n         Setting to null is used to remove an existing access level:\n\n         {\n           design: null\n         }\n      ",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "defaultAccesses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The default access permissions for the room. Permissions can be: \n        \n        1. [\"room:write\"] // public\n        2. [\"room:read\", \"room:presence:write\"] // read-only\n        3. [] // private        \n    "
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-room",
+      "description": "Delete a Liveblocks room",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-room-id",
+      "description": "Update a Liveblocks room's ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "newRoomId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "newRoomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-active-users",
+      "description": "Get a Liveblocks room's active users",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "broadcast-event",
+      "description": "Broadcast an event to a Liveblocks room",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "event"
+        ],
+        "properties": {
+          "event": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "roomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-storage-document",
+      "description": "Get a Liveblocks storage document",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-yjs-document",
+      "description": "Get a Liveblocks Yjs text document",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "format": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-threads",
+      "description": "Get recent Liveblocks threads",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId"
+        ],
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "startsWith"
+                      ],
+                      "properties": {
+                        "startsWith": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "resolved": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-thread",
+      "description": "Create a Liveblocks thread. Always ask for a userId.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "comment"
+            ],
+            "properties": {
+              "comment": {
+                "type": "object",
+                "required": [
+                  "body",
+                  "userId"
+                ],
+                "properties": {
+                  "body": {
+                    "type": "object",
+                    "required": [
+                      "version",
+                      "content"
+                    ],
+                    "properties": {
+                      "content": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "type",
+                            "children"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "paragraph"
+                            },
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "required": [
+                                      "text"
+                                    ],
+                                    "properties": {
+                                      "bold": {
+                                        "type": "boolean"
+                                      },
+                                      "code": {
+                                        "type": "boolean"
+                                      },
+                                      "text": {
+                                        "type": "string"
+                                      },
+                                      "italic": {
+                                        "type": "boolean"
+                                      },
+                                      "strikethrough": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "object",
+                                    "required": [
+                                      "type",
+                                      "id"
+                                    ],
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string",
+                                        "const": "mention"
+                                      }
+                                    },
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "object",
+                                    "required": [
+                                      "type",
+                                      "url"
+                                    ],
+                                    "properties": {
+                                      "url": {
+                                        "type": "string"
+                                      },
+                                      "text": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string",
+                                        "const": "link"
+                                      }
+                                    },
+                                    "additionalProperties": false
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      },
+                      "version": {
+                        "type": "number",
+                        "const": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "boolean",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-thread",
+      "description": "Get a Liveblocks thread",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-thread-participants",
+      "description": "Get a Liveblocks thread's participants",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "edit-thread-metadata",
+      "description": "Edit a Liveblocks thread's metadata. `null` can be used to remove a key.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "metadata",
+              "userId"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "boolean",
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mark-thread-as-resolved",
+      "description": "Mark a Liveblocks thread as resolved",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "userId"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mark-thread-as-unresolved",
+      "description": "Mark a Liveblocks thread as unresolved",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "userId"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-thread",
+      "description": "Delete a Liveblocks thread",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "subscribe-to-thread",
+      "description": "Subscribe to a Liveblocks thread",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "userId"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "unsubscribe-from-thread",
+      "description": "Unsubscribe from a Liveblocks thread",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "userId"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-thread-subscriptions",
+      "description": "Get a Liveblocks thread's subscriptions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-comment",
+      "description": "Create a Liveblocks comment. Always ask for a userId.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "body",
+              "userId"
+            ],
+            "properties": {
+              "body": {
+                "type": "object",
+                "required": [
+                  "version",
+                  "content"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "children"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "paragraph"
+                        },
+                        "children": {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "required": [
+                                  "text"
+                                ],
+                                "properties": {
+                                  "bold": {
+                                    "type": "boolean"
+                                  },
+                                  "code": {
+                                    "type": "boolean"
+                                  },
+                                  "text": {
+                                    "type": "string"
+                                  },
+                                  "italic": {
+                                    "type": "boolean"
+                                  },
+                                  "strikethrough": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "id"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "mention"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "url"
+                                ],
+                                "properties": {
+                                  "url": {
+                                    "type": "string"
+                                  },
+                                  "text": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "link"
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "version": {
+                    "type": "number",
+                    "const": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "userId": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-comment",
+      "description": "Get a Liveblocks comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "commentId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "commentId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "edit-comment",
+      "description": "Edit a Liveblocks comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "commentId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "body",
+              "userId"
+            ],
+            "properties": {
+              "body": {
+                "type": "object",
+                "required": [
+                  "version",
+                  "content"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "children"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "paragraph"
+                        },
+                        "children": {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "required": [
+                                  "text"
+                                ],
+                                "properties": {
+                                  "bold": {
+                                    "type": "boolean"
+                                  },
+                                  "code": {
+                                    "type": "boolean"
+                                  },
+                                  "text": {
+                                    "type": "string"
+                                  },
+                                  "italic": {
+                                    "type": "boolean"
+                                  },
+                                  "strikethrough": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "id"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "mention"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "url"
+                                ],
+                                "properties": {
+                                  "url": {
+                                    "type": "string"
+                                  },
+                                  "text": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "link"
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "version": {
+                    "type": "number",
+                    "const": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "userId": {
+                "type": "string"
+              },
+              "editedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "commentId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-comment",
+      "description": "Delete a Liveblocks comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "commentId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "commentId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-comment-reaction",
+      "description": "Add a reaction to a Liveblocks comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "commentId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "emoji",
+              "userId"
+            ],
+            "properties": {
+              "emoji": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "commentId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove-comment-reaction",
+      "description": "Remove a reaction from a Liveblocks comment",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "threadId",
+          "commentId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "emoji",
+              "userId"
+            ],
+            "properties": {
+              "emoji": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              },
+              "removedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "commentId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-room-subscription-settings",
+      "description": "Get a Liveblocks room's subscription settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "userId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-room-subscription-settings",
+      "description": "Update a Liveblocks room's subscription settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "userId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "threads": {
+                "enum": [
+                  "all",
+                  "replies_and_mentions",
+                  "none"
+                ],
+                "type": "string"
+              },
+              "textMentions": {
+                "enum": [
+                  "mine",
+                  "none"
+                ],
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-room-subscription-settings",
+      "description": "Delete a Liveblocks room's subscription settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "roomId",
+          "userId"
+        ],
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-user-room-subscription-settings",
+      "description": "Get a user's room subscription settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-inbox-notifications",
+      "description": "Get recent Liveblocks inbox notifications",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "query": {
+            "type": "object",
+            "required": [
+              "unread"
+            ],
+            "properties": {
+              "unread": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          "userId": {
+            "type": "string"
+          },
+          "startingAfter": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-inbox-notification",
+      "description": "Get a Liveblocks inbox notification",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId",
+          "inboxNotificationId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "inboxNotificationId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "trigger-inbox-notification",
+      "description": "Create a custom Liveblocks inbox notification",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId",
+          "kind",
+          "subjectId",
+          "activityData"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "pattern": "^\\$"
+          },
+          "roomId": {
+            "type": "string",
+            "description": "Don't add this unless specifically asked"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string"
+          },
+          "activityData": {
+            "type": "object",
+            "description": "Custom data related to the notification",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "boolean",
+                "number"
+              ]
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-inbox-notification",
+      "description": "Delete a Liveblocks inbox notification",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId",
+          "inboxNotificationId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "inboxNotificationId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-all-inbox-notifications",
+      "description": "Delete all Liveblocks inbox notifications",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-notification-settings",
+      "description": "Get a Liveblocks notification settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-notification-settings",
+      "description": "Update Liveblocks notification settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "boolean"
+              }
+            }
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-notification-settings",
+      "description": "Delete Liveblocks notification settings",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@liveblocks/liveblocks-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "secretKey"
+        ],
+        "properties": {
+          "secretKey": {
+            "type": "string",
+            "description": "Liveblocks secret key from liveblocks.io/dashboard"
+          }
+        }
+      }
+    }
+  ]
+}

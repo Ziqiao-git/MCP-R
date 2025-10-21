@@ -1,0 +1,268 @@
+{
+  "qualifiedName": "@AITutor3/icn-mcp",
+  "displayName": "Incheon Airport Live",
+  "description": "Get real-time departure hall congestion, flight statuses, and parking availability at Incheon International Airport. Search departures and arrivals by flight ID or airport code and filter by date to plan your trip. Explore destination details for cities served from Incheon.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@AITutor3/icn-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_departure_congestion",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieves the real-time congestion of the departure hall at a specific terminal of Incheon International Airport.\nCongestion is indicated by the number of people waiting and the estimated waiting time.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "terminal": {
+            "enum": [
+              "T1",
+              "T2"
+            ],
+            "type": "string",
+            "title": "Terminal",
+            "default": "T1"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_flight_departures",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieves the operational status of departing flights from Incheon Airport.\nYou can search by flight ID or destination airport code.\nIf no date is specified, it defaults to today's date. (e.g., 20250910)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "default": null
+          },
+          "flight_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flight Id",
+            "default": null
+          },
+          "to_airport_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Airport Code",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_flight_arrivals",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieves the operational status of arriving flights at Incheon Airport.\nYou can search by flight ID or origin airport code.\nIf no date is specified, it defaults to today's date. (e.g., 20250910)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "default": null
+          },
+          "flight_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flight Id",
+            "default": null
+          },
+          "from_airport_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Airport Code",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_parking_status",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Retrieves the real-time parking status of Incheon Airport's parking lots.\nYou can specify a terminal (T1, T2) or view the overall status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "terminal": {
+            "anyOf": [
+              {
+                "enum": [
+                  "T1",
+                  "T2"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terminal",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_destination_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Looks up information about cities served by Incheon Airport using the IATA airport code.\n(e.g., 'AMS', 'CDG')",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "airport_code"
+        ],
+        "properties": {
+          "airport_code": {
+            "type": "string",
+            "title": "Airport Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@AITutor3/icn-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

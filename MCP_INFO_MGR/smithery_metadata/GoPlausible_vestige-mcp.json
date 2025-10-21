@@ -1,0 +1,859 @@
+{
+  "qualifiedName": "@GoPlausible/vestige-mcp",
+  "displayName": "Vestige MCP",
+  "description": "Provide comprehensive access to Vestige API data and analytics through a standardized protocol interface. Query networks, protocols, assets, pools, trades, balances, notes, and vaults with flexible filtering and pagination. Enable seamless integration of Vestige's DeFi insights into LLM applications and workflows.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/vestige.fi.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "vestige_view_networks",
+      "description": "Get all networks",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "vestige_view_network_by_id",
+      "description": "Get network by id",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id"
+        ],
+        "properties": {
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_protocols",
+      "description": "Get all protocols",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id"
+        ],
+        "properties": {
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_protocol_by_id",
+      "description": "Get protocol by id",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "protocol_id",
+          "network_id"
+        ],
+        "properties": {
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "protocol_id": {
+            "type": "integer",
+            "description": "Protocol ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_protocol_volumes",
+      "description": "Get protocol volumes at specific day. Defaults to current day.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id"
+        ],
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "description": "Optional timestamp"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_assets",
+      "description": "Get data about assets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "asset_ids"
+        ],
+        "properties": {
+          "asset_ids": {
+            "type": "string",
+            "description": "Comma-separated list of asset IDs"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_assets_list",
+      "description": "Get asset list",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 250,
+            "minimum": 1,
+            "description": "Maximum number of results"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip"
+          },
+          "tvl__gt": {
+            "type": "number",
+            "description": "Filter by TVL greater than"
+          },
+          "tvl__lt": {
+            "type": "number",
+            "description": "Filter by TVL less than"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Field to order by"
+          },
+          "asset_ids": {
+            "type": "string",
+            "description": "Optional comma-separated list of asset IDs"
+          },
+          "order_dir": {
+            "type": "string",
+            "default": "desc",
+            "pattern": "^(asc|desc)$",
+            "description": "Order direction (asc/desc)"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "volume1d__gt": {
+            "type": "number",
+            "description": "Filter by 24h volume greater than"
+          },
+          "volume1d__lt": {
+            "type": "number",
+            "description": "Filter by 24h volume less than"
+          },
+          "created_at__gt": {
+            "type": "integer",
+            "description": "Filter by creation time greater than"
+          },
+          "created_at__lt": {
+            "type": "integer",
+            "description": "Filter by creation time less than"
+          },
+          "exclude_labels": {
+            "type": "string",
+            "description": "Optional comma-separated list of labels to exclude"
+          },
+          "include_labels": {
+            "type": "string",
+            "description": "Optional comma-separated list of labels to include"
+          },
+          "market_cap__gt": {
+            "type": "number",
+            "description": "Filter by market cap greater than"
+          },
+          "market_cap__lt": {
+            "type": "number",
+            "description": "Filter by market cap less than"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          },
+          "fully_diluted_market_cap__gt": {
+            "type": "number",
+            "description": "Filter by fully diluted market cap greater than"
+          },
+          "fully_diluted_market_cap__lt": {
+            "type": "number",
+            "description": "Filter by fully diluted market cap less than"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_assets_search",
+      "description": "Search assets by query",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 250,
+            "minimum": 1,
+            "description": "Maximum number of results"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Field to order by"
+          },
+          "order_dir": {
+            "type": "string",
+            "default": "desc",
+            "pattern": "^(asc|desc)$",
+            "description": "Order direction (asc/desc)"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "protocol_id": {
+            "type": "integer",
+            "description": "Optional protocol ID filter"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_asset_price",
+      "description": "Get asset prices",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "asset_ids"
+        ],
+        "properties": {
+          "asset_ids": {
+            "type": "string",
+            "description": "Comma-separated list of asset IDs"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_asset_candles",
+      "description": "Get asset candles",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "asset_id",
+          "interval",
+          "start"
+        ],
+        "properties": {
+          "end": {
+            "type": "integer",
+            "description": "Optional end timestamp"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Start timestamp"
+          },
+          "asset_id": {
+            "type": "integer",
+            "description": "Asset ID"
+          },
+          "interval": {
+            "type": "integer",
+            "description": "Candle interval in seconds"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          },
+          "volume_in_denominating_asset": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to return volume in denominating asset"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_asset_history",
+      "description": "Get asset volume, swaps, total lockup, vwap and confidence history",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "asset_id",
+          "interval",
+          "start"
+        ],
+        "properties": {
+          "end": {
+            "type": "integer",
+            "description": "Optional end timestamp"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Start timestamp"
+          },
+          "asset_id": {
+            "type": "integer",
+            "description": "Asset ID"
+          },
+          "interval": {
+            "type": "integer",
+            "description": "History interval in seconds"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          },
+          "volume_in_denominating_asset": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to return volume in denominating asset"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_asset_composition",
+      "description": "Get asset lockups based on protocol and pair",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "asset_id"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "integer",
+            "description": "Asset ID"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_pools",
+      "description": "Get pools",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 250,
+            "minimum": 1,
+            "description": "Maximum number of results"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Field to order by"
+          },
+          "order_dir": {
+            "type": "string",
+            "default": "desc",
+            "pattern": "^(asc|desc)$",
+            "description": "Order direction (asc/desc)"
+          },
+          "asset_1_id": {
+            "type": "integer",
+            "description": "Optional asset 1 ID filter"
+          },
+          "asset_2_id": {
+            "type": "integer",
+            "description": "Optional asset 2 ID filter"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "protocol_id": {
+            "type": "integer",
+            "description": "Optional protocol ID filter"
+          },
+          "other_protocol_id": {
+            "type": "integer",
+            "description": "Optional other protocol ID filter"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_vaults",
+      "description": "Get all vaults",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "protocol_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 250,
+            "minimum": 1,
+            "description": "Maximum number of results"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip"
+          },
+          "address": {
+            "type": "string",
+            "description": "Optional address filter"
+          },
+          "asset_id": {
+            "type": "integer",
+            "description": "Optional asset ID filter"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Field to order by"
+          },
+          "order_dir": {
+            "type": "string",
+            "default": "desc",
+            "pattern": "^(asc|desc)$",
+            "description": "Order direction (asc/desc)"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "protocol_id": {
+            "type": "integer",
+            "description": "Protocol ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_balances",
+      "description": "Get balances by network id, protocol id and asset id",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "protocol_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 250,
+            "minimum": 1,
+            "description": "Maximum number of results"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip"
+          },
+          "address": {
+            "type": "string",
+            "description": "Optional address filter"
+          },
+          "asset_id": {
+            "type": "integer",
+            "description": "Optional asset ID filter"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Field to order by"
+          },
+          "order_dir": {
+            "type": "string",
+            "default": "desc",
+            "pattern": "^(asc|desc)$",
+            "description": "Order direction (asc/desc)"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "protocol_id": {
+            "type": "integer",
+            "description": "Protocol ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_notes",
+      "description": "Get notes by network id and optionally asset id",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 250,
+            "minimum": 1,
+            "description": "Maximum number of results"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip"
+          },
+          "asset_id": {
+            "type": "integer",
+            "description": "Optional asset ID filter"
+          },
+          "order_by": {
+            "type": "string",
+            "description": "Field to order by"
+          },
+          "order_dir": {
+            "type": "string",
+            "default": "desc",
+            "pattern": "^(asc|desc)$",
+            "description": "Order direction (asc/desc)"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_first_asset_notes",
+      "description": "Get first note for assets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "asset_ids"
+        ],
+        "properties": {
+          "asset_ids": {
+            "type": "string",
+            "description": "Comma-separated list of asset IDs"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_asset_notes_count",
+      "description": "Get notes count for assets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "asset_ids"
+        ],
+        "properties": {
+          "asset_ids": {
+            "type": "string",
+            "description": "Comma-separated list of asset IDs"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_view_swaps",
+      "description": "Get swaps",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network_id",
+          "start"
+        ],
+        "properties": {
+          "end": {
+            "type": "integer",
+            "description": "Optional end timestamp"
+          },
+          "next": {
+            "type": "string",
+            "description": "Optional next token for pagination"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 250,
+            "minimum": 1,
+            "description": "Maximum number of results"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Start timestamp"
+          },
+          "address": {
+            "type": "string",
+            "description": "Optional address filter"
+          },
+          "asset_id": {
+            "type": "integer",
+            "description": "Optional asset ID filter"
+          },
+          "executor": {
+            "type": "string",
+            "description": "Optional executor filter"
+          },
+          "order_dir": {
+            "type": "string",
+            "default": "desc",
+            "pattern": "^(asc|desc)$",
+            "description": "Order direction (asc/desc)"
+          },
+          "network_id": {
+            "type": "integer",
+            "description": "Network ID"
+          },
+          "protocol_id": {
+            "type": "integer",
+            "description": "Optional protocol ID filter"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_get_best_v4_swap_data",
+      "description": "Get best V4 swap data",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "from_asa",
+          "to_asa",
+          "amount",
+          "mode"
+        ],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "pattern": "^(sef|sfe)$",
+            "description": "Swap mode (sef/sfe)"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Amount to swap"
+          },
+          "to_asa": {
+            "type": "integer",
+            "description": "Target ASA ID"
+          },
+          "from_asa": {
+            "type": "integer",
+            "description": "Source ASA ID"
+          },
+          "enabled_providers": {
+            "type": "string",
+            "description": "Optional comma-separated list of enabled providers"
+          },
+          "disabled_providers": {
+            "type": "string",
+            "description": "Optional comma-separated list of disabled providers"
+          },
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_get_v4_swap_discount",
+      "description": "Get V4 swap discount",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Account address"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_get_v4_swap_data_transactions",
+      "description": "Get V4 swap data transactions",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sender",
+          "slippage",
+          "swap_data"
+        ],
+        "properties": {
+          "sender": {
+            "type": "string",
+            "description": "Sender address"
+          },
+          "slippage": {
+            "type": "number",
+            "description": "Slippage tolerance"
+          },
+          "swap_data": {
+            "type": "object",
+            "description": "V4 swap data from get_best_v4_swap_data"
+          },
+          "random_signer": {
+            "type": "string",
+            "description": "Optional random signer address"
+          }
+        }
+      }
+    },
+    {
+      "name": "vestige_get_aggregator_stats",
+      "description": "Get aggregator stats",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "denominating_asset_id": {
+            "type": "integer",
+            "default": 0,
+            "description": "Optional denominating asset ID"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@GoPlausible/vestige-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "ALGORAND_ALGOD": {
+            "type": "string",
+            "default": "https://mainnet-api.algonode.cloud",
+            "description": "Algod node base URL"
+          },
+          "ALGORAND_TOKEN": {
+            "type": "string",
+            "default": "",
+            "description": "Algorand API token (optional)"
+          },
+          "ITEMS_PER_PAGE": {
+            "type": "string",
+            "default": 10,
+            "description": "Number of items per page for paginated responses"
+          },
+          "ALGORAND_NETWORK": {
+            "type": "string",
+            "default": "mainnet",
+            "description": "Algorand network to connect to, e.g., testnet or mainnet"
+          },
+          "ALGORAND_ALGOD_PORT": {
+            "type": "string",
+            "default": "",
+            "description": "Algod node port (optional)"
+          },
+          "ALGORAND_AGENT_WALLET": {
+            "type": "string",
+            "default": "",
+            "description": "Algorand agent active wallet"
+          }
+        }
+      }
+    }
+  ]
+}

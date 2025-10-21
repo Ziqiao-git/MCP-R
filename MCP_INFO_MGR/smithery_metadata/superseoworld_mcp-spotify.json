@@ -1,0 +1,689 @@
+{
+  "qualifiedName": "@superseoworld/mcp-spotify",
+  "displayName": "Spotify Server",
+  "description": "Access Spotify's music catalog and interact with tracks, albums, and artists.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/spotify.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_access_token",
+      "description": "Get a valid Spotify access token for API requests",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search for tracks, albums, artists, or playlists",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "track",
+              "album",
+              "artist",
+              "playlist"
+            ],
+            "type": "string",
+            "description": "Type of item to search for"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of results (1-50)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_artist",
+      "description": "Get Spotify catalog information for an artist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the artist"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_multiple_artists",
+      "description": "Get Spotify catalog information for multiple artists",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "description": "Array of Spotify artist IDs or URIs (max 50)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_artist_top_tracks",
+      "description": "Get Spotify catalog information about an artist's top tracks",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the artist"
+          },
+          "market": {
+            "type": "string",
+            "description": "Optional. An ISO 3166-1 alpha-2 country code"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_artist_related_artists",
+      "description": "Get Spotify catalog information about artists similar to a given artist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the artist"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_artist_albums",
+      "description": "Get Spotify catalog information about an artist's albums",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the artist"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of albums to return (1-50)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "The index of the first album to return"
+          },
+          "include_groups": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "album",
+                "single",
+                "appears_on",
+                "compilation"
+              ],
+              "type": "string"
+            },
+            "description": "Optional. Filter by album types"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_album",
+      "description": "Get Spotify catalog information for an album",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the album"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_album_tracks",
+      "description": "Get Spotify catalog information for an album's tracks",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the album"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of tracks to return (1-50)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "The index of the first track to return"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_multiple_albums",
+      "description": "Get Spotify catalog information for multiple albums",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "description": "Array of Spotify album IDs or URIs (max 20)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_track",
+      "description": "Get Spotify catalog information for a track",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the track"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_available_genres",
+      "description": "Get a list of available genres for recommendations",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_new_releases",
+      "description": "Get a list of new album releases featured in Spotify",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of releases to return (1-50)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "The index of the first release to return"
+          },
+          "country": {
+            "type": "string",
+            "description": "Optional. A country code (ISO 3166-1 alpha-2)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_recommendations",
+      "description": "Get track recommendations based on seed tracks, artists, or genres",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of recommendations (1-100)"
+          },
+          "seed_genres": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of genre names"
+          },
+          "seed_tracks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of Spotify track IDs or URIs"
+          },
+          "seed_artists": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of Spotify artist IDs or URIs"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_audiobook",
+      "description": "Get Spotify catalog information for an audiobook",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the audiobook"
+          },
+          "market": {
+            "type": "string",
+            "description": "Optional. An ISO 3166-1 alpha-2 country code"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_multiple_audiobooks",
+      "description": "Get Spotify catalog information for multiple audiobooks",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "description": "Array of Spotify audiobook IDs or URIs (max 50)"
+          },
+          "market": {
+            "type": "string",
+            "description": "Optional. An ISO 3166-1 alpha-2 country code"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_audiobook_chapters",
+      "description": "Get Spotify catalog information about an audiobook's chapters",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI for the audiobook"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of chapters to return (1-50)"
+          },
+          "market": {
+            "type": "string",
+            "description": "Optional. An ISO 3166-1 alpha-2 country code"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "The index of the first chapter to return"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_playlist",
+      "description": "Get a playlist owned by a Spotify user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI of the playlist"
+          },
+          "market": {
+            "type": "string",
+            "description": "Optional. An ISO 3166-1 alpha-2 country code"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_playlist_tracks",
+      "description": "Get full details of the tracks of a playlist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI of the playlist"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Optional. Maximum number of tracks to return (1-100)"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Optional. Filters for the query"
+          },
+          "market": {
+            "type": "string",
+            "description": "Optional. An ISO 3166-1 alpha-2 country code"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Optional. Index of the first track to return"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_playlist_items",
+      "description": "Get full details of the items of a playlist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI of the playlist"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Optional. Maximum number of items to return (1-100)"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Optional. Filters for the query"
+          },
+          "market": {
+            "type": "string",
+            "description": "Optional. An ISO 3166-1 alpha-2 country code"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Optional. Index of the first item to return"
+          }
+        }
+      }
+    },
+    {
+      "name": "modify_playlist",
+      "description": "Change a playlist's name and public/private state",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI of the playlist"
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional. New name for the playlist"
+          },
+          "public": {
+            "type": "boolean",
+            "description": "Optional. If true the playlist will be public"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional. New description for the playlist"
+          },
+          "collaborative": {
+            "type": "boolean",
+            "description": "Optional. If true, the playlist will become collaborative"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_tracks_to_playlist",
+      "description": "Add one or more tracks to a playlist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "uris"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI of the playlist"
+          },
+          "uris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of Spotify track URIs to add"
+          },
+          "position": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Optional. The position to insert the tracks (zero-based)"
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_tracks_from_playlist",
+      "description": "Remove one or more tracks from a playlist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "tracks"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The Spotify ID or URI of the playlist"
+          },
+          "tracks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "uri"
+              ],
+              "properties": {
+                "uri": {
+                  "type": "string",
+                  "description": "Spotify URI of the track to remove"
+                },
+                "positions": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Optional positions of the track to remove"
+                }
+              }
+            },
+            "description": "Array of objects containing Spotify track URIs to remove"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "description": "Optional. The playlist's snapshot ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_current_user_playlists",
+      "description": "Get a list of the playlists owned or followed by the current Spotify user",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of playlists to return (1-50)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "The index of the first playlist to return"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_featured_playlists",
+      "description": "Get a list of Spotify featured playlists",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Optional. Maximum number of playlists (1-50)"
+          },
+          "locale": {
+            "type": "string",
+            "description": "Optional. Desired language (format: es_MX)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Optional. Index of the first playlist to return"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_category_playlists",
+      "description": "Get a list of Spotify playlists tagged with a particular category",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "category_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Optional. Maximum number of playlists (1-50)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Optional. Index of the first playlist to return"
+          },
+          "category_id": {
+            "type": "string",
+            "description": "The Spotify category ID"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@superseoworld/mcp-spotify/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "spotifyClientId",
+          "spotifyClientSecret"
+        ],
+        "properties": {
+          "spotifyClientId": {
+            "type": "string",
+            "description": "Spotify API Client ID"
+          },
+          "spotifyClientSecret": {
+            "type": "string",
+            "description": "Spotify API Client Secret"
+          }
+        }
+      }
+    }
+  ]
+}

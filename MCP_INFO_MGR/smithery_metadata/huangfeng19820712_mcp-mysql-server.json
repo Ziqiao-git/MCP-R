@@ -1,0 +1,193 @@
+{
+  "qualifiedName": "@huangfeng19820712/mcp-mysql-server",
+  "displayName": "MySQL Database Server",
+  "description": "Enable AI models to interact with MySQL databases through a standardized interface. Perform database operations such as querying, executing statements, listing tables, and describing table structures securely and efficiently. Simplify database management with automatic connection handling and prepared statement support.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "connect_db",
+      "description": "Connect to MySQL database",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "host",
+          "user",
+          "password",
+          "database"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Database host"
+          },
+          "port": {
+            "type": "number",
+            "description": "Database port (optional)"
+          },
+          "user": {
+            "type": "string",
+            "description": "Database user"
+          },
+          "database": {
+            "type": "string",
+            "description": "Database name"
+          },
+          "password": {
+            "type": "string",
+            "description": "Database password"
+          }
+        }
+      }
+    },
+    {
+      "name": "query",
+      "description": "Execute a SELECT query,can not get table structure,use describe_table tool to get table structure",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SQL SELECT query"
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "description": "Query parameters (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "execute",
+      "description": "Execute an INSERT, UPDATE, or DELETE query",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SQL query (INSERT, UPDATE, DELETE)"
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "description": "Query parameters (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_tables",
+      "description": "List all tables in the database",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "describe_table",
+      "description": "Get table structure",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table"
+        ],
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "Table name"
+          }
+        }
+      }
+    },
+    {
+      "name": "show_statement",
+      "description": "Execute a SHOW statement (e.g., SHOW STATUS, SHOW VARIABLES)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SHOW SQL statement"
+          }
+        }
+      }
+    },
+    {
+      "name": "explain",
+      "description": "Analyze SQL query performance using EXPLAIN",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sql"
+        ],
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "SQL query to analyze with EXPLAIN"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@huangfeng19820712/mcp-mysql-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "mysqlHost",
+          "mysqlUser",
+          "mysqlPassword",
+          "mysqlDatabase"
+        ],
+        "properties": {
+          "mysqlHost": {
+            "type": "string",
+            "description": "Hostname for the MySQL server"
+          },
+          "mysqlUser": {
+            "type": "string",
+            "description": "MySQL user name"
+          },
+          "mysqlDatabase": {
+            "type": "string",
+            "description": "MySQL database name"
+          },
+          "mysqlPassword": {
+            "type": "string",
+            "description": "MySQL user's password"
+          }
+        }
+      }
+    }
+  ]
+}

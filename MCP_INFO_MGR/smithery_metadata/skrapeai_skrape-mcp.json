@@ -1,0 +1,67 @@
+{
+  "qualifiedName": "@skrapeai/skrape-mcp",
+  "displayName": "Skrape MCP Server",
+  "description": "Get any website content - Convert webpages into clean, LLM-ready Markdown.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/skrape.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_markdown",
+      "description": "Get markdown content from a webpage using skrape.ai",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the webpage to scrape"
+          },
+          "options": {
+            "type": "object",
+            "default": {
+              "renderJs": true
+            },
+            "properties": {
+              "renderJs": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to render the JavaScript content of the website"
+              }
+            },
+            "description": "Additional scraping options"
+          },
+          "returnJson": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to return JSON response (true) or raw markdown (false)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@skrapeai/skrape-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "skrapeApiKey"
+        ],
+        "properties": {
+          "skrapeApiKey": {
+            "type": "string",
+            "description": "The API key for the Skrape MCP server."
+          }
+        }
+      }
+    }
+  ]
+}

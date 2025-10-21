@@ -1,0 +1,128 @@
+{
+  "qualifiedName": "@pjookim/mcp-visit-korea",
+  "displayName": "Korea Tour",
+  "description": "Explore the rich cultural heritage and attractions of Korea. Access detailed tourism information, including attractions, festivals, and accommodations tailored to your interests. Easily search for tourism content based on area codes, keywords, or locations to plan your perfect trip.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_area_code",
+      "description": "한국의 지역코드를 조회합니다. 상위 지역코드를 입력하면 하위 지역 목록을 반환하고, 입력하지 않으면 광역시/도 목록을 반환합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "areaCode": {
+            "type": "string",
+            "description": "상위 지역코드 (선택)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_tour_info",
+      "description": "지역, 유형, 키워드 등을 기반으로 관광 정보를 검색합니다. 지역기반, 키워드 기반, 위치기반 검색을 지원합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "mapX": {
+            "type": "string",
+            "description": "경도 좌표"
+          },
+          "mapY": {
+            "type": "string",
+            "description": "위도 좌표"
+          },
+          "radius": {
+            "type": "string",
+            "description": "거리 반경(미터)"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "검색 키워드"
+          },
+          "areaCode": {
+            "type": "string",
+            "description": "지역코드"
+          },
+          "contentTypeId": {
+            "type": "string",
+            "description": "관광타입(12:관광지, 14:문화시설, 15:축제공연행사, 25:여행코스, 28:레포츠, 32:숙박, 38:쇼핑, 39:음식점)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_detail_common",
+      "description": "특정 관광지, 축제, 숙박 등의 상세 정보를 조회합니다. contentId를 기반으로 해당 콘텐츠의 공통 상세정보(제목, 주소, 개요 등)를 제공합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "contentId"
+        ],
+        "properties": {
+          "contentId": {
+            "type": "string",
+            "description": "관광 콘텐츠 ID"
+          },
+          "defaultYN": {
+            "type": "string",
+            "default": "Y",
+            "description": "기본정보 조회여부(Y/N)"
+          },
+          "mapinfoYN": {
+            "type": "string",
+            "default": "Y",
+            "description": "좌표정보 조회여부(Y/N)"
+          },
+          "addrinfoYN": {
+            "type": "string",
+            "default": "Y",
+            "description": "주소정보 조회여부(Y/N)"
+          },
+          "areacodeYN": {
+            "type": "string",
+            "default": "Y",
+            "description": "지역코드 조회여부(Y/N)"
+          },
+          "overviewYN": {
+            "type": "string",
+            "default": "Y",
+            "description": "개요정보 조회여부(Y/N)"
+          },
+          "firstImageYN": {
+            "type": "string",
+            "default": "Y",
+            "description": "대표이미지 조회여부(Y/N)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@pjookim/mcp-visit-korea/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "tourApiKey": {
+            "type": "string",
+            "description": "API key for TOUR_API. If not provided, calls depending on API key may fail."
+          }
+        }
+      }
+    }
+  ]
+}

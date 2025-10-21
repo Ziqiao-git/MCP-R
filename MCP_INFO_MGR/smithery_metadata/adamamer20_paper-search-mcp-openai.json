@@ -1,0 +1,1928 @@
+{
+  "qualifiedName": "@adamamer20/paper-search-mcp-openai",
+  "displayName": "Paper Search",
+  "description": "Search and download academic papers from arXiv, PubMed, bioRxiv, medRxiv, Google Scholar, Semantic Scholar, and IACR. Fetch PDFs and extract full text to accelerate literature reviews. Get consistent metadata for easier filtering, citation, and analysis.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@adamamer20/paper-search-mcp-openai",
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Deep Research compatible search tool aggregating across sources.",
+      "inputSchema": {
+        "type": "object",
+        "title": "searchArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 15
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "Annotations": {
+            "type": "object",
+            "title": "Annotations",
+            "properties": {
+              "audience": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "user",
+                        "assistant"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Audience",
+                "default": null
+              },
+              "priority": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Priority",
+                "default": null
+              }
+            },
+            "additionalProperties": true
+          },
+          "TextContent": {
+            "type": "object",
+            "title": "TextContent",
+            "required": [
+              "type",
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "title": "Text"
+              },
+              "type": {
+                "type": "string",
+                "const": "text",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "Text content for a message.",
+            "additionalProperties": true
+          },
+          "AudioContent": {
+            "type": "object",
+            "title": "AudioContent",
+            "required": [
+              "type",
+              "data",
+              "mimeType"
+            ],
+            "properties": {
+              "data": {
+                "type": "string",
+                "title": "Data"
+              },
+              "type": {
+                "type": "string",
+                "const": "audio",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "type": "string",
+                "title": "Mimetype"
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "Audio content for a message.",
+            "additionalProperties": true
+          },
+          "ImageContent": {
+            "type": "object",
+            "title": "ImageContent",
+            "required": [
+              "type",
+              "data",
+              "mimeType"
+            ],
+            "properties": {
+              "data": {
+                "type": "string",
+                "title": "Data"
+              },
+              "type": {
+                "type": "string",
+                "const": "image",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "type": "string",
+                "title": "Mimetype"
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "Image content for a message.",
+            "additionalProperties": true
+          },
+          "ResourceLink": {
+            "type": "object",
+            "title": "ResourceLink",
+            "required": [
+              "name",
+              "uri",
+              "type"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "title": "Uri",
+                "format": "uri",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "size": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Size",
+                "default": null
+              },
+              "type": {
+                "type": "string",
+                "const": "resource_link",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "title": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Title",
+                "default": null
+              },
+              "mimeType": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Mimetype",
+                "default": null
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "default": null
+              }
+            },
+            "description": "A resource that the server is capable of reading, included in a prompt or tool call result.\n\nNote: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.",
+            "additionalProperties": true
+          },
+          "EmbeddedResource": {
+            "type": "object",
+            "title": "EmbeddedResource",
+            "required": [
+              "type",
+              "resource"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "resource",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "resource": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/TextResourceContents"
+                  },
+                  {
+                    "$ref": "#/$defs/BlobResourceContents"
+                  }
+                ],
+                "title": "Resource"
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
+            "additionalProperties": true
+          },
+          "BlobResourceContents": {
+            "type": "object",
+            "title": "BlobResourceContents",
+            "required": [
+              "uri",
+              "blob"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "title": "Uri",
+                "format": "uri",
+                "minLength": 1
+              },
+              "blob": {
+                "type": "string",
+                "title": "Blob"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Mimetype",
+                "default": null
+              }
+            },
+            "description": "Binary contents of a resource.",
+            "additionalProperties": true
+          },
+          "TextResourceContents": {
+            "type": "object",
+            "title": "TextResourceContents",
+            "required": [
+              "uri",
+              "text"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "title": "Uri",
+                "format": "uri",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "title": "Text"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Mimetype",
+                "default": null
+              }
+            },
+            "description": "Text contents of a resource.",
+            "additionalProperties": true
+          }
+        },
+        "title": "CallToolResult",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "_meta": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meta",
+            "default": null
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/TextContent"
+                },
+                {
+                  "$ref": "#/$defs/ImageContent"
+                },
+                {
+                  "$ref": "#/$defs/AudioContent"
+                },
+                {
+                  "$ref": "#/$defs/ResourceLink"
+                },
+                {
+                  "$ref": "#/$defs/EmbeddedResource"
+                }
+              ]
+            },
+            "title": "Content"
+          },
+          "isError": {
+            "type": "boolean",
+            "title": "Iserror",
+            "default": false
+          },
+          "structuredContent": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Structuredcontent",
+            "default": null
+          }
+        },
+        "description": "The server's response to a tool call.",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "fetch",
+      "description": "Fetch full document content for a search result.",
+      "inputSchema": {
+        "type": "object",
+        "title": "fetchArguments",
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id",
+            "default": null
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "Annotations": {
+            "type": "object",
+            "title": "Annotations",
+            "properties": {
+              "audience": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "user",
+                        "assistant"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Audience",
+                "default": null
+              },
+              "priority": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Priority",
+                "default": null
+              }
+            },
+            "additionalProperties": true
+          },
+          "TextContent": {
+            "type": "object",
+            "title": "TextContent",
+            "required": [
+              "type",
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "title": "Text"
+              },
+              "type": {
+                "type": "string",
+                "const": "text",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "Text content for a message.",
+            "additionalProperties": true
+          },
+          "AudioContent": {
+            "type": "object",
+            "title": "AudioContent",
+            "required": [
+              "type",
+              "data",
+              "mimeType"
+            ],
+            "properties": {
+              "data": {
+                "type": "string",
+                "title": "Data"
+              },
+              "type": {
+                "type": "string",
+                "const": "audio",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "type": "string",
+                "title": "Mimetype"
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "Audio content for a message.",
+            "additionalProperties": true
+          },
+          "ImageContent": {
+            "type": "object",
+            "title": "ImageContent",
+            "required": [
+              "type",
+              "data",
+              "mimeType"
+            ],
+            "properties": {
+              "data": {
+                "type": "string",
+                "title": "Data"
+              },
+              "type": {
+                "type": "string",
+                "const": "image",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "type": "string",
+                "title": "Mimetype"
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "Image content for a message.",
+            "additionalProperties": true
+          },
+          "ResourceLink": {
+            "type": "object",
+            "title": "ResourceLink",
+            "required": [
+              "name",
+              "uri",
+              "type"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "title": "Uri",
+                "format": "uri",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "size": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Size",
+                "default": null
+              },
+              "type": {
+                "type": "string",
+                "const": "resource_link",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "title": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Title",
+                "default": null
+              },
+              "mimeType": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Mimetype",
+                "default": null
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "default": null
+              }
+            },
+            "description": "A resource that the server is capable of reading, included in a prompt or tool call result.\n\nNote: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.",
+            "additionalProperties": true
+          },
+          "EmbeddedResource": {
+            "type": "object",
+            "title": "EmbeddedResource",
+            "required": [
+              "type",
+              "resource"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "resource",
+                "title": "Type"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "resource": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/TextResourceContents"
+                  },
+                  {
+                    "$ref": "#/$defs/BlobResourceContents"
+                  }
+                ],
+                "title": "Resource"
+              },
+              "annotations": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Annotations"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "description": "The contents of a resource, embedded into a prompt or tool call result.\n\nIt is up to the client how best to render embedded resources for the benefit\nof the LLM and/or the user.",
+            "additionalProperties": true
+          },
+          "BlobResourceContents": {
+            "type": "object",
+            "title": "BlobResourceContents",
+            "required": [
+              "uri",
+              "blob"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "title": "Uri",
+                "format": "uri",
+                "minLength": 1
+              },
+              "blob": {
+                "type": "string",
+                "title": "Blob"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Mimetype",
+                "default": null
+              }
+            },
+            "description": "Binary contents of a resource.",
+            "additionalProperties": true
+          },
+          "TextResourceContents": {
+            "type": "object",
+            "title": "TextResourceContents",
+            "required": [
+              "uri",
+              "text"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "title": "Uri",
+                "format": "uri",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "title": "Text"
+              },
+              "_meta": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Meta",
+                "default": null
+              },
+              "mimeType": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Mimetype",
+                "default": null
+              }
+            },
+            "description": "Text contents of a resource.",
+            "additionalProperties": true
+          }
+        },
+        "title": "CallToolResult",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "_meta": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meta",
+            "default": null
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/TextContent"
+                },
+                {
+                  "$ref": "#/$defs/ImageContent"
+                },
+                {
+                  "$ref": "#/$defs/AudioContent"
+                },
+                {
+                  "$ref": "#/$defs/ResourceLink"
+                },
+                {
+                  "$ref": "#/$defs/EmbeddedResource"
+                }
+              ]
+            },
+            "title": "Content"
+          },
+          "isError": {
+            "type": "boolean",
+            "title": "Iserror",
+            "default": false
+          },
+          "structuredContent": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Structuredcontent",
+            "default": null
+          }
+        },
+        "description": "The server's response to a tool call.",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "search_arxiv",
+      "description": "Search academic papers from arXiv.\n\n    Args:\n        query: Search query string (e.g., 'machine learning').\n        max_results: Maximum number of papers to return (default: 10).\n    Returns:\n        List of paper metadata in dictionary format.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_arxivArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_arxivOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_pubmed",
+      "description": "Search academic papers from PubMed.\n\n    Args:\n        query: Search query string (e.g., 'machine learning').\n        max_results: Maximum number of papers to return (default: 10).\n    Returns:\n        List of paper metadata in dictionary format.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_pubmedArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_pubmedOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_biorxiv",
+      "description": "Search academic papers from bioRxiv.\n\n    Args:\n        query: Search query string (e.g., 'machine learning').\n        max_results: Maximum number of papers to return (default: 10).\n    Returns:\n        List of paper metadata in dictionary format.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_biorxivArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_biorxivOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_medrxiv",
+      "description": "Search academic papers from medRxiv.\n\n    Args:\n        query: Search query string (e.g., 'machine learning').\n        max_results: Maximum number of papers to return (default: 10).\n    Returns:\n        List of paper metadata in dictionary format.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_medrxivArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_medrxivOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_google_scholar",
+      "description": "Search academic papers from Google Scholar.\n\n    Args:\n        query: Search query string (e.g., 'machine learning').\n        max_results: Maximum number of papers to return (default: 10).\n    Returns:\n        List of paper metadata in dictionary format.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_google_scholarArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_google_scholarOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_iacr",
+      "description": "Search academic papers from IACR ePrint Archive.\n\n    Args:\n        query: Search query string (e.g., 'cryptography', 'secret sharing').\n        max_results: Maximum number of papers to return (default: 10).\n        fetch_details: Whether to fetch detailed information for each paper (default: True).\n    Returns:\n        List of paper metadata in dictionary format.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_iacrArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          },
+          "fetch_details": {
+            "type": "boolean",
+            "title": "Fetch Details",
+            "default": true
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_iacrOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_arxiv",
+      "description": "Download PDF of an arXiv paper.\n\n    Args:\n        paper_id: arXiv paper ID (e.g., '2106.12345').\n        save_path: Directory to save the PDF (default: './downloads').\n    Returns:\n        Path to the downloaded PDF file.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "download_arxivArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "download_arxivOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_pubmed",
+      "description": "Attempt to download PDF of a PubMed paper.\n\n    Args:\n        paper_id: PubMed ID (PMID).\n        save_path: Directory to save the PDF (default: './downloads').\n    Returns:\n        str: Message indicating that direct PDF download is not supported.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "download_pubmedArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "download_pubmedOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_biorxiv",
+      "description": "Download PDF of a bioRxiv paper.\n\n    Args:\n        paper_id: bioRxiv DOI.\n        save_path: Directory to save the PDF (default: './downloads').\n    Returns:\n        Path to the downloaded PDF file.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "download_biorxivArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "download_biorxivOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_medrxiv",
+      "description": "Download PDF of a medRxiv paper.\n\n    Args:\n        paper_id: medRxiv DOI.\n        save_path: Directory to save the PDF (default: './downloads').\n    Returns:\n        Path to the downloaded PDF file.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "download_medrxivArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "download_medrxivOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_iacr",
+      "description": "Download PDF of an IACR ePrint paper.\n\n    Args:\n        paper_id: IACR paper ID (e.g., '2009/101').\n        save_path: Directory to save the PDF (default: './downloads').\n    Returns:\n        Path to the downloaded PDF file.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "download_iacrArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "download_iacrOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_arxiv_paper",
+      "description": "Read and extract text content from an arXiv paper PDF.\n\n    Args:\n        paper_id: arXiv paper ID (e.g., '2106.12345').\n        save_path: Directory where the PDF is/will be saved (default: './downloads').\n    Returns:\n        str: The extracted text content of the paper.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "read_arxiv_paperArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "read_arxiv_paperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_pubmed_paper",
+      "description": "Read and extract text content from a PubMed paper.\n\n    Args:\n        paper_id: PubMed ID (PMID).\n        save_path: Directory where the PDF would be saved (unused).\n    Returns:\n        str: Message indicating that direct paper reading is not supported.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "read_pubmed_paperArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "read_pubmed_paperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_biorxiv_paper",
+      "description": "Read and extract text content from a bioRxiv paper PDF.\n\n    Args:\n        paper_id: bioRxiv DOI.\n        save_path: Directory where the PDF is/will be saved (default: './downloads').\n    Returns:\n        str: The extracted text content of the paper.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "read_biorxiv_paperArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "read_biorxiv_paperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_medrxiv_paper",
+      "description": "Read and extract text content from a medRxiv paper PDF.\n\n    Args:\n        paper_id: medRxiv DOI.\n        save_path: Directory where the PDF is/will be saved (default: './downloads').\n    Returns:\n        str: The extracted text content of the paper.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "read_medrxiv_paperArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "read_medrxiv_paperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_iacr_paper",
+      "description": "Read and extract text content from an IACR ePrint paper PDF.\n\n    Args:\n        paper_id: IACR paper ID (e.g., '2009/101').\n        save_path: Directory where the PDF is/will be saved (default: './downloads').\n    Returns:\n        str: The extracted text content of the paper.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "read_iacr_paperArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "read_iacr_paperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_semantic",
+      "description": "Search academic papers from Semantic Scholar.\n\n    Args:\n        query: Search query string (e.g., 'machine learning').\n        year: Optional year filter (e.g., '2019', '2016-2020', '2010-', '-2015').\n        max_results: Maximum number of papers to return (default: 10).\n    Returns:\n        List of paper metadata in dictionary format.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_semanticArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year",
+            "default": null
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_semanticOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_semantic",
+      "description": "Download PDF of a Semantic Scholar paper.    \n\n    Args:\n        paper_id: Semantic Scholar paper ID, Paper identifier in one of the following formats:\n            - Semantic Scholar ID (e.g., \"649def34f8be52c8b66281af98ae884c09aef38b\")\n            - DOI:<doi> (e.g., \"DOI:10.18653/v1/N18-3011\")\n            - ARXIV:<id> (e.g., \"ARXIV:2106.15928\")\n            - MAG:<id> (e.g., \"MAG:112218234\")\n            - ACL:<id> (e.g., \"ACL:W12-3903\")\n            - PMID:<id> (e.g., \"PMID:19872477\")\n            - PMCID:<id> (e.g., \"PMCID:2323736\")\n            - URL:<url> (e.g., \"URL:https://arxiv.org/abs/2106.15928v1\")\n        save_path: Directory to save the PDF (default: './downloads').\n    Returns:\n        Path to the downloaded PDF file.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "download_semanticArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "download_semanticOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_semantic_paper",
+      "description": "Read and extract text content from a Semantic Scholar paper. \n\n    Args:\n        paper_id: Semantic Scholar paper ID, Paper identifier in one of the following formats:\n            - Semantic Scholar ID (e.g., \"649def34f8be52c8b66281af98ae884c09aef38b\")\n            - DOI:<doi> (e.g., \"DOI:10.18653/v1/N18-3011\")\n            - ARXIV:<id> (e.g., \"ARXIV:2106.15928\")\n            - MAG:<id> (e.g., \"MAG:112218234\")\n            - ACL:<id> (e.g., \"ACL:W12-3903\")\n            - PMID:<id> (e.g., \"PMID:19872477\")\n            - PMCID:<id> (e.g., \"PMCID:2323736\")\n            - URL:<url> (e.g., \"URL:https://arxiv.org/abs/2106.15928v1\")\n        save_path: Directory where the PDF is/will be saved (default: './downloads').\n    Returns:\n        str: The extracted text content of the paper.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "read_semantic_paperArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "read_semantic_paperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_crossref",
+      "description": "Search academic papers from CrossRef database.\n    \n    CrossRef is a scholarly infrastructure organization that provides \n    persistent identifiers (DOIs) for scholarly content and metadata.\n    It's one of the largest citation databases covering millions of \n    academic papers, journals, books, and other scholarly content.\n\n    Args:\n        query: Search query string (e.g., 'machine learning', 'climate change').\n        max_results: Maximum number of papers to return (default: 10, max: 1000).\n        **kwargs: Additional search parameters:\n            - filter: CrossRef filter string (e.g., 'has-full-text:true,from-pub-date:2020')\n            - sort: Sort field ('relevance', 'published', 'updated', 'deposited', etc.)\n            - order: Sort order ('asc' or 'desc')\n    Returns:\n        List of paper metadata in dictionary format.\n        \n    Examples:\n        # Basic search\n        search_crossref(\"deep learning\", 20)\n        \n        # Search with filters\n        search_crossref(\"climate change\", 10, filter=\"from-pub-date:2020,has-full-text:true\")\n        \n        # Search sorted by publication date\n        search_crossref(\"neural networks\", 15, sort=\"published\", order=\"desc\")\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_crossrefArguments",
+        "required": [
+          "query",
+          "kwargs"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "kwargs": {
+            "type": "string",
+            "title": "kwargs"
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_crossrefOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_crossref_paper_by_doi",
+      "description": "Get a specific paper from CrossRef by its DOI.\n\n    Args:\n        doi: Digital Object Identifier (e.g., '10.1038/nature12373').\n    Returns:\n        Paper metadata in dictionary format, or empty dict if not found.\n        \n    Example:\n        get_crossref_paper_by_doi(\"10.1038/nature12373\")\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_crossref_paper_by_doiArguments",
+        "required": [
+          "doi"
+        ],
+        "properties": {
+          "doi": {
+            "type": "string",
+            "title": "Doi"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_crossref_paper_by_doiOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "download_crossref",
+      "description": "Attempt to download PDF of a CrossRef paper.\n\n    Args:\n        paper_id: CrossRef DOI (e.g., '10.1038/nature12373').\n        save_path: Directory to save the PDF (default: './downloads').\n    Returns:\n        str: Message indicating that direct PDF download is not supported.\n        \n    Note:\n        CrossRef is a citation database and doesn't provide direct PDF downloads.\n        Use the DOI to access the paper through the publisher's website.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "download_crossrefArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "download_crossrefOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_crossref_paper",
+      "description": "Attempt to read and extract text content from a CrossRef paper.\n\n    Args:\n        paper_id: CrossRef DOI (e.g., '10.1038/nature12373').\n        save_path: Directory where the PDF is/will be saved (default: './downloads').\n    Returns:\n        str: Message indicating that direct paper reading is not supported.\n        \n    Note:\n        CrossRef is a citation database and doesn't provide direct paper content.\n        Use the DOI to access the paper through the publisher's website.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "read_crossref_paperArguments",
+        "required": [
+          "paper_id"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "title": "Paper Id"
+          },
+          "save_path": {
+            "type": "string",
+            "title": "Save Path",
+            "default": "./downloads"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "read_crossref_paperOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@adamamer20/paper-search-mcp-openai/mcp",
+      "configSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ]
+}

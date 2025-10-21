@@ -1,0 +1,238 @@
+{
+  "qualifiedName": "@Eclipse-XV/twitch-mcp-smithery",
+  "displayName": "Twitch-Streamer-Server",
+  "description": "See setup blow. Enable AI agents to interact with Twitch streams by sending chat messages, managing polls and predictions, creating clips, analyzing chat activity, and moderating users. Automate stream title and category updates while leveraging intelligent user resolution and timeout duration suggestions for effective moderation. Simplify Twitch stream management and enhance viewer engagement through standardized AI tools.\n\nTwitch MCP — Quick Setup Checklist\n\n1. Generate token: https://twitchtokengenerator.com \n\n✅ Choose Custom Scope Token → scroll to bottom → select scopes (tip: “Select All,” then deselect any you don’t want). \n\n✅ Keep the tab open — you’ll need the Access Token and Client ID in step 3.\n\n-------------------------------\n\n2. Get (Twitch) Broadcaster ID: https://streamweasels.com/tools/convert-twitch-username-to-user-id/  \n\n✅ Enter your Twitch username to get your numeric Broadcaster (Twitch) ID.  \n\n✅ Keep the tab open for step 3.\n\n-------------------------------\n\n3. Configure Smithery: https://smithery.ai/server/@Eclipse-XV/twitch-mcp-smithery   \n\n✅ In the right-hand box, paste in: Channel Name → Client ID → Access (Auth) Token → Broadcaster ID\n\n-------------------------------\n\n4. Install & Setup Cursor (free Desktop plan): https://cursor.com/home?from=agents   \n\n✅ In Cursor, set Agent Mode = Auto (right panel). You'll want to click the Agent Dropdown and edit model choice to Auto. (Optional) Turn on Auto-Run Mode to skip per-request approvals. \n\n✅ On Smithery, click One-click Add to Cursor → Approve.  \n\n-------------------------------\n\n5. Test by sending messages or creating polls.\n\n✅ Actions run as your broadcaster account — keep your token private. If compromised or unsure, regenerate the token.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/c62f23d5-d019-4eb3-8698-7f110b97a8cb.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Eclipse-XV/twitch-mcp-smithery",
+  "security": null,
+  "tools": [
+    {
+      "name": "sendMessageToChat",
+      "description": "Send message to the Twitch Chat",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The message to send to chat"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createTwitchPoll",
+      "description": "Create a Twitch Poll",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "choices",
+          "duration"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Poll title"
+          },
+          "choices": {
+            "type": "string",
+            "description": "Comma-separated choices"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration in seconds"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createTwitchPrediction",
+      "description": "Create a Twitch Prediction",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "outcomes",
+          "duration"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Prediction title"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration in seconds"
+          },
+          "outcomes": {
+            "type": "string",
+            "description": "Comma-separated outcomes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createTwitchClip",
+      "description": "Create a Twitch clip of the current stream",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyzeChat",
+      "description": "Analyze recent Twitch chat messages and provide a summary of topics and activity",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getRecentChatLog",
+      "description": "Get the last 20 chat messages for moderation context",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "timeoutUser",
+      "description": "Timeout a user in the Twitch chat. If no username is provided, it will return the recent chat log for LLM review.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "usernameOrDescriptor"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for timeout (optional)"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Timeout duration in seconds (1-1209600). If not provided, duration will be guessed based on the reason."
+          },
+          "usernameOrDescriptor": {
+            "type": "string",
+            "description": "Username or descriptor to timeout (e.g. 'toxic', 'spammer', or a username)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "banUser",
+      "description": "Ban a user from the Twitch chat. If no username is provided, it will return the recent chat log for LLM review.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "usernameOrDescriptor"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for ban (optional)"
+          },
+          "usernameOrDescriptor": {
+            "type": "string",
+            "description": "Username or descriptor to ban (e.g. 'toxic', 'spammer', or a username)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateStreamTitle",
+      "description": "Update the stream title",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The new title for the stream"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateStreamCategory",
+      "description": "Update the game category of the stream",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "The new game category, e.g. 'Fortnite'"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Eclipse-XV/twitch-mcp-smithery/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "twitchClientId",
+          "twitchAuthToken",
+          "twitchBroadcasterId",
+          "twitchChannel"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "twitchChannel": {
+            "type": "string",
+            "description": "Twitch channel name for chat monitoring"
+          },
+          "twitchClientId": {
+            "type": "string",
+            "description": "Twitch Client ID for API access"
+          },
+          "twitchAuthToken": {
+            "type": "string",
+            "description": "Twitch OAuth token (without 'oauth:' prefix)"
+          },
+          "twitchBroadcasterId": {
+            "type": "string",
+            "description": "Twitch broadcaster user ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "qualifiedName": "@kj455/mcp-kibela",
+  "displayName": "Kibela Integration Server",
+  "description": "Integrate with Kibela to search and fetch notes seamlessly.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "kibela_search_notes",
+      "description": "Search Kibela notes by query",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        }
+      }
+    },
+    {
+      "name": "kibela_get_my_notes",
+      "description": "Get my latest notes from Kibela",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of notes to fetch"
+          }
+        }
+      }
+    },
+    {
+      "name": "kibela_get_note_content",
+      "description": "Get note content by note ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Note ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "kibela_get_note_from_path",
+      "description": "Get note content by note path",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Note path (e.g. /notes/123)"
+          }
+        }
+      }
+    },
+    {
+      "name": "kibela_update_note_content",
+      "description": "Update note content by note id. This tool allows you to modify the content of an existing Kibela note. Before updating, it fetches the current content of the note to ensure proper version control. Note that you need the note ID (not the note path) to use this tool.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "content"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Note id - not note path (e.g. /notes/123). If you want to update note content by note path, please use kibela_get_note_from_path tool first and get note id from the response"
+          },
+          "content": {
+            "type": "string",
+            "description": "New content of the note in markdown format. The content will completely replace the existing note content. Make sure to include all necessary formatting, headers, and sections you want to preserve."
+          }
+        }
+      }
+    },
+    {
+      "name": "kibela_create_note",
+      "description": "Create a new note in Kibela.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "title",
+          "content"
+        ],
+        "properties": {
+          "draft": {
+            "type": "boolean",
+            "description": "Whether to create the note as a draft"
+          },
+          "title": {
+            "type": "string",
+            "description": "required: Title of the note"
+          },
+          "content": {
+            "type": "string",
+            "description": "required: Content of the note in markdown format"
+          },
+          "folders": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs of the folders to add the note to."
+          },
+          "authorId": {
+            "type": "string",
+            "description": "ID of the author of the note. If not specified, the note will be created by the authenticated user."
+          },
+          "groupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "required: IDs of the groups to create the note in."
+          },
+          "coediting": {
+            "type": "boolean",
+            "description": "required: Whether to enable co-editing for the note"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kj455/mcp-kibela/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "kibelaTeam",
+          "kibelaToken"
+        ],
+        "properties": {
+          "kibelaTeam": {
+            "type": "string",
+            "description": "Your Kibela team name"
+          },
+          "kibelaToken": {
+            "type": "string",
+            "description": "Your Kibela API token"
+          }
+        }
+      }
+    }
+  ]
+}

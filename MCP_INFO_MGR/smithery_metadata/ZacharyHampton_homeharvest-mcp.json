@@ -1,0 +1,216 @@
+{
+  "qualifiedName": "@ZacharyHampton/homeharvest-mcp",
+  "displayName": "HomeHarvest",
+  "description": "Scrape real estate listings with flexible filters for location, property type, date range, and more. Retrieve comprehensive property details to power research, comps, and market analysis. Streamline data collection for investing, valuation, and lead generation.\n\nhttps://github.com/ZacharyHampton/HomeHarvest",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ZacharyHampton/homeharvest-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "scrape_properties",
+      "description": "Scrape real estate properties using HomeHarvest.\n        \n        This tool provides comprehensive real estate data scraping with flexible\n        filtering options for location, property type, date ranges, and more.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "ListingType": {
+            "enum": [
+              "FOR_SALE",
+              "FOR_RENT",
+              "PENDING",
+              "SOLD"
+            ],
+            "type": "string",
+            "title": "ListingType"
+          },
+          "SearchPropertyType": {
+            "enum": [
+              "single_family",
+              "apartment",
+              "condos",
+              "condo_townhome_rowhome_coop",
+              "condo_townhome",
+              "townhomes",
+              "duplex_triplex",
+              "farm",
+              "land",
+              "multi_family",
+              "mobile"
+            ],
+            "type": "string",
+            "title": "SearchPropertyType"
+          }
+        },
+        "title": "scrape_propertiesArguments",
+        "required": [
+          "location",
+          "listing_type"
+        ],
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit",
+            "default": 5,
+            "description": "Maximum number of properties to return (max 10,000, default 5)"
+          },
+          "radius": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Radius",
+            "default": null,
+            "description": "Search radius in miles around the specified location"
+          },
+          "date_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date To",
+            "default": null,
+            "description": "End date for listing search in YYYY-MM-DD format"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location",
+            "description": "Location to search (ZIP code, city, address, neighborhood, county, etc.)"
+          },
+          "mls_only": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mls Only",
+            "default": false,
+            "description": "Fetch only MLS listings (excludes non-MLS sources)"
+          },
+          "date_from": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date From",
+            "default": null,
+            "description": "Start date for listing search in YYYY-MM-DD format"
+          },
+          "past_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Past Days",
+            "default": null,
+            "description": "Filter properties listed/sold within the last N days"
+          },
+          "foreclosure": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Foreclosure",
+            "default": false,
+            "description": "Fetch only foreclosure properties"
+          },
+          "listing_type": {
+            "$ref": "#/$defs/ListingType",
+            "description": "Type of listing: FOR_SALE, FOR_RENT, SOLD, or PENDING"
+          },
+          "property_type": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/SearchPropertyType"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Property Type",
+            "default": null,
+            "description": "Filter by property types: single_family, multi_family, condos, condo_townhome_rowhome_coop, condo_townhome, townhomes, duplex_triplex, farm, land, mobile"
+          },
+          "exclude_pending": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exclude Pending",
+            "default": false,
+            "description": "Exclude pending properties from for_sale results"
+          },
+          "extra_property_data": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extra Property Data",
+            "default": false,
+            "description": "Fetch additional property details (may increase request time)"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "scrape_propertiesOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ZacharyHampton/homeharvest-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

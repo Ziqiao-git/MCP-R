@@ -1,0 +1,759 @@
+{
+  "qualifiedName": "@OutreachToday/cold-outreach",
+  "displayName": "Outreach Today MCP",
+  "description": "Set up and manage cold outreach email accounts and domains. Build powerful AI sales agents effortlessly. Trusted by 2000+ B2B companies",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "profile",
+      "description": "Get the profile for the current user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "current-user-domains",
+      "description": "Get the domains for the current user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check-available-domains",
+      "description": "Check if a domain is available",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domains"
+        ],
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The domains to check"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "save-domains-choice",
+      "description": "Save the domains choice",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domains",
+          "workspaceId",
+          "redirectDomain",
+          "contactInfo",
+          "whoisguard"
+        ],
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The domains to save"
+          },
+          "whoisguard": {
+            "type": "boolean",
+            "description": "Whether to enable whois guard"
+          },
+          "contactInfo": {
+            "type": "object",
+            "required": [
+              "first_name",
+              "last_name",
+              "real_address",
+              "city",
+              "state_province",
+              "postal_code",
+              "country",
+              "phone",
+              "email_address",
+              "organization_name",
+              "job_title"
+            ],
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "The city of the contact"
+              },
+              "phone": {
+                "type": "string",
+                "description": "The phone of the contact"
+              },
+              "country": {
+                "type": "string",
+                "description": "The country of the contact"
+              },
+              "job_title": {
+                "type": "string",
+                "description": "The job title of the contact"
+              },
+              "last_name": {
+                "type": "string",
+                "description": "The last name of the contact"
+              },
+              "first_name": {
+                "type": "string",
+                "description": "The first name of the contact"
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "The postal code of the contact"
+              },
+              "real_address": {
+                "type": "string",
+                "description": "The real address of the contact"
+              },
+              "email_address": {
+                "type": "string",
+                "description": "The email address of the contact"
+              },
+              "state_province": {
+                "type": "string",
+                "description": "The state province of the contact"
+              },
+              "organization_name": {
+                "type": "string",
+                "description": "The organization name of the contact"
+              }
+            },
+            "additionalProperties": false
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          },
+          "redirectDomain": {
+            "type": "string",
+            "description": "The domain to redirect to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "purchase-dns-hosting",
+      "description": "Purchase DNS hosting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domains",
+          "numYears",
+          "workspaceId",
+          "redirectDomain"
+        ],
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The domains to purchase DNS hosting for"
+          },
+          "numYears": {
+            "type": "number",
+            "description": "The number of years to purchase DNS hosting for"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The ID of the workspace to purchase DNS hosting for"
+          },
+          "redirectDomain": {
+            "type": "string",
+            "description": "The domain to redirect to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "change-domains-redirects",
+      "description": "Change the redirects for a domain",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domains",
+          "redirectDomain",
+          "workspaceId"
+        ],
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The domains to change redirects for"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          },
+          "redirectDomain": {
+            "type": "string",
+            "description": "The domain to redirect to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set-domain-dns-records",
+      "description": "Set the DNS records for a domain",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domain",
+          "workspaceId",
+          "records"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "The domain to set the DNS records for"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "Address",
+                "AssociatedAppTitle",
+                "FriendlyName",
+                "HostId",
+                "IsActive",
+                "IsDDNSEnabled",
+                "MXPref",
+                "Name",
+                "TTL",
+                "Type"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "TTL": {
+                  "type": "string"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "Type": {
+                  "type": "string"
+                },
+                "HostId": {
+                  "type": "string"
+                },
+                "MXPref": {
+                  "type": "string"
+                },
+                "Address": {
+                  "type": "string"
+                },
+                "IsActive": {
+                  "type": "string"
+                },
+                "FriendlyName": {
+                  "type": "string"
+                },
+                "IsDDNSEnabled": {
+                  "type": "string"
+                },
+                "AssociatedAppTitle": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "The DNS records to set"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "replace-restricted-domains",
+      "description": "Replace the restricted domains with the new domains",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "domains",
+          "workspaceId"
+        ],
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "old_domain",
+                "new_domain"
+              ],
+              "properties": {
+                "new_domain": {
+                  "type": "string"
+                },
+                "old_domain": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "The domains to replace"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "current-user-mailboxes",
+      "description": "Get the mailboxes for the current user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "save-mailbox-choice",
+      "description": "Save the mailbox choice",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "mailboxes",
+          "workspaceId"
+        ],
+        "properties": {
+          "mailboxes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "address",
+                "firstName",
+                "lastName"
+              ],
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "lastName": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "The mailboxes to save"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-mailboxes",
+      "description": "Update the mailboxes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "mailboxes",
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the mailbox"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the mailbox"
+          },
+          "forwardTo": {
+            "type": "string",
+            "description": "The forward to of the mailbox"
+          },
+          "mailboxes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The mailboxes to update"
+          },
+          "signature": {
+            "type": "string",
+            "description": "The signature of the mailbox"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The workspace id"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "upgrade-subscription",
+      "description": "Upgrade the subscription",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "newMaxMailboxes",
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          },
+          "newMaxMailboxes": {
+            "type": "number",
+            "description": "The new max mailboxes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "api-keys",
+      "description": "Get the API keys for the current user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-credits",
+      "description": "Get the credits for the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-subscription-status",
+      "description": "Get the subscription status for the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-invoices",
+      "description": "Get the invoices for the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "limit"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "The limit of invoices to return"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-payment-method",
+      "description": "Get the payment method for the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-add-user",
+      "description": "Add a user to the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "email",
+          "role"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "The role of the user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The email of the user to add"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-delete-user",
+      "description": "Delete a user from the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "number",
+            "description": "The ID of the user to delete"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-update",
+      "description": "Update a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "project_name"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The description of the workspace"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace to update"
+          },
+          "project_name": {
+            "type": "string",
+            "description": "The name of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-users",
+      "description": "Get the users for a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace to get users for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "workspace-create",
+      "description": "Create a workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "project_name"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The description of the workspace"
+          },
+          "project_name": {
+            "type": "string",
+            "description": "The name of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "health-tests",
+      "description": "Get the health tests for the workspace",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "domains-health",
+      "description": "Get the health of the domains",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId"
+        ],
+        "properties": {
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "domains-dns-records",
+      "description": "Get the DNS records for the domains",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workspaceId",
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "The domain to get the DNS records for"
+          },
+          "workspaceId": {
+            "type": "number",
+            "description": "The ID of the workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@OutreachToday/cold-outreach/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "OUTREACH_API_KEY"
+        ],
+        "properties": {
+          "OUTREACH_API_KEY": {
+            "type": "string",
+            "description": "The API key from https://app.outreach2day.com/"
+          }
+        }
+      }
+    }
+  ]
+}

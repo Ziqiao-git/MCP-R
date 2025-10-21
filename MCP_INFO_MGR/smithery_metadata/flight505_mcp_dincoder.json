@@ -1,0 +1,561 @@
+{
+  "qualifiedName": "@flight505/mcp_dincoder",
+  "displayName": "DinCoder",
+  "description": "Driven Intent Negotiation — Contract-Oriented Deterministic Executable Runtime\n\nDinCoder brings the power of GitHub Spec Kit to any AI coding agent through the Model Context Protocol. It transforms the traditional \"prompt-then-code-dump\" workflow into a systematic, specification-driven process where specifications don't serve code—code serves specifications.\n\n🌟 The Power Inversion: A New Development Paradigm\nFor decades, code has been king. Specifications were scaffolding—built, used, then discarded once \"real work\" began. PRDs guided development, design docs informed implementation, but these were always subordinate to code. Code was truth. Everything else was, at best, good intentions.\n\nSpec-Driven Development inverts this power structure: \n\nSpecifications Generate Code: The PRD isn't a guide—it's the source that produces implementation\nExecutable Specifications: Precise, complete specs that eliminate the gap between intent and implementation\nCode as Expression: Code becomes the specification's expression in a particular language/framework\nLiving Documentation: Maintain software by evolving specifications, not manually updating code\nThis transformation is possible because AI can understand complex specifications and implement them systematically. But raw AI generation without structure produces chaos. DinCoder provides that structure through GitHub's proven Spec Kit methodology. ",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/e3c7d336-d917-43e9-9b49-84df8af893f2.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@flight505/mcp_dincoder",
+  "security": null,
+  "tools": [
+    {
+      "name": "constitution_create",
+      "description": "Define project principles, constraints, and preferences that guide all AI-generated artifacts. Use this before specify_start to establish project guardrails.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectName",
+          "principles",
+          "constraints"
+        ],
+        "properties": {
+          "principles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Project principles (e.g., \"Prefer functional patterns\")"
+          },
+          "constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Technical constraints (e.g., \"Max bundle size: 500KB\")"
+          },
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "style": {
+                "type": "string",
+                "description": "Code style preference (e.g., \"Functional > OOP\")"
+              },
+              "patterns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Preferred patterns (e.g., \"Repository pattern\")"
+              },
+              "libraries": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Preferred libraries (e.g., \"React Query over Redux\")"
+              }
+            },
+            "description": "Optional preferences for libraries, patterns, and style",
+            "additionalProperties": false
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "clarify_add",
+      "description": "Flag ambiguities or questions in specifications that need clarification. Creates a tracked clarification with unique ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "context": {
+            "type": "string",
+            "description": "Context or section where clarification is needed"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Possible options or approaches to consider"
+          },
+          "question": {
+            "type": "string",
+            "description": "The clarification question to ask"
+          },
+          "specPath": {
+            "type": "string",
+            "description": "Path to specific spec file (optional)"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "clarify_resolve",
+      "description": "Resolve a pending clarification with an answer. Updates spec.md and logs resolution in research.md.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "clarificationId",
+          "resolution"
+        ],
+        "properties": {
+          "rationale": {
+            "type": "string",
+            "description": "Reasoning behind the resolution"
+          },
+          "resolution": {
+            "type": "string",
+            "description": "The answer/resolution to the clarification"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          },
+          "clarificationId": {
+            "type": "string",
+            "description": "ID of the clarification to resolve (e.g., CLARIFY-001)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "clarify_list",
+      "description": "List all clarifications with optional status filter (pending/resolved/all). Useful for tracking progress.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "status": {
+            "enum": [
+              "pending",
+              "resolved",
+              "all"
+            ],
+            "type": "string",
+            "description": "Filter by status"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "specify_start",
+      "description": "Initialize a new spec-driven project. Creates .dincoder directory with spec.json template. Use this as the first step when starting a new project.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectName",
+          "agent"
+        ],
+        "properties": {
+          "agent": {
+            "enum": [
+              "claude",
+              "copilot",
+              "gemini"
+            ],
+            "type": "string",
+            "description": "AI agent to use"
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project to initialize"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "specify_describe",
+      "description": "Create or update project specification with detailed requirements, goals, and constraints. Use after specify_start to define what the project should do.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "description"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Project specification description"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "plan_create",
+      "description": "Generate technical implementation plan from the project specification. Creates a step-by-step technical approach with milestones and architecture decisions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "constraintsText"
+        ],
+        "properties": {
+          "specPath": {
+            "type": "string",
+            "description": "Path to specification file"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          },
+          "constraintsText": {
+            "type": "string",
+            "description": "Technical constraints and requirements"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tasks_generate",
+      "description": "Generate granular, actionable tasks from the technical plan. Creates a task list with specific implementation steps that can be executed sequentially.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "scope": {
+            "type": "string",
+            "description": "Scope or context for task generation"
+          },
+          "planPath": {
+            "type": "string",
+            "description": "Path to plan file"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tasks_tick",
+      "description": "Mark a specific task as complete by its ID. Updates the task status and tracks progress through the implementation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "Task ID to mark as complete"
+          },
+          "tasksPath": {
+            "type": "string",
+            "description": "Path to tasks file"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quality_format",
+      "description": "Run Prettier code formatter to ensure consistent code style. Automatically formats JavaScript, TypeScript, JSON, and other supported files.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "fix": {
+            "type": "boolean",
+            "description": "Apply fixes automatically"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quality_lint",
+      "description": "Run ESLint to check for code quality issues, potential bugs, and style violations. Helps maintain code standards and catch errors early.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "fix": {
+            "type": "boolean",
+            "description": "Apply fixes automatically"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quality_test",
+      "description": "Run test suite with optional code coverage reporting. Executes all unit and integration tests to ensure code correctness.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "coverage": {
+            "type": "boolean",
+            "description": "Include coverage report"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quality_security_audit",
+      "description": "Run npm/yarn security audit to check for known vulnerabilities in dependencies. Identifies and reports security issues that need attention.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "fix": {
+            "type": "boolean",
+            "description": "Apply fixes automatically"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quality_deps_update",
+      "description": "Check for available updates to project dependencies. Lists outdated packages and their latest versions for potential upgrades.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "check": {
+            "type": "boolean",
+            "description": "Only check for updates without installing"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quality_license_check",
+      "description": "Analyze licenses of all dependencies to ensure compatibility with project requirements. Identifies potential licensing conflicts or restrictions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          },
+          "allowedLicenses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of allowed license types"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "artifacts_read",
+      "description": "Read and return the current state of spec.json, plan.json, or tasks.json files. Use to retrieve project artifacts in normalized JSON format.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "artifactType"
+        ],
+        "properties": {
+          "artifactType": {
+            "enum": [
+              "spec",
+              "plan",
+              "tasks",
+              "all"
+            ],
+            "type": "string",
+            "description": "Type of artifact to read"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "research_append",
+      "description": "Append technical decisions, trade-offs, and research findings to the research.md document. Maintains a record of architectural choices and reasoning.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic",
+          "content"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "Research topic or decision area"
+          },
+          "content": {
+            "type": "string",
+            "description": "Research content or decision rationale"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "git_create_branch",
+      "description": "Create a new Git branch for implementing a specific feature or fix. Follows naming conventions and ensures clean branch creation from main/master.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "branchName"
+        ],
+        "properties": {
+          "branchName": {
+            "type": "string",
+            "description": "Name of the branch to create"
+          },
+          "fromBranch": {
+            "type": "string",
+            "description": "Base branch to create from (default: current branch)"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Workspace directory path"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "test_echo",
+      "description": "Simple echo tool for testing MCP server connectivity. Returns the input message prefixed with \"Echo:\". Use for debugging and connection verification.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to echo"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@flight505/mcp_dincoder/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Optional API key for authentication"
+          },
+          "logLevel": {
+            "enum": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ],
+            "type": "string",
+            "default": "info",
+            "description": "Logging level"
+          },
+          "transportMode": {
+            "enum": [
+              "stateless",
+              "stateful"
+            ],
+            "type": "string",
+            "default": "stateless",
+            "description": "Transport mode"
+          },
+          "workspacePath": {
+            "type": "string",
+            "description": "Default workspace path for spec operations"
+          },
+          "originWhitelist": {
+            "type": "string",
+            "description": "Comma-separated list of allowed origins"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

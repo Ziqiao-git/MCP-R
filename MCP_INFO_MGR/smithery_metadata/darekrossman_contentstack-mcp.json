@@ -1,0 +1,789 @@
+{
+  "qualifiedName": "@darekrossman/contentstack-mcp",
+  "displayName": "Contentstack CMS Integration Server",
+  "description": "Enable AI assistants to interact seamlessly with your Contentstack CMS by accessing and managing content types, entries, assets, and global fields through a standardized protocol. Perform CRUD operations and content publishing directly via AI-driven commands to streamline content management workflows. Enhance your content operations with AI-powered automation and real-time content manipulation capabilities.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/c2566eca-c9c8-4874-a53b-e2acd9358174.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "create_content_type",
+      "description": "Creates a new content type with the specified schema, options, field rules, and taxonomies.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "uid",
+          "schema"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "Content type UID (unique identifier)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Content type title"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "description": "Array of schema fields defining the content structure. Each field object should include properties like:\n- display_name: Field display name\n- uid: Unique identifier for the field\n- data_type: Type of data (text, number, boolean, file, etc.)\n- field_metadata: Additional metadata for the field\n- multiple: Whether field accepts multiple values\n- mandatory: Whether field is required\n- unique: Whether field values must be unique"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Field to use as the title"
+              },
+              "is_page": {
+                "type": "boolean",
+                "description": "Set to true for webpage content types, false for content blocks"
+              },
+              "singleton": {
+                "type": "boolean",
+                "description": "Set to true for single content types, false for multiple"
+              },
+              "sub_title": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Fields to use as subtitles"
+              },
+              "url_prefix": {
+                "type": "string",
+                "description": "Path prefix for entries"
+              },
+              "url_pattern": {
+                "type": "string",
+                "description": "Default URL pattern for entries"
+              }
+            },
+            "description": "Content type options like webpage/content block settings and URL patterns",
+            "additionalProperties": false
+          },
+          "taxonomies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "taxonomy_uid"
+              ],
+              "properties": {
+                "mandatory": {
+                  "type": "boolean",
+                  "description": "Whether this taxonomy is required"
+                },
+                "max_terms": {
+                  "type": "number",
+                  "description": "Maximum number of terms allowed (up to 25)"
+                },
+                "taxonomy_uid": {
+                  "type": "string",
+                  "description": "Taxonomy UID to link"
+                },
+                "non_localizable": {
+                  "type": "boolean",
+                  "description": "Whether this taxonomy is non-localizable"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Taxonomies to associate with this content type"
+          },
+          "field_rules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "conditions",
+                "actions",
+                "match_type"
+              ],
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "action",
+                      "target_field"
+                    ],
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "description": "Action to perform (show/hide)"
+                      },
+                      "target_field": {
+                        "type": "string",
+                        "description": "Field to show/hide based on condition"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "conditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "operand_field",
+                      "operator"
+                    ],
+                    "properties": {
+                      "value": {
+                        "description": "Expected value for the condition"
+                      },
+                      "operator": {
+                        "type": "string",
+                        "description": "Operator for condition (e.g., equals, contains)"
+                      },
+                      "operand_field": {
+                        "type": "string",
+                        "description": "Field on which to apply condition"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "match_type": {
+                  "type": "string",
+                  "description": "Whether all or any conditions should be met"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Field visibility rules for showing/hiding fields based on conditions"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_content_type",
+      "description": "Updates an existing content type identified by its UID. Allows modification of title, schema, options, and field rules.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uid"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "Content type UID to update"
+          },
+          "title": {
+            "type": "string",
+            "description": "New content type title"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "description": "Array of schema fields defining the content structure. Each field object should include properties like:\n- display_name: Field display name\n- uid: Unique identifier for the field\n- data_type: Type of data (text, number, boolean, file, etc.)\n- field_metadata: Additional metadata for the field\n- multiple: Whether field accepts multiple values\n- mandatory: Whether field is required\n- unique: Whether field values must be unique"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Field to use as the title"
+              },
+              "is_page": {
+                "type": "boolean",
+                "description": "Set to true for webpage content types, false for content blocks"
+              },
+              "singleton": {
+                "type": "boolean",
+                "description": "Set to true for single content types, false for multiple"
+              },
+              "sub_title": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Fields to use as subtitles"
+              },
+              "url_prefix": {
+                "type": "string",
+                "description": "Path prefix for entries"
+              },
+              "url_pattern": {
+                "type": "string",
+                "description": "Default URL pattern for entries"
+              }
+            },
+            "description": "Content type options like webpage/content block settings and URL patterns",
+            "additionalProperties": false
+          },
+          "field_rules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "conditions",
+                "actions",
+                "match_type"
+              ],
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "action",
+                      "target_field"
+                    ],
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "description": "Action to perform (show/hide)"
+                      },
+                      "target_field": {
+                        "type": "string",
+                        "description": "Field to show/hide based on condition"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "conditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "operand_field",
+                      "operator"
+                    ],
+                    "properties": {
+                      "value": {
+                        "description": "Expected value for the condition"
+                      },
+                      "operator": {
+                        "type": "string",
+                        "description": "Operator for condition (e.g., equals, contains)"
+                      },
+                      "operand_field": {
+                        "type": "string",
+                        "description": "Field on which to apply condition"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "match_type": {
+                  "type": "string",
+                  "description": "Whether all or any conditions should be met"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Field visibility rules for showing/hiding fields based on conditions"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_content_type",
+      "description": "Deletes a content type identified by its UID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uid"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "Content type UID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_entry",
+      "description": "Creates a new entry for a specified content type.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content_type_uid",
+          "entry"
+        ],
+        "properties": {
+          "entry": {
+            "type": "object",
+            "properties": {},
+            "description": "Entry data according to content type schema",
+            "additionalProperties": true
+          },
+          "content_type_uid": {
+            "type": "string",
+            "description": "Content type UID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_entry",
+      "description": "Updates an existing entry identified by its UID and content type UID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content_type_uid",
+          "entry_uid",
+          "entry"
+        ],
+        "properties": {
+          "entry": {
+            "type": "object",
+            "properties": {},
+            "description": "Updated entry data",
+            "additionalProperties": true
+          },
+          "entry_uid": {
+            "type": "string",
+            "description": "Entry UID to update"
+          },
+          "content_type_uid": {
+            "type": "string",
+            "description": "Content type UID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_entry",
+      "description": "Deletes an entry identified by its UID and content type UID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content_type_uid",
+          "entry_uid"
+        ],
+        "properties": {
+          "entry_uid": {
+            "type": "string",
+            "description": "Entry UID to delete"
+          },
+          "content_type_uid": {
+            "type": "string",
+            "description": "Content type UID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_content_type",
+      "description": "Retrieves a specific content type by its UID, optionally including the global field schema.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uid"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "Content type UID to retrieve"
+          },
+          "include_global_field_schema": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include global field schemas"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_all_content_types",
+      "description": "Retrieves a list of all content types, with options for pagination and including additional details like global field schema and counts.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "skip": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of content types to skip (for pagination)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of content types to return (max 100)"
+          },
+          "include_count": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include total count of content types"
+          },
+          "include_branch_info": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include branch information in response"
+          },
+          "include_global_field_schema": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include global field schemas"
+          },
+          "include_reference_content_type_uid": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include content type UIDs in references"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_entry",
+      "description": "Retrieves a specific entry by its content type UID and entry UID, with options for locale and including references.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content_type_uid",
+          "entry_uid"
+        ],
+        "properties": {
+          "locale": {
+            "type": "string",
+            "description": "Locale code (e.g., 'en-us')"
+          },
+          "entry_uid": {
+            "type": "string",
+            "description": "Entry UID to retrieve"
+          },
+          "content_type_uid": {
+            "type": "string",
+            "description": "Content type UID"
+          },
+          "include_references": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "References to include"
+          },
+          "include_reference_content_type_uid": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include content type UIDs in references"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_entries",
+      "description": "Retrieves entries for a specified content type, with extensive options for filtering, sorting, pagination, and including related data.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content_type_uid"
+        ],
+        "properties": {
+          "asc": {
+            "type": "string",
+            "description": "Sort entries in ascending order by the specified field UID"
+          },
+          "desc": {
+            "type": "string",
+            "description": "Sort entries in descending order by the specified field UID"
+          },
+          "only": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Include only specified top-level fields in the response"
+          },
+          "skip": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of entries to skip (for pagination)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of entries to return (max 100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Query in JSON format to filter entries"
+          },
+          "except": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Exclude specified top-level fields from the response"
+          },
+          "locale": {
+            "type": "string",
+            "description": "Locale code (e.g., 'en-us')"
+          },
+          "include_count": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include total count of entries"
+          },
+          "include_owner": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include owner information in the response"
+          },
+          "include_schema": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include content type schema"
+          },
+          "content_type_uid": {
+            "type": "string",
+            "description": "Content type UID to fetch entries from"
+          },
+          "include_metadata": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include metadata in the response"
+          },
+          "include_reference": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "References to include"
+          },
+          "include_publish_details": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include publish details in the response"
+          },
+          "include_global_field_schema": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include global field schema"
+          },
+          "include_reference_content_type_uid": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include content type UIDs in references"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "publish_entry",
+      "description": "Publishes an entry to a specified environment and locale.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content_type_uid",
+          "entry_uid",
+          "environment"
+        ],
+        "properties": {
+          "locale": {
+            "type": "string",
+            "default": "en-us",
+            "description": "Locale code (defaults to en-us)"
+          },
+          "entry_uid": {
+            "type": "string",
+            "description": "Entry UID to publish"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Environment to publish to"
+          },
+          "content_type_uid": {
+            "type": "string",
+            "description": "Content type UID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "unpublish_entry",
+      "description": "Unpublishes an entry from a specified environment and locale.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content_type_uid",
+          "entry_uid",
+          "environment"
+        ],
+        "properties": {
+          "locale": {
+            "type": "string",
+            "default": "en-us",
+            "description": "Locale code (defaults to en-us)"
+          },
+          "entry_uid": {
+            "type": "string",
+            "description": "Entry UID to unpublish"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Environment to unpublish from"
+          },
+          "content_type_uid": {
+            "type": "string",
+            "description": "Content type UID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_global_field",
+      "description": "Creates a new global field with the specified title, UID, and schema.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "uid",
+          "schema"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "Global field UID (unique identifier)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Global field title"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "description": "Array of schema fields defining the global field structure. Each field object should include properties like:\n- display_name: Field display name\n- uid: Unique identifier for the field\n- data_type: Type of data (text, number, boolean, file, etc.)\n- field_metadata: Additional metadata for the field\n- multiple: Whether field accepts multiple values\n- mandatory: Whether field is required\n- unique: Whether field values must be unique"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_global_field",
+      "description": "Updates an existing global field identified by its UID. Allows modification of title and schema.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "uid"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "Global field UID to update"
+          },
+          "title": {
+            "type": "string",
+            "description": "New global field title"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "description": "Updated schema fields defining the global field structure. Each field object should include properties like:\n- display_name: Field display name\n- uid: Unique identifier for the field\n- data_type: Type of data (text, number, boolean, file, etc.)\n- field_metadata: Additional metadata for the field\n- multiple: Whether field accepts multiple values\n- mandatory: Whether field is required\n- unique: Whether field values must be unique"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_all_global_fields",
+      "description": "Retrieves a list of all global fields, with options for pagination and including branch information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "skip": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of global fields to skip (for pagination)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of global fields to return (max 100)"
+          },
+          "include_count": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include total count of global fields"
+          },
+          "include_branch_info": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include branch information in response"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@darekrossman/contentstack-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "contentstackApiKey",
+          "contentstackManagementToken"
+        ],
+        "properties": {
+          "contentstackApiKey": {
+            "type": "string",
+            "description": "Contentstack API Key"
+          },
+          "contentstackBranch": {
+            "type": "string",
+            "default": "",
+            "description": "Contentstack branch name to use (optional)"
+          },
+          "contentstackManagementToken": {
+            "type": "string",
+            "description": "Contentstack Management Token"
+          }
+        }
+      }
+    }
+  ]
+}

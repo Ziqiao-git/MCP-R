@@ -1,0 +1,443 @@
+{
+  "qualifiedName": "@coyaSONG/youtube-mcp-server",
+  "displayName": "Advanced YouTube",
+  "description": "A Model Context Protocol (MCP) server for interacting with YouTube data. This server provides resources and tools to query YouTube videos, channels, comments, and transcripts through a stdio interface.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@coyaSONG/youtube-mcp-server",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "search-videos",
+      "description": "Search for YouTube videos with advanced filtering options. Supports parameters: - query: Search term (required) - maxResults: Number of results to return (1-50) - channelId: Filter by specific channel - order: Sort by date, rating, viewCount, relevance, title - type: Filter by resource type (video, channel, playlist) - videoDuration: Filter by length (short: <4min, medium: 4-20min, long: >20min) - publishedAfter/publishedBefore: Filter by publish date (ISO format) - videoCaption: Filter by caption availability - videoDefinition: Filter by quality (standard/high) - regionCode: Filter by country (ISO country code)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "video",
+              "channel",
+              "playlist"
+            ],
+            "type": "string"
+          },
+          "order": {
+            "enum": [
+              "date",
+              "rating",
+              "relevance",
+              "title",
+              "videoCount",
+              "viewCount"
+            ],
+            "type": "string"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "maxResults": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1
+          },
+          "regionCode": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2
+          },
+          "videoCaption": {
+            "enum": [
+              "any",
+              "closedCaption",
+              "none"
+            ],
+            "type": "string"
+          },
+          "videoDuration": {
+            "enum": [
+              "any",
+              "short",
+              "medium",
+              "long"
+            ],
+            "type": "string"
+          },
+          "publishedAfter": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "publishedBefore": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "videoDefinition": {
+            "enum": [
+              "any",
+              "high",
+              "standard"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-video-comments",
+      "description": "Retrieve comments for a specific YouTube video with sorting options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoId"
+        ],
+        "properties": {
+          "order": {
+            "enum": [
+              "time",
+              "relevance"
+            ],
+            "type": "string"
+          },
+          "videoId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pageToken": {
+            "type": "string"
+          },
+          "maxResults": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1
+          },
+          "includeReplies": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-video-transcript",
+      "description": "Get the transcript/captions for a YouTube video with optional language selection. This tool retrieves the full transcript of a video with timestamped captions. Each caption includes the text and its timestamp in the video. Parameters: videoId (required) - The YouTube video ID; language (optional) - Language code for the transcript (e.g., \"en\", \"ko\", \"ja\"). If not specified, the default language for the video will be used. Returns a text with each caption line preceded by its timestamp.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoId"
+        ],
+        "properties": {
+          "videoId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "language": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-video-stats",
+      "description": "Get statistical information for a specific YouTube video (views, likes, comments, upload date, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoId"
+        ],
+        "properties": {
+          "videoId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-channel-stats",
+      "description": "Get statistical information for a specific YouTube channel (subscriber count, total views, video count, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare-videos",
+      "description": "Compare statistics for multiple YouTube videos",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoIds"
+        ],
+        "properties": {
+          "videoIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 2
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-trending-videos",
+      "description": "Retrieve trending videos by region and category. This helps analyze current popular content trends.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "maxResults": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1
+          },
+          "regionCode": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-video-categories",
+      "description": "Retrieve available video categories for a specific region",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "regionCode": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze-channel-videos",
+      "description": "Analyze recent videos from a specific channel to identify performance trends",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "sortBy": {
+            "enum": [
+              "date",
+              "viewCount",
+              "rating"
+            ],
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxResults": {
+            "type": "number",
+            "maximum": 50,
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enhanced-transcript",
+      "description": "Advanced transcript extraction tool with filtering, search, and multi-video capabilities. Provides rich transcript data for detailed analysis and processing. This tool offers multiple advanced features: 1) Extract transcripts from multiple videos in one request; 2) Filter by time ranges to focus on specific parts; 3) Search for specific content within transcripts; 4) Segment transcripts for structural analysis; 5) Format output in different ways (raw, timestamped, merged text); 6) Include video metadata. Parameters: videoIds (required) - Array of YouTube video IDs (up to 5); language (optional) - Language code; format (optional) - Output format (\"raw\", \"timestamped\", \"merged\"); includeMetadata (optional) - Whether to include video details; filters (optional) - Complex filtering options including timeRange, search, and segment.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoIds"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "raw",
+              "timestamped",
+              "merged"
+            ],
+            "type": "string"
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "search": {
+                "type": "object",
+                "required": [
+                  "query"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "contextLines": {
+                    "type": "number",
+                    "maximum": 5,
+                    "minimum": 0
+                  },
+                  "caseSensitive": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "segment": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "number",
+                    "maximum": 10,
+                    "minimum": 1
+                  },
+                  "method": {
+                    "enum": [
+                      "equal",
+                      "smart"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "timeRange": {
+                "type": "object",
+                "properties": {
+                  "end": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "start": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "language": {
+            "type": "string"
+          },
+          "videoIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1
+          },
+          "includeMetadata": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-key-moments",
+      "description": "Extract key moments with timestamps from a video transcript for easier navigation and summarization. This tool analyzes the video transcript to identify important segments based on content density and creates a structured output with timestamped key moments. Useful for quickly navigating to important parts of longer videos. Parameters: videoId (required) - The YouTube video ID; maxMoments (optional) - Number of key moments to extract (default: 5, max: 10). Returns a formatted text with key moments and their timestamps, plus the full transcript.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoId"
+        ],
+        "properties": {
+          "videoId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxMoments": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-segmented-transcript",
+      "description": "Divide a video transcript into segments for easier analysis and navigation. This tool splits the video into equal time segments and extracts the transcript for each segment with proper timestamps. Ideal for analyzing the structure of longer videos or when you need to focus on specific parts of the content. Parameters: videoId (required) - The YouTube video ID; segmentCount (optional) - Number of segments to divide the video into (default: 4, max: 10). Returns a markdown-formatted text with each segment clearly labeled with time ranges and containing the relevant transcript text.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "videoId"
+        ],
+        "properties": {
+          "videoId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "segmentCount": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@coyaSONG/youtube-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "youtubeApiKey"
+        ],
+        "properties": {
+          "port": {
+            "type": "string",
+            "default": "3000",
+            "description": "Server port"
+          },
+          "youtubeApiKey": {
+            "type": "string",
+            "description": "YouTube Data API v3 key"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

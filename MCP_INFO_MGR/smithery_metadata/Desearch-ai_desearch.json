@@ -1,0 +1,116 @@
+{
+  "qualifiedName": "@Desearch-ai/desearch",
+  "displayName": "Desearch AI",
+  "description": "Enable real-time AI-powered search capabilities including Twitter (X) and web search directly within your LLM applications. Access relevant links and summaries instantly to enhance your AI workflows. Integrate seamlessly with Claude Desktop and Cursor IDE for enriched search experiences.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/desearch.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "ai-search",
+      "description": "Real-time AI search and analysis on web using Desearch AI",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "NOVA",
+              "ORBIT"
+            ],
+            "type": "string",
+            "default": "NOVA",
+            "description": "Model to use for the search, example: 'NOVA', Nova is 10s model, Orbit is 30s model"
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Twitter Search",
+                "Web Search",
+                "ArXiv Search",
+                "Wikipedia Search",
+                "Youtube Search",
+                "Hacker News Search",
+                "Reddit Search"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "Twitter Search",
+              "Web Search"
+            ],
+            "description": "Tools to use for the search, example: ['Web Search', 'Twitter Search']"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Question, example: 'What is the latest news on AI?'"
+          },
+          "date_filter": {
+            "enum": [
+              "PAST_24_HOURS",
+              "PAST_2_DAYS",
+              "PAST_WEEK",
+              "PAST_2_WEEKS",
+              "PAST_MONTH",
+              "PAST_2_MONTHS",
+              "PAST_YEAR",
+              "PAST_2_YEARS"
+            ],
+            "type": "string",
+            "description": "Time range for the search, example: 'PAST_WEEK'"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "x-search",
+      "description": "Search the X (Twitter) using Desearch AI - performs real-time tweet search on X.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "count": {
+            "type": "number",
+            "default": 20,
+            "description": "Number of search results to return (default: 20), max is 100"
+          },
+          "query": {
+            "type": "string",
+            "description": "Twitter advanced search query, example: 'from:elonmusk since:2023-01-01 min_replies:10'"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Desearch-ai/desearch/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "desearchApiKey"
+        ],
+        "properties": {
+          "desearchApiKey": {
+            "type": "string",
+            "description": "The API key for accessing the Desearch API."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "qualifiedName": "@mikechao/artic-mcp",
+  "displayName": "Art Institute of Chicago Collection Server",
+  "description": "Provide AI models with natural language access to the Art Institute of Chicago's art collection. Enable searching artworks by title, full text, or artist, and retrieving detailed artwork information including images. Enhance AI interactions with rich art data as accessible resources.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/artic.edu.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "search-by-title",
+      "description": "Search for artworks by title in the Art Institute of Chicago. Pagination is supported with the page parameter",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "The page of results to return. Used for pagination."
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "The number of resources to return per page."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the artwork to search for."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-artwork-by-id",
+      "description": "Get additional information, including an image if available, about a specific artwork by its ID from the Art Institute of Chicago. Using the value of Artwork ID from the 'search-by-title' tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the artwork to retrieve."
+          },
+          "includeImage": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include the artwork image in the response."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "full-text-search",
+      "description": "Search for artworks in the Art Institute of Chicago collection whose metadata contains mention of the query term.Pagination is supported with the page parameter",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "The page of results to return. Used for pagination."
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "The number of resources to return per page."
+          },
+          "query": {
+            "type": "string",
+            "description": "The term to search the metadata for."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-for-artist",
+      "description": "Search for artists in the Art Institute of Chicago collection",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the artist to search for."
+          },
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "The page of results to return. Used for pagination."
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "The number of resources to return per page."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-artwork-by-artist",
+      "description": "Get artworks by artist id in the Art Institute of Chicago collection. Pagination is supported with the page parameter.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The id of the artist to search for artworks. Should be the Artist ID of the `search-for-artist` tool."
+          },
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "The page of results to return. Used for pagination."
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "The number of resources to return per page."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-by-medium",
+      "description": "Search for artworks by medium in the Art Institute of Chicago. Pagination is supported with the page parameter",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "medium"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "The page of results to return. Used for pagination."
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "The number of resources to return per page."
+          },
+          "medium": {
+            "type": "string",
+            "description": "The medium to search for (e.g., \"oil on canvas\", \"acrylic on panel\", \"watercolor on paper\")."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@mikechao/artic-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,800 @@
+{
+  "qualifiedName": "@phuc-nt/mcp-atlassian-server",
+  "displayName": "Atlassian Integration Server",
+  "description": "Connect AI agents to Atlassian Jira and Confluence to query data and perform actions through a standardized interface. Enable seamless management of issues, projects, pages, and comments directly from AI assistants. Simplify workflows and reduce context switching for developers and teams using Atlassian tools.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "createIssue",
+      "description": "Create a new issue in Jira",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectKey",
+          "summary"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels for the issue"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Issue summary"
+          },
+          "assignee": {
+            "type": "string",
+            "description": "Assignee username"
+          },
+          "priority": {
+            "type": "string",
+            "description": "Priority (e.g., High, Medium, Low)"
+          },
+          "issueType": {
+            "type": "string",
+            "default": "Task",
+            "description": "Issue type (e.g., Bug, Task, Story)"
+          },
+          "projectKey": {
+            "type": "string",
+            "description": "Project key (e.g., PROJ)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Issue description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateIssue",
+      "description": "Update information of a Jira issue",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueIdOrKey"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "New labels for the issue"
+          },
+          "summary": {
+            "type": "string",
+            "description": "New summary of the issue"
+          },
+          "priority": {
+            "type": "string",
+            "description": "New priority (e.g., High, Medium, Low)"
+          },
+          "description": {
+            "type": "string",
+            "description": "New description of the issue"
+          },
+          "customFields": {
+            "type": "object",
+            "description": "Custom fields to update",
+            "additionalProperties": {}
+          },
+          "issueIdOrKey": {
+            "type": "string",
+            "description": "ID or key of the issue to update (e.g., PROJ-123)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transitionIssue",
+      "description": "Transition the status of a Jira issue",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueIdOrKey",
+          "transitionId"
+        ],
+        "properties": {
+          "comment": {
+            "type": "string",
+            "description": "Comment when performing the transition"
+          },
+          "issueIdOrKey": {
+            "type": "string",
+            "description": "ID or key of the issue (e.g., PROJ-123)"
+          },
+          "transitionId": {
+            "type": "string",
+            "description": "ID of the transition to apply"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "assignIssue",
+      "description": "Assign a Jira issue to a user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueIdOrKey"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Account ID of the assignee (leave blank to unassign)"
+          },
+          "issueIdOrKey": {
+            "type": "string",
+            "description": "ID or key of the issue (e.g., PROJ-123)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createFilter",
+      "description": "Create a new filter in Jira",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "jql"
+        ],
+        "properties": {
+          "jql": {
+            "type": "string",
+            "description": "JQL query for the filter"
+          },
+          "name": {
+            "type": "string",
+            "description": "Filter name"
+          },
+          "favourite": {
+            "type": "boolean",
+            "description": "Mark as favourite"
+          },
+          "description": {
+            "type": "string",
+            "description": "Filter description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateFilter",
+      "description": "Update an existing filter in Jira",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filterId"
+        ],
+        "properties": {
+          "jql": {
+            "type": "string",
+            "description": "New JQL query"
+          },
+          "name": {
+            "type": "string",
+            "description": "New filter name"
+          },
+          "filterId": {
+            "type": "string",
+            "description": "Filter ID to update"
+          },
+          "favourite": {
+            "type": "boolean",
+            "description": "Mark as favourite"
+          },
+          "description": {
+            "type": "string",
+            "description": "New description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteFilter",
+      "description": "Delete a filter in Jira",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filterId"
+        ],
+        "properties": {
+          "filterId": {
+            "type": "string",
+            "description": "Filter ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createSprint",
+      "description": "Create a new sprint in Jira",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "boardId",
+          "name"
+        ],
+        "properties": {
+          "goal": {
+            "type": "string",
+            "description": "Sprint goal"
+          },
+          "name": {
+            "type": "string",
+            "description": "Sprint name"
+          },
+          "boardId": {
+            "type": "string",
+            "description": "Board ID"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (ISO format)"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (ISO format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "startSprint",
+      "description": "Start a Jira sprint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sprintId",
+          "startDate",
+          "endDate"
+        ],
+        "properties": {
+          "goal": {
+            "type": "string",
+            "description": "Sprint goal"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (ISO 8601)"
+          },
+          "sprintId": {
+            "type": "string",
+            "description": "Sprint ID"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (ISO 8601)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "closeSprint",
+      "description": "Close a Jira sprint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sprintId"
+        ],
+        "properties": {
+          "sprintId": {
+            "type": "string",
+            "description": "Sprint ID"
+          },
+          "completeDate": {
+            "type": "string",
+            "description": "Complete date (ISO 8601, optional, e.g. 2025-05-10T12:45:00.000+07:00)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addIssuesToBacklog",
+      "description": "Move issue(s) to Jira backlog (POST /rest/agile/1.0/backlog/issue or /rest/agile/1.0/backlog/{boardId}/issue)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "issueKeys"
+        ],
+        "properties": {
+          "boardId": {
+            "type": "string",
+            "description": "Board ID (optional). If provided, issues will be moved to the backlog of this board."
+          },
+          "issueKeys": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Issue key(s) to move to backlog. Accepts a single issue key (e.g. \"PROJ-123\") or an array of issue keys (e.g. [\"PROJ-123\", \"PROJ-124\"])."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "rankBacklogIssues",
+      "description": "Rank issues in Jira backlog",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "boardId",
+          "issueKeys"
+        ],
+        "properties": {
+          "boardId": {
+            "type": "string",
+            "description": "Board ID"
+          },
+          "issueKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of issue keys to rank"
+          },
+          "rankAfterIssue": {
+            "type": "string",
+            "description": "Rank after this issue key"
+          },
+          "rankBeforeIssue": {
+            "type": "string",
+            "description": "Rank before this issue key"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createDashboard",
+      "description": "Create a new Jira dashboard",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Dashboard name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Dashboard description"
+          },
+          "sharePermissions": {
+            "type": "array",
+            "description": "Share permissions array"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateDashboard",
+      "description": "Update a Jira dashboard",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dashboardId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Dashboard name"
+          },
+          "dashboardId": {
+            "type": "string",
+            "description": "Dashboard ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "Dashboard description"
+          },
+          "sharePermissions": {
+            "type": "array",
+            "description": "Share permissions array"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addGadgetToDashboard",
+      "description": "Add gadget to Jira dashboard (POST /rest/api/3/dashboard/{dashboardId}/gadget)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dashboardId",
+          "color"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "Gadget URI (legacy, e.g. \"/rest/gadgets/1.0/g/com.atlassian.jira.gadgets:filter-results-gadget/gadgets/filter-results-gadget.xml\"). Only one of moduleKey or uri should be provided."
+          },
+          "color": {
+            "enum": [
+              "blue",
+              "red",
+              "yellow",
+              "green",
+              "cyan",
+              "purple",
+              "gray",
+              "white"
+            ],
+            "type": "string",
+            "description": "Gadget color. Must be one of: blue, red, yellow, green, cyan, purple, gray, white."
+          },
+          "title": {
+            "type": "string",
+            "description": "Gadget title (optional)"
+          },
+          "position": {
+            "type": "object",
+            "required": [
+              "column",
+              "row"
+            ],
+            "properties": {
+              "row": {
+                "type": "number",
+                "description": "Row index (0-based)"
+              },
+              "column": {
+                "type": "number",
+                "description": "Column index (0-based)"
+              }
+            },
+            "description": "Position of the gadget on the dashboard (optional)",
+            "additionalProperties": false
+          },
+          "moduleKey": {
+            "type": "string",
+            "description": "Gadget moduleKey (recommended, e.g. \"com.atlassian.plugins.atlassian-connect-plugin:sample-dashboard-item\"). Only one of moduleKey or uri should be provided."
+          },
+          "dashboardId": {
+            "type": "string",
+            "description": "Dashboard ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "removeGadgetFromDashboard",
+      "description": "Remove gadget from Jira dashboard",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "dashboardId",
+          "gadgetId"
+        ],
+        "properties": {
+          "gadgetId": {
+            "type": "string",
+            "description": "Gadget ID"
+          },
+          "dashboardId": {
+            "type": "string",
+            "description": "Dashboard ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "createPage",
+      "description": "Create a new page in Confluence (API v2, chỉ hỗ trợ spaceId)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "spaceId",
+          "title",
+          "content",
+          "parentId"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the page (required)"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content of the page (required, must be in Confluence storage format - XML-like HTML).\n\n- Plain text or markdown is NOT supported (will throw error).\n- Only XML-like HTML tags, Confluence macros (<ac:structured-macro>, <ac:rich-text-body>, ...), tables, panels, info, warning, etc. are supported if valid storage format.\n- Content MUST strictly follow Confluence storage format.\n\nValid examples:\n- <p>This is a paragraph</p>\n- <ac:structured-macro ac:name=\"info\"><ac:rich-text-body>Information</ac:rich-text-body></ac:structured-macro>\n"
+          },
+          "spaceId": {
+            "type": "string",
+            "description": "Space ID (required, must be the numeric ID from API v2, NOT the key like TX, DEV, ...)"
+          },
+          "parentId": {
+            "type": "string",
+            "description": "Parent page ID (required, must specify the parent page to create a child page)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updatePage",
+      "description": "Update the content and information of a Confluence page",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pageId",
+          "version"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "New title of the page"
+          },
+          "pageId": {
+            "type": "string",
+            "description": "ID of the page to update"
+          },
+          "content": {
+            "type": "string",
+            "description": "New content of the page (Confluence storage format only, XML-like HTML).\n\n- Plain text or markdown is NOT supported (will throw error).\n- Only XML-like HTML tags, Confluence macros (<ac:structured-macro>, <ac:rich-text-body>, ...), tables, panels, info, warning, etc. are supported if valid storage format.\n- Content MUST strictly follow Confluence storage format.\n\nValid examples:\n- <p>This is a paragraph</p>\n- <ac:structured-macro ac:name=\"info\"><ac:rich-text-body>Information</ac:rich-text-body></ac:structured-macro>\n"
+          },
+          "version": {
+            "type": "number",
+            "description": "Current version number of the page (required to avoid conflicts)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addComment",
+      "description": "Add a comment to a Confluence page",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pageId",
+          "content"
+        ],
+        "properties": {
+          "pageId": {
+            "type": "string",
+            "description": "ID of the page to add a comment to"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content of the comment (Confluence storage format, XML-like HTML)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deletePage",
+      "description": "Delete a Confluence page (API v2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pageId"
+        ],
+        "properties": {
+          "draft": {
+            "type": "boolean",
+            "description": "Delete draft version if true"
+          },
+          "purge": {
+            "type": "boolean",
+            "description": "Permanently delete (purge) if true"
+          },
+          "pageId": {
+            "type": "string",
+            "description": "ID of the page to delete (required)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updatePageTitle",
+      "description": "Update the title of a Confluence page (API v2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pageId",
+          "title",
+          "version"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "New title of the page (required)"
+          },
+          "pageId": {
+            "type": "string",
+            "description": "ID of the page to update the title (required)"
+          },
+          "version": {
+            "type": "number",
+            "description": "New version number (required, must be exactly one greater than the current version)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "updateFooterComment",
+      "description": "Update a footer comment in Confluence (API v2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "commentId",
+          "version",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "New content of the comment (required)"
+          },
+          "message": {
+            "type": "string",
+            "description": "Update message (optional)"
+          },
+          "version": {
+            "type": "number",
+            "description": "New version number (required, must be exactly one greater than the current version)"
+          },
+          "commentId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "ID of the comment to update (required)"
+          },
+          "representation": {
+            "type": "string",
+            "description": "Content representation, default is \"storage\""
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deleteFooterComment",
+      "description": "Delete a footer comment in Confluence (API v2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "commentId"
+        ],
+        "properties": {
+          "commentId": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "ID of the comment to delete (required)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "addIssueToSprint",
+      "description": "Add issues to a Jira sprint (POST /rest/agile/1.0/sprint/{sprintId}/issue)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sprintId",
+          "issueKeys"
+        ],
+        "properties": {
+          "sprintId": {
+            "type": "string",
+            "description": "Target sprint ID (must be future or active)"
+          },
+          "issueKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "description": "List of issue keys to move to the sprint (max 50)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@phuc-nt/mcp-atlassian-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "atlassianSiteName",
+          "atlassianUserEmail",
+          "atlassianApiToken"
+        ],
+        "properties": {
+          "mcpServerName": {
+            "type": "string",
+            "default": "mcp-atlassian-integration",
+            "description": "Optional custom name for the MCP server"
+          },
+          "mcpServerVersion": {
+            "type": "string",
+            "default": "1.0.0",
+            "description": "Optional custom version for the MCP server"
+          },
+          "atlassianApiToken": {
+            "type": "string",
+            "description": "API token for Atlassian authentication"
+          },
+          "atlassianSiteName": {
+            "type": "string",
+            "description": "Your Atlassian site name or URL (e.g., example.atlassian.net or https://example.atlassian.net)"
+          },
+          "atlassianUserEmail": {
+            "type": "string",
+            "description": "Email address associated with your Atlassian account"
+          }
+        }
+      }
+    }
+  ]
+}

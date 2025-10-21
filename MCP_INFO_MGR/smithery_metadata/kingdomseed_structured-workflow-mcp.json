@@ -1,0 +1,597 @@
+{
+  "qualifiedName": "@kingdomseed/structured-workflow-mcp",
+  "displayName": "Structured Workflow Server",
+  "description": "Enforce disciplined AI-assisted programming workflows by requiring systematic auditing, analysis, and verified outputs at each development phase. Guide AI through structured phases like refactoring, feature development, and testing to ensure thorough understanding and quality results. Prevent skipping steps and maintain session state to uphold workflow integrity.\n\n## Manual Installation\n### Clone the repository\n- git clone https://github.com/kingdomseed/structured-workflow-mcp\n- cd structured-workflow-mcp\n\n### Install dependencies and build\n- npm install\n- npm run build\n\nThen add this to your MCP.json\n```\n\"structured-workflow\": {\n      \"command\": \"node\",\n      \"args\": [\n        \"/path/to/your/structured-workflow-mcp/dist/index.js\"\n      ],\n      \"env\": {}\n    }\n```",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/b9b8519e-7eb2-4050-9570-beef0fc725d3.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "refactor_workflow",
+      "description": "Start a structured refactoring workflow to improve existing code without changing functionality",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Description of what you want to refactor"
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "scope": {
+                "enum": [
+                  "file",
+                  "directory",
+                  "project"
+                ],
+                "type": "string",
+                "description": "The scope of the refactoring"
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Any constraints or requirements"
+              },
+              "targetFiles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific files to refactor"
+              }
+            },
+            "description": "Additional context (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_feature_workflow",
+      "description": "Start a structured workflow for adding new functionality with integrated testing",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Description of the feature to create"
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "scope": {
+                "enum": [
+                  "file",
+                  "directory",
+                  "project"
+                ],
+                "type": "string",
+                "description": "The scope of the feature"
+              },
+              "targetFiles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Files where the feature will be added"
+              },
+              "requirements": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Feature requirements and acceptance criteria"
+              }
+            },
+            "description": "Additional context (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "test_workflow",
+      "description": "Start a focused workflow for writing or improving test coverage",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Description of what to test or test coverage to add"
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "testType": {
+                "enum": [
+                  "unit",
+                  "integration",
+                  "e2e",
+                  "all"
+                ],
+                "type": "string",
+                "description": "Type of tests to write"
+              },
+              "targetFiles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Files that need test coverage"
+              },
+              "coverageGoals": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific coverage goals or scenarios to test"
+              },
+              "testFramework": {
+                "type": "string",
+                "description": "Testing framework being used (e.g., jest, mocha, pytest)"
+              }
+            },
+            "description": "Additional context (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "tdd_workflow",
+      "description": "Start a Test-Driven Development workflow with Red-Green-Refactor cycles",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Description of the feature to develop using TDD"
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "testFirst": {
+                "type": "boolean",
+                "default": true,
+                "description": "Always write the test first (TDD principle)"
+              },
+              "targetFiles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Files where tests and implementation will be added"
+              },
+              "testFramework": {
+                "type": "string",
+                "description": "Testing framework to use"
+              },
+              "acceptanceCriteria": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Clear acceptance criteria for the feature"
+              }
+            },
+            "description": "Additional context (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "build_custom_workflow",
+      "description": "Build a custom workflow with full control over phases and configuration. Use specific workflow tools (refactor_workflow, create_feature_workflow, etc.) for optimized presets.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Description of the programming task"
+          },
+          "workflowType": {
+            "enum": [
+              "refactor",
+              "feature",
+              "test",
+              "tdd",
+              "custom"
+            ],
+            "type": "string",
+            "default": "custom",
+            "description": "Use a predefined workflow type or custom for full control"
+          },
+          "selectedPhases": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "SETUP",
+                "AUDIT_INVENTORY",
+                "COMPARE_ANALYZE",
+                "QUESTION_DETERMINE",
+                "WRITE_OR_REFACTOR",
+                "TEST",
+                "LINT",
+                "ITERATE",
+                "PRESENT"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "SETUP",
+              "AUDIT_INVENTORY",
+              "WRITE_OR_REFACTOR",
+              "TEST",
+              "LINT",
+              "PRESENT"
+            ],
+            "description": "Select which phases to include in your workflow"
+          },
+          "iterationLimits": {
+            "type": "object",
+            "properties": {
+              "LINT": {
+                "type": "number",
+                "default": 10,
+                "description": "Max lint/fix cycles before user input"
+              },
+              "TEST": {
+                "type": "number",
+                "default": 5,
+                "description": "Max test failure cycles before user input"
+              },
+              "ITERATE": {
+                "type": "number",
+                "default": 15,
+                "description": "Max overall iterations before user input"
+              }
+            },
+            "description": "Set iteration limits before escalation to user input"
+          },
+          "userCheckpoints": {
+            "type": "object",
+            "properties": {
+              "beforeMajorChanges": {
+                "type": "boolean",
+                "default": true
+              },
+              "afterFailedIterations": {
+                "type": "boolean",
+                "default": true
+              },
+              "beforeFinalPresentation": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          },
+          "outputPreferences": {
+            "type": "object",
+            "properties": {
+              "formats": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "markdown",
+                    "json"
+                  ],
+                  "type": "string"
+                },
+                "default": [
+                  "markdown"
+                ],
+                "description": "Output formats for documentation"
+              },
+              "outputDirectory": {
+                "type": "string",
+                "default": "workflow-output"
+              },
+              "realTimeUpdates": {
+                "type": "boolean",
+                "default": true
+              },
+              "generateDiagrams": {
+                "type": "boolean",
+                "default": true
+              },
+              "includeCodeSnippets": {
+                "type": "boolean",
+                "default": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "setup_guidance",
+      "description": "Get guidance for the SETUP phase - initialize workflow and establish patterns",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "audit_inventory_guidance",
+      "description": "Get guidance for the AUDIT_INVENTORY phase - analyze code and catalog changes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "compare_analyze_guidance",
+      "description": "Get guidance for the COMPARE/ANALYZE phase - evaluating approaches",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "question_determine_guidance",
+      "description": "Get guidance for the QUESTION_DETERMINE phase - clarify and finalize plan",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "refactor_guidance",
+      "description": "Get guidance for the WRITE/REFACTOR phase - implementing changes",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "lint_guidance",
+      "description": "Get guidance for the LINT phase - verifying code quality",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "iterate_guidance",
+      "description": "Get guidance for the ITERATE phase - fixing issues",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "present_guidance",
+      "description": "Get guidance for the PRESENT phase - summarizing work",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "test_guidance",
+      "description": "Get MANDATORY guidance for the TEST phase - execute tests and validate functionality after refactoring",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "validate_action",
+      "description": "Check if an action follows critical safety rules",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "action",
+          "targetFile"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "The action you want to take"
+          },
+          "targetFile": {
+            "type": "string",
+            "description": "The file you want to act on"
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_phase_completion",
+      "description": "Validate that current phase meets all completion requirements before allowing progression",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "phase",
+          "completedWork"
+        ],
+        "properties": {
+          "phase": {
+            "enum": [
+              "SETUP",
+              "AUDIT_INVENTORY",
+              "COMPARE_ANALYZE",
+              "QUESTION_DETERMINE",
+              "WRITE_OR_REFACTOR",
+              "TEST",
+              "LINT",
+              "ITERATE",
+              "PRESENT"
+            ],
+            "type": "string",
+            "description": "The phase to validate"
+          },
+          "createdFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of files created during this phase"
+          },
+          "completedWork": {
+            "type": "object",
+            "description": "Description of work completed in this phase",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "user_input_required_guidance",
+      "description": "Handle escalation to user input when iteration limits reached or checkpoints triggered",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "trigger"
+        ],
+        "properties": {
+          "context": {
+            "type": "object",
+            "properties": {
+              "lastError": {
+                "type": "string"
+              },
+              "failedPhase": {
+                "type": "string"
+              },
+              "attemptCount": {
+                "type": "number"
+              },
+              "specificIssues": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Additional context about the escalation"
+          },
+          "trigger": {
+            "enum": [
+              "iteration_limit",
+              "user_checkpoint",
+              "validation_failure",
+              "time_limit"
+            ],
+            "type": "string",
+            "description": "What triggered the escalation"
+          }
+        }
+      }
+    },
+    {
+      "name": "workflow_status",
+      "description": "Check current workflow progress and session state",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "phase_output",
+      "description": "Record the output/results when completing a workflow phase - REQUIRES ACTUAL OUTPUT ARTIFACTS with numbered file naming",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "phase",
+          "output",
+          "outputArtifacts"
+        ],
+        "properties": {
+          "phase": {
+            "enum": [
+              "AUDIT_INVENTORY",
+              "COMPARE_ANALYZE",
+              "QUESTION_DETERMINE",
+              "WRITE_OR_REFACTOR",
+              "TEST",
+              "LINT",
+              "ITERATE",
+              "PRESENT"
+            ],
+            "type": "string",
+            "description": "The phase you are completing"
+          },
+          "output": {
+            "type": "object",
+            "description": "The results/findings from this phase",
+            "additionalProperties": true
+          },
+          "outputArtifacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "format",
+                "description",
+                "content"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path if written to disk, OR descriptive identifier for JSON output provided in response"
+                },
+                "format": {
+                  "enum": [
+                    "markdown",
+                    "json",
+                    "text"
+                  ],
+                  "type": "string",
+                  "description": "Format of the output"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "REQUIRED: The actual content/JSON of your output (for validation)"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Brief description of what this artifact contains"
+                }
+              }
+            },
+            "minItems": 1,
+            "description": "MANDATORY: List of actual output artifacts you created for this phase (use numbered file names)"
+          }
+        }
+      }
+    },
+    {
+      "name": "discover_workflow_tools",
+      "description": "List the workflow guidance tools provided by this MCP server",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kingdomseed/structured-workflow-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

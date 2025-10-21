@@ -1,0 +1,148 @@
+{
+  "qualifiedName": "@cantian-ai/bazi-mcp",
+  "displayName": "Bazi Calculator",
+  "description": "Provide precise Bazi (Chinese metaphysical) calculations to empower AI agents with accurate personality and destiny insights. Enable reliable and community-driven Bazi data services for applications in fortune-telling and Chinese metaphysics. Join a collaborative platform to advance traditional cultural analysis with AI.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/8c6c9899-13de-44f2-ad85-8cef0512d0d9.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cantian-ai/bazi-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "getBaziDetail",
+      "description": "根据时间（公历或农历）、性别来获取八字信息。solarDatetime和lunarDatetime必须传且只传其中一个。",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "gender"
+        ],
+        "properties": {
+          "gender": {
+            "type": "number",
+            "description": "传0表示女性，传1表示男性。"
+          },
+          "lunarDatetime": {
+            "type": "string",
+            "description": "农历时间。例如农历2000年5月初五中午12点整表示为：`2000-5-5 12:00:00`。"
+          },
+          "solarDatetime": {
+            "type": "string",
+            "description": "用ISO时间格式表示的公历时间. 例如：`2008-03-01T13:00:00+08:00`。"
+          },
+          "eightCharProviderSect": {
+            "type": "number",
+            "default": 2,
+            "description": "早晚子时配置。传1表示23:00-23:59日干支为明天，传2表示23:00-23:59日干支为当天。"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getSolarTimes",
+      "description": "根据八字获取公历时间列表。返回的时间格式为：YYYY-MM-DD hh:mm:ss。例如时间1998年7月31日下午2点整表示为：1998-07-31 14:00:00",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "bazi"
+        ],
+        "properties": {
+          "bazi": {
+            "type": "string",
+            "description": "八字，按年柱、月柱、日柱、时柱顺序，用空格隔开。例如：戊寅 己未 己卯 辛未"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getChineseCalendar",
+      "description": "获取指定公历时间（默认今天）的黄历信息。",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "solarDatetime": {
+            "type": "string",
+            "description": "用ISO时间格式表示的公历时间. 例如：`2008-03-01T13:00:00+08:00`。"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "buildBaziFromLunarDatetime",
+      "description": "根据农历时间、性别来获取八字信息。",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "lunarDatetime",
+          "gender"
+        ],
+        "properties": {
+          "gender": {
+            "type": "number",
+            "description": "传0表示女性，传1表示男性。"
+          },
+          "lunarDatetime": {
+            "type": "string",
+            "description": "农历时间。例如：`2000-5-15 12:00:00`。"
+          },
+          "eightCharProviderSect": {
+            "type": "number",
+            "default": 2,
+            "description": "早晚子时配置。传1表示23:00-23:59日干支为明天，传2表示23:00-23:59日干支为当天。"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "buildBaziFromSolarDatetime",
+      "description": "根据阳历时间、性别来获取八字信息。",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "solarDatetime",
+          "gender"
+        ],
+        "properties": {
+          "gender": {
+            "type": "number",
+            "description": "传0表示女性，传1表示男性。"
+          },
+          "solarDatetime": {
+            "type": "string",
+            "description": "用ISO时间格式表示的阳历时间. 例如：`2008-03-01T13:00:00+08:00`。"
+          },
+          "eightCharProviderSect": {
+            "type": "number",
+            "default": 2,
+            "description": "早晚子时配置。传1表示23:00-23:59日干支为明天，传2表示23:00-23:59日干支为当天。"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cantian-ai/bazi-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

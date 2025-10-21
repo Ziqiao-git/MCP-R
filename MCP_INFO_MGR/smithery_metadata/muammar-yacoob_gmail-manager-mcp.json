@@ -1,0 +1,231 @@
+{
+  "qualifiedName": "@muammar-yacoob/gmail-manager-mcp",
+  "displayName": "Gmail Manager",
+  "description": "Gmail Manager MCP gives Claude Desktop direct access to your Gmail inbox, allowing you to:\n\n🔍 Search & Filter - Find emails by sender, subject, date, or any Gmail query\n🏷️ Smart Organization - Create and apply labels to categorize emails automatically\n🗑️ Bulk Operations - Delete multiple emails at once based on your criteria\n📊 Inbox Analytics - Get insights about your email patterns and volume\n🧹 Smart Cleanup - Remove old newsletters, notifications, and spam efficiently\nPerfect for inbox zero enthusiasts and anyone drowning in email overload!",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/55e2b6fa-d274-4396-8971-fffe4046ea63.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@muammar-yacoob/gmail-manager-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_emails",
+      "description": "Search emails using Gmail query syntax",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Gmail search query (e.g., 'is:unread', 'from:newsletter@example.com')"
+          },
+          "maxResults": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of results (default: 10)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "read_email",
+      "description": "Read the full content of an email",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messageId"
+        ],
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "Email message ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_email",
+      "description": "Permanently delete an email",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messageId"
+        ],
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "Email message ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "batch_delete_emails",
+      "description": "Delete multiple emails at once",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messageIds"
+        ],
+        "properties": {
+          "messageIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of email message IDs to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_labels",
+      "description": "List all Gmail labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_label",
+      "description": "Create a new Gmail label",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Label name"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_label",
+      "description": "Delete a Gmail label",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "labelId"
+        ],
+        "properties": {
+          "labelId": {
+            "type": "string",
+            "description": "Label ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "apply_label",
+      "description": "Apply a label to an email",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messageId",
+          "labelId"
+        ],
+        "properties": {
+          "labelId": {
+            "type": "string",
+            "description": "Label ID to apply"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Email message ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove_label",
+      "description": "Remove a label from an email",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messageId",
+          "labelId"
+        ],
+        "properties": {
+          "labelId": {
+            "type": "string",
+            "description": "Label ID to remove"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Email message ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "batch_apply_labels",
+      "description": "Apply labels to multiple emails at once",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "messageIds",
+          "labelIds"
+        ],
+        "properties": {
+          "labelIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of label IDs to apply"
+          },
+          "messageIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of email message IDs"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@muammar-yacoob/gmail-manager-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "properties": {
+          "credentialsPath": {
+            "type": "string",
+            "description": "Path to stored credentials (optional, defaults to ~/.gmail-mcp/credentials.json)"
+          },
+          "gcpOauthKeysPath": {
+            "type": "string",
+            "description": "Path to the GCP OAuth keys JSON file (optional, defaults to gcp-oauth.keys.json in project root)"
+          }
+        }
+      }
+    }
+  ]
+}

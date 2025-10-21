@@ -1,0 +1,169 @@
+{
+  "qualifiedName": "@bradleygolden/hexdocs-mcp",
+  "displayName": "HexDocs MCP",
+  "description": "Semantically searches hex documentation right from your editor.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "semantic_search",
+      "description": "Searches the documentation of one or more Elixir Hex packages using semantic vector embeddings. Given a natural language query, returns the most relevant documentation snippets. This is unique to hexdocs-mcp and complements TideWave by providing embeddings-based search capabilities that TideWave does not offer. Always available regardless of TideWave status. Requires that embeddings have been generated for the target package(s) using the fetch_docs tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum number of results to return (default: 5, increase for more comprehensive results)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The semantic search query to find relevant documentation (can be natural language, not just keywords)"
+          },
+          "version": {
+            "type": "string",
+            "description": "Optional specific package version to search within, defaults to latest fetched version"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "Optional Hex package name to search within (must be a package that has been fetched)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch_docs",
+      "description": "Downloads and processes the documentation for a specified Elixir Hex package and version, converting it to markdown, splitting it into semantic chunks, and generating vector embeddings. This enables the unique semantic_search capability that complements TideWave. Always useful regardless of TideWave availability. Must be run before searching a package for the first time or to update embeddings.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "packageName"
+        ],
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force re-fetch even if embeddings already exist"
+          },
+          "version": {
+            "type": "string",
+            "description": "Optional package version, defaults to latest"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "The Hex package name to fetch (required)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hex_search",
+      "description": "Searches for Elixir packages on Hex.pm by name or description. Can search across all packages, within a specific package's versions, or get info for a specific package version. Note: If TideWave is available in your current Phoenix project, prefer using TideWave's hex search for better project integration. Use this tool when TideWave is not available or for general package discovery outside of a Phoenix project.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "sort": {
+            "type": "string",
+            "description": "Sort results by: downloads (default), recent, or name"
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of results to return (default: 10)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The search query to find packages (searches in name and description)"
+          },
+          "version": {
+            "type": "string",
+            "description": "Optional specific version (only used with packageName)"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "Optional package name to search within its versions"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fulltext_search",
+      "description": "Performs full-text search on HexDocs documentation using Typesense search engine. This searches the actual documentation content across all packages on HexDocs.\n\nNote: If TideWave is available in your current Phoenix project, prefer using TideWave's documentation search for better project context. Use this tool when TideWave is not available or for searching packages not in your current project.\n\nQuery Syntax:\n- Basic search: \"Phoenix.LiveView\" (searches for both terms)\n- Exact phrase: \"\\\"handle event\\\"\" (use escaped quotes)\n- AND operator: \"Phoenix AND LiveView\" (both terms required)\n- OR operator: \"Phoenix OR Plug\" (either term)\n- Exclude terms: \"Phoenix -test\" (minus sign excludes)\n- Module/function: \"Enum.map\" or \"GenServer.handle_call\"\n\nBest Practices:\n- Use exact module.function names for precise results\n- Combine with packageName filter for focused search\n- Use quotes for multi-word exact phrases\n- For callbacks use patterns like \"@callback handle_\"\n- For types use patterns like \"@type t()\"\n\nExamples:\n- Find LiveView event handlers: query: \"handle_event\", packageName: \"phoenix_live_view\"\n- Find Ecto changesets: query: \"changeset\", packageName: \"ecto\"\n- Find specific function: query: \"\\\"Enum.map/2\\\"\"\n- Find type definitions: query: \"@type\", packageName: \"phoenix\"",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of results to return (default: 10, max: 100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The search query using Typesense syntax (see tool description for examples)"
+          },
+          "version": {
+            "type": "string",
+            "description": "Optional specific version (only used with packageName, e.g., '1.7.0')"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "Optional package name to limit search to (e.g., 'phoenix', 'ecto')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_embeddings",
+      "description": "Checks if embeddings exist for a specific Hex package and version. This is useful before attempting semantic search to ensure the package has been processed. Returns information about whether embeddings exist and how many.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "packageName"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Optional package version, defaults to 'latest'"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "The Hex package name to check (required)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@bradleygolden/hexdocs-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

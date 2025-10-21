@@ -1,0 +1,212 @@
+{
+  "qualifiedName": "@waldzellai/clear-thought",
+  "displayName": "Clear Thought 1.5",
+  "description": "Clear Thought v1.5 – the OG sequential-thinking fork gets some upgrades while glassBead takes time to do the upcoming v2 right. \n\nmajor updates: \n\n - reasoning in Model Context Protocol is no longer limited to CoT! experiment with six different approaches to reasoning and strategy.\n- now stateful in anticipation of observability/eval tooling being added\n\nCore Reasoning Modes\n\n\t•\tsequential_thinking – Chain-of-thought and pattern-based reasoning\n\n\t•\ttree_of_thought – Branching reasoning with multiple solution paths\n\n\t•\tbeam_search – Best-path finding within constrained search spaces\n\n\t•\tmcts – Monte Carlo Tree Search for optimal strategies\n\n\t•\tgraph_of_thought – Graph-based reasoning with interconnected ideas\n\n\t•\torchestration_suggest – Recommend optimal reasoning approaches for tasks\n\nMental Models & Frameworks\n\n\t•\tmental_model – First principles thinking and conceptual structures\n\n\t•\tsystems_thinking – Complex system and interconnection analysis\n\n\t•\tdecision_framework – Structured decision-making with defined criteria\n\n\t•\tcustom_framework – Build bespoke problem-solving methodologies\n\nAnalytical & Diagnostic Tools\n\n\t•\tdebugging_approach – Systematic problem diagnosis\n\n\t•\tscientific_method – Hypothesis-driven experimentation\n\n\t•\tcausal_analysis – Cause–effect mapping\n\n\t•\tstatistical_reasoning – Data-driven interpretation\n\n\t•\toptimization – Constraint satisfaction and solution refinement\n\nCreative & Divergent Thinking\n\n\t•\tcreative_thinking – Idea generation and innovation\n\n\t•\tanalogical_reasoning – Cross-domain comparisons\n\n\t•\tvisual_reasoning – Diagramming and spatial problem solving\n\nCollaborative & Ethical Inquiry\n\n\t•\tcollaborative_reasoning – Multi-perspective group reasoning\n\n\t•\tsocratic_method – Deep questioning to expose assumptions\n\n\t•\tstructured_argumentation – Logical argument building\n\n\t•\tethical_analysis – Evaluation using moral frameworks\n\nKnowledge & Insight\n\n\t•\tresearch – Targeted information gathering and synthesis\n\n\t•\tmetacognitive_monitoring – Track and improve your own reasoning process\n\nSimulation & Visualization\n\n\t•\tsimulation – Scenario modeling and process exploration\n\n\t•\tvisual_dashboard – Data visualization and performance metrics\n\nExecution & Session Management\n\n\t•\tcode_execution – Run and analyze code snippets\n\n\t•\tsession_info, session_export, session_import – Session tracking, persistence, and portability",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/fb0513c6-6304-4e83-b74e-ed35187edb48.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@waldzellai/clear-thought",
+  "security": null,
+  "tools": [
+    {
+      "name": "clear_thought",
+      "title": "Clear Thought",
+      "description": "Unified Clear Thought reasoning tool. Operations: sequential_thinking (chain or patterns via pattern/patternParams), mental_model, debugging_approach, creative_thinking, visual_reasoning, metacognitive_monitoring, scientific_method, collaborative_reasoning, decision_framework, socratic_method, structured_argumentation, systems_thinking, research, analogical_reasoning, causal_analysis, statistical_reasoning, simulation, optimization, ethical_analysis, visual_dashboard, custom_framework, code_execution, tree_of_thought, beam_search, mcts, graph_of_thought, orchestration_suggest. See resource guide://clear-thought-operations for details.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operation",
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "The problem, question, or challenge to work on"
+          },
+          "context": {
+            "type": "string",
+            "description": "Additional context or background information"
+          },
+          "advanced": {
+            "type": "object",
+            "properties": {
+              "autoProgress": {
+                "type": "boolean",
+                "description": "Automatically progress through stages when applicable"
+              },
+              "saveToSession": {
+                "type": "boolean",
+                "default": true,
+                "description": "Save results to session state"
+              },
+              "generateNextSteps": {
+                "type": "boolean",
+                "default": true,
+                "description": "Generate recommended next steps"
+              }
+            },
+            "description": "Advanced reasoning options",
+            "additionalProperties": false
+          },
+          "operation": {
+            "enum": [
+              "sequential_thinking",
+              "mental_model",
+              "debugging_approach",
+              "creative_thinking",
+              "visual_reasoning",
+              "metacognitive_monitoring",
+              "scientific_method",
+              "collaborative_reasoning",
+              "decision_framework",
+              "socratic_method",
+              "structured_argumentation",
+              "systems_thinking",
+              "session_info",
+              "session_export",
+              "session_import",
+              "pdr_reasoning",
+              "research",
+              "analogical_reasoning",
+              "causal_analysis",
+              "statistical_reasoning",
+              "simulation",
+              "optimization",
+              "ethical_analysis",
+              "visual_dashboard",
+              "custom_framework",
+              "code_execution",
+              "tree_of_thought",
+              "beam_search",
+              "mcts",
+              "graph_of_thought",
+              "orchestration_suggest",
+              "ooda_loop",
+              "ulysses_protocol",
+              "notebook_create",
+              "notebook_add_cell",
+              "notebook_run_cell",
+              "notebook_export"
+            ],
+            "type": "string",
+            "description": "What type of reasoning operation to perform"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Session identifier for continuity"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Operation-specific parameters",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@waldzellai/clear-thought/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "enableMetrics": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable metrics collection"
+          },
+          "pythonCommand": {
+            "type": "string",
+            "default": "python3",
+            "description": "Python executable to use"
+          },
+          "persistenceDir": {
+            "type": "string",
+            "default": ".ct-data",
+            "description": "Directory to store persistent data"
+          },
+          "sessionTimeout": {
+            "type": "number",
+            "default": 3600000,
+            "minimum": 60000,
+            "description": "Session timeout in milliseconds"
+          },
+          "researchProvider": {
+            "enum": [
+              "none",
+              "exa",
+              "serpapi"
+            ],
+            "type": "string",
+            "default": "none",
+            "description": "External research provider to use"
+          },
+          "researchApiKeyEnv": {
+            "type": "string",
+            "default": "",
+            "description": "Env var name that contains the API key for the research provider"
+          },
+          "telemetryProvider": {
+            "enum": [
+              "none",
+              "shinzo",
+              "console"
+            ],
+            "type": "string",
+            "default": "none",
+            "description": "Telemetry provider to use"
+          },
+          "telemetryTokenEnv": {
+            "type": "string",
+            "default": "SHINZO_TOKEN",
+            "description": "Env var name that contains the Shinzo ingest token"
+          },
+          "allowCodeExecution": {
+            "type": "boolean",
+            "default": false,
+            "description": "Allow code execution tools"
+          },
+          "executionTimeoutMs": {
+            "type": "number",
+            "default": 10000,
+            "minimum": 1000,
+            "description": "Maximum duration for code execution jobs in milliseconds"
+          },
+          "knowledgeGraphFile": {
+            "type": "string",
+            "default": "knowledge-graph.json",
+            "description": "Knowledge graph storage file"
+          },
+          "persistenceEnabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable persistent storage across sessions"
+          },
+          "telemetryEndpointEnv": {
+            "type": "string",
+            "default": "SHINZO_ENDPOINT",
+            "description": "Env var name that contains the Shinzo HTTP ingest endpoint (e.g., https://api.app.shinzo.ai/telemetry/ingest_http)"
+          },
+          "maxThoughtsPerSession": {
+            "type": "number",
+            "default": 100,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of thoughts allowed per session"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

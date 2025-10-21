@@ -1,0 +1,145 @@
+{
+  "qualifiedName": "@AdityaRapid/strapi_mcps",
+  "displayName": "Strapi Connector",
+  "description": "Manage Strapi content and media from one place. Browse content types and components, run REST operations, and upload assets. Switch between multiple Strapi servers effortlessly to streamline your workflows.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/2aaf0731-4272-4f72-b98e-bd24d00c5b32.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@AdityaRapid/strapi_mcps",
+  "security": null,
+  "tools": [
+    {
+      "name": "strapi_list_servers",
+      "description": "List all configured Strapi servers",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "strapi_get_content_types",
+      "description": "Get content type schemas from a Strapi server",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "server"
+        ],
+        "properties": {
+          "server": {
+            "type": "string",
+            "description": "Server name to query"
+          }
+        }
+      }
+    },
+    {
+      "name": "strapi_rest",
+      "description": "Execute REST API operations on Strapi",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "server",
+          "endpoint",
+          "method"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Request body data"
+          },
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE"
+            ],
+            "type": "string"
+          },
+          "server": {
+            "type": "string",
+            "description": "Server name"
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "API endpoint"
+          }
+        }
+      }
+    },
+    {
+      "name": "strapi_upload_media",
+      "description": "Upload media files to Strapi",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "server",
+          "file_data",
+          "filename"
+        ],
+        "properties": {
+          "server": {
+            "type": "string",
+            "description": "Server name"
+          },
+          "filename": {
+            "type": "string",
+            "description": "File name"
+          },
+          "file_data": {
+            "type": "string",
+            "description": "Base64 encoded file data"
+          }
+        }
+      }
+    },
+    {
+      "name": "strapi_get_components",
+      "description": "Get component schemas from Strapi",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "server"
+        ],
+        "properties": {
+          "server": {
+            "type": "string",
+            "description": "Server name"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@AdityaRapid/strapi_mcps/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "STRAPI_API_URL",
+          "STRAPI_API_KEY"
+        ],
+        "properties": {
+          "STRAPI_API_KEY": {
+            "type": "string",
+            "description": "JWT token from Strapi Admin Panel"
+          },
+          "STRAPI_API_URL": {
+            "type": "string",
+            "description": "URL of your Strapi instance"
+          },
+          "STRAPI_API_PREFIX": {
+            "type": "string",
+            "default": "/api",
+            "description": "API prefix (e.g., /api/v1)"
+          },
+          "STRAPI_SERVER_NAME": {
+            "type": "string",
+            "default": "default",
+            "description": "Server instance name"
+          }
+        }
+      }
+    }
+  ]
+}

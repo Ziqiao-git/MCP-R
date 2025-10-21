@@ -1,0 +1,749 @@
+{
+  "qualifiedName": "@wlu03/alpaca-mcp",
+  "displayName": "Alpaca Trading Integration",
+  "description": "Enable seamless interaction with Alpaca's trading API through a standardized protocol. Execute trading operations, fetch market data, and manage portfolios efficiently within your LLM applications. Simplify algorithmic trading by integrating real-time financial data and actions.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "get-alpaca-account",
+      "description": "Fetches your Alpaca account",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "alpaca-createOrder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol",
+          "qty",
+          "side",
+          "type",
+          "time_in_force"
+        ],
+        "properties": {
+          "qty": {
+            "type": "number",
+            "description": "Number of shares"
+          },
+          "side": {
+            "enum": [
+              "buy",
+              "sell"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "market",
+              "limit",
+              "stop",
+              "stop_limit"
+            ],
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Ticker symbol, e.g. AAPL"
+          },
+          "limit_price": {
+            "type": "number",
+            "description": "Required if type is limit"
+          },
+          "time_in_force": {
+            "enum": [
+              "day",
+              "gtc",
+              "ioc",
+              "fok"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getOrder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "order_id"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "description": "The unique ID of the Alpaca order"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getOrders",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Max number of orders to retrieve"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "closed",
+              "all"
+            ],
+            "type": "string",
+            "description": "Filter by order status (open, closed, or all)"
+          },
+          "direction": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction: ascending or descending"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-replaceOrder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "order_id"
+        ],
+        "properties": {
+          "qty": {
+            "type": "number",
+            "description": "New quantity of shares"
+          },
+          "order_id": {
+            "type": "string",
+            "description": "The unique ID of the Alpaca order to replace"
+          },
+          "limit_price": {
+            "type": "number",
+            "description": "New limit price, required for updating a limit order"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-cancelOrder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "order_id"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "description": "The unique ID of the Alpaca order to cancel"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-cancelOrders",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getPosition",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol_or_asset_id"
+        ],
+        "properties": {
+          "symbol_or_asset_id": {
+            "type": "string",
+            "description": "Either the ticker symbol (e.g. AAPL) or the Alpaca asset ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getPositions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-closePosition",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol_or_asset_id"
+        ],
+        "properties": {
+          "symbol_or_asset_id": {
+            "type": "string",
+            "description": "Either the ticker symbol (e.g. AAPL) or the Alpaca asset ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-closePositions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-exerciseOption",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol_or_contract_id"
+        ],
+        "properties": {
+          "symbol_or_contract_id": {
+            "type": "string",
+            "description": "Either the option symbol (e.g. AAPL230616C00150000) or contract ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getWatchlist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "watchlist_id"
+        ],
+        "properties": {
+          "watchlist_id": {
+            "type": "string",
+            "description": "The unique ID of the watchlist to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getWatchlists",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-createWatchlist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "symbols"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the new watchlist"
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of ticker symbols to include"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-updateWatchlist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "watchlist_id",
+          "name",
+          "symbols"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the watchlist"
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Updated array of ticker symbols"
+          },
+          "watchlist_id": {
+            "type": "string",
+            "description": "The ID of the watchlist to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-deleteWatchlist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "watchlist_id"
+        ],
+        "properties": {
+          "watchlist_id": {
+            "type": "string",
+            "description": "The ID of the watchlist to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getPortfolioHistory",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "period",
+          "timeframe"
+        ],
+        "properties": {
+          "period": {
+            "type": "string",
+            "description": "History period (e.g. '1D', '1W', '1M', '1Y', 'ALL')"
+          },
+          "date_end": {
+            "type": "string",
+            "description": "ISO date to end the history"
+          },
+          "timeframe": {
+            "type": "string",
+            "description": "Timeframe for granularity (e.g. '1Min', '5Min', '1D')"
+          },
+          "extended_hours": {
+            "type": "boolean",
+            "description": "Include extended‑hours data?"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getActivity",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "activity_type"
+        ],
+        "properties": {
+          "activity_type": {
+            "type": "string",
+            "description": "Type of activity (e.g. 'FILL', 'ORDER_CANCEL')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getActivities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getOptionsContract",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol_or_contract_id"
+        ],
+        "properties": {
+          "symbol_or_contract_id": {
+            "type": "string",
+            "description": "Underlying symbol or exact contract ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getOptionsContracts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbol_or_contract_id"
+        ],
+        "properties": {
+          "option_type": {
+            "enum": [
+              "call",
+              "put"
+            ],
+            "type": "string",
+            "description": "Filter by 'call' or 'put'"
+          },
+          "strike_price": {
+            "type": "number",
+            "description": "Filter by strike price"
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "YYYY‑MM‑DD expiration filter"
+          },
+          "symbol_or_contract_id": {
+            "type": "string",
+            "description": "Either the option symbol (e.g. AAPL230616C00150000) or contract ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getCorporateAction",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the corporate action"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getCorporateActions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ca_types",
+          "since",
+          "until"
+        ],
+        "properties": {
+          "since": {
+            "type": "string",
+            "description": "Start date (YYYY‑MM‑DD) for filtering"
+          },
+          "until": {
+            "type": "string",
+            "description": "End date (YYYY‑MM‑DD) for filtering"
+          },
+          "ca_types": {
+            "type": "string",
+            "description": "Comma‑separated action types (e.g. 'MERGER,CASH_DIVIDEND')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksCorporateActions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbols",
+          "types"
+        ],
+        "properties": {
+          "types": {
+            "type": "string",
+            "description": "Comma‑separated action types (e.g. 'cash_dividends')"
+          },
+          "symbols": {
+            "type": "string",
+            "description": "Comma‑separated symbols (e.g. 'AAPL,TSLA')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getNews",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbols"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Max number of articles"
+          },
+          "symbols": {
+            "type": "string",
+            "description": "Comma‑separated symbols to fetch news for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksMostActives",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "by",
+          "top"
+        ],
+        "properties": {
+          "by": {
+            "enum": [
+              "volume",
+              "change"
+            ],
+            "type": "string",
+            "description": "Sort by 'volume' or 'change'"
+          },
+          "top": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of top movers to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksMarketMovers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "by",
+          "top"
+        ],
+        "properties": {
+          "by": {
+            "enum": [
+              "volume",
+              "change"
+            ],
+            "type": "string",
+            "description": "Sort by 'volume' or 'change'"
+          },
+          "top": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of top movers to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksQuotes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbols"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Max number of quotes"
+          },
+          "symbols": {
+            "type": "string",
+            "description": "Comma‑separated symbols"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksQuotesLatest",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbols"
+        ],
+        "properties": {
+          "symbols": {
+            "type": "string",
+            "description": "Comma‑separated symbols to fetch latest quotes (e.g. 'AAPL,TSLA')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksSnapshots",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbols"
+        ],
+        "properties": {
+          "symbols": {
+            "type": "string",
+            "description": "Comma‑separated symbols"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksConditions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tickType",
+          "tape"
+        ],
+        "properties": {
+          "tape": {
+            "type": "string",
+            "description": "Tape identifier (e.g. 'A', 'B', 'C')"
+          },
+          "tickType": {
+            "type": "string",
+            "description": "Type of tick (e.g. 'trades', 'quotes')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksExchangeCodes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksTrades",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbols"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Max number of trades"
+          },
+          "symbols": {
+            "type": "string",
+            "description": "Comma‑separated symbols"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "alpaca-getStocksTradesLatest",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "symbols"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Max number of trades to return"
+          },
+          "symbols": {
+            "type": "string",
+            "description": "Comma‑separated symbols to fetch latest trades for (e.g. 'AAPL,TSLA')"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@wlu03/alpaca-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "alpacaPaperKey",
+          "alpacaPaperSecret"
+        ],
+        "properties": {
+          "alpacaPaperKey": {
+            "type": "string",
+            "description": "Your Alpaca API paper key"
+          },
+          "alpacaPaperSecret": {
+            "type": "string",
+            "description": "Your Alpaca API paper secret"
+          }
+        }
+      }
+    }
+  ]
+}

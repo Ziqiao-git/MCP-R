@@ -1,0 +1,187 @@
+{
+  "qualifiedName": "@PixdataOrg/coderide",
+  "displayName": "CodeRide",
+  "description": "CodeRide eliminates the context reset cycle once and for all. Through MCP integration, it seamlessly connects to your existing AI coding workflow, enhancing how you vibe code. Once connected, CodeRide transforms your development tasks into a structured Kanban, where each task preserves complete context and instructions your AI needs to work autonomously. Compatible with all major AI code editors including Cursor, Cline, and Windsurf, plus any MCP client like Claude.ai.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/2aa6d32a-9ce6-41df-a3c7-e870eec4c576.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@PixdataOrg/coderide",
+  "security": null,
+  "tools": [
+    {
+      "name": "start_project",
+      "description": "Retrieves the project details and the prompt for the very first task of a specified project using the project's unique slug (e.g., 'CRD'). This is useful for initiating work on a new project or understanding its starting point.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_prompt",
+      "description": "Retrieves the specific instructions or prompt for a given task, identified by its unique task number (e.g., 'CRD-1'). This is typically used to understand the detailed requirements or context for an AI agent to work on the task.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "number"
+        ],
+        "properties": {
+          "number": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}-\\d+$"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_task",
+      "description": "Retrieves detailed information for a specific task using its unique task number (e.g., 'CRD-1').",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "number"
+        ],
+        "properties": {
+          "number": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}-\\d+$"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_project",
+      "description": "Retrieves detailed information about a specific project using its unique 'slug' (three uppercase letters, e.g., 'CRD').",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_projects",
+      "description": "Lists all projects in the user workspace. No input parameters required as the workspace is automatically determined from the API key authentication.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_tasks",
+      "description": "Lists all tasks within a project using the project slug (e.g., 'CDB'). Returns tasks organized by status columns with their order and current status.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$"
+          }
+        }
+      }
+    },
+    {
+      "name": "next_task",
+      "description": "Retrieves the next task in sequence based on the current task number (e.g., CDB-23 → CDB-24). This is useful for finding the next task that needs to be done in a project workflow.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "number"
+        ],
+        "properties": {
+          "number": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}-\\d+$"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_task",
+      "description": "Updates an existing task's 'description' and/or 'status'. The task is identified by its unique 'number' (e.g., 'CRD-1'). At least one of 'description' or 'status' must be provided for an update.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "number"
+        ],
+        "properties": {
+          "number": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}-\\d+$"
+          },
+          "status": {
+            "enum": [
+              "to-do",
+              "in-progress",
+              "done"
+            ],
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_project",
+      "description": "Updates a project's knowledge graph data and/or its structure diagram (in Mermaid.js format). The project is identified by its unique 'slug'. At least one of 'project_knowledge' or 'project_diagram' must be provided for an update to occur.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$"
+          },
+          "project_diagram": {
+            "type": "string"
+          },
+          "project_knowledge": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@PixdataOrg/coderide/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "CODERIDE_API_KEY"
+        ],
+        "properties": {
+          "CODERIDE_API_KEY": {
+            "type": "string",
+            "description": "CodeRide API key for authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

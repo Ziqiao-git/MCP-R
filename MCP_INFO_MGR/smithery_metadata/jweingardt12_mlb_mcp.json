@@ -1,0 +1,700 @@
+{
+  "qualifiedName": "@jweingardt12/mlb_mcp",
+  "displayName": "MLB MCP",
+  "description": "Provides easy access to MLB, Baseball Savant, Statcast, and Fangraphs baseball data. Query detailed baseball statistics by player name, team, year, and stat type to enhance your baseball analytics and applications. Integrate comprehensive baseball data seamlessly into your workflows with this FastAPI-based server.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/d6d37337-966e-4578-9947-2b9784bc57c5.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@jweingardt12/mlb_mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Implements the MCP search connector contract. Accepts a list of SearchQuery objects and\nreturns SearchResult objects that describe which MLB tools can satisfy each request.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "queries": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "fetch",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Executes the MCP search connector fetch contract. Accepts a list of result IDs and\nreturns their fully-hydrated contents.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_player_stats",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Fetch player Statcast summary stats",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_team_stats",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Fetch team batting or pitching totals for a season",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "team",
+          "year"
+        ],
+        "properties": {
+          "team": {
+            "type": "string"
+          },
+          "year": {
+            "title": "Year"
+          },
+          "stat_type": {
+            "type": "string",
+            "default": "batting"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_leaderboard",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get MLB leaderboard for a stat and season",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "stat",
+          "season"
+        ],
+        "properties": {
+          "stat": {
+            "type": "string"
+          },
+          "limit": {
+            "title": "Limit",
+            "default": 10
+          },
+          "season": {
+            "title": "Season"
+          },
+          "leaderboard_type": {
+            "type": "string",
+            "default": "batting"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "team_season_stats",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get team season averages for Statcast metrics. Optimized for fast team comparisons.\n\nArgs:\n    year: Season year (e.g., 2025)\n    stat: Metric to analyze - 'exit_velocity', 'distance', 'launch_angle', 'barrel_rate', \n          'hard_hit_rate' (95+ mph), 'sweet_spot_rate' (8-32 degree launch angle)\n    min_result_type: Filter to specific results like 'batted_ball' (all), 'home_run', 'hit' (optional)\n\nReturns:\n    JSON string of team rankings by selected metric",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "year"
+        ],
+        "properties": {
+          "stat": {
+            "type": "string",
+            "default": "exit_velocity"
+          },
+          "year": {
+            "title": "Year"
+          },
+          "min_result_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "team_pitching_stats",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get team pitching averages for Statcast metrics. Optimized for fast team pitching comparisons.\n\nArgs:\n    year: Season year (e.g., 2025)\n    stat: Metric to analyze - 'velocity', 'spin_rate', 'movement', 'whiff_rate', \n          'chase_rate', 'zone_rate', 'ground_ball_rate', 'xera' (expected ERA)\n    pitch_type: Filter to specific pitch type - 'FF' (4-seam), 'SL' (slider), 'CH' (changeup), \n               'CU' (curveball), 'SI' (sinker), 'FC' (cutter), 'FS' (splitter) (optional)\n\nReturns:\n    JSON string of team pitching rankings by selected metric",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "year"
+        ],
+        "properties": {
+          "stat": {
+            "type": "string",
+            "default": "velocity"
+          },
+          "year": {
+            "title": "Year"
+          },
+          "pitch_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "statcast_count",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Count Statcast events matching criteria. Optimized for multi-year queries like \"how many 475+ ft home runs since 2023?\"\n\nArgs:\n    start_date: Start date in YYYY-MM-DD format\n    end_date: End date in YYYY-MM-DD format\n    result_type: Type of result to count - 'home_run' (default), 'hit', 'batted_ball', or specific like 'double'\n    min_distance: Minimum distance in feet (e.g., 475 for long home runs)\n    min_exit_velocity: Minimum exit velocity in mph\n    max_distance: Maximum distance in feet\n    max_exit_velocity: Maximum exit velocity in mph\n    player_name: Filter by batter name (e.g., 'Aaron Judge', 'Mike Trout')\n    pitch_type: Filter by pitch type - 'FF' (4-seam), 'SL' (slider), 'CH' (changeup), 'CU' (curveball), 'SI' (sinker), 'FC' (cutter), 'FS' (splitter)\n\nReturns:\n    JSON with count, breakdown by year, and top examples",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "start_date",
+          "end_date"
+        ],
+        "properties": {
+          "end_date": {
+            "type": "string"
+          },
+          "pitch_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_date": {
+            "type": "string"
+          },
+          "player_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "result_type": {
+            "type": "string",
+            "default": "home_run"
+          },
+          "max_distance": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "min_distance": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "max_exit_velocity": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "min_exit_velocity": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "top_home_runs",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get top home runs by exit velocity for a given year range. Optimized for performance.\n\nArgs:\n    year_start: Starting year (default: 2023)\n    year_end: Ending year (default: current year)\n    limit: Number of results to return (default: 5)\n    min_exit_velocity: Minimum exit velocity filter in mph (optional)\n\nReturns:\n    JSON string of top home runs",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "title": "Limit",
+            "default": 5
+          },
+          "year_end": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "year_start": {
+            "title": "Year Start",
+            "default": 2023
+          },
+          "min_exit_velocity": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "statcast_leaderboard",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get event-level Statcast leaderboard for a date range with advanced filtering and sorting.\n\nSupports sorting by exit velocity, distance, pitch velocity, spin rate, expected stats, and more.\nIncludes video highlight links for each result.\n\nArgs:\n    start_date: Start date in YYYY-MM-DD format\n    end_date: End date in YYYY-MM-DD format\n    result: Filter by result type, e.g., 'home_run' (optional)\n    min_ev: Minimum exit velocity (optional)\n    min_pitch_velo: Minimum pitch velocity in mph (optional)\n    sort_by: Metric to sort by - 'exit_velocity', 'distance', 'launch_angle', 'pitch_velocity',\n            'spin_rate', 'xba', 'xwoba', 'barrel' (default: 'exit_velocity')\n    limit: Number of results to return\n    order: Sort order - 'asc' or 'desc'\n    group_by: Group results by 'team' for team-wide rankings (optional)\n    pitch_type: Filter by pitch type - 'FF' (4-seam), 'SL' (slider), 'CH' (changeup), 'CU' (curveball), 'SI' (sinker), 'FC' (cutter), 'FS' (splitter) (optional)\n    player_name: Filter by batter name (e.g., 'Aaron Judge', 'Mike Trout') (optional)\n\nReturns:\n    JSON string of statcast leaderboard",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "start_date",
+          "end_date"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 10
+          },
+          "order": {
+            "type": "string",
+            "default": "desc"
+          },
+          "min_ev": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "sort_by": {
+            "type": "string",
+            "default": "exit_velocity"
+          },
+          "end_date": {
+            "type": "string"
+          },
+          "group_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pitch_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_date": {
+            "type": "string"
+          },
+          "player_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "min_pitch_velo": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "player_statcast",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get comprehensive Statcast data for a specific player with advanced filtering.\n\nArgs:\n    player_name: Player name (e.g., 'Aaron Judge', 'Shohei Ohtani')\n    start_date: Start date in YYYY-MM-DD format (optional, defaults to current season)\n    end_date: End date in YYYY-MM-DD format (optional, defaults to current season)\n    pitch_type: Filter by pitch type - 'FF' (4-seam), 'SL' (slider), 'CH' (changeup), 'CU' (curveball), 'SI' (sinker), 'FC' (cutter), 'FS' (splitter) (optional)\n    result_type: Filter by result - 'home_run', 'hit', 'single', 'double', 'triple', 'batted_ball' (optional)\n    min_exit_velocity: Minimum exit velocity in mph (optional)\n    min_distance: Minimum distance in feet (optional)\n\nReturns:\n    JSON with player stats, counts by pitch type, and top examples",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "player_name"
+        ],
+        "properties": {
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pitch_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "player_name": {
+            "type": "string"
+          },
+          "result_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "min_distance": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "min_exit_velocity": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@jweingardt12/mlb_mcp/mcp",
+      "configSchema": {
+        "message": "No configuration schema available"
+      }
+    }
+  ]
+}

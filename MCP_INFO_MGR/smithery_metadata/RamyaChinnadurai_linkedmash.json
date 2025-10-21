@@ -1,0 +1,333 @@
+{
+  "qualifiedName": "@RamyaChinnadurai/linkedmash",
+  "displayName": "Linkedmash",
+  "description": "Enable AI assistants to manage LinkedIn bookmarks with advanced filtering, searching, and pagination capabilities. Access bookmark counts and details filtered by read status, media type, author, tags, and date ranges. Seamlessly integrate Linkedmash bookmark management into your AI workflows using this MCP service.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/linkedmash.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "list_bookmarks",
+      "description": "List bookmarks with optional filtering and pagination",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "Filter by tag"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of bookmarks to retrieve (1-100)"
+          },
+          "author": {
+            "type": "string",
+            "description": "Filter by author. Can be an exact author ID (e.g., 'urn:li:member:123') or author name/username for fuzzy search"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for next page"
+          },
+          "sort_by": {
+            "enum": [
+              "bookmarked_at",
+              "posted_at",
+              "author",
+              "title"
+            ],
+            "type": "string",
+            "default": "bookmarked_at",
+            "description": "Sort order for results"
+          },
+          "posted_to": {
+            "type": "string",
+            "description": "Filter by post posting date range (ISO date string)"
+          },
+          "media_type": {
+            "enum": [
+              "thread",
+              "media",
+              "replies",
+              "notes",
+              "links"
+            ],
+            "type": "string",
+            "description": "Filter by media type"
+          },
+          "posted_from": {
+            "type": "string",
+            "description": "Filter by post posting date range (ISO date string)"
+          },
+          "bookmarked_to": {
+            "type": "string",
+            "description": "Filter by bookmark date range (ISO date string)"
+          },
+          "hide_archived": {
+            "type": "boolean",
+            "default": true,
+            "description": "Hide archived bookmarks"
+          },
+          "is_unread_only": {
+            "type": "boolean",
+            "description": "Filter to only unread bookmarks"
+          },
+          "bookmarked_from": {
+            "type": "string",
+            "description": "Filter by bookmark date range (ISO date string)"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_bookmarks",
+      "description": "Search through a user's LinkedIn bookmarks using either keyword (text) search or semantic (meaning-based) search. Supports all list_bookmarks filters, full-text search via the q field, and semantic search via the vector_search_term field for natural language or topic-based queries.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "q"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Keyword or text search query for finding bookmarks by exact words or phrases"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Filter by tag"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of bookmarks to retrieve (1-100)"
+          },
+          "author": {
+            "type": "string",
+            "description": "Filter by author. Can be an exact author ID (e.g., 'urn:li:member:123') or author name/username for fuzzy search"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for next page"
+          },
+          "sort_by": {
+            "enum": [
+              "bookmarked_at",
+              "posted_at",
+              "author",
+              "title"
+            ],
+            "type": "string",
+            "default": "bookmarked_at",
+            "description": "Sort order for results"
+          },
+          "posted_to": {
+            "type": "string",
+            "description": "Filter by post posting date range (ISO date string)"
+          },
+          "media_type": {
+            "enum": [
+              "thread",
+              "media",
+              "replies",
+              "notes",
+              "links"
+            ],
+            "type": "string",
+            "description": "Filter by media type"
+          },
+          "posted_from": {
+            "type": "string",
+            "description": "Filter by post posting date range (ISO date string)"
+          },
+          "bookmarked_to": {
+            "type": "string",
+            "description": "Filter by bookmark date range (ISO date string)"
+          },
+          "hide_archived": {
+            "type": "boolean",
+            "default": true,
+            "description": "Hide archived bookmarks"
+          },
+          "is_unread_only": {
+            "type": "boolean",
+            "description": "Filter to only unread bookmarks"
+          },
+          "bookmarked_from": {
+            "type": "string",
+            "description": "Filter by bookmark date range (ISO date string)"
+          },
+          "vector_search_term": {
+            "type": "string",
+            "description": "Semantic search query for retrieving bookmarks based on meaning and context, not just keywords. Use for natural language questions or topic-based searches."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_bookmark_count",
+      "description": "Get the total count of bookmarks with optional filtering",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "Filter by tag"
+          },
+          "author": {
+            "type": "string",
+            "description": "Filter by author. Can be an exact author ID (e.g., 'urn:li:member:123') or author name/username for fuzzy search"
+          },
+          "posted_to": {
+            "type": "string",
+            "description": "Filter by post posting date range (ISO date string)"
+          },
+          "media_type": {
+            "enum": [
+              "thread",
+              "media",
+              "replies",
+              "notes",
+              "links"
+            ],
+            "type": "string",
+            "description": "Filter by media type"
+          },
+          "posted_from": {
+            "type": "string",
+            "description": "Filter by post posting date range (ISO date string)"
+          },
+          "bookmarked_to": {
+            "type": "string",
+            "description": "Filter by bookmark date range (ISO date string)"
+          },
+          "hide_archived": {
+            "type": "boolean",
+            "default": true,
+            "description": "Hide archived bookmarks"
+          },
+          "is_unread_only": {
+            "type": "boolean",
+            "description": "Filter to only unread bookmarks"
+          },
+          "bookmarked_from": {
+            "type": "string",
+            "description": "Filter by bookmark date range (ISO date string)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_labels",
+      "description": "List all user's labels/tags",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "add_labels",
+      "description": "Add labels to bookmarked posts",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "label_id"
+            ]
+          },
+          {
+            "required": [
+              "label_name"
+            ]
+          }
+        ],
+        "required": [
+          "post_ids"
+        ],
+        "properties": {
+          "label_id": {
+            "type": "string",
+            "description": "ID of the existing label to add (use either label_id or label_name)"
+          },
+          "post_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "Array of post IDs to add labels to"
+          },
+          "label_name": {
+            "type": "string",
+            "description": "Name of the label to add (will create if doesn't exist, use either label_id or label_name)"
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_labels",
+      "description": "Remove labels from bookmarked posts",
+      "inputSchema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "label_id"
+            ]
+          },
+          {
+            "required": [
+              "label_name"
+            ]
+          }
+        ],
+        "required": [
+          "post_ids"
+        ],
+        "properties": {
+          "label_id": {
+            "type": "string",
+            "description": "ID of the label to remove (use either label_id or label_name)"
+          },
+          "post_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "Array of post IDs to remove labels from"
+          },
+          "label_name": {
+            "type": "string",
+            "description": "Name of the label to remove (use either label_id or label_name)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@RamyaChinnadurai/linkedmash/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "LINKEDMASH_API_KEY"
+        ],
+        "properties": {
+          "LINKEDMASH_API_KEY": {
+            "type": "string",
+            "description": "The API key from https://linkedmash.com/integrations/api"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "qualifiedName": "@pythondev-pro/egw_writings_mcp_server",
+  "displayName": "EGH Research",
+  "description": "Explore Ellen Gould Harmon's writings offline with fast full-text search and contextual navigation. Generate formatted PDFs and browse books by reference and metadata. Keep your study private with local-only operation.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@pythondev-pro/egw_writings_mcp_server",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_local",
+      "description": "Search the local EGW writings database",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Maximum results (default: 20)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_local_book",
+      "description": "Get information about a specific book",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bookId"
+        ],
+        "properties": {
+          "bookId": {
+            "type": "number",
+            "description": "Book ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_local_content",
+      "description": "Get content from a specific book",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "bookId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum paragraphs (default: 50)"
+          },
+          "bookId": {
+            "type": "number",
+            "description": "Book ID"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination (default: 0)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_local_books",
+      "description": "List all available books",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum books (default: 50)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_database_stats",
+      "description": "Get database statistics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@pythondev-pro/egw_writings_mcp_server/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

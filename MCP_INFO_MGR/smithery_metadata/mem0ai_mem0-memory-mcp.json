@@ -1,0 +1,85 @@
+{
+  "qualifiedName": "@mem0ai/mem0-memory-mcp",
+  "displayName": "Memory Tool",
+  "description": "Store and retrieve user-specific memories to maintain context and make informed decisions based on past interactions. Utilize a simple API to add and search memories with relevance scoring, enhancing your application's ability to remember user preferences and interactions.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/app.mem0.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@mem0ai/mem0-memory-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "add-memory",
+      "description": "Add a new memory about the user. Call this whenever the user shares preferences, facts about themselves, or explicitly asks you to remember something.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User ID for memory storage. If omitted, uses config.defaultUserId."
+          },
+          "content": {
+            "type": "string",
+            "description": "The content to store in memory"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-memories",
+      "description": "Search through stored memories. Call this whenever you need to recall prior information relevant to the user query.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query, typically derived from the user's current question."
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID for memory storage. If omitted, uses config.defaultUserId."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@mem0ai/mem0-memory-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "mem0ApiKey"
+        ],
+        "properties": {
+          "mem0ApiKey": {
+            "type": "string",
+            "description": "Mem0 API key. Defaults to MEM0_API_KEY env var if not provided."
+          },
+          "defaultUserId": {
+            "type": "string",
+            "default": "mem0-mcp-user",
+            "description": "Default user ID when not provided in tool input"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

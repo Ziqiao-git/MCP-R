@@ -1,0 +1,127 @@
+{
+  "qualifiedName": "@letta-ai/memory-mcp",
+  "displayName": "Memory MCP ",
+  "description": "Add MemGPT-style tools to any agent with Letta's memory MCP. With this server, your agent will be able to remember you across sessions, and form personalized memories about you as well as the interactions you have. \n\nTo use this MCP server, you must provide a Letta API key as well as a unique `user_id` field (defaults to \"default_user_Id\") for associating memories with. \n\nThe server has two main types of memory: user memory, used to build a memory profile of the user over time, and a vector DB, used to store and search episodic memories. ",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/94b4f29d-db2e-4ce7-bfe9-8800cdbaa2c1.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@letta-ai/memory-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "add_vector_memory",
+      "title": "Add Vector Memory",
+      "description": "Add episodic memories into your vector store to be searchable at a later time. These memories are NOT part of your memory about the user, and will be stored in a vector DB until retrieved explicitly with the vector search tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "memory"
+        ],
+        "properties": {
+          "memory": {
+            "type": "string",
+            "description": "Episodic memory string to store in the vector DB"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_vector_memory",
+      "title": "Search Vector Memory",
+      "description": "Search your vector store for relevant episodic memories to inform the current conversation. This can be used to retrieve information that is not currently in your conversation or context.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Query to search for in the vector DB"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_memory",
+      "title": "Get Memory",
+      "description": "Get a summary of the memories you have about the user you are currently interacting with. You should call this tool at the beginning of the conversation, since you will always start with an empty session that does not include previous interactions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory_append",
+      "title": "Memory Append",
+      "description": "Append to the memory you have about the user you are currently interacting with.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "memory_str"
+        ],
+        "properties": {
+          "memory_str": {
+            "type": "string",
+            "description": "Memory string to append to the memory you have about the user."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory_replace",
+      "title": "Memory Replace",
+      "description": "Replace the memory you have about the user you are currently interacting with.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "old_memory_str",
+          "new_memory_str"
+        ],
+        "properties": {
+          "new_memory_str": {
+            "type": "string",
+            "description": "New memory string to replace with."
+          },
+          "old_memory_str": {
+            "type": "string",
+            "description": "Previous memory string to replace."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@letta-ai/memory-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "api_key"
+        ],
+        "properties": {
+          "api_key": {
+            "type": "string",
+            "description": "Letta API key for memory operations"
+          },
+          "user_id": {
+            "type": "string",
+            "default": "default_user_id",
+            "description": "Unique user identifier for associated memories"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

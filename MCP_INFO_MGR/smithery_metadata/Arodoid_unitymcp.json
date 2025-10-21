@@ -1,0 +1,261 @@
+{
+  "qualifiedName": "@Arodoid/unitymcp",
+  "displayName": "UnityMCP",
+  "description": "Integrate AI assistants seamlessly into your Unity projects. Monitor editor states, execute commands in real-time, and manage logs efficiently to enhance your development workflow.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_editor_state",
+      "tags": [
+        "unity",
+        "editor",
+        "state",
+        "hierarchy",
+        "project"
+      ],
+      "returns": {
+        "type": "object",
+        "format": "The response format varies based on the format parameter:\n- Raw: Full UnityEditorState object\n- scripts only: Array of script file paths\n- no scripts: UnityEditorState minus script-related fields",
+        "description": "Returns a JSON object containing the requested editor state information"
+      },
+      "category": "Editor State",
+      "examples": [
+        {
+          "input": {},
+          "output": "{ \"activeGameObjects\": [\"Main Camera\", \"Directional Light\"], ... }",
+          "description": "Get complete editor state"
+        },
+        {
+          "input": {
+            "format": "scripts only"
+          },
+          "output": "[\"Assets/Scripts/Player.cs\", \"Assets/Scripts/Enemy.cs\"]",
+          "description": "Get only script files"
+        }
+      ],
+      "description": "Retrieve the current state of the Unity Editor, including active GameObjects, selection state, play mode status, scene hierarchy, and project structure. This tool provides a comprehensive snapshot of the editor's current context.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "enum": [
+              "Raw",
+              "scripts only",
+              "no scripts"
+            ],
+            "type": "string",
+            "default": "Raw",
+            "description": "Specify the output format:\n- Raw: Complete editor state including all available data\n- scripts only: Returns only the list of script files in the project\n- no scripts: Returns everything except script-related information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_editor_command",
+      "tags": [
+        "unity",
+        "editor",
+        "command",
+        "c#",
+        "scripting"
+      ],
+      "returns": {
+        "type": "object",
+        "format": "JSON object containing \"result\" and \"logs\" fields",
+        "description": "Returns the execution result and any logs generated during execution"
+      },
+      "category": "Editor Control",
+      "examples": [
+        {
+          "input": {
+            "code": "var selected = Selection.activeGameObject; if(selected != null) { selected.transform.position = Vector3.zero; }"
+          },
+          "output": "{ \"result\": true, \"logs\": [\"[UnityMCP] Command executed successfully\"] }",
+          "description": "Center selected object"
+        }
+      ],
+      "description": "Execute arbitrary C# code within the Unity Editor context. This powerful tool allows for direct manipulation of the Unity Editor, GameObjects, components, and project assets using the Unity Editor API.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "examples": [
+              "Selection.activeGameObject.transform.position = Vector3.zero;",
+              "EditorApplication.isPlaying = !EditorApplication.isPlaying;"
+            ],
+            "minLength": 1,
+            "description": "C# code to execute in the Unity Editor context. The code has access to all UnityEditor and UnityEngine APIs."
+          }
+        },
+        "additionalProperties": false
+      },
+      "errorHandling": {
+        "scenarios": [
+          {
+            "error": "Compilation error",
+            "handling": "Returns compilation error details in logs"
+          },
+          {
+            "error": "Runtime exception",
+            "handling": "Returns exception details and stack trace"
+          },
+          {
+            "error": "Timeout",
+            "handling": "Command execution timeout after 5 seconds"
+          }
+        ],
+        "description": "Common error scenarios and their handling:"
+      }
+    },
+    {
+      "name": "get_logs",
+      "tags": [
+        "unity",
+        "editor",
+        "logs",
+        "debugging",
+        "console"
+      ],
+      "returns": {
+        "type": "array",
+        "format": "Array of objects containing requested log entry fields",
+        "description": "Returns an array of log entries matching the specified filters"
+      },
+      "category": "Debugging",
+      "examples": [
+        {
+          "input": {
+            "count": 10,
+            "types": [
+              "Error",
+              "Exception"
+            ],
+            "fields": [
+              "message",
+              "timestamp"
+            ]
+          },
+          "output": "[{\"message\": \"NullReferenceException\", \"timestamp\": \"2024-01-14T12:00:00Z\"}, ...]",
+          "description": "Get recent error logs"
+        },
+        {
+          "input": {
+            "fields": [
+              "message",
+              "logType"
+            ],
+            "messageContains": "Player"
+          },
+          "output": "[{\"message\": \"Player position updated\", \"logType\": \"Log\"}, ...]",
+          "description": "Search logs for specific message"
+        }
+      ],
+      "description": "Retrieve and filter Unity Editor logs with comprehensive filtering options. This tool provides access to editor logs, console messages, warnings, errors, and exceptions with powerful filtering capabilities.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number",
+            "default": 100,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of log entries to return"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Log",
+                "Warning",
+                "Error",
+                "Exception"
+              ],
+              "type": "string",
+              "description": "Log entry types to include"
+            },
+            "examples": [
+              [
+                "Error",
+                "Exception"
+              ],
+              [
+                "Log",
+                "Warning"
+              ]
+            ],
+            "description": "Filter logs by type. If not specified, all types are included."
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "message",
+                "stackTrace",
+                "logType",
+                "timestamp"
+              ],
+              "type": "string"
+            },
+            "examples": [
+              [
+                "message",
+                "logType"
+              ],
+              [
+                "message",
+                "stackTrace",
+                "timestamp"
+              ]
+            ],
+            "description": "Specify which fields to include in the output. If not specified, all fields are included."
+          },
+          "timestampAfter": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-14T00:00:00Z",
+            "description": "Filter logs after this ISO timestamp (inclusive)"
+          },
+          "messageContains": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Filter logs to only include entries where the message contains this string (case-sensitive)"
+          },
+          "timestampBefore": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-14T23:59:59Z",
+            "description": "Filter logs before this ISO timestamp (inclusive)"
+          },
+          "stackTraceContains": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Filter logs to only include entries where the stack trace contains this string (case-sensitive)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Arodoid/unitymcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

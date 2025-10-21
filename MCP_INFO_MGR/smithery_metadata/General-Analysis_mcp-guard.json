@@ -1,0 +1,111 @@
+{
+  "qualifiedName": "@General-Analysis/mcp-guard",
+  "displayName": "MCP Guardrail",
+  "description": "Add AI-powered security and moderation to your MCP setup by aggregating multiple MCP servers into a single secure interface. Prevent prompt injection attacks with intelligent moderation and easily configure your MCP environment with automatic detection and updates. Support both local and remote MCP servers transparently for enhanced safety and convenience.\n\nInstall the MCP Guard with 3 commands. Check out set up instructions: https://github.com/General-Analysis/mcp-guard",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/d1bf3bd2-e0bb-41c7-b117-1f5d64ba527b.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@General-Analysis/mcp-guard",
+  "security": null,
+  "tools": [
+    {
+      "name": "mcp_guard_status",
+      "title": "MCP Guard Status",
+      "description": "Get the current status of the MCP Guard, including connected servers and moderation state",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@General-Analysis/mcp-guard/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "API key for General Analysis moderation service. Required when enableGuardApi is true. Can also be set via API_KEY environment variable."
+          },
+          "servers": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "command"
+                  ],
+                  "properties": {
+                    "env": {
+                      "type": "object",
+                      "default": {},
+                      "description": "Environment variables to set when launching the server",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "args": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "default": [],
+                      "description": "Array of command line arguments to pass to the server command"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Unique name for this server. Will be used as a prefix for all tools, prompts, and resources from this server."
+                    },
+                    "command": {
+                      "type": "string",
+                      "description": "Command to execute the MCP server (e.g., 'npx', 'python', 'node')"
+                    }
+                  },
+                  "description": "Configuration for a local MCP server that runs as a subprocess via stdio transport",
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "url"
+                  ],
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "description": "URL of the remote MCP server (supports both HTTP streaming and SSE transports)"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Unique name for this server. Will be used as a prefix for all tools, prompts, and resources from this server."
+                    }
+                  },
+                  "description": "Configuration for a remote MCP server accessible via HTTP",
+                  "additionalProperties": false
+                }
+              ],
+              "description": "MCP server configuration - can be either a local stdio server or a remote HTTP server"
+            },
+            "default": [],
+            "description": "Array of MCP server configurations to aggregate. Each server can be either a local server (with command and args) or a remote server (with URL)."
+          },
+          "enableGuardApi": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable AI-powered moderation for tool outputs to prevent prompt injection attacks. Requires a valid apiKey."
+          }
+        },
+        "description": "Configuration for MCP Guard - a security layer that aggregates multiple MCP servers with optional AI-powered moderation",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

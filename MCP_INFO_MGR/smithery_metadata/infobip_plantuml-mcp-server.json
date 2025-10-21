@@ -1,0 +1,82 @@
+{
+  "qualifiedName": "@infobip/plantuml-mcp-server",
+  "displayName": "PlantUML Diagrams",
+  "description": "Create PlantUML diagrams with automatic syntax validation and auto-fix suggestions. Get embeddable image URLs for valid diagrams and structured feedback to resolve issues. Encode or decode PlantUML code for easy URL sharing.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@infobip/plantuml-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "generate_plantuml_diagram",
+      "description": "Generate a PlantUML diagram with automatic syntax validation and error reporting for auto-fix workflows. Returns embeddable image URLs for valid diagrams or structured error details for invalid syntax that can be automatically corrected.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "plantuml_code"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "svg",
+              "png"
+            ],
+            "type": "string",
+            "default": "svg",
+            "description": "Output image format (SVG or PNG)"
+          },
+          "plantuml_code": {
+            "type": "string",
+            "description": "PlantUML diagram code. Will be automatically validated for syntax errors before generating the diagram URL."
+          }
+        }
+      }
+    },
+    {
+      "name": "encode_plantuml",
+      "description": "Encode PlantUML code for URL usage",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "plantuml_code"
+        ],
+        "properties": {
+          "plantuml_code": {
+            "type": "string",
+            "description": "PlantUML diagram code to encode"
+          }
+        }
+      }
+    },
+    {
+      "name": "decode_plantuml",
+      "description": "Decode encoded PlantUML string back to PlantUML code",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "encoded_string"
+        ],
+        "properties": {
+          "encoded_string": {
+            "type": "string",
+            "description": "Encoded PlantUML string to decode"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@infobip/plantuml-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

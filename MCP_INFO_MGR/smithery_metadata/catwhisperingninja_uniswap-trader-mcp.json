@@ -1,0 +1,134 @@
+{
+  "qualifiedName": "@catwhisperingninja/uniswap-trader-mcp",
+  "displayName": "Uniswap Trader",
+  "description": "Get real-time quotes for Uniswap token swaps. Execute trades with optimal routing to improve price and reduce slippage. Receive swap suggestions for your chosen tokens.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@catwhisperingninja/uniswap-trader-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "getPrice",
+      "description": "Get a price quote for a Uniswap swap, supporting multi-hop routes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenIn",
+          "tokenOut"
+        ],
+        "properties": {
+          "chainId": {
+            "type": "number",
+            "default": 1,
+            "description": "Chain ID (1: Ethereum, 10: Optimism, 137: Polygon, 42161: Arbitrum, 42220: Celo, 56: BNB Chain, 43114: Avalanche, 8453: Base)"
+          },
+          "tokenIn": {
+            "type": "string",
+            "description": "Input token address ('NATIVE' for native token like ETH)"
+          },
+          "amountIn": {
+            "type": "string",
+            "description": "Exact input amount (required for exactIn trades)"
+          },
+          "tokenOut": {
+            "type": "string",
+            "description": "Output token address ('NATIVE' for native token like ETH)"
+          },
+          "amountOut": {
+            "type": "string",
+            "description": "Exact output amount (required for exactOut trades)"
+          },
+          "tradeType": {
+            "enum": [
+              "exactIn",
+              "exactOut"
+            ],
+            "type": "string",
+            "default": "exactIn",
+            "description": "Trade type: exactIn requires amountIn, exactOut requires amountOut"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "executeSwap",
+      "description": "Execute a swap on Uniswap with optimal multi-hop routing",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenIn",
+          "tokenOut"
+        ],
+        "properties": {
+          "chainId": {
+            "type": "number",
+            "default": 1,
+            "description": "Chain ID (1: Ethereum, 10: Optimism, 137: Polygon, 42161: Arbitrum, 42220: Celo, 56: BNB Chain, 43114: Avalanche, 8453: Base)"
+          },
+          "tokenIn": {
+            "type": "string",
+            "description": "Input token address ('NATIVE' for native token like ETH)"
+          },
+          "amountIn": {
+            "type": "string",
+            "description": "Exact input amount (required for exactIn trades)"
+          },
+          "deadline": {
+            "type": "number",
+            "default": 20,
+            "description": "Transaction deadline in minutes"
+          },
+          "tokenOut": {
+            "type": "string",
+            "description": "Output token address ('NATIVE' for native token like ETH)"
+          },
+          "amountOut": {
+            "type": "string",
+            "description": "Exact output amount (required for exactOut trades)"
+          },
+          "tradeType": {
+            "enum": [
+              "exactIn",
+              "exactOut"
+            ],
+            "type": "string",
+            "default": "exactIn",
+            "description": "Trade type: exactIn requires amountIn, exactOut requires amountOut"
+          },
+          "slippageTolerance": {
+            "type": "number",
+            "default": 0.5,
+            "description": "Slippage tolerance in percentage"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@catwhisperingninja/uniswap-trader-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "infuraKey",
+          "walletPrivateKey"
+        ],
+        "properties": {
+          "infuraKey": {
+            "type": "string",
+            "description": "Infura API key for RPC endpoints"
+          },
+          "walletPrivateKey": {
+            "type": "string",
+            "description": "Private key of the wallet for executing swaps"
+          }
+        }
+      }
+    }
+  ]
+}

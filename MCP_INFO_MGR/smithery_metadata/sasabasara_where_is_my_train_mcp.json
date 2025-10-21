@@ -1,0 +1,260 @@
+{
+  "qualifiedName": "@sasabasara/where_is_my_train_mcp",
+  "displayName": "Where's my train? MTA Guide",
+  "description": "Real-time NYC subway intel at your fingertips: stations, arrivals, service alerts, and route planning. \n\nWhy Use It\n\nYou’re in your AI-powered IDE, mid-flow, when that little voice in your head goes: “Wait… is my train even running?” Instead of doom-scrolling Twitter or refreshing three different apps, just ask this MCP. Live trains and service alerts, right when you need them.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/4c047436-5374-4f8e-a20b-f96562d37663.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@sasabasara/where_is_my_train_mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "find_station",
+      "title": "Find Station",
+      "description": "Advanced station search with fuzzy matching, accessibility info, and nearby amenities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Station name or partial name to search for"
+          },
+          "include_amenities": {
+            "type": "boolean",
+            "description": "Include nearby amenities like restrooms, WiFi"
+          },
+          "include_accessibility": {
+            "type": "boolean",
+            "description": "Include wheelchair accessibility information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "next_trains",
+      "title": "Next Trains",
+      "description": "Real-time train arrivals with delay predictions, crowding levels, and service alerts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "station"
+        ],
+        "properties": {
+          "line": {
+            "type": "string",
+            "description": "Filter by specific train line"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of arrivals to return"
+          },
+          "station": {
+            "type": "string",
+            "description": "Station name to get arrivals for"
+          },
+          "direction": {
+            "enum": [
+              "uptown",
+              "downtown",
+              "manhattan",
+              "brooklyn",
+              "queens",
+              "bronx"
+            ],
+            "type": "string",
+            "description": "Filter by direction"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_status",
+      "title": "Service Status",
+      "description": "Comprehensive service status with performance metrics, on-time rates, and system-wide health indicators",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "line": {
+            "type": "string",
+            "description": "Filter by specific train line"
+          },
+          "time_range": {
+            "enum": [
+              "current",
+              "today",
+              "week"
+            ],
+            "type": "string",
+            "description": "Time range for status information"
+          },
+          "include_metrics": {
+            "type": "boolean",
+            "description": "Include performance metrics like on-time percentage"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "subway_alerts",
+      "title": "Subway Alerts",
+      "description": "Detailed service alerts with impact analysis, affected stations, and estimated resolution times",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "line": {
+            "type": "string",
+            "description": "Filter alerts by specific train line"
+          },
+          "category": {
+            "enum": [
+              "ALL",
+              "DELAYS",
+              "SUSPENSIONS",
+              "REROUTES",
+              "PLANNED_WORK",
+              "ACCESSIBILITY"
+            ],
+            "type": "string",
+            "description": "Filter by alert category"
+          },
+          "severity": {
+            "enum": [
+              "ALL",
+              "CRITICAL",
+              "MAJOR",
+              "MINOR",
+              "PLANNED"
+            ],
+            "type": "string",
+            "description": "Filter by alert severity"
+          },
+          "active_only": {
+            "type": "boolean",
+            "description": "Show only currently active alerts"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "station_transfers",
+      "title": "Station Transfers",
+      "description": "Find all train line transfer options at a specific subway station",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "station"
+        ],
+        "properties": {
+          "station": {
+            "type": "string",
+            "description": "Station name to find transfers for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nearest_station",
+      "title": "Nearest Station",
+      "description": "Find closest subway stations with walking directions, accessibility info, and real-time service status",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "Latitude coordinate"
+          },
+          "lon": {
+            "type": "number",
+            "description": "Longitude coordinate"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of stations to return"
+          },
+          "radius": {
+            "type": "number",
+            "description": "Search radius in meters"
+          },
+          "location": {
+            "type": "string",
+            "description": "Address, landmark, or neighborhood"
+          },
+          "service_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Only return stations served by specific lines"
+          },
+          "accessible_only": {
+            "type": "boolean",
+            "description": "Return only wheelchair accessible stations"
+          },
+          "include_walking_directions": {
+            "type": "boolean",
+            "description": "Include basic walking directions to stations"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "service_disruptions",
+      "title": "Service Disruptions",
+      "description": "Get comprehensive service disruption information with impact analysis, alternative routes, and estimated resolution times",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "line": {
+            "type": "string",
+            "description": "Filter by specific train line"
+          },
+          "location": {
+            "type": "string",
+            "description": "Filter disruptions affecting a specific area or station"
+          },
+          "severity": {
+            "enum": [
+              "ALL",
+              "CRITICAL",
+              "MAJOR",
+              "MINOR"
+            ],
+            "type": "string",
+            "description": "Filter by disruption severity"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@sasabasara/where_is_my_train_mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

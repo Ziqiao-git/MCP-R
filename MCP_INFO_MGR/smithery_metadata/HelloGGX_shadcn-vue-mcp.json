@@ -1,0 +1,162 @@
+{
+  "qualifiedName": "@HelloGGX/shadcn-vue-mcp",
+  "displayName": "Shadcn Vue MCP Server",
+  "description": "Shadcn-vue MCP Server is a powerful AI-driven tool that helps developers instantly create beautiful, modern UI components through natural language descriptions. It integrates the shadcn-vue component library and tailwindcss, seamlessly connects with mainstream IDEs, and provides a streamlined UI development workflow.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/15199cbd-61a1-4766-bc69-e6c978f4c912.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@HelloGGX/shadcn-vue-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "requirement-structuring",
+      "description": "analyze the user's natural language and structure the requirements into a clear and structured component requirement document. Use this tool when the user requests a new UI component—e.g., mentions /ui, or asks for a button, input, dialog, table, form, banner, card, or other Vue component",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Content about user requirement in specific contextual information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "components-filter",
+      "description": "filter components with shadcn/ui components and tailwindcss, Use this tool when mentions /filter",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "requirement json from requirement-structuring tool"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "component-usage-doc",
+      "description": "read usage doc of a component， Use this tool when mentions /doc.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name of the component in lowercase"
+          },
+          "type": {
+            "enum": [
+              "components",
+              "charts"
+            ],
+            "type": "string",
+            "description": "type of the component"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "component-builder",
+      "description": "Retrieve documentation for all filtered components and charts to prepare for component generation, This tool ONLY returns the text snippet for that UI component. After calling this tool, you must edit or add files to integrate the snippet into the codebase.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "components",
+          "charts"
+        ],
+        "properties": {
+          "icon": {
+            "enum": [
+              "@nuxt/icon",
+              "lucide"
+            ],
+            "type": "string",
+            "default": "lucide",
+            "description": "icon module of the component"
+          },
+          "charts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/components/items"
+            },
+            "description": "charts from components-filter tool"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "necessity",
+                "justification"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "necessity": {
+                  "enum": [
+                    "critical",
+                    "important",
+                    "optional"
+                  ],
+                  "type": "string"
+                },
+                "justification": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "components from components-filter tool"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "component-quality-check",
+      "description": "Automatically check Vue component quality and provide detailed feedback. Use this tool when you need to validate component quality, accessibility, performance, and best practices compliance. or when mentions /check.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "componentCode"
+        ],
+        "properties": {
+          "componentCode": {
+            "type": "string",
+            "description": "code of the component from component-builder tool"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@HelloGGX/shadcn-vue-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "description": "Empty configuration"
+      }
+    }
+  ]
+}

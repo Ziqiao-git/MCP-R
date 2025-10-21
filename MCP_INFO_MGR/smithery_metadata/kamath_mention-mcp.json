@@ -1,0 +1,64 @@
+{
+  "qualifiedName": "@kamath/mention-mcp",
+  "displayName": "#docs",
+  "description": "A documentation MCP server, such that you can ask a question like:\n\n- \"How do I use #stagehand to create a computer use agent?\"\n- \"How do I write a client component using #aisdk and the useChat hook?\"",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@kamath/mention-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "hashtag_mention",
+      "description": "If a user says something like #{page}, like #aisdk, call this tool with the #'d value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "page"
+        ],
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "The mentioned page WITHOUT the #"
+          },
+          "query": {
+            "type": "string",
+            "description": "Something about the page that a user might be specifically asking for. Leave null to get the full context (might be very long)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_docs_servers",
+      "description": "List all available documentation servers and their corresponding URLs, if a user asks for what documentation servers are available, call this tool",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@kamath/mention-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

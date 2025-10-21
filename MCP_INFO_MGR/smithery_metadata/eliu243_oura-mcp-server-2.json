@@ -1,0 +1,243 @@
+{
+  "qualifiedName": "@eliu243/oura-mcp-server-2",
+  "displayName": "Oura Ring Connect",
+  "description": "Connect your Oura Ring account for secure access to your data. Generate an authorization link and complete the sign-in flow to link your account. Streamline authentication for workflows that use Oura insights.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@eliu243/oura-mcp-server-2",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_auth_url",
+      "description": "Get OAuth2 authorization URL to connect your Oura Ring account.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_auth_urlArguments",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": "personal daily"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_auth_urlOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "exchange_code",
+      "description": "Exchange authorization code for access token.",
+      "inputSchema": {
+        "type": "object",
+        "title": "exchange_codeArguments",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "exchange_codeOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "parse_redirect_url",
+      "description": "Parse OAuth2 redirect URL and automatically extract token/code.",
+      "inputSchema": {
+        "type": "object",
+        "title": "parse_redirect_urlArguments",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "parse_redirect_urlOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "set_access_token",
+      "description": "Manually set the access token in session configuration.",
+      "inputSchema": {
+        "type": "object",
+        "title": "set_access_tokenArguments",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "set_access_tokenOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_sleep_last_night",
+      "description": "Get sleep data from last night.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_sleep_last_nightArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_sleep_last_nightOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_sleep_last_week",
+      "description": "Get sleep data from the past week.",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_sleep_last_weekArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_sleep_last_weekOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_sleep_by_date",
+      "description": "Get sleep data for a specific date (YYYY-MM-DD format).",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_sleep_by_dateArguments",
+        "required": [
+          "date"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "title": "Date"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_sleep_by_dateOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@eliu243/oura-mcp-server-2/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "ConfigSchema",
+        "required": [
+          "client_id",
+          "client_secret"
+        ],
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "title": "Client Id",
+            "description": "Oura API client ID"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "default": "",
+            "description": "Oura API access token"
+          },
+          "redirect_uri": {
+            "type": "string",
+            "title": "Redirect Uri",
+            "default": "http://localhost:8080/callback",
+            "description": "OAuth2 redirect URI"
+          },
+          "client_secret": {
+            "type": "string",
+            "title": "Client Secret",
+            "description": "Oura API client secret"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

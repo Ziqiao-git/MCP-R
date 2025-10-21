@@ -1,0 +1,434 @@
+{
+  "qualifiedName": "@hjsh200219/fortuneteller",
+  "displayName": "Saju Insights",
+  "description": "Discover personalized Four Pillars (Saju) readings, from daily to yearly fortunes and 10-year luck cycles, based on your birth data. Check relationship compatibility and receive Yongshin-driven guidance with practical tips on colors, directions, and careers. Convert between lunar and solar calendars and tailor interpretations across different schools.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@hjsh200219/fortuneteller",
+  "security": null,
+  "tools": [
+    {
+      "name": "analyze_saju",
+      "description": "사주 분석 통합 (basic/fortune/yongsin/school_compare/yongsin_method)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "birthDate",
+          "birthTime",
+          "gender",
+          "analysisType"
+        ],
+        "properties": {
+          "gender": {
+            "enum": [
+              "male",
+              "female"
+            ],
+            "type": "string"
+          },
+          "method": {
+            "enum": [
+              "strength",
+              "seasonal",
+              "mediation",
+              "disease"
+            ],
+            "type": "string",
+            "description": "yongsin_method용 (strength/seasonal/mediation/disease)"
+          },
+          "schools": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "ziping",
+                "dts",
+                "qtbj",
+                "modern",
+                "shensha"
+              ],
+              "type": "string"
+            },
+            "description": "school_compare용"
+          },
+          "calendar": {
+            "enum": [
+              "solar",
+              "lunar"
+            ],
+            "type": "string",
+            "default": "solar"
+          },
+          "birthDate": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "birthTime": {
+            "type": "string",
+            "description": "HH:mm"
+          },
+          "fortuneType": {
+            "enum": [
+              "general",
+              "career",
+              "wealth",
+              "health",
+              "love"
+            ],
+            "type": "string",
+            "description": "fortune용 (general/career/wealth/health/love)"
+          },
+          "isLeapMonth": {
+            "type": "boolean",
+            "default": false
+          },
+          "analysisType": {
+            "enum": [
+              "basic",
+              "fortune",
+              "yongsin",
+              "school_compare",
+              "yongsin_method"
+            ],
+            "type": "string",
+            "description": "basic:사주계산 | fortune:운세 | yongsin:용신 | school_compare:유파비교 | yongsin_method:용신방법론"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_compatibility",
+      "description": "두 사람 궁합 분석",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "person1",
+          "person2"
+        ],
+        "properties": {
+          "person1": {
+            "type": "object",
+            "required": [
+              "birthDate",
+              "birthTime",
+              "gender"
+            ],
+            "properties": {
+              "gender": {
+                "enum": [
+                  "male",
+                  "female"
+                ],
+                "type": "string"
+              },
+              "calendar": {
+                "enum": [
+                  "solar",
+                  "lunar"
+                ],
+                "type": "string",
+                "default": "solar"
+              },
+              "birthDate": {
+                "type": "string"
+              },
+              "birthTime": {
+                "type": "string"
+              },
+              "isLeapMonth": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          },
+          "person2": {
+            "type": "object",
+            "required": [
+              "birthDate",
+              "birthTime",
+              "gender"
+            ],
+            "properties": {
+              "gender": {
+                "enum": [
+                  "male",
+                  "female"
+                ],
+                "type": "string"
+              },
+              "calendar": {
+                "enum": [
+                  "solar",
+                  "lunar"
+                ],
+                "type": "string",
+                "default": "solar"
+              },
+              "birthDate": {
+                "type": "string"
+              },
+              "birthTime": {
+                "type": "string"
+              },
+              "isLeapMonth": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "convert_calendar",
+      "description": "양력↔음력 변환",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "date",
+          "fromCalendar",
+          "toCalendar"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "toCalendar": {
+            "enum": [
+              "solar",
+              "lunar"
+            ],
+            "type": "string"
+          },
+          "isLeapMonth": {
+            "type": "boolean",
+            "default": false
+          },
+          "fromCalendar": {
+            "enum": [
+              "solar",
+              "lunar"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_daily_fortune",
+      "description": "일일 운세",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "birthDate",
+          "birthTime",
+          "gender",
+          "targetDate"
+        ],
+        "properties": {
+          "gender": {
+            "enum": [
+              "male",
+              "female"
+            ],
+            "type": "string"
+          },
+          "calendar": {
+            "enum": [
+              "solar",
+              "lunar"
+            ],
+            "type": "string",
+            "default": "solar"
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "birthTime": {
+            "type": "string"
+          },
+          "targetDate": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "isLeapMonth": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    },
+    {
+      "name": "get_dae_un",
+      "description": "10년 대운",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "birthDate",
+          "birthTime",
+          "gender"
+        ],
+        "properties": {
+          "gender": {
+            "enum": [
+              "male",
+              "female"
+            ],
+            "type": "string"
+          },
+          "calendar": {
+            "enum": [
+              "solar",
+              "lunar"
+            ],
+            "type": "string",
+            "default": "solar"
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "birthTime": {
+            "type": "string"
+          },
+          "isLeapMonth": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    },
+    {
+      "name": "get_fortune_by_period",
+      "description": "시간대별 운세 (year/month/hour/multi-year)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "birthDate",
+          "birthTime",
+          "gender",
+          "periodType"
+        ],
+        "properties": {
+          "count": {
+            "type": "number",
+            "default": 5,
+            "description": "multi-year용"
+          },
+          "gender": {
+            "enum": [
+              "male",
+              "female"
+            ],
+            "type": "string"
+          },
+          "target": {
+            "type": "string",
+            "description": "기간 (periodType에 맞는 형식)"
+          },
+          "calendar": {
+            "enum": [
+              "solar",
+              "lunar"
+            ],
+            "type": "string",
+            "default": "solar"
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "birthTime": {
+            "type": "string"
+          },
+          "periodType": {
+            "enum": [
+              "year",
+              "month",
+              "hour",
+              "multi-year"
+            ],
+            "type": "string",
+            "description": "year:YYYY | month:YYYY-MM | hour:YYYY-MM-DD HH:mm | multi-year:연속"
+          },
+          "isLeapMonth": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    },
+    {
+      "name": "manage_settings",
+      "description": "해석 설정 관리 (get/set)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get",
+              "set"
+            ],
+            "type": "string"
+          },
+          "custom": {
+            "type": "object",
+            "properties": {
+              "dts": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "qtbj": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "modern": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "ziping": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "shensha": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              }
+            }
+          },
+          "preset": {
+            "enum": [
+              "ziping",
+              "dts",
+              "qtbj",
+              "modern",
+              "shensha",
+              "balanced"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@hjsh200219/fortuneteller/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

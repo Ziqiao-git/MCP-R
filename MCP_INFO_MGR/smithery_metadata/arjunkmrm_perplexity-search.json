@@ -1,0 +1,80 @@
+{
+  "qualifiedName": "@arjunkmrm/perplexity-search",
+  "displayName": "Perplexity Search",
+  "description": "Enable AI assistants to perform web searches using Perplexity's Sonar Pro.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/docs.perplexity.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@arjunkmrm/perplexity-search",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "search",
+      "title": "Search",
+      "description": "Perform a web search using Perplexity's API, which provides detailed and contextually relevant results with citations. By default, no time filtering is applied to search results.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query to perform"
+          },
+          "search_recency_filter": {
+            "enum": [
+              "month",
+              "week",
+              "day",
+              "hour"
+            ],
+            "type": "string",
+            "description": "Filter search results by recency (options: month, week, day, hour). If not specified, no time filtering is applied."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@arjunkmrm/perplexity-search/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "perplexityApiKey"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "sonar",
+              "sonar-pro"
+            ],
+            "type": "string",
+            "default": "sonar-pro",
+            "description": "Perplexity model to use"
+          },
+          "maxTokens": {
+            "type": "number",
+            "default": 8192,
+            "description": "Maximum tokens for response"
+          },
+          "temperature": {
+            "type": "number",
+            "default": 0.2,
+            "description": "Temperature for response generation"
+          },
+          "perplexityApiKey": {
+            "type": "string",
+            "description": "Your Perplexity API key"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

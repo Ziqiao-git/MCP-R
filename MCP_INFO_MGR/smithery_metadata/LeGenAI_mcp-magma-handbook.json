@@ -1,0 +1,150 @@
+{
+  "qualifiedName": "@LeGenAI/mcp-magma-handbook",
+  "displayName": "MAGMA Handbook AI Assistant",
+  "description": "Provide AI assistants with comprehensive, semantic search and contextual understanding of the MAGMA computational algebra system handbook. Enable users to retrieve categorized code examples, detailed code explanations, and filtered documentation efficiently. Enhance research, learning, and development workflows with fast, vector-powered similarity search tailored for MAGMA syntax and concepts.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@LeGenAI/mcp-magma-handbook",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_magma_advanced",
+      "description": "Advanced search with hybrid BM25+vector similarity, query expansion, and re-ranking for MAGMA handbook content",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum number of results to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query for MAGMA handbook content"
+          },
+          "category": {
+            "enum": [
+              "syntax",
+              "function",
+              "algorithm",
+              "example",
+              "theory",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Category of content to search"
+          },
+          "bm25Weight": {
+            "type": "number",
+            "default": 0.3,
+            "description": "Weight for BM25 score (0-1)"
+          },
+          "vectorWeight": {
+            "type": "number",
+            "default": 0.7,
+            "description": "Weight for vector similarity (0-1)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_functions",
+      "description": "Search for specific MAGMA functions with fuzzy matching and signature lookup",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "functionName"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of function matches"
+          },
+          "functionName": {
+            "type": "string",
+            "description": "Function name to search for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_api_key",
+      "description": "Validate your OpenAI API key configuration and test connectivity",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "magma_info",
+      "description": "Get information about MAGMA computational algebra system and this server",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "benchmark_quality",
+      "description": "Run quality benchmarks to evaluate search performance across different query types",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "difficulty": {
+            "enum": [
+              "easy",
+              "medium",
+              "hard",
+              "all"
+            ],
+            "type": "string",
+            "default": "all",
+            "description": "Difficulty level to test"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@LeGenAI/mcp-magma-handbook/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "openaiApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "openaiApiKey": {
+            "type": "string",
+            "description": "Your OpenAI API key for embeddings generation (required)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "qualifiedName": "@zereight/sentry-mcp",
+  "displayName": "Sentry Server",
+  "description": "Fetch and manage Sentry issue and event details seamlessly. Integrate with your Sentry projects to retrieve insights and streamline your debugging process. Enhance your workflow by leveraging Sentry's powerful API through a standardized interface.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/sentry.io.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_sentry_issue",
+      "description": "Get details for a specific Sentry issue using its ID or URL",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "issue_id_or_url"
+        ],
+        "properties": {
+          "issue_id_or_url": {
+            "type": "string",
+            "description": "The Sentry issue ID or the full URL of the issue page"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_organization_projects",
+      "description": "List all projects for the configured Sentry organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_project_issues",
+      "description": "List issues for a specific project, with optional filtering.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "project_slug"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Sentry search query to filter issues (e.g., \"is:unresolved\", \"assignee:me\"). Optional."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor for fetching next/previous page. Optional."
+          },
+          "statsPeriod": {
+            "type": "string",
+            "description": "Time period for statistics (e.g., \"24h\", \"14d\", \"auto\"). Optional."
+          },
+          "project_slug": {
+            "type": "string",
+            "description": "The slug of the project to list issues for."
+          },
+          "organization_slug": {
+            "type": "string",
+            "description": "The slug of the organization the project belongs to."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_event_details",
+      "description": "Get details for a specific event within a project.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "event_id",
+          "project_slug"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "The ID of the event to retrieve."
+          },
+          "project_slug": {
+            "type": "string",
+            "description": "The slug of the project the event belongs to."
+          },
+          "organization_slug": {
+            "type": "string",
+            "description": "The slug of the organization the project belongs to."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@zereight/sentry-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "sentryAuthToken",
+          "sentryOrgSlug",
+          "sentryProjectNames"
+        ],
+        "properties": {
+          "sentryBaseUrl": {
+            "type": "string",
+            "default": "https://sentry.io",
+            "description": "Optional: The Sentry base URL. Defaults to https://sentry.io"
+          },
+          "sentryOrgSlug": {
+            "type": "string",
+            "description": "The slug of your Sentry organization"
+          },
+          "sentryAuthToken": {
+            "type": "string",
+            "description": "Your Sentry authentication token"
+          },
+          "sentryProjectNames": {
+            "type": "string",
+            "description": "Comma-separated Sentry project slugs"
+          }
+        }
+      }
+    }
+  ]
+}

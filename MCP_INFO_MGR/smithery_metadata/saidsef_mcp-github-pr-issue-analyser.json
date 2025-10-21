@@ -1,0 +1,916 @@
+{
+  "qualifiedName": "@saidsef/mcp-github-pr-issue-analyser",
+  "displayName": "GitHub PR and Issue Analyser",
+  "description": "A Model Context Protocol (MCP) application for automated GitHub PR analysis and issue management. Enables LLMs to fetch PR details, analyse diffs, manage issues, and handle releases through a standardised interface",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@saidsef/mcp-github-pr-issue-analyser",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "add_inline_pr_comment",
+      "description": "\n        Adds an inline review comment to a specific line in a file within a pull request on GitHub.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            pr_number (int): The pull request number.\n            path (str): The relative path to the file (e.g., 'src/main.py').\n            line (int): The line number in the file to comment on.\n            comment_body (str): The content of the review comment.\n        Returns:\n            Dict[str, Any]: The JSON response from the GitHub API containing the comment data if successful.\n            None: If an error occurs while adding the comment.\n        Error Handling:\n            Logs an error message and prints the traceback if the request fails or an exception is raised.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "add_inline_pr_commentArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "pr_number",
+          "path",
+          "line",
+          "comment_body"
+        ],
+        "properties": {
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "pr_number": {
+            "type": "integer",
+            "title": "Pr Number"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          },
+          "comment_body": {
+            "type": "string",
+            "title": "Comment Body"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "add_inline_pr_commentOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "add_pr_comments",
+      "description": "\n        Adds a comment to a specific pull request on GitHub.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            pr_number (int): The pull request number to which the comment will be added.\n            comment (str): The content of the comment to add.\n        Returns:\n            Dict[str, Any]: The JSON response from the GitHub API containing the comment data if successful.\n            None: If an error occurs while adding the comment.\n        Error Handling:\n            Logs an error message and prints the traceback if the request fails or an exception is raised.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "add_pr_commentsArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "pr_number",
+          "comment"
+        ],
+        "properties": {
+          "comment": {
+            "type": "string",
+            "title": "Comment"
+          },
+          "pr_number": {
+            "type": "integer",
+            "title": "Pr Number"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "add_pr_commentsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "create_issue",
+      "description": "\n        Creates a new issue in the specified GitHub repository.\n        If the issue is created successfully, a link to the issue must be appended in the PR's description.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            title (str): The title of the issue to be created.\n            body (str): The body content of the issue.\n            labels (list[str]): A list of labels to assign to the issue. The label 'mcp' will always be included.\n        Returns:\n            Dict[str, Any]: A dictionary containing the created issue's data if successful.\n            None: If an error occurs during issue creation.\n        Error Handling:\n            Logs errors and prints the traceback if the issue creation fails, returning None.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "create_issueArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "title",
+          "body",
+          "labels"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "title": "Body"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Labels"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "create_issueOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "create_pr",
+      "description": "\n        Creates a new pull request in the specified GitHub repository.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            title (str): The title of the pull request.\n            body (str): The body content of the pull request.\n            head (str): The name of the branch where your changes are implemented.\n            base (str): The name of the branch you want the changes pulled into.\n            draft (bool, optional): Whether the pull request is a draft. Defaults to False.\n        Returns:\n            Dict[str, Any]: The JSON response from the GitHub API containing pull request information if successful.\n        Error Handling:\n            Logs errors and prints the traceback if the pull request creation fails, returning None.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "create_prArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "title",
+          "body",
+          "head",
+          "base"
+        ],
+        "properties": {
+          "base": {
+            "type": "string",
+            "title": "Base"
+          },
+          "body": {
+            "type": "string",
+            "title": "Body"
+          },
+          "head": {
+            "type": "string",
+            "title": "Head"
+          },
+          "draft": {
+            "type": "boolean",
+            "title": "Draft",
+            "default": false
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "create_prOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "create_release",
+      "description": "\n        Creates a new release in the specified GitHub repository.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            tag_name (str): The tag name for the release.\n            release_name (str): The name of the release.\n            body (str): The description or body content of the release.\n        Returns:\n            Dict[str, Any]: The JSON response from the GitHub API containing release information if successful.\n            None: If an error occurs during the release creation process.\n        Error Handling:\n            Logs errors and prints the traceback if the release creation fails, returning None.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "create_releaseArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "tag_name",
+          "release_name",
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "title": "Body"
+          },
+          "tag_name": {
+            "type": "string",
+            "title": "Tag Name"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          },
+          "release_name": {
+            "type": "string",
+            "title": "Release Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "create_releaseOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "create_tag",
+      "description": "\n        Creates a new tag in the specified GitHub repository.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            tag_name (str): The name of the tag to create.\n            message (str): The message associated with the tag.\n        Returns:\n            Dict[str, Any]: The response data from the GitHub API if the tag is created successfully.\n            None: If an error occurs during the tag creation process.\n        Error Handling:\n            Logs errors and prints the traceback if fetching the latest commit SHA fails or if the GitHub API request fails.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "create_tagArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "tag_name",
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "tag_name": {
+            "type": "string",
+            "title": "Tag Name"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "create_tagOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_latest_sha",
+      "description": "\n        Fetches the SHA of the latest commit in the specified GitHub repository.\n        Args:\n            repo_owner (str): The owner of the GitHub repository.\n            repo_name (str): The name of the GitHub repository.\n        Returns:\n            Optional[str]: The SHA string of the latest commit if found, otherwise None.\n        Error Handling:\n            Logs errors and warnings if the request fails, the response is invalid, or no commits are found.\n            Returns None in case of exceptions or if the repository has no commits.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_latest_shaArguments",
+        "required": [
+          "repo_owner",
+          "repo_name"
+        ],
+        "properties": {
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_latest_shaOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_pr_content",
+      "description": "\n        Fetches the content/details of a specific pull request from a GitHub repository.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            pr_number (int): The pull request number.\n        Returns:\n            Dict[str, Any]: A dictionary containing the pull request's title, description, author, creation and update timestamps, and state.\n            Returns None if an error occurs during the fetch operation.\n        Error Handling:\n            Logs an error message and prints the traceback if the request fails or an exception is raised during processing.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_pr_contentArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "pr_number"
+        ],
+        "properties": {
+          "pr_number": {
+            "type": "integer",
+            "title": "Pr Number"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_pr_contentOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_pr_diff",
+      "description": "\n        Fetches the diff/patch of a specific pull request from a GitHub repository.\n        Args:\n            repo_owner (str): The owner of the GitHub repository.\n            repo_name (str): The name of the GitHub repository.\n            pr_number (int): The pull request number.\n        Returns:\n            str: The raw patch/diff text of the pull request if successful, otherwise None.\n        Error Handling:\n            Logs an error message and prints the traceback if the request fails or an exception occurs.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_pr_diffArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "pr_number"
+        ],
+        "properties": {
+          "pr_number": {
+            "type": "integer",
+            "title": "Pr Number"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_pr_diffOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_open_issues_prs",
+      "description": "\n        Lists open pull requests or issues for a specified GitHub repository owner.\n        Args:\n            repo_owner (str): The owner of the repository.\n            issue (Literal['pr', 'issue']): The type of items to list, either 'pr' for pull requests or 'issue' for issues. Defaults to 'pr'.\n            filtering (Literal['user', 'owner', 'involves']): The filtering criteria for the search. Defaults to 'involves'.\n            per_page (Annotated[int, PerPage]): The number of results to return per page, range 1-100. Defaults to 50.\n            page (int): The page number to retrieve. Defaults to 1.\n        Returns:\n            Dict[str, Any]: A dictionary containing the list of open pull requests or issues, depending on the value of the `issue` parameter.\n            None: If an error occurs during the request.\n        Error Handling:\n            Logs an error message and prints the traceback if the request fails or an exception is raised.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "list_open_issues_prsArguments",
+        "required": [
+          "repo_owner"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "default": 1
+          },
+          "issue": {
+            "enum": [
+              "pr",
+              "issue"
+            ],
+            "type": "string",
+            "title": "Issue",
+            "default": "pr"
+          },
+          "per_page": {
+            "type": "integer",
+            "title": "Per Page",
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1
+          },
+          "filtering": {
+            "enum": [
+              "user",
+              "owner",
+              "involves"
+            ],
+            "type": "string",
+            "title": "Filtering",
+            "default": "involves"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "list_open_issues_prsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "merge_pr",
+      "description": "\n        Merges a specific pull request in a GitHub repository using the specified merge method.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            pr_number (int): The pull request number to merge.\n            commit_title (str, optional): The title for the merge commit. Defaults to None.\n            commit_message (str, optional): The message for the merge commit. Defaults to None.\n            merge_method (Literal['merge', 'squash', 'rebase'], optional): The merge method to use ('merge', 'squash', or 'rebase'). Defaults to 'squash'.\n        Returns:\n            Dict[str, Any]: The JSON response from the GitHub API containing merge information if successful.\n        Error Handling:\n            Logs errors and prints the traceback if the merge fails, returning None.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "merge_prArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "pr_number"
+        ],
+        "properties": {
+          "pr_number": {
+            "type": "integer",
+            "title": "Pr Number"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          },
+          "commit_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commit Title",
+            "default": null
+          },
+          "merge_method": {
+            "enum": [
+              "merge",
+              "squash",
+              "rebase"
+            ],
+            "type": "string",
+            "title": "Merge Method",
+            "default": "squash"
+          },
+          "commit_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commit Message",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "merge_prOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "update_assignees",
+      "description": "\n        Updates the assignees for a specific issue or pull request in a GitHub repository.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            issue_number (int): The issue or pull request number to update.\n            assignees (list[str]): A list of usernames to assign to the issue or pull request.\n        Returns:\n            Dict[str, Any]: The updated issue or pull request data as returned by the GitHub API if the update is successful.\n            None: If an error occurs during the update process.\n        Error Handling:\n            Logs an error message and prints the traceback if the request fails or an exception is raised.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "update_assigneesArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "issue_number",
+          "assignees"
+        ],
+        "properties": {
+          "assignees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Assignees"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          },
+          "issue_number": {
+            "type": "integer",
+            "title": "Issue Number"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "update_assigneesOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "update_issue",
+      "description": "\n        Updates an existing issue in the specified GitHub repository.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            issue_number (int): The number of the issue to update.\n            title (str): The new title for the issue.\n            body (str): The new body content for the issue.\n            labels (list[str], optional): A list of labels to assign to the issue. Defaults to an empty list.\n            state (str, optional): The state of the issue ('open' or 'closed'). Defaults to 'open'.\n        Returns:\n            Dict[str, Any]: The updated issue data as returned by the GitHub API if the update is successful.\n            None: If an error occurs during the update process.\n        Error Handling:\n            Logs an error message and prints the traceback if the request fails or an exception is raised.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "update_issueArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "issue_number",
+          "title",
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "title": "Body"
+          },
+          "state": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "type": "string",
+            "title": "State",
+            "default": "open"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Labels",
+            "default": []
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          },
+          "issue_number": {
+            "type": "integer",
+            "title": "Issue Number"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "update_issueOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "update_pr_description",
+      "description": "\n        Updates the title and description (body) of a specific pull request on GitHub.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            pr_number (int): The pull request number to update.\n            new_title (str): The new title for the pull request.\n            new_description (str): The new description (body) for the pull request.\n        Returns:\n            Dict[str, Any]: The updated pull request data as returned by the GitHub API if the update is successful.\n            None: If an error occurs during the update process.\n        Error Handling:\n            Logs an error message and prints the traceback if the update fails due to an exception (e.g., network issues, invalid credentials, or API errors).\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "update_pr_descriptionArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "pr_number",
+          "new_title",
+          "new_description"
+        ],
+        "properties": {
+          "new_title": {
+            "type": "string",
+            "title": "New Title"
+          },
+          "pr_number": {
+            "type": "integer",
+            "title": "Pr Number"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          },
+          "new_description": {
+            "type": "string",
+            "title": "New Description"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "update_pr_descriptionOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "update_reviews",
+      "description": "\n        Submits a review for a specific pull request in a GitHub repository.\n        Args:\n            repo_owner (str): The owner of the repository.\n            repo_name (str): The name of the repository.\n            pr_number (int): The pull request number to review.\n            event (Literal['APPROVE', 'REQUEST_CHANGES', 'COMMENT']): The type of review event.\n            body (str, optional): Required when using REQUEST_CHANGES or COMMENT for the event parameter. Defaults to None.\n        Returns:\n            Dict[str, Any]: The JSON response from the GitHub API containing review information if successful.\n            None: If an error occurs during the review submission process.\n        Error Handling:\n            Logs errors and prints the traceback if the review submission fails, returning None.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "update_reviewsArguments",
+        "required": [
+          "repo_owner",
+          "repo_name",
+          "pr_number",
+          "event"
+        ],
+        "properties": {
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body",
+            "default": null
+          },
+          "event": {
+            "enum": [
+              "APPROVE",
+              "REQUEST_CHANGES",
+              "COMMENT"
+            ],
+            "type": "string",
+            "title": "Event"
+          },
+          "pr_number": {
+            "type": "integer",
+            "title": "Pr Number"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name"
+          },
+          "repo_owner": {
+            "type": "string",
+            "title": "Repo Owner"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "update_reviewsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_info",
+      "description": "\n    Fetches information from the specified URL using an HTTP GET request.\n    Args:\n        url (str): The URL to send the GET request to.\n    Returns:\n        Dict[str, Any]: The JSON response parsed into a dictionary if the request is successful.\n        Returns an empty dictionary if the request fails or an exception occurs.\n    Error Handling:\n        Logs an error message and stack trace if a requests.RequestException is raised during the HTTP request.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_infoArguments",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_infoOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_ipv4_info",
+      "description": "\n      Get information about an IPv4 address.\n      :return: A dictionary containing the IPv4 information.\n      ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_ipv4_infoArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_ipv4_infoOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_ipv6_info",
+      "description": "\n    Retrieves IPv6 information from a specified API endpoint.\n    This method temporarily overrides the `allowed_gai_family` method to force the use of IPv6 when making network requests.\n    It then attempts to fetch IPv6-related information from the configured API URL.\n    Returns:\n        dict: A dictionary containing IPv6 information if the request is successful.\n              Returns an empty dictionary if no information is found or if an error occurs.\n    Error Handling:\n        Logs an error message and returns an empty dictionary if a `requests.RequestException` is raised during the fetch operation.\n        Also logs the full traceback at the debug level for troubleshooting.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_ipv6_infoArguments",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_ipv6_infoOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@saidsef/mcp-github-pr-issue-analyser/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "githubToken"
+        ],
+        "properties": {
+          "githubToken": {
+            "type": "string",
+            "description": "GitHub token to use for authentication."
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "qualifiedName": "@mnhlt/WebSearch-MCP",
+  "displayName": "WebSearch",
+  "description": "Enable your AI assistants to perform real-time web searches and retrieve the latest information on any topic. Integrate seamlessly with the WebSearch Crawler API for efficient and accurate search results. Enhance your applications with up-to-date knowledge and insights from the web. This is self-hosted service, free\nYou will need to selfhost web api on local or vps. follow [guide here](https://github.com/mnhlt/WebSearch-MCP/blob/main/README.md)",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "web_search",
+      "description": "Search the web for information.\nUse this tool when you need to search the web for information.\nYou can use this tool to search for news, blogs, or all types of information.\nYou can also use this tool to search for information about a specific company or product.\nYou can also use this tool to search for information about a specific person.\nYou can also use this tool to search for information about a specific product.\nYou can also use this tool to search for information about a specific company.\nYou can also use this tool to search for information about a specific event.\nYou can also use this tool to search for information about a specific location.\nYou can also use this tool to search for information about a specific thing.\nIf you request search with 1 result number and failed, retry with bigger results number.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query to look up"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region code for search results (e.g., 'us')"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code for search results (e.g., 'en')"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of results to return (default: 5)"
+          },
+          "resultType": {
+            "enum": [
+              "all",
+              "news",
+              "blogs"
+            ],
+            "type": "string",
+            "description": "Type of results to return"
+          },
+          "excludeTerms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Terms to exclude from results"
+          },
+          "excludeDomains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Domains to exclude from results"
+          },
+          "includeDomains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Only include these domains in results"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@mnhlt/WebSearch-MCP/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "apiUrl": {
+            "type": "string",
+            "default": "http://localhost:3001",
+            "description": "The URL of the WebSearch Crawler API."
+          },
+          "maxSearchResult": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum number of search results to return."
+          }
+        }
+      }
+    }
+  ]
+}

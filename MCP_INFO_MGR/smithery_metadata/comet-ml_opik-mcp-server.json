@@ -1,0 +1,435 @@
+{
+  "qualifiedName": "@comet-ml/opik-mcp-server",
+  "displayName": "Opik MCP Server",
+  "description": "Integrate seamlessly with your IDE and access all Opik features through a standardized protocol. Manage prompts, projects, and metrics efficiently with a unified interface. Leverage multiple transport options for flexible integration into various environments.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.comet.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "opik-integration-docs",
+      "description": "Provides detailed documentation on how to integrate Opik with your LLM application",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-prompts",
+      "description": "Get a list of prompts with optional filtering",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Filter by prompt name"
+          },
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination"
+          },
+          "size": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of items per page"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-prompt",
+      "description": "Create a new prompt",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the prompt"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of tags for the prompt"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the prompt"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-prompt-version",
+      "description": "Retrieve a specific version of a prompt",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the prompt"
+          },
+          "commit": {
+            "type": "string",
+            "description": "Specific commit/version to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "save-prompt-version",
+      "description": "Save a new version of a prompt",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "template"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the prompt"
+          },
+          "type": {
+            "enum": [
+              "mustache",
+              "jinja2"
+            ],
+            "type": "string",
+            "description": "Template type"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for the prompt version",
+            "additionalProperties": {}
+          },
+          "template": {
+            "type": "string",
+            "description": "Template content for the prompt version"
+          },
+          "change_description": {
+            "type": "string",
+            "description": "Description of changes in this version"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-projects",
+      "description": "Get a list of projects with optional filtering",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination"
+          },
+          "size": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of items per page"
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-project",
+      "description": "Create a new project",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the project"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the project"
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-traces",
+      "description": "Get a list of traces from a project. Use this for basic trace retrieval and overview",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination (starts at 1)"
+          },
+          "size": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of traces per page (1-100, default 10)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to filter traces. If not provided, will use the first available project"
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Project name to filter traces (alternative to projectId). Example: \"My AI Assistant\""
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-trace-by-id",
+      "description": "Get detailed information about a specific trace including input, output, metadata, and timing information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "traceId"
+        ],
+        "properties": {
+          "traceId": {
+            "type": "string",
+            "description": "ID of the trace to fetch (UUID format, e.g. \"123e4567-e89b-12d3-a456-426614174000\")"
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-trace-stats",
+      "description": "Get aggregated statistics for traces including counts, costs, token usage, and performance metrics over time",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "endDate": {
+            "type": "string",
+            "description": "End date in ISO format (YYYY-MM-DD). Example: \"2024-01-31\""
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to filter traces. If not provided, will use the first available project"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date in ISO format (YYYY-MM-DD). Example: \"2024-01-01\""
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Project name to filter traces (alternative to projectId)"
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default workspace"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-traces",
+      "description": "Advanced search for traces with complex filtering and query capabilities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination"
+          },
+          "size": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of traces per page (max 100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Text query to search in trace names, inputs, outputs, and metadata. Example: \"error\" or \"user_query:hello\""
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Field to sort by. Options: \"created_at\", \"duration\", \"name\", \"status\""
+          },
+          "filters": {
+            "type": "object",
+            "description": "Advanced filters as key-value pairs. Examples: {\"status\": \"error\"}, {\"model\": \"gpt-4\"}, {\"duration_ms\": {\"$gt\": 1000}}",
+            "additionalProperties": {}
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to search within"
+          },
+          "sortOrder": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "desc",
+            "description": "Sort order: ascending or descending"
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Project name to search within"
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-trace-threads",
+      "description": "Get trace threads (conversation groupings) to view related traces that belong to the same conversation or session",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number for pagination"
+          },
+          "size": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of threads per page"
+          },
+          "threadId": {
+            "type": "string",
+            "description": "Specific thread ID to retrieve (useful for getting all traces in a conversation)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project ID to filter threads"
+          },
+          "projectName": {
+            "type": "string",
+            "description": "Project name to filter threads"
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-trace-feedback",
+      "description": "Add feedback scores to a trace for quality evaluation and monitoring. Useful for rating trace quality, relevance, or custom metrics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "traceId",
+          "scores"
+        ],
+        "properties": {
+          "scores": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "value"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the feedback metric (e.g., \"relevance\", \"accuracy\", \"helpfulness\", \"quality\")"
+                },
+                "value": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0,
+                  "description": "Score value between 0.0 and 1.0 (0.0 = poor, 1.0 = excellent)"
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Optional explanation for the score"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of feedback scores to add. Each score should have a name and value between 0-1"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "ID of the trace to add feedback to"
+          },
+          "workspaceName": {
+            "type": "string",
+            "description": "Workspace name to use instead of the default"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@comet-ml/opik-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

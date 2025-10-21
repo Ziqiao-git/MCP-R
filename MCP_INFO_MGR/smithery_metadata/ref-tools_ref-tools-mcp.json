@@ -1,0 +1,66 @@
+{
+  "qualifiedName": "@ref-tools/ref-tools-mcp",
+  "displayName": "Ref",
+  "description": "Provide your AI coding tools with token-efficient access to up-to-date technical documentation for APIs, services, libraries, and more. Enable powerful search and reading capabilities to help your agent find precise information from documentation and web pages. \n\nLearn more:  https://ref.tools\n\nHow is this different from Context7?\n- Context7 works by looking up a library and giving you the 10k most relevant tokens. If you have 2 libraries, that's 20k tokens etc. It's unlikely you need all of that and it's costly. Ref uses on average 60% fewer tokens and up to 95% fewer (eg 500 tokens instead of 10000) in some cases.\n- Ref supports indexing private GitHub repos and PDFs so you can bring your own context as well.\n\nWant to chat or have a feature request?\n- Reach out to hello@ref.tools and say hi!",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/d881ea52-95b3-41dc-bb8d-e5c7248d5ae1.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ref-tools/ref-tools-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "ref_search_documentation",
+      "description": "Search for documentation on the web or github as well from private resources like repos and pdfs. Use Ref 'ref_read_url' to read the content of a url.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Query for documentation. Should include programming language and framework or library names. Searches public only docs by default, include ref_src=private to search a user's private docs."
+          }
+        }
+      }
+    },
+    {
+      "name": "ref_read_url",
+      "description": "Read the content of a url as markdown. The entire exact URL from a Ref 'ref_search_documentation' result should be passed to this tool to read it.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the webpage to read."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ref-tools/ref-tools-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "refApiKey"
+        ],
+        "properties": {
+          "refApiKey": {
+            "type": "string",
+            "description": "API key for Ref MCP server. Get one from https://ref.tools/keys"
+          },
+          "disableSearchWeb": {
+            "type": "boolean",
+            "default": false,
+            "description": "Disable the fallback web search tool"
+          }
+        }
+      }
+    }
+  ]
+}

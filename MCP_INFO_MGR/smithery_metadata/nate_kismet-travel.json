@@ -1,0 +1,171 @@
+{
+  "qualifiedName": "@nate/kismet-travel",
+  "displayName": "kismet-travel",
+  "description": "Kismet is the leader in AI driven hotel search. Find live hotel data for any of our listed hotels. \n- Search using semantic queries for \"Boutique Dog Friendly  [Hotels] in Charleston\"\n- Find rate and inventory information\n- Get direct access to booking pages in your chat.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/2dcf8ecc-ddaa-4758-9245-41ff097699f7.jpg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@nate/kismet-travel",
+  "security": null,
+  "tools": [
+    {
+      "name": "semantic_search_hotels",
+      "description": "Search for hotels using natural language queries",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Number of results (1-50)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Natural language search query for hotels"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_availability_rate_inventory",
+      "description": "Get real-time availability, rates, and inventory for a specific hotel",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "hotelSlug",
+          "checkIn",
+          "checkOut"
+        ],
+        "properties": {
+          "guests": {
+            "type": "number",
+            "default": 2,
+            "maximum": 10,
+            "minimum": 1,
+            "description": "Number of guests"
+          },
+          "checkIn": {
+            "type": "string",
+            "description": "Check-in date (YYYY-MM-DD format)"
+          },
+          "checkOut": {
+            "type": "string",
+            "description": "Check-out date (YYYY-MM-DD format)"
+          },
+          "currency": {
+            "type": "string",
+            "default": "USD",
+            "description": "Currency code (e.g., USD, EUR, GBP)"
+          },
+          "hotelSlug": {
+            "type": "string",
+            "description": "Hotel slug identifier (e.g., 'marriott-north-charleston-charleston-sc')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare_hotel_prices",
+      "description": "Compare real-time prices across multiple hotels for the same dates and guest count",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "hotelSlugs"
+        ],
+        "properties": {
+          "hotelSlugs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 40,
+            "description": "Array of hotel slugs to compare (e.g., ['marriott-north-charleston-charleston-sc', 'hilton-downtown'])"
+          },
+          "checkInDate": {
+            "type": "string",
+            "description": "Check-in date (YYYY-MM-DD format)"
+          },
+          "checkOutDate": {
+            "type": "string",
+            "description": "Check-out date (YYYY-MM-DD format)"
+          },
+          "numberOfGuests": {
+            "type": "number",
+            "default": 2,
+            "maximum": 10,
+            "minimum": 1,
+            "description": "Number of guests"
+          },
+          "preferredCurrency": {
+            "type": "string",
+            "default": "USD",
+            "description": "Currency code (e.g., USD, EUR, GBP)"
+          },
+          "filterStandardRates": {
+            "type": "boolean",
+            "default": true,
+            "description": "Filter to show only standard/public rates in offers (excludes member/corporate rates)"
+          },
+          "includeSummaryStats": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include lowest/highest price summary (LLM can compute if false)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search for hotels and return results in OpenAI MCP format",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query string for finding hotels"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch",
+      "description": "Fetch full details for a specific hotel by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the hotel to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@nate/kismet-travel/mcp",
+      "configSchema": {}
+    }
+  ]
+}

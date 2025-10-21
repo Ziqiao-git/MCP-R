@@ -1,0 +1,195 @@
+{
+  "qualifiedName": "@pdv/hot100",
+  "displayName": "Billboard Hot 100",
+  "description": "Explore the Billboard Hot 100 by week, artist, or track to see who’s charting. Look up a song’s chart history and weekly peak positions.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@pdv/hot100",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_chart",
+      "title": "Get chart for week",
+      "description": "Get the Hot 100 chart for a given week",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "week"
+        ],
+        "properties": {
+          "week": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$",
+            "description": "Week in YYYY-MM-DD format"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chart"
+        ],
+        "properties": {
+          "chart": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "position",
+                "performer",
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "integer"
+                },
+                "performer": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_track",
+      "title": "Get chart positions for track",
+      "description": "Get chart positions for track",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "artist",
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the track"
+          },
+          "artist": {
+            "type": "string",
+            "description": "Performer of the track"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "positions"
+        ],
+        "properties": {
+          "positions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "week",
+                "position"
+              ],
+              "properties": {
+                "week": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$",
+                  "description": "Chart week"
+                },
+                "position": {
+                  "type": "integer",
+                  "description": "Position on the chart this week"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_charts",
+      "title": "Search Charts",
+      "description": "Search all tracks by artist or title",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "q"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "results"
+        ],
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "performer",
+                "title",
+                "peak"
+              ],
+              "properties": {
+                "peak": {
+                  "type": "integer",
+                  "description": "Highest chart position reached by this track"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Title of the track"
+                },
+                "performer": {
+                  "type": "string",
+                  "description": "Performer of the track"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@pdv/hot100/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

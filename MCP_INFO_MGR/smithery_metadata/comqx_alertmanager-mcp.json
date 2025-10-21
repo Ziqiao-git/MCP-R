@@ -1,0 +1,185 @@
+{
+  "qualifiedName": "@comqx/alertmanager-mcp",
+  "displayName": "Prometheus Alertmanager Integration Server",
+  "description": "Enable natural language interaction with Prometheus Alertmanager to manage alerts and silences efficiently. Retrieve, filter, and group alerts, as well as create and delete silences through a standardized interface. Simplify alert management by bridging Claude AI with Alertmanager's API.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-alerts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "description": "Include active alerts (default: true)"
+          },
+          "filter": {
+            "type": "string",
+            "description": "Filtering query (e.g. alertname=~'.*CPU.*')"
+          },
+          "silenced": {
+            "type": "boolean",
+            "description": "Include silenced alerts"
+          },
+          "inhibited": {
+            "type": "boolean",
+            "description": "Include inhibited alerts"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-alert-details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fingerprint"
+        ],
+        "properties": {
+          "fingerprint": {
+            "type": "string",
+            "description": "Alert fingerprint"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-silence",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "matchers",
+          "endsAt",
+          "createdBy",
+          "comment"
+        ],
+        "properties": {
+          "endsAt": {
+            "type": "string",
+            "description": "Silence end time (ISO8601 format)"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Reason or explanation for the silence"
+          },
+          "matchers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "value"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Matcher name (e.g. alertname)"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Matcher value (e.g. HighCPULoad)"
+                },
+                "isRegex": {
+                  "type": "boolean",
+                  "description": "Use regex matching"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "List of matchers for alerts"
+          },
+          "startsAt": {
+            "type": "string",
+            "description": "Silence start time (ISO8601 format, default is current time)"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "Username who created the silence"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-silences",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "filter": {
+            "type": "string",
+            "description": "Filtering query (e.g. createdBy=~'.*admin.*')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-silence",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "silenceId"
+        ],
+        "properties": {
+          "silenceId": {
+            "type": "string",
+            "description": "ID of the silence to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-alert-groups",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "description": "Include active alerts (default: true)"
+          },
+          "silenced": {
+            "type": "boolean",
+            "description": "Include silenced alerts"
+          },
+          "inhibited": {
+            "type": "boolean",
+            "description": "Include inhibited alerts"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@comqx/alertmanager-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "alertmanagerUrl": {
+            "type": "string",
+            "default": "http://localhost:9093",
+            "description": "Base URL for Prometheus Alertmanager API"
+          }
+        }
+      }
+    }
+  ]
+}

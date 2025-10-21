@@ -1,0 +1,497 @@
+{
+  "qualifiedName": "@burakdirin/opsgenie-mcp-server",
+  "displayName": "Opsgenie Alert Management Server",
+  "description": "Manage Opsgenie alerts efficiently by listing, creating, acknowledging, and closing alerts. Add notes, view activity logs, and customize alert details seamlessly. Integrate with various transports including stdio, HTTP, and SSE for flexible deployment and usage.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.atlassian.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "opsgenie_list_alerts",
+      "description": "List alerts from Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "sort": {
+            "type": "string",
+            "description": "Name of the field that result set will be sorted by"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of items to provide in the result"
+          },
+          "order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sorting order of the result set"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query to apply while filtering the alerts"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Start index of the result set (for pagination)"
+          },
+          "searchIdentifier": {
+            "type": "string",
+            "description": "Identifier of the saved search query"
+          },
+          "searchIdentifierType": {
+            "enum": [
+              "id",
+              "name"
+            ],
+            "type": "string",
+            "description": "Identifier type of the saved search query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "opsgenie_create_alert",
+      "description": "Create a new alert in Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "Additional note that will be added while creating the alert"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags of the alert"
+          },
+          "user": {
+            "type": "string",
+            "description": "Display name of the request owner"
+          },
+          "alias": {
+            "type": "string",
+            "description": "Client-defined identifier of the alert"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "entity": {
+            "type": "string",
+            "description": "Entity field of the alert"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source field of the alert"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Custom actions that will be available for the alert"
+          },
+          "details": {
+            "type": "object",
+            "description": "Map of key-value pairs to use as custom properties",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "Message of the alert"
+          },
+          "priority": {
+            "enum": [
+              "P1",
+              "P2",
+              "P3",
+              "P4",
+              "P5"
+            ],
+            "type": "string",
+            "description": "Priority level of the alert"
+          },
+          "visibleTo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/responders/items"
+            },
+            "description": "Teams and users that the alert will become visible to"
+          },
+          "responders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "user",
+                    "team",
+                    "escalation",
+                    "schedule"
+                  ],
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Responders that the alert will be routed to"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description field of the alert"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "opsgenie_acknowledge_alert",
+      "description": "Acknowledge an alert in Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "identifier"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "Additional note"
+          },
+          "user": {
+            "type": "string",
+            "description": "Display name of the request owner"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source field"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Alert identifier (id, tiny id, or alias)"
+          },
+          "identifierType": {
+            "enum": [
+              "id",
+              "name",
+              "tiny"
+            ],
+            "type": "string",
+            "description": "Type of identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "opsgenie_close_alert",
+      "description": "Close an alert in Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "identifier"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "Additional note"
+          },
+          "user": {
+            "type": "string",
+            "description": "Display name of the request owner"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source field"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Alert identifier (id, tiny id, or alias)"
+          },
+          "identifierType": {
+            "enum": [
+              "id",
+              "name",
+              "tiny"
+            ],
+            "type": "string",
+            "description": "Type of identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "opsgenie_list_alert_notes",
+      "description": "List notes for an alert in Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "identifier"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of items to provide"
+          },
+          "order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sorting order"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Start index of the result set"
+          },
+          "direction": {
+            "enum": [
+              "next",
+              "prev"
+            ],
+            "type": "string",
+            "description": "Page direction"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Alert identifier (id, tiny id, or alias)"
+          },
+          "identifierType": {
+            "enum": [
+              "id",
+              "name",
+              "tiny"
+            ],
+            "type": "string",
+            "description": "Type of identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "opsgenie_add_note",
+      "description": "Add a note to an alert in Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "identifier",
+          "note"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "Note to add to the alert"
+          },
+          "user": {
+            "type": "string",
+            "description": "Display name of the request owner"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source field"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Alert identifier (id, tiny id, or alias)"
+          },
+          "identifierType": {
+            "enum": [
+              "id",
+              "name",
+              "tiny"
+            ],
+            "type": "string",
+            "description": "Type of identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "opsgenie_list_alert_logs",
+      "description": "List logs for an alert in Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "identifier"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum number of items to provide"
+          },
+          "order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sorting order"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Start index of the result set"
+          },
+          "direction": {
+            "enum": [
+              "next",
+              "prev"
+            ],
+            "type": "string",
+            "description": "Page direction"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Alert identifier (id, tiny id, or alias)"
+          },
+          "identifierType": {
+            "enum": [
+              "id",
+              "name",
+              "tiny"
+            ],
+            "type": "string",
+            "description": "Type of identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "opsgenie_add_details",
+      "description": "Add custom details to an alert in Opsgenie",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "identifier",
+          "details"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "Additional note"
+          },
+          "user": {
+            "type": "string",
+            "description": "Display name of the request owner"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key (optional if OPSGENIE_API_KEY env var is set)"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source field"
+          },
+          "details": {
+            "type": "object",
+            "description": "Key-value pairs to add as custom properties",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Alert identifier (id, tiny id, or alias)"
+          },
+          "identifierType": {
+            "enum": [
+              "id",
+              "name",
+              "tiny"
+            ],
+            "type": "string",
+            "description": "Type of identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@burakdirin/opsgenie-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Opsgenie API key"
+          },
+          "transport": {
+            "type": "string",
+            "default": "stdio",
+            "description": "Transport type"
+          }
+        }
+      }
+    }
+  ]
+}

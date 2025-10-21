@@ -1,0 +1,166 @@
+{
+  "qualifiedName": "@vuvuvu/streamersonglist-mcp",
+  "displayName": "StreamerSongList Server",
+  "description": "Enable AI assistants to manage and monitor song requests and queues for streamers seamlessly. Interact with StreamerSongList APIs to fetch streamer info, queue stats, and control song requests. Simplify music request management for streaming platforms without requiring authentication.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/streamersonglist.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@vuvuvu/streamersonglist-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "getStreamerByName",
+      "description": "Fetch detailed information about a specific streamer",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "streamerName": {
+            "type": "string",
+            "description": "The name of the streamer"
+          }
+        }
+      }
+    },
+    {
+      "name": "getQueue",
+      "description": "View current song queues with pagination support",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum number of songs to return (default: 50)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of songs to skip for pagination (default: 0)"
+          },
+          "streamerName": {
+            "type": "string",
+            "description": "The name of the streamer whose queue to fetch"
+          }
+        }
+      }
+    },
+    {
+      "name": "monitorQueue",
+      "description": "Monitor queue changes with configurable polling intervals",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "duration": {
+            "type": "number",
+            "default": 300,
+            "description": "How long to monitor in seconds (default: 300)"
+          },
+          "interval": {
+            "type": "number",
+            "default": 30,
+            "description": "Polling interval in seconds (default: 30)"
+          },
+          "streamerName": {
+            "type": "string",
+            "description": "The name of the streamer whose queue to monitor"
+          }
+        }
+      }
+    },
+    {
+      "name": "getSongs",
+      "description": "Fetch the complete song list for a streamer with pagination support",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum number of songs to return (default: 100)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of songs to skip for pagination (default: 0)"
+          },
+          "streamerName": {
+            "type": "string",
+            "description": "The name of the streamer whose song list to fetch"
+          }
+        }
+      }
+    },
+    {
+      "name": "searchSongs",
+      "description": "Search within a streamer's song list by title or artist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Maximum number of results to return (default: 20)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query to match against song titles and artists"
+          },
+          "streamerName": {
+            "type": "string",
+            "description": "The name of the streamer whose songs to search"
+          }
+        }
+      }
+    },
+    {
+      "name": "getSongDetails",
+      "description": "Get detailed information about a specific song by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "songId"
+        ],
+        "properties": {
+          "songId": {
+            "type": "number",
+            "description": "The ID of the song to fetch details for"
+          },
+          "streamerName": {
+            "type": "string",
+            "description": "The name of the streamer who owns the song"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@vuvuvu/streamersonglist-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "apiBase": {
+            "type": "string",
+            "default": "https://api.streamersonglist.com/v1",
+            "description": "StreamerSongList API base URL"
+          },
+          "defaultStreamer": {
+            "type": "string",
+            "description": "Default streamer name to use when not specified"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

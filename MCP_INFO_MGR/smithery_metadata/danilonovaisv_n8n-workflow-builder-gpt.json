@@ -1,0 +1,236 @@
+{
+  "qualifiedName": "@danilonovaisv/n8n-workflow-builder-gpt",
+  "displayName": "n8n Workflow Builder",
+  "description": "Enable AI assistants to seamlessly manage, create, execute, and monitor n8n workflows through natural language commands. Automate workflow lifecycle operations and gain comprehensive control over your n8n automation platform. Integrate effortlessly with AI tools like Claude Desktop and ChatGPT for enhanced productivity.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@danilonovaisv/n8n-workflow-builder-gpt",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_workflows",
+      "description": "List all workflows from your n8n instance. Returns a comprehensive list of all workflows with their IDs, names, status (active/inactive), creation dates, and basic metadata. Perfect for getting an overview of your automation landscape.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_workflow",
+      "description": "Create a new workflow in n8n with custom nodes, connections, and settings. Build complex automation workflows programmatically by defining nodes (triggers, actions, conditions) and their relationships. Supports all n8n node types and advanced workflow configurations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "workflow"
+        ],
+        "properties": {
+          "workflow": {
+            "type": "object",
+            "required": [
+              "name",
+              "nodes"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the workflow"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Workflow tags"
+              },
+              "nodes": {
+                "type": "array",
+                "description": "Array of workflow nodes"
+              },
+              "settings": {
+                "type": "object",
+                "description": "Workflow settings",
+                "additionalProperties": {}
+              },
+              "connections": {
+                "type": "object",
+                "description": "Node connections",
+                "additionalProperties": {}
+              }
+            },
+            "description": "Workflow configuration",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_workflow",
+      "description": "Retrieve detailed information about a specific workflow by its ID. Returns complete workflow configuration including all nodes, connections, settings, triggers, and metadata. Essential for inspecting workflow structure before making modifications.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Workflow ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_workflow",
+      "description": "Trigger immediate execution of a workflow by its ID. Starts the workflow manually regardless of its normal triggers (webhooks, schedules, etc.). Returns execution details including status, start time, and any immediate results or errors.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Workflow ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_workflow",
+      "description": "Modify an existing workflow by updating its configuration, nodes, connections, or settings. Supports partial updates - you can change specific aspects without affecting the entire workflow. Perfect for iterative workflow development and maintenance.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id",
+          "workflow"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Workflow ID"
+          },
+          "workflow": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the workflow"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Workflow tags"
+              },
+              "nodes": {
+                "type": "array",
+                "description": "Array of workflow nodes"
+              },
+              "settings": {
+                "type": "object",
+                "description": "Workflow settings",
+                "additionalProperties": {}
+              },
+              "connections": {
+                "type": "object",
+                "description": "Node connections",
+                "additionalProperties": {}
+              }
+            },
+            "description": "Updated workflow configuration",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "activate_workflow",
+      "description": "Enable a workflow to start processing triggers and executing automatically. Once activated, the workflow will respond to its configured triggers (webhooks, schedules, file changes, etc.) and run according to its automation logic.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Workflow ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deactivate_workflow",
+      "description": "Disable a workflow to stop it from processing triggers and executing automatically. The workflow will remain in your n8n instance but won't respond to triggers until reactivated. Useful for maintenance, debugging, or temporary suspension.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Workflow ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_workflow",
+      "description": "Permanently remove a workflow from your n8n instance. This action cannot be undone - the workflow, its configuration, nodes, and execution history will be completely deleted. Use with caution for cleanup and workflow lifecycle management.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Workflow ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@danilonovaisv/n8n-workflow-builder-gpt/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "n8nApiKey"
+        ],
+        "properties": {
+          "n8nHost": {
+            "type": "string",
+            "default": "http://localhost:5678",
+            "description": "n8n instance URL (e.g., http://localhost:5678)"
+          },
+          "n8nApiKey": {
+            "type": "string",
+            "description": "n8n API key for authentication"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

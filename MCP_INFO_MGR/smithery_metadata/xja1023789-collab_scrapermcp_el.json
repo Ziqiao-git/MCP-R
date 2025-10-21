@@ -1,0 +1,115 @@
+{
+  "qualifiedName": "@xja1023789-collab/scrapermcp_el",
+  "displayName": "Thordata Scraper",
+  "description": "Extract clean, structured content from any website, including dynamic pages, as Markdown, HTML, or link lists. Bypass anti-bot defenses and geo-restrictions to reliably access protected or region-locked pages. Accelerate research and monitoring by turning any URL into ready-to-analyze data. ",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@xja1023789-collab/scrapermcp_el",
+  "security": null,
+  "tools": [
+    {
+      "name": "parse_with_ai_selectors",
+      "_meta": {
+        "author": "tom",
+        "version": "v1.0",
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Use proxy or unlocker to crawl and parse web pages\n\nParameters:\n    url: The URL of the web page to parse\n    render: Proxy configuration selector (\"Unlocker\" for unlocker, other values for regular proxy)\n    output_format: Output format (\"html\", \"links\", \"MarkDown\")\n    ",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url",
+          "render",
+          "output_format"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "The URL of the website to be scraped."
+          },
+          "render": {
+            "type": "string",
+            "title": "Render",
+            "description": "Proxy configuration selector (Unlocker for unlocker, other values for regular proxy)"
+          },
+          "output_format": {
+            "enum": [
+              "",
+              "links",
+              "Markdown",
+              "html"
+            ],
+            "type": "string",
+            "title": "Output Format",
+            "description": " # Describes the output format.\n        Output format:\n            - links - When you need links or navigation from the page.\n            - Markdown - When you need the page in readable MarkDown format.\n            - html - When you need the page in pure HTML format.\n        "
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@xja1023789-collab/scrapermcp_el/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {
+          "default_proxy_url": {
+            "type": "string",
+            "default": "",
+            "description": "Default proxy server URL"
+          },
+          "unlocker_proxy_url": {
+            "type": "string",
+            "default": "",
+            "description": "Unlocker proxy server URL"
+          },
+          "default_proxy_login": {
+            "type": "string",
+            "default": "",
+            "description": "Default proxy server login username"
+          },
+          "unlocker_proxy_login": {
+            "type": "string",
+            "default": "",
+            "description": "Unlocker proxy server login username"
+          },
+          "default_proxy_password": {
+            "type": "string",
+            "default": "",
+            "description": "Default proxy server login password"
+          },
+          "unlocker_proxy_password": {
+            "type": "string",
+            "default": "",
+            "description": "Unlocker proxy server login password"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

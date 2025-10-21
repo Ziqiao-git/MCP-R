@@ -1,0 +1,213 @@
+{
+  "qualifiedName": "@iosif2/opendata-mcp",
+  "displayName": "OpenData MCP",
+  "description": "OpenData MCP는 표준화된 MCP 인터페이스를 통해 공공데이터 자원에 대한 접근을 제공합니다. 키워드 검색으로 API 목록을 조회하고, 표준 문서를 자동 생성하며, OpenAPI 엔드포인트를 직접 호출할 수 있습니다. 클라이언트가 다양한 공공데이터 자원을 원활하게 탐색하고 활용할 수 있도록 지원하며, 외부 데이터를 LLM 애플리케이션에 통합하여 향상된 컨텍스트와 기능을 제공합니다.\n\nOpenData MCP provides access to open data resources through a standardized MCP interface. Search APIs by keywords, automatically generate standard documentation, and directly call OpenAPI endpoints. Enables clients to seamlessly explore and utilize various open data resources while integrating external data into LLM applications for enhanced context and capabilities.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/6efdf18f-43f3-431a-ac85-ef55b7cce7c9.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@iosif2/opendata-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_api",
+      "title": "Search Open Data APIs",
+      "description": "Search for APIs in the Open Data Portal using keywords.(API Provider: OpenDataAPI(mcp.ezrnd.co.kr))",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query",
+          "page",
+          "pageSize"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Page number(1-based)"
+          },
+          "query": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Keyword string(No spaces)"
+            },
+            "maxItems": 5,
+            "description": "Array of keywords"
+          },
+          "pageSize": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Page size"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_std_docs",
+      "title": "Get Standard Documents",
+      "description": "Get standard documents from the search results.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "description": "listId returned from search_api"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "description": "Array of listId"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch_data",
+      "title": "Fetch Data",
+      "description": "Fetch data from the API.(Base on information of get_std_docs tool)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "baseInfo",
+          "endpointInfo"
+        ],
+        "properties": {
+          "baseInfo": {
+            "type": "object",
+            "required": [
+              "host",
+              "base_path"
+            ],
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Host name of the API(No protocol or slash)"
+              },
+              "base_path": {
+                "type": "string",
+                "description": "Base path of the API(Start with '/' as a root)"
+              }
+            },
+            "description": "Base Connection information of the API",
+            "additionalProperties": false
+          },
+          "endpointInfo": {
+            "type": "object",
+            "required": [
+              "path",
+              "method"
+            ],
+            "properties": {
+              "body": {
+                "type": "object",
+                "description": "Body of the API Not supported yet",
+                "additionalProperties": {}
+              },
+              "path": {
+                "type": "string",
+                "description": "Path of the API(Start with '/' as a root)"
+              },
+              "method": {
+                "enum": [
+                  "GET",
+                  "POST",
+                  "PUT",
+                  "DELETE"
+                ],
+                "type": "string",
+                "description": "Method of the API Now only GET is supported"
+              },
+              "params": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the parameter(No spaces)"
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Value of the parameter"
+                    }
+                  },
+                  "description": "Parameter information of the API to fetch data, if serviceKey is required, it will be automatically filled so you need to provide empty string as a value",
+                  "additionalProperties": false
+                },
+                "default": [],
+                "description": "Parameters of the API(Check the information of ParamSchema)"
+              },
+              "headers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "prefix",
+                    "value"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the header(No spaces)"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Value of the header(Accepts string only)"
+                    },
+                    "prefix": {
+                      "type": "string",
+                      "description": "Prefix of the header(e.g. Infuser, Bearer)"
+                    }
+                  },
+                  "description": "Header information of the API to fetch data, if serviceKey is required, it will be automatically filled so you need to provide empty string as a value and put the prefix of the header(e.g. Infuser, Bearer) in the prefix field",
+                  "additionalProperties": false
+                },
+                "default": [],
+                "description": "Headers of the API(Check the information of HeaderSchema)"
+              }
+            },
+            "description": "Endpoint information of the API to fetch data",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@iosif2/opendata-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "ODP_SERVICE_KEY": {
+            "type": "string",
+            "description": "Service key for Open Data Portal(공공데이터포털) for authenticated requests while using fetch_data tool.(If serviceKey is not provided, only No-Auth API is supported.)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

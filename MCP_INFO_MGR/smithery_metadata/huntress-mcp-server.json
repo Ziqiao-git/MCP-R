@@ -1,0 +1,199 @@
+{
+  "qualifiedName": "huntress-mcp-server",
+  "displayName": "Huntress API MCP Server",
+  "description": "A Model Context Protocol server for interacting with the Huntress API.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/huntress-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "health_check",
+      "description": "Check server status and authentication configuration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_account_info",
+      "description": "Get information about the current account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_organizations",
+      "description": "List organizations in the account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number (starts at 1)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of results per page (1-500)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_organization",
+      "description": "Get details of a specific organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "organization_id"
+        ],
+        "properties": {
+          "organization_id": {
+            "type": "number",
+            "description": "Organization ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_agents",
+      "description": "List agents in the account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number (starts at 1)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of results per page (1-500)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_agent",
+      "description": "Get details of a specific agent",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "agent_id"
+        ],
+        "properties": {
+          "agent_id": {
+            "type": "number",
+            "description": "Agent ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_incidents",
+      "description": "List incidents in the account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number (starts at 1)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 500,
+            "minimum": 1,
+            "description": "Number of results per page (1-500)"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "resolved",
+              "ignored"
+            ],
+            "type": "string",
+            "description": "Filter by incident status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_incident",
+      "description": "Get details of a specific incident",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "incident_id"
+        ],
+        "properties": {
+          "incident_id": {
+            "type": "number",
+            "description": "Incident ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/huntress-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "huntressApiKey",
+          "huntressApiSecret"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "huntressApiKey": {
+            "type": "string",
+            "description": "Your Huntress API Key"
+          },
+          "huntressApiSecret": {
+            "type": "string",
+            "description": "Your Huntress API Secret"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

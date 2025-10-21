@@ -1,0 +1,234 @@
+{
+  "qualifiedName": "@a-ariff/canvas-student-mcp-server",
+  "displayName": "Canvas Student",
+  "description": "Connect to your Canvas LMS to browse courses, track assignments, and check grades. See upcoming due dates and plan your workload at a glance. Use it with any Canvas instance you have access to.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@a-ariff/canvas-student-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_courses",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_assignments",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "course_id"
+        ],
+        "properties": {
+          "course_id": {
+            "type": "number",
+            "description": "Canvas course ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_upcoming_assignments",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_grades",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "course_id"
+        ],
+        "properties": {
+          "course_id": {
+            "type": "number",
+            "description": "Canvas course ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_announcements",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "course_id"
+        ],
+        "properties": {
+          "course_id": {
+            "type": "number",
+            "description": "Canvas course ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_modules",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "course_id"
+        ],
+        "properties": {
+          "course_id": {
+            "type": "number",
+            "description": "Canvas course ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_todo_items",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_calendar_events",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "end_date": {
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_discussions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "course_id"
+        ],
+        "properties": {
+          "course_id": {
+            "type": "number",
+            "description": "Canvas course ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_quizzes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "course_id"
+        ],
+        "properties": {
+          "course_id": {
+            "type": "number",
+            "description": "Canvas course ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_user_profile",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_submission_status",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "course_id",
+          "assignment_id"
+        ],
+        "properties": {
+          "course_id": {
+            "type": "number",
+            "description": "Canvas course ID"
+          },
+          "assignment_id": {
+            "type": "number",
+            "description": "Assignment ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@a-ariff/canvas-student-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "Canvas Student MCP Configuration",
+        "required": [
+          "canvasApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "title": "Debug Mode",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "canvasApiKey": {
+            "type": "string",
+            "title": "Canvas API Key",
+            "description": "Your Canvas API access token (Get from Canvas → Account → Settings → Approved Integrations)"
+          },
+          "canvasBaseUrl": {
+            "type": "string",
+            "title": "Canvas Base URL",
+            "default": "https://canvas.instructure.com",
+            "description": "Your Canvas instance URL (e.g., https://canvas.instructure.com)"
+          },
+          "gradescopeEmail": {
+            "type": "string",
+            "title": "Gradescope Email",
+            "description": "Your Gradescope email address (optional)"
+          },
+          "gradescopePassword": {
+            "type": "string",
+            "title": "Gradescope Password",
+            "description": "Your Gradescope password (optional)"
+          }
+        },
+        "description": "Configuration for connecting to Canvas and Gradescope MCP server",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

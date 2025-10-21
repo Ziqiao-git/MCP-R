@@ -1,0 +1,57 @@
+{
+  "qualifiedName": "@delty-inc/delty-mcp-server",
+  "displayName": "Exa AI Search Server",
+  "description": "Enable AI assistants to perform real-time web searches, academic paper searches, company research, and more using the Exa AI Search API. Access comprehensive and up-to-date information from multiple sources including web pages, Wikipedia, LinkedIn, GitHub, and research papers. Customize and control which search tools are enabled to tailor the assistant's capabilities to your needs.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/exa.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_delty_projects",
+      "description": "Get the list of projects from Delty.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_delty_project_documents",
+      "description": "Get the all the documents of a project from Delty. The projectId is the id of the project you want to get the documents for. If projectId is not available, use the get_delty_projects tool to get the list of projects and corresponding projectIds. Then use get_delty_project_documents tool to get the documents for the projectId.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@delty-inc/delty-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "deltyApiKey": {
+            "type": "string",
+            "description": "The API key for accessing the Delty API."
+          }
+        }
+      }
+    }
+  ]
+}

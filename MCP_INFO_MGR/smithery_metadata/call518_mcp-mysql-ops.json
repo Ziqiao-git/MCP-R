@@ -1,0 +1,745 @@
+{
+  "qualifiedName": "@call518/mcp-mysql-ops",
+  "displayName": "MCP-MySQL-Ops",
+  "description": "Monitor MySQL instances, inspect schemas, and track performance. Diagnose slow queries, locks, and connection issues to keep databases healthy. Explore databases, tables, users, and configuration to optimize storage and plan capacity.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/422bc938-a8db-4150-9a94-ea75e78cae64.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@call518/mcp-mysql-ops",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_server_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get MySQL server version and basic information\n\n[Exact Functionality]:\n- Show MySQL server version, edition, and compilation info\n- Display server uptime and basic configuration\n- Show available storage engines and default engine\n- Provide server connection details (sanitized)\n\n[Required Use Cases]:\n- When user requests \"server info\", \"MySQL version\", \"server status\"\n- When diagnosing compatibility issues\n- When checking server capabilities\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n\nReturns:\n    Formatted string with MySQL server information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_active_connections",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Monitor active MySQL connections and processes\n\n[Exact Functionality]:\n- List all active connections with process ID, user, host, database\n- Show current command being executed by each connection\n- Display connection time and state information\n- Filter by user or database name\n\n[Required Use Cases]:\n- When user requests \"active connections\", \"current sessions\", \"process list\"\n- When diagnosing connection issues or monitoring user activity\n- When checking for long-running queries\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n    user_filter: Filter connections by username\n    db_filter: Filter connections by database name\n\nReturns:\n    Formatted string with active connection information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "db_filter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Db Filter",
+            "default": null
+          },
+          "user_filter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Filter",
+            "default": null
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_database_list",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: List all databases in MySQL server\n\n[Exact Functionality]:\n- Show all databases with names and character sets\n- Display database size information if available\n- Show collation and default character set\n\n[Required Use Cases]:\n- When user requests \"database list\", \"show databases\", \"available databases\"\n- When exploring server structure\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n\nReturns:\n    Formatted string with database list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_table_list",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: List all tables in specified database or all databases\n\n[Exact Functionality]:\n- If database_name provided: Show tables in that specific database\n- If database_name empty: Show tables from all user databases with database names\n- Display table type (BASE TABLE, VIEW), engine, rows count, and size information\n- Show creation and update timestamps\n- Filter by table type if specified\n\n[Required Use Cases]:\n- When user requests \"table list\", \"show tables\", \"database tables\"\n- When exploring database structure\n\nArgs:\n    database_name: Database name to analyze (if empty, shows tables from all databases)\n    table_type: Filter by table type (\"BASE TABLE\", \"VIEW\")\n\nReturns:\n    Formatted string with table information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Table Type",
+            "default": null
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_table_schema_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get detailed schema information for a specific table or entire database\n\n[Exact Functionality]:\n- If table_name provided: Show all columns, indexes, foreign keys for that table\n- If table_name empty: Show overview of all tables in the database\n- Display table statistics, constraints, and engine information\n- Include column comments and default values\n\n[Required Use Cases]:\n- When user requests \"table schema\", \"table structure\", \"describe table\"\n- When analyzing table design and constraints\n- When requesting database-wide schema analysis with empty table_name\n\nArgs:\n    table_name: Name of the table to analyze (empty string for database overview)\n    database_name: Database containing the table (uses current database if omitted)\n\nReturns:\n    Formatted string with detailed table schema information or database overview",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "title": "Table Name"
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_mysql_config",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get MySQL server configuration variables\n\n[Exact Functionality]:\n- Show server configuration variables and their values\n- Filter by search term if provided\n- Display both global and session variables\n- Show variable descriptions where available\n\n[Required Use Cases]:\n- When user requests \"MySQL config\", \"server variables\", \"configuration\"\n- When diagnosing configuration issues\n- When checking specific settings\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n    search_term: Filter variables by name containing this term\n\nReturns:\n    Formatted string with MySQL configuration",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "search_term": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search Term",
+            "default": null
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_user_list",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: List all MySQL users and their privileges\n\n[Exact Functionality]:\n- Show all MySQL users with their host patterns\n- Display account status and authentication info\n- Show password expiration and locking status\n- Include SSL and resource limit information\n\n[Required Use Cases]:\n- When user requests \"user list\", \"MySQL users\", \"account info\"\n- When managing user access and security\n- When auditing user accounts\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n\nReturns:\n    Formatted string with user account information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_server_status",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get MySQL server status variables and performance counters\n\n[Exact Functionality]:\n- Show server status variables with current values\n- Display performance counters and operational metrics\n- Filter by search term if provided\n- Include connection, query, and resource statistics\n\n[Required Use Cases]:\n- When user requests \"server status\", \"MySQL status\", \"performance metrics\"\n- When monitoring server health and performance\n- When diagnosing operational issues\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n    search_term: Filter status variables by name containing this term\n\nReturns:\n    Formatted string with server status information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "search_term": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search Term",
+            "default": null
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_table_size_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get table size information and storage analysis\n\n[Exact Functionality]:\n- Show table sizes with data and index breakdown\n- Display size ratios and storage efficiency\n- Order by total size (largest first)\n- Include row counts and average row sizes\n\n[Required Use Cases]:\n- When user requests \"table sizes\", \"largest tables\", \"storage analysis\"\n- When planning database optimization\n- When monitoring storage usage\n\nArgs:\n    database_name: Database name to analyze (uses current database if omitted, shows all if none)\n    limit: Maximum number of tables to return (default: 20)\n\nReturns:\n    Formatted string with table size information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 20
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_database_size_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get database size information and storage distribution\n\n[Exact Functionality]:\n- Show database sizes with table counts\n- Display total, data, and index size breakdown\n- Compare databases by storage usage\n- Include average table sizes\n\n[Required Use Cases]:\n- When user requests \"database sizes\", \"storage usage\", \"database capacity\"\n- When planning database resources\n- When monitoring growth trends\n\nArgs:\n    database_name: Specific database name to analyze (analyzes all databases if omitted)\n\nReturns:\n    Formatted string with database size information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_index_usage_stats",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get index usage statistics and efficiency analysis\n\n[Exact Functionality]:\n- Show index information with cardinality and selectivity\n- Display index types and usage patterns\n- Identify potentially unused or inefficient indexes\n- Order by cardinality and selectivity metrics\n\n[Required Use Cases]:\n- When user requests \"index stats\", \"index analysis\", \"index optimization\"\n- When optimizing query performance\n- When identifying redundant indexes\n\nArgs:\n    database_name: Database name to analyze (uses current database if omitted)\n    limit: Maximum number of indexes to return (default: 20)\n\nReturns:\n    Formatted string with index usage statistics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 20
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_connection_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get current connection and process information\n\n[Exact Functionality]:\n- Show active connections with detailed process information\n- Display connection duration, state, and current operations\n- Include user, host, and database context for each connection\n- Filter out system processes for clarity\n\n[Required Use Cases]:\n- When user requests \"connection info\", \"active processes\", \"session details\"\n- When monitoring database activity and user sessions\n- When diagnosing connection issues\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n\nReturns:\n    Formatted string with connection information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_slow_queries",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get slow queries from Performance Schema\n\n[Exact Functionality]:\n- Show slowest queries with execution statistics\n- Display query text, execution count, and timing information\n- Show rows examined and returned\n- Order by total execution time\n\n[Required Use Cases]:\n- When user requests \"slow queries\", \"performance analysis\", \"query optimization\"\n- When diagnosing performance issues\n- When identifying problematic queries\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n    limit: Maximum number of queries to return (default: 20)\n\nReturns:\n    Formatted string with slow query information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 20
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_table_io_stats",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get table I/O statistics from Performance Schema\n\n[Exact Functionality]:\n- Show I/O statistics for tables including reads, writes, and timing\n- Display fetch, insert, update, delete operations\n- Order by total I/O time\n- Show both request counts and timing information\n\n[Required Use Cases]:\n- When user requests \"table I/O\", \"table performance\", \"I/O statistics\"\n- When analyzing table access patterns\n- When identifying heavily used tables\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n    limit: Maximum number of tables to return (default: 20)\n\nReturns:\n    Formatted string with table I/O statistics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 20
+          },
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_lock_monitoring",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Monitor current locks in MySQL\n\n[Exact Functionality]:\n- Show current lock information from Performance Schema\n- Display lock types, modes, and status\n- Show which sessions are holding or waiting for locks\n- Include query information for lock holders\n\n[Required Use Cases]:\n- When user requests \"lock monitoring\", \"deadlock check\", \"blocked sessions\"\n- When diagnosing locking issues\n- When checking for lock contention\n\nArgs:\n    database_name: Database name to connect to (uses default if omitted)\n\nReturns:\n    Formatted string with lock monitoring information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_current_database_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "[Tool Purpose]: Get information about the currently connected or specified database\n\n[Exact Functionality]:\n- Show database name, character set, and collation\n- Display database size and table count\n- Show creation time if available\n- Include storage engine distribution\n\n[Required Use Cases]:\n- When user requests \"current database\", \"database info\", \"database details\"\n- When getting context about the working database\n\nArgs:\n    database_name: Database name to analyze (uses current database if omitted, shows available databases if none)\n\nReturns:\n    Formatted string with database information or available databases",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "database_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@call518/mcp-mysql-ops/mcp",
+      "configSchema": {}
+    }
+  ]
+}

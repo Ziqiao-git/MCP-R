@@ -1,0 +1,437 @@
+{
+  "qualifiedName": "@cuongpo/aptos-mcp",
+  "displayName": "Aptos Blockchain Server",
+  "description": "Enable AI applications to seamlessly interact with the Aptos blockchain for account management, token transfers, custom coin operations, and transaction queries on testnet and mainnet. Simplify blockchain integration by providing a comprehensive set of tools for native APT and custom coin handling. Facilitate secure and efficient blockchain operations directly from your AI workflows.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/aptos.dev.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "create_account",
+      "description": "Create a new Aptos account with a random private key. This generates a new account that can be used for transactions on the Aptos blockchain. Returns the account address, private key, and public key.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_account_info",
+      "description": "Get detailed information about an Aptos account including sequence number and authentication key. This is used for checking account status and transaction readiness. Returns comprehensive account information.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "account_address"
+        ],
+        "properties": {
+          "account_address": {
+            "type": "string",
+            "description": "Aptos account address, e.g., 0x1 or 0x742d35Cc6634C0532925a3b8D6Ac0C4db9c8b3"
+          }
+        }
+      }
+    },
+    {
+      "name": "fund_account",
+      "description": "Fund an Aptos account using the testnet faucet. This is only available on testnet and is used to add APT tokens to an account for testing purposes. Returns the funding transaction details.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "account_address"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "default": 1,
+            "description": "Amount of APT to fund (optional, defaults to 1 APT)"
+          },
+          "account_address": {
+            "type": "string",
+            "description": "Aptos account address to fund, e.g., 0x1 or 0x742d35Cc6634C0532925a3b8D6Ac0C4db9c8b3"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_apt_balance",
+      "description": "Get the native APT token balance of an Aptos account. This is used for checking the current balance of APT tokens in an account. Returns the account balance in both Octas and APT.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "account_address"
+        ],
+        "properties": {
+          "account_address": {
+            "type": "string",
+            "description": "Aptos account address, e.g., 0x1 or 0x742d35Cc6634C0532925a3b8D6Ac0C4db9c8b3"
+          }
+        }
+      }
+    },
+    {
+      "name": "transfer_apt",
+      "description": "Transfer native APT tokens to another Aptos account. This is used for sending APT tokens from your account to another address. Returns the transaction hash upon successful transfer.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recipient_address",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount of APT to transfer (e.g., '1.5' for 1.5 APT)"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 2000,
+            "description": "Maximum gas amount for the transaction (optional)"
+          },
+          "recipient_address": {
+            "type": "string",
+            "description": "Recipient Aptos address, e.g., 0x1 or 0x742d35Cc6634C0532925a3b8D6Ac0C4db9c8b3"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_coin_balance",
+      "description": "Get the balance of a specific coin type for an Aptos account. This is used for checking the balance of custom coins or tokens. Returns the coin balance and metadata.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "account_address",
+          "coin_type"
+        ],
+        "properties": {
+          "coin_type": {
+            "type": "string",
+            "description": "Coin type identifier, e.g., '0x1::aptos_coin::AptosCoin' or custom coin type"
+          },
+          "account_address": {
+            "type": "string",
+            "description": "Aptos account address, e.g., 0x1 or 0x742d35Cc6634C0532925a3b8D6Ac0C4db9c8b3"
+          }
+        }
+      }
+    },
+    {
+      "name": "transfer_coin",
+      "description": "Transfer a specific coin type to another Aptos account. This is used for sending custom coins or tokens from your account to another address. Returns the transaction hash upon successful transfer.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recipient_address",
+          "coin_type",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount of coins to transfer (in smallest unit)"
+          },
+          "coin_type": {
+            "type": "string",
+            "description": "Coin type identifier, e.g., '0x1::aptos_coin::AptosCoin' or custom coin type"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 2000,
+            "description": "Maximum gas amount for the transaction (optional)"
+          },
+          "recipient_address": {
+            "type": "string",
+            "description": "Recipient Aptos address, e.g., 0x1 or 0x742d35Cc6634C0532925a3b8D6Ac0C4db9c8b3"
+          }
+        }
+      }
+    },
+    {
+      "name": "deploy_coin",
+      "description": "Deploy a real custom coin/token on Aptos blockchain using the Aptos CLI and Move modules. This creates a new coin type that can be minted, transferred, and managed. Returns the actual coin type identifier and deployment transaction details.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "symbol"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the coin (e.g., 'My Token')"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol of the coin (e.g., 'MTK')"
+          },
+          "decimals": {
+            "type": "number",
+            "default": 8,
+            "maximum": 32,
+            "minimum": 0,
+            "description": "Number of decimal places for the coin (typically 6 or 8)"
+          },
+          "icon_url": {
+            "type": "string",
+            "description": "URL to the coin icon/logo (optional)"
+          },
+          "project_url": {
+            "type": "string",
+            "description": "URL to the project website (optional)"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 5000,
+            "description": "Maximum gas amount for the transaction (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "quick_deploy_coin",
+      "description": "Quickly deploy a coin using Aptos managed coin framework (faster than full Move deployment). Creates a coin that can be minted and transferred immediately.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "symbol"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the coin (e.g., 'My Token')"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol of the coin (e.g., 'MTK')"
+          },
+          "decimals": {
+            "type": "number",
+            "default": 8,
+            "maximum": 32,
+            "minimum": 0,
+            "description": "Number of decimal places for the coin"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 10000,
+            "description": "Maximum gas amount for the transaction"
+          },
+          "monitor_supply": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to monitor the coin supply"
+          }
+        }
+      }
+    },
+    {
+      "name": "deploy_fungible_asset",
+      "description": "Deploy a fungible asset (FA) using the Aptos Fungible Asset Standard. Fast deployment without Move compilation - uses existing framework functions.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "symbol"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the fungible asset (e.g., 'My Token')"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol of the fungible asset (e.g., 'MTK')"
+          },
+          "decimals": {
+            "type": "number",
+            "default": 8,
+            "maximum": 32,
+            "minimum": 0,
+            "description": "Number of decimal places for the asset"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 200000,
+            "description": "Maximum gas amount for the transaction"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_managed_coin",
+      "description": "Initialize a managed coin using existing Aptos framework. This works with pre-deployed managed coin modules and doesn't require Move compilation. Suitable for testing and development.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "symbol"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the coin (e.g., 'Test Token')"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol of the coin (e.g., 'TEST')"
+          },
+          "decimals": {
+            "type": "number",
+            "default": 8,
+            "maximum": 32,
+            "minimum": 0,
+            "description": "Number of decimal places for the coin (typically 6 or 8)"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 10000,
+            "description": "Maximum gas amount for the transaction"
+          },
+          "monitor_supply": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to monitor the coin supply"
+          }
+        }
+      }
+    },
+    {
+      "name": "mint_coin",
+      "description": "Mint new tokens of a previously deployed custom coin using the token factory. Only the coin deployer can mint new tokens. This increases the total supply of the coin and sends the minted tokens to a specified recipient.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coin_type",
+          "recipient_address",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount of coins to mint (in the coin's base unit)"
+          },
+          "coin_type": {
+            "type": "string",
+            "description": "The coin type identifier (e.g., '0x123::coin::T')"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 3000,
+            "description": "Maximum gas amount for the transaction (optional)"
+          },
+          "recipient_address": {
+            "type": "string",
+            "description": "Address to receive the minted coins"
+          }
+        }
+      }
+    },
+    {
+      "name": "register_coin",
+      "description": "Register your account to receive a specific coin type using the token factory. This is required before you can receive transfers of custom coins on Aptos. Returns the registration transaction details.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "coin_type"
+        ],
+        "properties": {
+          "coin_type": {
+            "type": "string",
+            "description": "The coin type identifier to register for (e.g., '0x123::coin::T')"
+          },
+          "max_gas_amount": {
+            "type": "number",
+            "default": 1000,
+            "description": "Maximum gas amount for the transaction (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "deploy_token_factory",
+      "description": "Deploy the token factory contract to Aptos blockchain. This creates a factory contract that can be used to deploy and manage custom tokens. Returns the deployment transaction details and factory address.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "max_gas_amount": {
+            "type": "number",
+            "default": 10000,
+            "description": "Maximum gas amount for the transaction (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_transaction_status",
+      "description": "Get the status and details of a transaction by its hash. This is used for checking if a transaction was successful and getting detailed information about it. Returns comprehensive transaction information.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "transaction_hash"
+        ],
+        "properties": {
+          "transaction_hash": {
+            "type": "string",
+            "description": "Transaction hash to check, e.g., 0x1234567890abcdef..."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_account_transactions",
+      "description": "Get recent transactions for an Aptos account. This is used for viewing transaction history and activity for an account. Returns a list of recent transactions with details.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "account_address"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of transactions to return (optional, default: 10, max: 100)"
+          },
+          "account_address": {
+            "type": "string",
+            "description": "Aptos account address, e.g., 0x1 or 0x742d35Cc6634C0532925a3b8D6Ac0C4db9c8b3"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@cuongpo/aptos-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "aptosMcpPrivateKey"
+        ],
+        "properties": {
+          "aptosMcpNetwork": {
+            "type": "string",
+            "default": "testnet",
+            "description": "Aptos network to connect to (testnet or mainnet)."
+          },
+          "aptosMcpNodeUrl": {
+            "type": "string",
+            "description": "Custom Aptos node URL (optional, uses default network nodes if not specified)."
+          },
+          "aptosMcpFaucetUrl": {
+            "type": "string",
+            "description": "Custom faucet URL for testnet (optional, uses default faucet if not specified)."
+          },
+          "aptosMcpPrivateKey": {
+            "type": "string",
+            "description": "Aptos MCP private key for signing transactions (hex format starting with 0x)."
+          }
+        }
+      }
+    }
+  ]
+}

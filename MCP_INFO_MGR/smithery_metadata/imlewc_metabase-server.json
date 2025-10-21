@@ -1,0 +1,330 @@
+{
+  "qualifiedName": "@imlewc/metabase-server",
+  "displayName": "Metabase Integration Server",
+  "description": "Interact with Metabase seamlessly. Access dashboards, execute queries, and retrieve data directly from your Metabase instance, enhancing your AI assistant's capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.metabase.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list_dashboards",
+      "description": "List all dashboards in Metabase",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_cards",
+      "description": "List all questions/cards in Metabase",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "f": {
+            "type": "string",
+            "description": "Optional filter function, possible values: archived, table, database, using_model, bookmarked, using_segment, all, mine"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_databases",
+      "description": "List all databases in Metabase",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "execute_card",
+      "description": "Execute a Metabase question/card and get results",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "card_id"
+        ],
+        "properties": {
+          "card_id": {
+            "type": "number",
+            "description": "ID of the card/question to execute"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Optional parameters for the query"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_dashboard_cards",
+      "description": "Get all cards in a dashboard",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dashboard_id"
+        ],
+        "properties": {
+          "dashboard_id": {
+            "type": "number",
+            "description": "ID of the dashboard"
+          }
+        }
+      }
+    },
+    {
+      "name": "execute_query",
+      "description": "Execute a SQL query against a Metabase database",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "database_id",
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "SQL query to execute"
+          },
+          "database_id": {
+            "type": "number",
+            "description": "ID of the database to query"
+          },
+          "native_parameters": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Optional parameters for the query"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_card",
+      "description": "Create a new Metabase question (card).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "dataset_query",
+          "display",
+          "visualization_settings"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the card"
+          },
+          "display": {
+            "type": "string",
+            "description": "Display type (e.g., 'table', 'line', 'bar')"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description for the card"
+          },
+          "collection_id": {
+            "type": "number",
+            "description": "Optional ID of the collection to save the card in"
+          },
+          "dataset_query": {
+            "type": "object",
+            "description": "The query for the card (e.g., MBQL or native query)"
+          },
+          "visualization_settings": {
+            "type": "object",
+            "description": "Settings for the visualization"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_card",
+      "description": "Update an existing Metabase question (card).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "card_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the card"
+          },
+          "card_id": {
+            "type": "number",
+            "description": "ID of the card to update"
+          },
+          "display": {
+            "type": "string",
+            "description": "New display type"
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Set to true to archive the card"
+          },
+          "description": {
+            "type": "string",
+            "description": "New description"
+          },
+          "collection_id": {
+            "type": "number",
+            "description": "New collection ID"
+          },
+          "dataset_query": {
+            "type": "object",
+            "description": "New query for the card"
+          },
+          "visualization_settings": {
+            "type": "object",
+            "description": "New visualization settings"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_card",
+      "description": "Delete a Metabase question (card).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "card_id"
+        ],
+        "properties": {
+          "card_id": {
+            "type": "number",
+            "description": "ID of the card to delete"
+          },
+          "hard_delete": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true for hard delete, false (default) for archive"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_dashboard",
+      "description": "Create a new Metabase dashboard.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the dashboard"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Optional parameters for the dashboard"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description for the dashboard"
+          },
+          "collection_id": {
+            "type": "number",
+            "description": "Optional ID of the collection to save the dashboard in"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_dashboard",
+      "description": "Update an existing Metabase dashboard.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dashboard_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the dashboard"
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Set to true to archive the dashboard"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "New parameters for the dashboard"
+          },
+          "description": {
+            "type": "string",
+            "description": "New description for the dashboard"
+          },
+          "dashboard_id": {
+            "type": "number",
+            "description": "ID of the dashboard to update"
+          },
+          "collection_id": {
+            "type": "number",
+            "description": "New collection ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_dashboard",
+      "description": "Delete a Metabase dashboard.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "dashboard_id"
+        ],
+        "properties": {
+          "hard_delete": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true for hard delete, false (default) for archive"
+          },
+          "dashboard_id": {
+            "type": "number",
+            "description": "ID of the dashboard to delete"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@imlewc/metabase-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "metabaseUrl",
+          "metabaseUsername",
+          "metabasePassword"
+        ],
+        "properties": {
+          "metabaseUrl": {
+            "type": "string",
+            "description": "URL of the Metabase instance (e.g. https://your-metabase-instance.com)"
+          },
+          "metabasePassword": {
+            "type": "string",
+            "description": "Password for authenticating with Metabase"
+          },
+          "metabaseUsername": {
+            "type": "string",
+            "description": "Username for authenticating with Metabase"
+          }
+        }
+      }
+    }
+  ]
+}

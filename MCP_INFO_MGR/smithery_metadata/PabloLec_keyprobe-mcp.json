@@ -1,0 +1,127 @@
+{
+  "qualifiedName": "@PabloLec/keyprobe-mcp",
+  "displayName": "KeyProbe",
+  "description": "Audit certificates and keystores to surface expiry risks, weak algorithms, and misconfigurations. Generate concise reports and compact JSON summaries from files or pasted data. Explain results in plain language to speed remediation and compliance.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@PabloLec/keyprobe-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "analyze_from_local_path",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "analysis",
+            "filesystem",
+            "keyprobe",
+            "x509"
+          ]
+        }
+      },
+      "title": "Analyze local file",
+      "annotations": {
+        "title": "Analyze local file",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true
+      },
+      "description": "Analyze a local certificate/keystore file and return a detailed JSON summary. Read-only and idempotent. Best for sandboxed setups where the server can read files.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "format": "path",
+            "description": "Local path to the target file."
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password",
+            "default": null,
+            "description": "Optional password for protected containers (e.g., PKCS#12) or keystores (JKS/JCEKS/BKS). Leave null if not required."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "analyze_from_b64_string",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "analysis",
+            "binary",
+            "keyprobe",
+            "x509"
+          ]
+        }
+      },
+      "title": "Analyze base64 content",
+      "annotations": {
+        "title": "Analyze base64 content",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true
+      },
+      "description": "Analyze a certificate/keystore provided as base64 and return a JSON summary. Use this when the client cannot expose a local path (e.g., remote deployment). Read-only and idempotent.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "filename",
+          "content_b64"
+        ],
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename",
+            "description": "Original filename (used for type heuristics only, not for reading from disk)."
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password",
+            "default": null,
+            "description": "Optional password for protected containers (e.g., PKCS#12) or keystores (JKS/JCEKS/BKS). Leave null if not required."
+          },
+          "content_b64": {
+            "type": "string",
+            "title": "Content B64",
+            "description": "RFC 4648 raw base64-encoded bytes of the file"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@PabloLec/keyprobe-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

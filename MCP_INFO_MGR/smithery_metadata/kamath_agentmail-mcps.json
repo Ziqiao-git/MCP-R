@@ -1,0 +1,307 @@
+{
+  "qualifiedName": "@kamath/agentmail-mcps",
+  "displayName": "AgentMail",
+  "description": "Create inboxes and send emails. Manage threads, labels, and replies to keep conversations organized and surface messages that need attention. Automate workflows to find unreplied threads, respond, and update labels in one pass.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@kamath/agentmail-mcps",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_inbox",
+      "description": "Create a new email inbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Optional domain for the inbox"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_email",
+      "description": "Send an email from an inbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId",
+          "to",
+          "subject",
+          "text"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Recipient email address"
+          },
+          "html": {
+            "type": "string",
+            "description": "Optional HTML version of the email"
+          },
+          "text": {
+            "type": "string",
+            "description": "Email body text"
+          },
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox to send from"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_thread",
+      "description": "Get detailed information about a thread including all messages",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId",
+          "threadId"
+        ],
+        "properties": {
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox containing the thread"
+          },
+          "threadId": {
+            "type": "string",
+            "description": "ID of the thread to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reply_to_message",
+      "description": "Reply to a specific message in a thread",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId",
+          "messageId",
+          "text"
+        ],
+        "properties": {
+          "html": {
+            "type": "string",
+            "description": "Optional HTML version of the reply"
+          },
+          "text": {
+            "type": "string",
+            "description": "Reply text content"
+          },
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox containing the message"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "ID of the message to reply to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_threads",
+      "description": "List threads in an inbox, optionally filtered by labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional labels to filter threads by"
+          },
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox to list threads from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_message_labels",
+      "description": "Update labels on a message (add new labels and/or remove existing ones)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId",
+          "messageId"
+        ],
+        "properties": {
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox containing the message"
+          },
+          "addLabels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels to add to the message"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "ID of the message to update"
+          },
+          "removeLabels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels to remove from the message"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_unreplied_threads",
+      "description": "Find threads that need replies by looking for specific labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId"
+        ],
+        "properties": {
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox to search"
+          },
+          "unrepliedLabel": {
+            "type": "string",
+            "default": "unreplied",
+            "description": "Label that marks threads needing replies"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "process_conversational_loop",
+      "description": "Complete workflow: find unreplied thread, get details, send reply, and update labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId",
+          "replyText"
+        ],
+        "properties": {
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox to process"
+          },
+          "replyHtml": {
+            "type": "string",
+            "description": "Optional HTML version of the reply"
+          },
+          "replyText": {
+            "type": "string",
+            "description": "Text content for the reply"
+          },
+          "repliedLabel": {
+            "type": "string",
+            "default": "replied",
+            "description": "Label to mark threads as replied"
+          },
+          "unrepliedLabel": {
+            "type": "string",
+            "default": "unreplied",
+            "description": "Label marking threads needing replies"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_messages",
+      "description": "List messages in an inbox, optionally filtered by labels",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional labels to filter messages by"
+          },
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox to list messages from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_message",
+      "description": "Get detailed information about a specific message",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inboxId",
+          "messageId"
+        ],
+        "properties": {
+          "inboxId": {
+            "type": "string",
+            "description": "ID of the inbox containing the message"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "ID of the message to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@kamath/agentmail-mcps/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "agentmailApiKey"
+        ],
+        "properties": {
+          "agentmailApiKey": {
+            "type": "string",
+            "description": "AgentMail API key for email operations"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,829 @@
+{
+  "qualifiedName": "@xinkuang/china-stock-mcp",
+  "displayName": "China Stock Insights",
+  "description": "Access real-time and historical market data for China A-shares and Hong Kong stocks, along with news and macro indicators. Retrieve financial statements, key ratios, shareholder and insider activity, sentiment analysis, and company profiles to power investment research and strategies.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@xinkuang/china-stock-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_hist_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取股票的历史行情数据，支持多种数据源和技术指标",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "adjust": {
+            "enum": [
+              "none",
+              "qfq",
+              "hfq"
+            ],
+            "type": "string",
+            "default": "none",
+            "description": "复权类型: none, qfq(前复权), hfq(后复权)。默认：none"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "end_date": {
+            "type": "string",
+            "default": "2030-12-31",
+            "description": "结束日期，格式为 YYYY-MM-DD"
+          },
+          "interval": {
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year"
+            ],
+            "type": "string",
+            "default": "day",
+            "description": "时间周期: minute, hour, day, week, month, year。默认:day"
+          },
+          "start_date": {
+            "type": "string",
+            "default": "1970-01-01",
+            "description": "开始日期，格式为 YYYY-MM-DD"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          },
+          "indicators_list": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "SMA",
+                    "EMA",
+                    "RSI",
+                    "MACD",
+                    "BOLL",
+                    "STOCH",
+                    "ATR",
+                    "CCI",
+                    "ADX",
+                    "WILLR",
+                    "AD",
+                    "ADOSC",
+                    "OBV",
+                    "MOM",
+                    "SAR",
+                    "TSF",
+                    "APO",
+                    "AROON",
+                    "AROONOSC",
+                    "BOP",
+                    "CMO",
+                    "DX",
+                    "MFI",
+                    "MINUS_DI",
+                    "MINUS_DM",
+                    "PLUS_DI",
+                    "PLUS_DM",
+                    "PPO",
+                    "ROC",
+                    "ROCP",
+                    "ROCR",
+                    "ROCR100",
+                    "TRIX",
+                    "ULTOSC"
+                  ],
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "SMA, EMA, RSI, MACD, BOLL, STOCH, OBV, MFI",
+            "description": "要添加的技术指标，可以是逗号分隔的字符串（例如: 'SMA,EMA'）或字符串列表（例如: ['SMA', 'EMA']）。支持的指标包括: SMA, EMA, RSI, MACD, BOLL, STOCH, ATR, CCI, ADX, WILLR, AD, ADOSC, OBV, MOM, SAR, TSF, APO, AROON, AROONOSC, BOP, CMO, DX, MFI, MINUS_DI, MINUS_DM, PLUS_DI, PLUS_DM, PPO, ROC, ROCP, ROCR, ROCR100, TRIX, ULTOSC。常用指标：SMA, EMA, RSI, MACD, BOLL, STOCH, OBV, MFI,建议不超过10个。"
+          },
+          "interval_multiplier": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "description": "时间周期乘数"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_realtime_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取股票的实时行情数据，支持多种数据源",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_news_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取股票相关的新闻数据",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_balance_sheet",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取公司的资产负债表数据",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_income_statement",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取指定股票代码的公司的利润表数据",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_cash_flow",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取指定股票代码的公司的现金流量表数据",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_fund_flow",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取股票的近 100 个交易日的资金流向数据",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_inner_trade_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取公司的内部股东交易数据",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_financial_metrics",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取三大财务报表的关键财务指标",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_time_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取当前时间（ISO格式、时间戳）和最近一个交易日",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_stock_basic_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取指定股票的基本概要信息",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_macro_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取单个宏观经济指标数据",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "indicator": {
+            "enum": [
+              "money_supply",
+              "gdp",
+              "cpi",
+              "pmi",
+              "stock_summary"
+            ],
+            "type": "string",
+            "default": "gdp",
+            "description": "要获取的宏观经济指标。支持的指标包括: money_supply, gdp, cpi, pmi, stock_summary。默认: 'gdp'"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_investor_sentiment",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "分析散户和机构投资者的投资情绪",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_shareholder_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取指定股票的股东情况",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_product_info",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取指定股票公司的主要产品或业务构成",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '000001')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_profit_forecast",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "获取股票的业绩预测数据，包括预测年报净利润和每股收益",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "股票代码 (例如: '600519')"
+          },
+          "output_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml",
+              "excel",
+              "markdown",
+              "html"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "输出数据格式: json, csv, xml, excel, markdown, html。默认: json"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@xinkuang/china-stock-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "default": {},
+        "description": "No configuration required for china-stock-mcp",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

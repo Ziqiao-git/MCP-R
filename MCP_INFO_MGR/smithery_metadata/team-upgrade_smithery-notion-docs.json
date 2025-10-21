@@ -1,0 +1,228 @@
+{
+  "qualifiedName": "@team-upgrade/smithery-notion-docs",
+  "displayName": "Notion RAG: Intelligent Documentation Search",
+  "description": "This server acts as a bridge between your Notion workspace and your development environment, providing intelligent access to your documentation right within your IDE.\nLeveraging a Retrieval-Augmented Generation (RAG) system, it syncs your Notion pages, indexes them into a Pinecone vector database, and allows you to perform semantic searches using powerful AI models from OpenAI or Google.\nDesigned for seamless integration with tools like Cursor, it uses the Model Context Protocol (MCP) to make your entire Notion knowledge base available as a development context. Developers can quickly find relevant guides, API documentation, or project notes without context switching.\n\nKey Features:\n- Direct IDE Integration: Access Notion docs via MCP in supported IDEs like Cursor.\n- Intelligent RAG System: Get context-aware search results powered by AI.\n- Automatic Sync: Keeps your knowledge base up-to-date with your Notion workspace.\n- Flexible API: Includes a REST API for custom integrations.\n- Powered by: LangChain, Pinecone, OpenAI, and Google AI.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/team-upgrade.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@team-upgrade/smithery-notion-docs",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_notion_docs",
+      "description": "Search Notion documents related to development topics",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Maximum number of documents to return"
+          },
+          "topic": {
+            "type": "string",
+            "description": "Development topic to search for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_dev_context",
+      "description": "Generate AI summary and context for development work",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of documents to reference"
+          },
+          "topic": {
+            "type": "string",
+            "description": "Development topic to generate context for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sync_notion_docs",
+      "description": "Sync Notion documents to the RAG system",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to force full resync"
+          },
+          "pageIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of specific page IDs to sync"
+          },
+          "databaseIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of database IDs to sync"
+          },
+          "searchQuery": {
+            "type": "string",
+            "description": "Filter documents by search query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "preview_notion_docs",
+      "description": "Preview Notion documents to be synced (no actual sync)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "pageIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of specific page IDs to check"
+          },
+          "databaseIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of database IDs to check"
+          },
+          "searchQuery": {
+            "type": "string",
+            "description": "Filter documents by search query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ask_notion",
+      "description": "Answer questions based on Notion documents",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 15,
+            "description": "Number of documents to reference"
+          },
+          "question": {
+            "type": "string",
+            "description": "Question content"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_system_status",
+      "description": "Check the status of the Notion RAG system",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "hello",
+      "description": "Simple greeting message",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the person to greet"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@team-upgrade/smithery-notion-docs/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "notionToken",
+          "pineconeApiKey",
+          "pineconeIndexName",
+          "openaiApiKey",
+          "googleAiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "maxResults": {
+            "type": "number",
+            "default": 15,
+            "description": "Maximum number of search results"
+          },
+          "googleAiKey": {
+            "type": "string",
+            "description": "Google AI API key"
+          },
+          "notionToken": {
+            "type": "string",
+            "description": "Notion API key"
+          },
+          "openaiApiKey": {
+            "type": "string",
+            "description": "OpenAI API key"
+          },
+          "notionTargetId": {
+            "type": "string",
+            "description": "Notion target ID"
+          },
+          "pineconeApiKey": {
+            "type": "string",
+            "description": "Pinecone API key"
+          },
+          "pineconeIndexName": {
+            "type": "string",
+            "description": "Pinecone index name"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

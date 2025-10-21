@@ -1,0 +1,659 @@
+{
+  "qualifiedName": "@codebyyassine/discordselfbot-mcp",
+  "displayName": "Discord Selfbot MCP Server",
+  "description": "Enable your agents to interact with Discord through a selfbot interface using the Model Context Protocol. Automate and extend Discord functionalities by integrating MCP tools and resources seamlessly. Enhance your Discord automation workflows with this MCP server implementation.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@codebyyassine/discordselfbot-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_server_info",
+      "description": "Get detailed discord server information",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_id_by_name",
+      "description": "Get a Discord user's ID by username in a guild for ping usage <@id>.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "username": {
+            "type": "string",
+            "description": "Discord username (optionally username#discriminator)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_channels",
+      "description": "List of all channels",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_text_channel",
+      "description": "Create a new text channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Channel name"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Category ID (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_channel",
+      "description": "Delete a channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_message",
+      "description": "Send a message to a specific channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message content"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_messages",
+      "description": "Read recent message history from a specific channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "count": {
+            "type": "string",
+            "description": "Number of messages to retrieve"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "edit_message",
+      "description": "Edit a message from a specific channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId",
+          "newMessage"
+        ],
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Specific message ID"
+          },
+          "newMessage": {
+            "type": "string",
+            "description": "New message content"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_message",
+      "description": "Delete a message from a specific channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId"
+        ],
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Specific message ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_private_message",
+      "description": "Send a private message to a specific user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "userId",
+          "message"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "Discord user ID"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message content"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_private_messages",
+      "description": "Read recent message history from a specific user",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "count": {
+            "type": "string",
+            "description": "Number of messages to retrieve"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Discord user ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_reaction",
+      "description": "Add a reaction (emoji) to a specific message",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId",
+          "emoji"
+        ],
+        "properties": {
+          "emoji": {
+            "type": "string",
+            "description": "Emoji (Unicode or string)"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Discord message ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_reaction",
+      "description": "Remove a specified reaction (emoji) from a message",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "messageId",
+          "emoji"
+        ],
+        "properties": {
+          "emoji": {
+            "type": "string",
+            "description": "Emoji (Unicode or string)"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "Discord message ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_roles",
+      "description": "List all roles in a Discord server",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_role",
+      "description": "Create a new role in a Discord server",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Role name"
+          },
+          "color": {
+            "type": "string",
+            "description": "Role color in hex format (e.g., #FF0000 for red)"
+          },
+          "hoist": {
+            "type": "string",
+            "description": "Whether the role should be displayed separately in the member list"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "mentionable": {
+            "type": "string",
+            "description": "Whether the role should be mentionable"
+          },
+          "permissions": {
+            "type": "string",
+            "description": "Comma-separated list of permissions (e.g., SEND_MESSAGES,KICK_MEMBERS)"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_role",
+      "description": "Delete a role from a Discord server",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "roleId"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "description": "Role ID"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_role_to_member",
+      "description": "Add a role to a guild member",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "userId",
+          "roleId"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "description": "Role ID"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_role_from_member",
+      "description": "Remove a role from a guild member",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "userId",
+          "roleId"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "description": "Role ID"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_category",
+      "description": "Create a new category for channels",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Discord category name"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_category",
+      "description": "Delete a category",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Discord category ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_category",
+      "description": "Find a category ID using name and server ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "categoryName"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Discord category name"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_channels_in_category",
+      "description": "List of channels in a specific category",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Discord category ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_webhook",
+      "description": "Create a new webhook on a specific channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Webhook name"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_webhook",
+      "description": "Delete a webhook",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "webhookId"
+        ],
+        "properties": {
+          "webhookId": {
+            "type": "string",
+            "description": "Discord webhook ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_webhooks",
+      "description": "List of webhooks on a specific channel",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId"
+        ],
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_webhook_message",
+      "description": "Send a message via webhook",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "webhookUrl",
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message content"
+          },
+          "webhookUrl": {
+            "type": "string",
+            "description": "Discord webhook link"
+          }
+        }
+      }
+    },
+    {
+      "name": "send_slash_command",
+      "description": "Send a slash command to a bot in a channel. Returns the complete raw message object with all embeds, attachments, and metadata. Bot ID is optional if configured as default.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelId",
+          "commandName"
+        ],
+        "properties": {
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of command arguments"
+          },
+          "botId": {
+            "type": "string",
+            "description": "Bot user ID that owns the slash command (optional if configured as default)"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Discord channel ID"
+          },
+          "commandName": {
+            "type": "string",
+            "description": "Command name (can include subcommands like \"command subcommand\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_bot_commands",
+      "description": "Get available slash commands for a specific bot (experimental)",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "description": "Bot user ID (optional if configured as default)"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_channel",
+      "description": "Find a channel type and ID using name and server ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "channelName"
+        ],
+        "properties": {
+          "guildId": {
+            "type": "string",
+            "description": "Discord server ID (optional if configured as default)"
+          },
+          "channelName": {
+            "type": "string",
+            "description": "Discord channel name"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@codebyyassine/discordselfbot-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "botId": {
+            "type": "string",
+            "description": "Default bot ID for slash commands (optional)"
+          },
+          "token": {
+            "type": "string",
+            "description": "Discord bot token for authentication"
+          },
+          "guildId": {
+            "type": "string",
+            "description": "Default Discord server ID (optional)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

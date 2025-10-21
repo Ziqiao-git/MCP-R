@@ -1,0 +1,57 @@
+{
+  "qualifiedName": "@Gorav22/terminusai",
+  "displayName": "TerminusAI",
+  "description": "Execute terminal commands locally or remotely via SSH with session persistence and environment variable support. Manage terminal sessions that maintain state for up to 20 minutes, enabling efficient command execution workflows. Connect using stdio or SSE for flexible integration with AI models and applications.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/b1e4b363-687f-4f64-978a-cadca01a20a6.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "execute_command",
+      "description": "Execute commands on remote hosts or locally (This tool can be used for both remote hosts and the current machine)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "env": {
+            "type": "object",
+            "default": {},
+            "description": "Environment variables"
+          },
+          "host": {
+            "type": "string",
+            "description": "Host to connect to (optional, if not provided the command will be executed locally)"
+          },
+          "command": {
+            "type": "string",
+            "description": "Command to execute. Before running commands, it's best to determine the system type (Mac, Linux, etc.)"
+          },
+          "session": {
+            "type": "string",
+            "default": "default",
+            "description": "Session name, defaults to 'default'. The same session name will reuse the same terminal environment for 20 minutes, which is useful for operations requiring specific environments like conda."
+          },
+          "username": {
+            "type": "string",
+            "description": "Username for SSH connection (required when host is specified)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Gorav22/terminusai/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

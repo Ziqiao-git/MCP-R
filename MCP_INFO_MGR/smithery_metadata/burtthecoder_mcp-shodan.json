@@ -1,0 +1,219 @@
+{
+  "qualifiedName": "@burtthecoder/mcp-shodan",
+  "displayName": "Shodan Server",
+  "description": "A Model Context Protocol server for querying the Shodan API and Shodan CVEDB, providing access to network intelligence and security services.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "ip_lookup",
+      "description": "Retrieve comprehensive information about an IP address, including geolocation, open ports, running services, SSL certificates, hostnames, and cloud provider details if available. Returns service banners and HTTP server information when present.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ip"
+        ],
+        "properties": {
+          "ip": {
+            "type": "string",
+            "description": "The IP address to query."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "shodan_search",
+      "description": "Search Shodan's database of internet-connected devices. Returns detailed information about matching devices including services, vulnerabilities, and geographic distribution. Supports advanced search filters and returns country-based statistics.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query for Shodan."
+          },
+          "max_results": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum results to return."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cve_lookup",
+      "description": "Query detailed vulnerability information from Shodan's CVEDB. Returns comprehensive CVE details including CVSS scores (v2/v3), EPSS probability and ranking, KEV status, proposed mitigations, ransomware associations, and affected products (CPEs).",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "cve"
+        ],
+        "properties": {
+          "cve": {
+            "type": "string",
+            "pattern": "^CVE-\\d{4}-\\d{4,}$",
+            "description": "The CVE identifier to query (format: CVE-YYYY-NNNNN)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dns_lookup",
+      "description": "Resolve domain names to IP addresses using Shodan's DNS service. Supports batch resolution of multiple hostnames in a single query. Returns IP addresses mapped to their corresponding hostnames.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "hostnames"
+        ],
+        "properties": {
+          "hostnames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of hostnames to resolve."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cpe_lookup",
+      "description": "Search for Common Platform Enumeration (CPE) entries by product name in Shodan's CVEDB. Supports pagination and can return either full CPE details or just the total count. Useful for identifying specific versions and configurations of software and hardware.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "product"
+        ],
+        "properties": {
+          "skip": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of CPEs to skip (for pagination)."
+          },
+          "count": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, returns only the count of matching CPEs."
+          },
+          "limit": {
+            "type": "number",
+            "default": 1000,
+            "description": "Maximum number of CPEs to return (max 1000)."
+          },
+          "product": {
+            "type": "string",
+            "description": "The name of the product to search for CPEs."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cves_by_product",
+      "description": "Search for vulnerabilities affecting specific products or CPEs. Supports filtering by KEV status, sorting by EPSS score, date ranges, and pagination. Can search by product name or CPE 2.3 identifier. Returns detailed vulnerability information including severity scores and impact assessments.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "skip": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of CVEs to skip (for pagination)."
+          },
+          "count": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, returns only the count of matching CVEs."
+          },
+          "cpe23": {
+            "type": "string",
+            "description": "The CPE version 2.3 identifier (format: cpe:2.3:part:vendor:product:version)."
+          },
+          "limit": {
+            "type": "number",
+            "default": 1000,
+            "description": "Maximum number of CVEs to return (max 1000)."
+          },
+          "is_kev": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, returns only CVEs with the KEV flag set."
+          },
+          "product": {
+            "type": "string",
+            "description": "The name of the product to search for CVEs."
+          },
+          "end_date": {
+            "type": "string",
+            "description": "End date for filtering CVEs (format: YYYY-MM-DDTHH:MM:SS)."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date for filtering CVEs (format: YYYY-MM-DDTHH:MM:SS)."
+          },
+          "sort_by_epss": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, sorts CVEs by EPSS score in descending order."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reverse_dns_lookup",
+      "description": "Perform reverse DNS lookups to find hostnames associated with IP addresses. Supports batch lookups of multiple IP addresses in a single query. Returns all known hostnames for each IP address, with clear indication when no hostnames are found.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "ips"
+        ],
+        "properties": {
+          "ips": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of IP addresses to perform reverse DNS lookup on."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@burtthecoder/mcp-shodan/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "shodanApiKey"
+        ],
+        "properties": {
+          "shodanApiKey": {
+            "type": "string",
+            "description": "The API key for the Shodan API."
+          }
+        }
+      }
+    }
+  ]
+}

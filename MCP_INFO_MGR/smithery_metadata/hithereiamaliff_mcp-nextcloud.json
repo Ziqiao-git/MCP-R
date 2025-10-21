@@ -1,0 +1,896 @@
+{
+  "qualifiedName": "@hithereiamaliff/mcp-nextcloud",
+  "displayName": "Nextcloud MCP Server",
+  "description": "A comprehensive Model Context Protocol (MCP) server that enables AI assistants to interact with your Nextcloud instance. Features 34 tools across Notes, Calendar, Contacts, Tables, and WebDAV operations. Built in TypeScript (rewritten from the original fork's Python codebase from scratch) with full Smithery support for one-click cloud deployment and local testing via Smithery playground.\n\nNote: this is NOT an official MCP server by Nextcloud, and is a direct fork of cbcoutinho's nextcloud-mcp-server.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/9b23b931-66e5-4332-8dc6-fa8a2ac1b8ce.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/mcp-nextcloud",
+  "security": null,
+  "tools": [
+    {
+      "name": "nextcloud_notes_create_note",
+      "description": "Create a new note in Nextcloud Notes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title",
+          "content",
+          "category"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the note"
+          },
+          "content": {
+            "type": "string",
+            "description": "The content of the note"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the note"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_notes_update_note",
+      "description": "Update an existing note in Nextcloud Notes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "note_id",
+          "etag"
+        ],
+        "properties": {
+          "etag": {
+            "type": "string",
+            "description": "The etag of the note for concurrency control"
+          },
+          "title": {
+            "type": "string",
+            "description": "The new title of the note"
+          },
+          "content": {
+            "type": "string",
+            "description": "The new content of the note"
+          },
+          "note_id": {
+            "type": "number",
+            "description": "The ID of the note to update"
+          },
+          "category": {
+            "type": "string",
+            "description": "The new category of the note"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_notes_append_content",
+      "description": "Append content to an existing note",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "note_id",
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The content to append"
+          },
+          "note_id": {
+            "type": "number",
+            "description": "The ID of the note to append to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_notes_search_notes",
+      "description": "Search for notes in Nextcloud Notes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_notes_delete_note",
+      "description": "Delete a note from Nextcloud Notes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "note_id"
+        ],
+        "properties": {
+          "note_id": {
+            "type": "number",
+            "description": "The ID of the note to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_list_calendars",
+      "description": "List all calendars in Nextcloud",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_create_event",
+      "description": "Create a new calendar event",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId",
+          "event"
+        ],
+        "properties": {
+          "event": {
+            "type": "object",
+            "properties": {
+              "dtend": {
+                "type": "string",
+                "description": "End date/time (ISO format)"
+              },
+              "dtstart": {
+                "type": "string",
+                "description": "Start date/time (ISO format)"
+              },
+              "summary": {
+                "type": "string",
+                "description": "Event title/summary"
+              },
+              "location": {
+                "type": "string",
+                "description": "Event location"
+              },
+              "description": {
+                "type": "string",
+                "description": "Event description"
+              }
+            },
+            "description": "Event data",
+            "additionalProperties": false
+          },
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_list_events",
+      "description": "List events from a calendar",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId"
+        ],
+        "properties": {
+          "end": {
+            "type": "string",
+            "description": "End date filter (ISO format)"
+          },
+          "start": {
+            "type": "string",
+            "description": "Start date filter (ISO format)"
+          },
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_get_event",
+      "description": "Get details of a specific event",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId",
+          "eventId"
+        ],
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "description": "The ID of the event"
+          },
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_update_event",
+      "description": "Update an existing event",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId",
+          "eventId",
+          "event"
+        ],
+        "properties": {
+          "event": {
+            "type": "object",
+            "properties": {
+              "dtend": {
+                "type": "string",
+                "description": "End date/time (ISO format)"
+              },
+              "dtstart": {
+                "type": "string",
+                "description": "Start date/time (ISO format)"
+              },
+              "summary": {
+                "type": "string",
+                "description": "Event title/summary"
+              },
+              "location": {
+                "type": "string",
+                "description": "Event location"
+              },
+              "description": {
+                "type": "string",
+                "description": "Event description"
+              }
+            },
+            "description": "Updated event data",
+            "additionalProperties": false
+          },
+          "eventId": {
+            "type": "string",
+            "description": "The ID of the event"
+          },
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_delete_event",
+      "description": "Delete an event from calendar",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId",
+          "eventId"
+        ],
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "description": "The ID of the event"
+          },
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_debug_list_calendars",
+      "description": "Debug: List all calendars with detailed info",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_debug_verify_calendar",
+      "description": "Debug: Verify if a specific calendar exists and is accessible",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId"
+        ],
+        "properties": {
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar to verify"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_debug_create_test_event",
+      "description": "Debug: Create a test event with proper formatting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId",
+          "testType"
+        ],
+        "properties": {
+          "testType": {
+            "enum": [
+              "simple",
+              "with_timezone"
+            ],
+            "type": "string",
+            "description": "Type of test event to create"
+          },
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_calendar_debug_list_events_verbose",
+      "description": "Debug: List events from a calendar with detailed logging",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "calendarId"
+        ],
+        "properties": {
+          "calendarId": {
+            "type": "string",
+            "description": "The ID of the calendar"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_contacts_list_addressbooks",
+      "description": "List all address books",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_contacts_create_addressbook",
+      "description": "Create a new address book",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "displayName",
+          "description"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of the address book"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name for the address book"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_contacts_delete_addressbook",
+      "description": "Delete an address book",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "addressBookId"
+        ],
+        "properties": {
+          "addressBookId": {
+            "type": "string",
+            "description": "The ID of the address book to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_contacts_list_contacts",
+      "description": "List contacts from an address book",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "addressBookId"
+        ],
+        "properties": {
+          "addressBookId": {
+            "type": "string",
+            "description": "The ID of the address book"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_contacts_create_contact",
+      "description": "Create a new contact",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "addressBookId",
+          "contact"
+        ],
+        "properties": {
+          "contact": {
+            "type": "object",
+            "properties": {
+              "fn": {
+                "type": "string",
+                "description": "Full name"
+              },
+              "adr": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of addresses"
+              },
+              "org": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of organizations"
+              },
+              "tel": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of phone numbers"
+              },
+              "note": {
+                "type": "string",
+                "description": "Note"
+              },
+              "email": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of email addresses"
+              }
+            },
+            "description": "Contact information",
+            "additionalProperties": false
+          },
+          "addressBookId": {
+            "type": "string",
+            "description": "The ID of the address book"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_contacts_delete_contact",
+      "description": "Delete a contact",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "addressBookId",
+          "contactId"
+        ],
+        "properties": {
+          "contactId": {
+            "type": "string",
+            "description": "The ID of the contact to delete"
+          },
+          "addressBookId": {
+            "type": "string",
+            "description": "The ID of the address book"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_tables_list_tables",
+      "description": "List all tables in Nextcloud Tables",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_tables_get_schema",
+      "description": "Get schema of a specific table",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tableId"
+        ],
+        "properties": {
+          "tableId": {
+            "type": "string",
+            "description": "The ID of the table"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_tables_read_table",
+      "description": "Read data from a table",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tableId"
+        ],
+        "properties": {
+          "tableId": {
+            "type": "string",
+            "description": "The ID of the table"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_tables_insert_row",
+      "description": "Insert a new row into a table",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tableId",
+          "row"
+        ],
+        "properties": {
+          "row": {
+            "type": "object",
+            "description": "Row data as key-value pairs",
+            "additionalProperties": {}
+          },
+          "tableId": {
+            "type": "string",
+            "description": "The ID of the table"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_tables_update_row",
+      "description": "Update an existing row in a table",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tableId",
+          "rowId",
+          "row"
+        ],
+        "properties": {
+          "row": {
+            "type": "object",
+            "description": "Updated row data as key-value pairs",
+            "additionalProperties": {}
+          },
+          "rowId": {
+            "type": "string",
+            "description": "The ID of the row"
+          },
+          "tableId": {
+            "type": "string",
+            "description": "The ID of the table"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_tables_delete_row",
+      "description": "Delete a row from a table",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tableId",
+          "rowId"
+        ],
+        "properties": {
+          "rowId": {
+            "type": "string",
+            "description": "The ID of the row to delete"
+          },
+          "tableId": {
+            "type": "string",
+            "description": "The ID of the table"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_webdav_list_directory",
+      "description": "List files and directories in Nextcloud",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path to list (e.g., \"/\" for root)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_webdav_read_file",
+      "description": "Read content of a file from Nextcloud",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path to the file to read"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_webdav_write_file",
+      "description": "Write content to a file in Nextcloud",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path",
+          "content"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path to the file to write"
+          },
+          "content": {
+            "type": "string",
+            "description": "The content to write to the file"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_webdav_create_directory",
+      "description": "Create a new directory in Nextcloud",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path of the directory to create"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_webdav_delete_resource",
+      "description": "Delete a file or directory from Nextcloud",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path to the file or directory to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_webdav_search_files",
+      "description": "Search for files across Nextcloud using unified search - supports filename, content, and metadata search",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum number of results to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search terms (supports multiple words, e.g., \"budget report 2024\")"
+          },
+          "basePath": {
+            "type": "string",
+            "default": "/",
+            "description": "Limit search to specific directory (e.g., \"/Documents\", \"/Projects\")"
+          },
+          "maxDepth": {
+            "type": "number",
+            "default": 3,
+            "description": "Maximum directory depth to search (1-10, default: 3)"
+          },
+          "searchIn": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "filename",
+                "content",
+                "metadata"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "filename",
+              "content"
+            ],
+            "description": "What to search in: filename, content, and/or metadata"
+          },
+          "dateRange": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string",
+                "description": "End date (ISO format: YYYY-MM-DD)"
+              },
+              "from": {
+                "type": "string",
+                "description": "Start date (ISO format: YYYY-MM-DD)"
+              }
+            },
+            "description": "Filter by last modified date range",
+            "additionalProperties": false
+          },
+          "fileTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by file extensions (e.g., [\"pdf\", \"txt\", \"md\", \"js\"])"
+          },
+          "sizeRange": {
+            "type": "object",
+            "properties": {
+              "max": {
+                "type": "number",
+                "description": "Maximum file size in bytes"
+              },
+              "min": {
+                "type": "number",
+                "description": "Minimum file size in bytes"
+              }
+            },
+            "description": "Filter by file size range",
+            "additionalProperties": false
+          },
+          "quickSearch": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use quick search mode (faster, limited depth) for root directory searches"
+          },
+          "caseSensitive": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether search should be case sensitive"
+          },
+          "includeContent": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include content preview in results (for text files)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nextcloud_hello",
+      "description": "A simple test tool to verify that the MCP server is working correctly",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@hithereiamaliff/mcp-nextcloud/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "nextcloudHost",
+          "nextcloudUsername",
+          "nextcloudPassword"
+        ],
+        "properties": {
+          "nextcloudHost": {
+            "type": "string",
+            "description": "Nextcloud server URL (e.g., https://cloud.example.com)"
+          },
+          "nextcloudPassword": {
+            "type": "string",
+            "description": "Nextcloud password for authentication"
+          },
+          "nextcloudUsername": {
+            "type": "string",
+            "description": "Nextcloud username for authentication"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,288 @@
+{
+  "qualifiedName": "@GHSix/averbeporto-mcp",
+  "displayName": "AverbePorto",
+  "description": "Integrate with AverbePorto to streamline authentication and document submission using AI tools. Effortlessly manage your cargo insurance endorsements and access essential services through a secure API. Enhance your workflow with automated document handling and protocol consultations.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.averbeporto.com.br.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "login",
+      "description": "Authenticates a user with the AverbePorto API using their username and password. Establishes a session and returns a unique `sessionId` required for subsequent API calls.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user",
+          "pass"
+        ],
+        "properties": {
+          "dump": {
+            "type": "number",
+            "description": "Debug flag (1 or 2)"
+          },
+          "pass": {
+            "type": "string",
+            "description": "Password for AverbePorto API"
+          },
+          "user": {
+            "type": "string",
+            "description": "Username for AverbePorto API"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "upload",
+      "description": "Uploads a specified file to the AverbePorto API for processing. Requires an active `sessionId` obtained from the `login` tool. Returns the processing status, including counts of processed/duplicated/rejected/denied items, generated protocol numbers, and any errors encountered.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId",
+          "filePath"
+        ],
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "description": "Path to the file to upload"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Session ID from login"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "consultProtocol",
+      "description": "Consults the AverbePorto API to retrieve details associated with one or more document access keys (44 digits) or protocol numbers (40 digits). Requires an active `sessionId`.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId"
+        ],
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of keys (44 characters) and/or protocols to query - will be automatically sorted"
+          },
+          "download": {
+            "type": "boolean",
+            "description": "Set download header"
+          },
+          "delimiter": {
+            "type": "string",
+            "description": "CSV delimiter"
+          },
+          "protocols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of protocols (40 characters) and/or keys to query - will be automatically sorted"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Session ID from login"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "decomposeKey",
+      "description": "Parses a 44-digit (infCte/Id) Brazilian electronic fiscal document access key (like NF-e, CT-e, MDF-e) into its individual components. Provides details such as state code, emission date, emitter CNPJ, document model, series, number, and emission type. This operation is performed locally without calling an external API.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The access key for NF-e, CT-e, or MDF-e, which may include prefixes or suffixes"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "retrieveDocument",
+      "description": "Retrieves a list of electronic fiscal documents (NF-e, CT-e, MDF-e, Minuta CT-e) from the AverbePorto API based on specified filter criteria. Filters include document type, date range, date type (emission, update, send), document number (9 char max), involved parties (CNPJs), status, and more. Supports pagination. Requires an active `sessionId`.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sessionId",
+          "modDoc",
+          "dtStart",
+          "dtLimit"
+        ],
+        "properties": {
+          "rem": {
+            "type": "string",
+            "description": "Remitter filter (CNPJ/CPF)"
+          },
+          "dest": {
+            "type": "string",
+            "description": "Destination filter (CNPJ/CPF)"
+          },
+          "emit": {
+            "type": "string",
+            "description": "Emitter filter (CNPJ/CPF)"
+          },
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "description": "Page number for pagination (starts at 1)",
+            "exclusiveMinimum": 0
+          },
+          "prot": {
+            "type": "string",
+            "description": "Protocol filter"
+          },
+          "toma": {
+            "type": "string",
+            "description": "Taker filter (CNPJ/CPF)"
+          },
+          "exped": {
+            "type": "string",
+            "description": "Expedition filter (CNPJ/CPF)"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 25,
+            "description": "Limit number of results per page",
+            "exclusiveMinimum": 0
+          },
+          "modal": {
+            "enum": [
+              "All",
+              "Road",
+              "Air",
+              "Water",
+              "Rail",
+              "Pipeline",
+              "Multimodal"
+            ],
+            "type": "string",
+            "default": "All",
+            "description": "Modal parameter, default All (maps to 0)"
+          },
+          "receb": {
+            "type": "string",
+            "description": "Reception filter (CNPJ/CPF)"
+          },
+          "start": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Start index for pagination (0-based)"
+          },
+          "taxId": {
+            "type": "string",
+            "description": "Tax ID filter (CNPJ/CPF, specific use case)"
+          },
+          "valid": {
+            "enum": [
+              "No",
+              "Yes",
+              "All"
+            ],
+            "type": "string",
+            "default": "All",
+            "description": "Valid parameter (document status), default All (maps to 2)"
+          },
+          "dtType": {
+            "enum": [
+              "Update",
+              "Emission",
+              "Send"
+            ],
+            "type": "string",
+            "default": "Send",
+            "description": "Date type filter (Update, Emission, Send), default is Send (maps to 1)"
+          },
+          "modDoc": {
+            "enum": [
+              "DI",
+              "MDF-e",
+              "CT-e",
+              "NF-e",
+              "Minuta CT-e"
+            ],
+            "type": "string",
+            "description": "Document type identifier (e.g., CT-e, NF-e, MDF-e, Minuta CT-e)"
+          },
+          "numDoc": {
+            "type": "string",
+            "description": "Document number filter (9 char)"
+          },
+          "dtLimit": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          "dtStart": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Start date in YYYY-MM-DD format"
+          },
+          "relation": {
+            "type": "integer",
+            "default": 0,
+            "description": "Relation parameter, default 0"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Session ID from login"
+          },
+          "importador": {
+            "type": "string",
+            "description": "Importer filter (CNPJ/CPF)"
+          },
+          "representante": {
+            "type": "string",
+            "description": "Representative filter (CNPJ/CPF)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@GHSix/averbeporto-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "averbeportoUser",
+          "averbeportoPass"
+        ],
+        "properties": {
+          "averbeportoPass": {
+            "type": "string",
+            "description": "AverbePorto API Password"
+          },
+          "averbeportoUser": {
+            "type": "string",
+            "description": "AverbePorto API Username"
+          }
+        }
+      }
+    }
+  ]
+}

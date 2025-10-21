@@ -1,0 +1,4659 @@
+{
+  "qualifiedName": "@amalinakurniasari/figmamcp",
+  "displayName": "Conduit for Figma",
+  "description": "Control Figma to create, edit, and organize designs in real time. Generate components and variants, apply styles and variables, manage text, vectors, images, and auto layout with powerful batch operations. Export assets and code (PNG/SVG/PDF, HTML/CSS) and stay in sync with selections, pages, and document events to streamline your workflow.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@amalinakurniasari/figmamcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "start_legion",
+      "annotations": {
+        "title": "Start Legion",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Start Legion Design Assistant when user greets the bot",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "join",
+      "annotations": {
+        "title": "Join Channel",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Join a specific channel to communicate with Figma.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "channel"
+        ],
+        "properties": {
+          "channel": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The name of the channel to join. Must be a non-empty string."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "select_task",
+      "annotations": {
+        "title": "Select Task",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Select and run a design task based on the task number.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskNumber"
+        ],
+        "properties": {
+          "subTask": {
+            "type": "number",
+            "description": "Optional sub-task number for specific tasks"
+          },
+          "confirmed": {
+            "type": "boolean",
+            "description": "Whether the frame selection has been confirmed"
+          },
+          "taskNumber": {
+            "type": "number",
+            "maximum": 3,
+            "minimum": 1,
+            "description": "The task number to run (1-3)"
+          },
+          "outputFormat": {
+            "type": "string",
+            "description": "Selected output format (figma, markdown, or annotations)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_components",
+      "annotations": {
+        "title": "Get Components (Unified)",
+        "extraInfo": "Unified command for retrieving local, team, or remote components. Old commands are deprecated.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"source\":\"local\"},{\"source\":\"team\",\"team_id\":\"123456\"},{\"source\":\"remote\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "If source is 'team', team_id is required.",
+          "Pagination may be needed for large teams or remote libraries.",
+          "Returns an empty array if no components are found.",
+          "Network or permission errors may cause failure."
+        ]
+      },
+      "description": "Get components from the current document, a team library, or remote team libraries.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the components info as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "after": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "A cursor for pagination, indicating where to start the next page."
+          },
+          "source": {
+            "enum": [
+              "local",
+              "team",
+              "remote"
+            ],
+            "type": "string",
+            "description": "The source to get components from: 'local' (current document), 'team' (team library), or 'remote' (remote team library)."
+          },
+          "team_id": {
+            "type": "string",
+            "description": "The team ID to use when the source is 'team' or 'remote'."
+          },
+          "page_size": {
+            "type": "number",
+            "description": "The number of components to return per page."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_variant",
+      "description": "Create, add, rename, delete, organize, or batch create variants/properties in a component set (single or batch).\n\nReturns: Array of result objects for each operation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "variant": {
+            "type": "object",
+            "required": [
+              "componentSetId",
+              "action"
+            ],
+            "properties": {
+              "action": {
+                "enum": [
+                  "create",
+                  "add",
+                  "rename",
+                  "delete",
+                  "organize",
+                  "batch_create"
+                ],
+                "type": "string",
+                "description": "The action to perform on the component set."
+              },
+              "variantId": {
+                "type": "string",
+                "description": "The ID of the specific variant to modify (if applicable)."
+              },
+              "organizeBy": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Properties to organize variants by."
+              },
+              "properties": {
+                "type": "object",
+                "description": "Additional properties for the variant operation.",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "propertyName": {
+                "type": "string",
+                "description": "The name of the property to rename or modify."
+              },
+              "propertyValue": {
+                "type": "string",
+                "description": "The value of the property to set or update."
+              },
+              "componentSetId": {
+                "type": "string",
+                "description": "The ID of the component set to operate on."
+              },
+              "propertiesList": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "description": "A list of property objects for batch operations."
+              },
+              "newPropertyName": {
+                "type": "string",
+                "description": "The new name for the property (if renaming)."
+              },
+              "newPropertyValue": {
+                "type": "string",
+                "description": "The new value for the property (if changing)."
+              },
+              "templateComponentId": {
+                "type": "string",
+                "description": "The ID of a template component to use for batch creation."
+              }
+            },
+            "description": "A single variant operation to perform.",
+            "additionalProperties": false
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/variant"
+            },
+            "description": "An array of variant operations to perform in batch."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_variant",
+      "description": "Get info about variants/properties for one or more component sets.\n\nReturns: For single: { componentSetId, variants: [...] }, for batch: Array<{ componentSetId, variants: [...] }>.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "componentSetId": {
+            "type": "string",
+            "description": "The ID of a single component set to query."
+          },
+          "componentSetIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of component set IDs to query in batch."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_component_instance",
+      "annotations": {
+        "title": "Create Instances from Components",
+        "extraInfo": "Creates one or more instances of a component at specified positions.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"entry\":{\"componentKey\":\"abc:123\",\"x\":100,\"y\":200}},{\"entries\":[{\"componentKey\":\"abc:123\",\"x\":100,\"y\":200},{\"componentKey\":\"def:456\",\"x\":300,\"y\":400}]}]",
+        "idempotentHint": false,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "componentKey must be valid.",
+          "x and y must be within Figma canvas bounds.",
+          "You must provide either 'entry' or 'entries'."
+        ]
+      },
+      "description": "Creates one or more component instances in Figma. Accepts either a single entry (via 'entry') or an array of entries (via 'entries').\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created instance IDs.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "entry": {
+            "type": "object",
+            "required": [
+              "componentKey",
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "The X coordinate for the instance on the Figma canvas."
+              },
+              "y": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "The Y coordinate for the instance on the Figma canvas."
+              },
+              "componentKey": {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1,
+                "description": "The unique key of the component to instantiate."
+              }
+            },
+            "description": "A single component instance creation entry.",
+            "additionalProperties": false
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/entry"
+            },
+            "description": "An array of component instance creation entries for batch creation."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_components_from_node",
+      "annotations": {
+        "title": "Create Components From Node(s)",
+        "extraInfo": "Converts one or more nodes into reusable components for design systems. Supports both single and batch input.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"entry\":{\"nodeId\":\"123:456\"}},{\"entries\":[{\"nodeId\":\"123:456\"},{\"nodeId\":\"789:101\",\"maintain_position\":true}],\"skip_errors\":true}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Each nodeId must be a valid Figma node ID.",
+          "If a node is not convertible, the command will fail unless skip_errors is true.",
+          "Nodes must not already be components."
+        ]
+      },
+      "description": "Converts one or more existing nodes into components in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains:\n      - type: \"text\"\n      - text: JSON string with created component IDs and any errors.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "entry": {
+            "type": "object",
+            "required": [
+              "nodeId"
+            ],
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "description": "The Figma node ID to convert into a component."
+              },
+              "maintain_position": {
+                "type": "boolean",
+                "description": "Whether to maintain the node's position after conversion."
+              }
+            },
+            "description": "A single node-to-component conversion entry.",
+            "additionalProperties": false
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/entry"
+            },
+            "description": "An array of node-to-component conversion entries for batch conversion."
+          },
+          "skip_errors": {
+            "type": "boolean",
+            "description": "If true, skip errors and continue processing remaining entries."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_selection",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "inputSchema"
+        ],
+        "properties": {
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "description": "A single Figma node ID to select."
+              },
+              "nodeIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "An array of Figma node IDs to select."
+              }
+            },
+            "description": "Input schema for the set_selection command. Provide either 'nodeId' or 'nodeIds'.",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_selection",
+      "annotations": {
+        "title": "Get Selection",
+        "extraInfo": "Use this command to inspect the current selection context in the Figma document.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns an empty array if nothing is selected.",
+          "Selection info may include node IDs, types, and properties.",
+          "If multiple nodes are selected, the result is an array."
+        ]
+      },
+      "description": "Get information about the current selection in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the selection info as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "duplicate_page",
+      "annotations": {
+        "title": "Duplicate Page",
+        "extraInfo": "Use this command to duplicate an entire page and its contents.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"pageId\":\"123:456\"},{\"pageId\":\"123:456\",\"newPageName\":\"My Duplicated Page\"}]",
+        "idempotentHint": false,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Duplicates all children of the original page.",
+          "The new page will have a unique name and independent children."
+        ]
+      },
+      "description": "Duplicate a Figma page and all its children as a new page.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the new page info as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "pageId"
+        ],
+        "properties": {
+          "pageId": {
+            "type": "string",
+            "description": "The ID of the page to duplicate."
+          },
+          "newPageName": {
+            "type": "string",
+            "description": "Optional name for the new page."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_document_info",
+      "annotations": {
+        "title": "Get Document Info",
+        "extraInfo": "Use this command to retrieve the full structure and metadata of the current Figma document.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns a large JSON object for complex documents.",
+          "May include document-level metadata, pages, and settings.",
+          "If the document is empty, the result may be minimal."
+        ]
+      },
+      "description": "Get detailed information about the current Figma document.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the document info as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_doc_pages",
+      "annotations": {
+        "title": "Get Pages",
+        "extraInfo": "Use this command to get a list of all pages in the current Figma document.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns information about all pages in the document.",
+          "Empty pages will still be included in the result.",
+          "If the document has no pages, an empty array will be returned."
+        ]
+      },
+      "description": "Get information about all pages in the current Figma document.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the pages info as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_node_as_image",
+      "annotations": {
+        "title": "Export Node As Image",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Exports a node as an image from Figma in the specified format and scale.\n\nReturns:\n  - content: Array of objects. Each object contains type: \"image\", data (image data), and mimeType (image mime type).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId"
+        ],
+        "properties": {
+          "scale": {
+            "type": "number",
+            "description": "Optional. The export scale factor. Must be a positive number. Defaults to 1 if omitted.",
+            "exclusiveMinimum": 0
+          },
+          "format": {
+            "enum": [
+              "PNG",
+              "JPG",
+              "SVG",
+              "PDF"
+            ],
+            "type": "string",
+            "description": "Optional. The image format to export: \"PNG\", \"JPG\", \"SVG\", or \"PDF\". Defaults to \"PNG\" if omitted."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to export. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_html",
+      "annotations": {
+        "title": "Generate HTML",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Generates HTML structure from Figma nodes.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the generated HTML string.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "semantic",
+              "div-based",
+              "webcomponent"
+            ],
+            "type": "string",
+            "default": "semantic",
+            "description": "Optional. The HTML output format: \"semantic\", \"div-based\", or \"webcomponent\". Defaults to \"semantic\"."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to generate HTML from. Must be a string in the format '123:456'."
+          },
+          "cssMode": {
+            "enum": [
+              "inline",
+              "classes",
+              "external"
+            ],
+            "type": "string",
+            "default": "classes",
+            "description": "Optional. The CSS handling mode: \"inline\", \"classes\", or \"external\". Defaults to \"classes\"."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_css_async",
+      "annotations": {
+        "title": "Get CSS Async",
+        "extraInfo": "Use this command to extract CSS properties from a Figma node for code generation or inspection.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"format\":\"string\"},{\"nodeId\":\"123:456\",\"format\":\"object\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID if provided.",
+          "Format must be one of 'string', 'object', or 'inline'.",
+          "Returns an error if the node does not support CSS export."
+        ]
+      },
+      "description": "Get CSS properties from a node.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the CSS properties as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "format": {
+            "enum": [
+              "object",
+              "string",
+              "inline"
+            ],
+            "type": "string",
+            "description": "Optional. The format to return CSS in: \"object\", \"string\", or \"inline\"."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "Optional. The unique Figma node ID to get CSS from. If provided, must be a string in the format '123:456'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_image",
+      "annotations": {
+        "title": "Insert Image(s)",
+        "extraInfo": "Supports inserting images from remote URLs, local files, or base64 data. Batch insertion is efficient for adding multiple images at once.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"image\":{\"url\":\"https://example.com/image.png\",\"x\":100,\"y\":200,\"width\":300,\"height\":150,\"name\":\"Remote Image\"}},{\"image\":{\"imagePath\":\"/Users/youruser/Pictures/photo.jpg\",\"x\":50,\"y\":60,\"width\":200,\"height\":200,\"name\":\"Local File Image\"}},{\"image\":{\"imageData\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...\",\"x\":10,\"y\":20,\"width\":100,\"height\":100,\"name\":\"Base64 Image\"}},{\"images\":[{\"url\":\"https://example.com/image1.png\",\"x\":0,\"y\":0,\"width\":100,\"height\":100,\"name\":\"Remote 1\"},{\"imagePath\":\"/Users/youruser/Pictures/photo2.jpg\",\"x\":120,\"y\":0,\"width\":100,\"height\":100,\"name\":\"Local 2\"},{\"imageData\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...\",\"x\":240,\"y\":0,\"width\":100,\"height\":100,\"name\":\"Base64 3\"}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Each image must have at least one of url, imagePath, or imageData.",
+          "Width and height must be positive if specified.",
+          "If parentId is invalid, the image will be added to the root.",
+          "Network errors, invalid URLs, or invalid file paths will cause failure.",
+          "Base64 data must be a valid image string."
+        ]
+      },
+      "description": "Sets or inserts one or more images into Figma. Each image can be specified by a remote URL, a local file path, or a base64 data URI. Accepts either a single image config (via 'image') or an array of configs (via 'images'). You can customize size, name, and parent node.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the inserted image node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "image": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "default": 0,
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "Optional. X coordinate for the image. Must be between -10,000 and 10,000. Defaults to 0."
+              },
+              "y": {
+                "type": "number",
+                "default": 0,
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "Optional. Y coordinate for the image. Must be between -10,000 and 10,000. Defaults to 0."
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Optional. The URL of the image to insert. Must be a valid URL."
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1,
+                "description": "Optional. Name for the image node. If provided, must be a non-empty string up to 100 characters."
+              },
+              "width": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": 1,
+                "description": "Optional. Width of the image. Must be between 1 and 10,000."
+              },
+              "height": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": 1,
+                "description": "Optional. Height of the image. Must be between 1 and 10,000."
+              },
+              "parentId": {
+                "type": "string",
+                "pattern": "^\\d+:\\d+$",
+                "description": "Optional. Figma node ID of the parent. If provided, must be a string in the format '123:456'."
+              },
+              "imageData": {
+                "type": "string",
+                "maxLength": 10000000,
+                "minLength": 1,
+                "description": "Optional. Base64 data URI of the image. If provided, must be a non-empty string."
+              },
+              "imagePath": {
+                "type": "string",
+                "maxLength": 500,
+                "minLength": 1,
+                "description": "Optional. Path to the local image file. If provided, must be a non-empty string up to 500 characters."
+              }
+            },
+            "description": "A single image configuration object. Each object should include at least one of url, imagePath, or imageData, plus optional coordinates and properties.",
+            "additionalProperties": false
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/image"
+            },
+            "description": "An array of image configuration objects. Each object should include at least one of url, imagePath, or imageData, plus optional coordinates and properties."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_image",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "set_corner_radius",
+      "annotations": {
+        "title": "Set Corner Radius",
+        "extraInfo": "Use this command to set the corner radius of a node, optionally specifying which corners.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"radius\":8}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID.",
+          "Radius must be a non-negative number.",
+          "Corners array, if provided, must have four boolean values."
+        ]
+      },
+      "description": "Sets the corner radius of a node in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the updated node's ID.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "radius"
+        ],
+        "properties": {
+          "radius": {
+            "type": "number",
+            "minimum": 0,
+            "description": "The corner radius to set, in pixels. Must be a non-negative number."
+          },
+          "corners": {
+            "type": "array",
+            "items": {
+              "type": "boolean"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "description": "Optional array of four booleans indicating which corners to apply the radius to, in order: [top-left, top-right, bottom-right, bottom-left]."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "move_node",
+      "annotations": {
+        "title": "Move Node(s)",
+        "extraInfo": "Use this command to move one or more nodes to a new position.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"move\":{\"nodeId\":\"123:456\",\"x\":100,\"y\":200}},{\"moves\":[{\"nodeId\":\"123:456\",\"x\":100,\"y\":200},{\"nodeId\":\"789:101\",\"x\":300,\"y\":400}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID.",
+          "x and y must be within allowed range."
+        ]
+      },
+      "description": "Moves one or more nodes to a new position in Figma. Accepts either a single move config (via 'move') or an array of configs (via 'moves').\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the moved node ID(s) and new position(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "move": {
+            "type": "object",
+            "required": [
+              "nodeId",
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "New X position. Must be between -10,000 and 10,000."
+              },
+              "y": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "New Y position. Must be between -10,000 and 10,000."
+              },
+              "nodeId": {
+                "type": "string",
+                "description": "The unique Figma node ID to move. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+              }
+            },
+            "description": "A single node move operation.",
+            "additionalProperties": false
+          },
+          "moves": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/move"
+            },
+            "description": "An array of node move operations for batch movement."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "resize_node",
+      "annotations": {
+        "title": "Resize Node",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"width\":200,\"height\":100},{\"nodeId\":\"789:101\",\"width\":400,\"height\":300}]",
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Resize a node in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the resized node's ID and new size.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId",
+          "width",
+          "height"
+        ],
+        "properties": {
+          "width": {
+            "type": "number",
+            "maximum": 10000,
+            "minimum": 1,
+            "description": "The new width for the node, in pixels. Must be a positive number between 1 and 10,000."
+          },
+          "height": {
+            "type": "number",
+            "maximum": 10000,
+            "minimum": 1,
+            "description": "The new height for the node, in pixels. Must be a positive number between 1 and 10,000."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to resize. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "rotate_node",
+      "annotations": {
+        "title": "Rotate Node",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"angle\":45},{\"nodeId\":\"123:456\",\"angle\":90,\"pivot\":\"top-left\"},{\"nodeId\":\"123:456\",\"angle\":180,\"pivot\":\"bottom-right\"},{\"nodeId\":\"123:456\",\"angle\":30,\"pivot\":\"custom\",\"pivotPoint\":{\"x\":500,\"y\":200}}]",
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Rotate a node in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the rotated node's ID, angle, and pivot info.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId",
+          "angle"
+        ],
+        "properties": {
+          "angle": {
+            "type": "number",
+            "maximum": 360,
+            "minimum": -360,
+            "description": "The rotation angle in degrees. Positive is clockwise."
+          },
+          "pivot": {
+            "enum": [
+              "center",
+              "top-left",
+              "top-right",
+              "bottom-left",
+              "bottom-right",
+              "custom"
+            ],
+            "type": "string",
+            "default": "center",
+            "description": "The pivot point for rotation. Defaults to 'center'."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to rotate."
+          },
+          "pivotPoint": {
+            "type": "object",
+            "required": [
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "X coordinate of the custom pivot point (absolute coordinates)."
+              },
+              "y": {
+                "type": "number",
+                "description": "Y coordinate of the custom pivot point (absolute coordinates)."
+              }
+            },
+            "description": "Custom pivot point coordinates. Required if pivot is 'custom'.",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_auto_layout_resizing",
+      "annotations": {
+        "title": "Set Auto Layout Resizing",
+        "extraInfo": "Sets hug or fill sizing mode on an auto layout frame or child node.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"axis\":\"horizontal\",\"mode\":\"HUG\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID.",
+          "axis must be 'horizontal' or 'vertical'.",
+          "mode must be 'FIXED', 'HUG', or 'FILL'."
+        ]
+      },
+      "description": "Sets hug or fill sizing mode on an auto layout frame or child node in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the updated node's ID.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId",
+          "axis",
+          "mode"
+        ],
+        "properties": {
+          "axis": {
+            "enum": [
+              "horizontal",
+              "vertical"
+            ],
+            "type": "string",
+            "description": "The axis to set sizing mode for: \"horizontal\" or \"vertical\"."
+          },
+          "mode": {
+            "enum": [
+              "FIXED",
+              "HUG",
+              "FILL"
+            ],
+            "type": "string",
+            "description": "The sizing mode to set: \"FIXED\", \"HUG\", or \"FILL\"."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to update. Must be a string in the format '123:456'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "detach_instances",
+      "annotations": {
+        "title": "Detach Instances (Unified)",
+        "extraInfo": "Use this command to detach one or more component instances from their masters in a single call.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"instanceId\":\"123:456\"},{\"instanceIds\":[\"123:456\",\"789:101\"],\"options\":{\"maintain_position\":true,\"skip_errors\":true}}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Each instanceId must be a valid Figma instance ID.",
+          "Detaching an instance is irreversible.",
+          "Detached instances lose connection to their master component.",
+          "If skip_errors is false, the operation will stop on the first error.",
+          "You must provide either 'instanceId' or 'instanceIds'."
+        ]
+      },
+      "description": "Detaches one or more Figma component instances from their masters.\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the detached instance's ID or error info.\n\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "options": {
+            "type": "object",
+            "properties": {
+              "skip_errors": {
+                "type": "boolean",
+                "description": "If true, skip errors and continue processing remaining instances."
+              },
+              "maintain_position": {
+                "type": "boolean",
+                "description": "If true, maintain the position of the instance after detaching."
+              }
+            },
+            "description": "Options for detaching instances.",
+            "additionalProperties": false
+          },
+          "instanceId": {
+            "type": "string",
+            "description": "A single Figma instance ID to detach."
+          },
+          "instanceIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/instanceId"
+            },
+            "description": "An array of Figma instance IDs to detach in batch."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_node_prop",
+      "annotations": {
+        "_def": {
+          "effect": {
+            "type": "refinement"
+          },
+          "schema": {
+            "_def": {
+              "catchall": {
+                "_def": {
+                  "typeName": "ZodNever"
+                },
+                "~standard": {
+                  "vendor": "zod",
+                  "version": 1
+                }
+              },
+              "typeName": "ZodObject",
+              "unknownKeys": "strip"
+            },
+            "_cached": null,
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodEffects"
+        },
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Sets node properties (locked, visible, etc.) for one or more nodes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "set_auto_layout",
+      "annotations": {
+        "title": "Set Auto Layout",
+        "extraInfo": "Applies auto-layout settings to Figma frames with support for wrapping.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"layout\":{\"nodeId\":\"123:456\",\"mode\":\"HORIZONTAL\",\"layoutWrap\":\"WRAP\",\"itemSpacing\":15,\"padding\":{\"top\":20,\"right\":20,\"bottom\":20,\"left\":20}}}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID.",
+          "mode must be 'HORIZONTAL', 'VERTICAL', or 'NONE'.",
+          "layoutWrap must be 'NO_WRAP' or 'WRAP'."
+        ]
+      },
+      "description": "Set, update, or delete one or more layout grids on Figma nodes (FRAME, COMPONENT, INSTANCE).\n\nReturns: Array of result objects for each operation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "layout": {
+            "type": "object",
+            "required": [
+              "nodeId",
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "enum": [
+                  "HORIZONTAL",
+                  "VERTICAL",
+                  "NONE"
+                ],
+                "type": "string",
+                "description": "The auto layout mode to set: \"HORIZONTAL\", \"VERTICAL\", or \"NONE\"."
+              },
+              "nodeId": {
+                "type": "string",
+                "description": "The unique Figma node ID to update."
+              },
+              "padding": {
+                "type": "object",
+                "properties": {
+                  "top": {
+                    "type": "number",
+                    "description": "Top padding in pixels. Optional."
+                  },
+                  "left": {
+                    "type": "number",
+                    "description": "Left padding in pixels. Optional."
+                  },
+                  "right": {
+                    "type": "number",
+                    "description": "Right padding in pixels. Optional."
+                  },
+                  "bottom": {
+                    "type": "number",
+                    "description": "Bottom padding in pixels. Optional."
+                  }
+                },
+                "description": "Padding object with top, right, bottom, left properties. Optional.",
+                "additionalProperties": false
+              },
+              "layoutWrap": {
+                "enum": [
+                  "NO_WRAP",
+                  "WRAP"
+                ],
+                "type": "string",
+                "description": "The layout wrap mode: \"NO_WRAP\" or \"WRAP\". Optional."
+              },
+              "itemSpacing": {
+                "type": "number",
+                "description": "Spacing between items in pixels. Optional."
+              }
+            },
+            "description": "A single auto-layout configuration. Optional.",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_constraint",
+      "description": "Set constraints (left/right/top/bottom/center/scale/stretch) for one or more Figma nodes.\n\nReturns: Array of result objects for each operation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "constraint": {
+            "type": "object",
+            "required": [
+              "nodeId",
+              "horizontal",
+              "vertical"
+            ],
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "description": "The ID of the node to apply constraints to."
+              },
+              "vertical": {
+                "enum": [
+                  "top",
+                  "bottom",
+                  "center",
+                  "scale",
+                  "stretch"
+                ],
+                "type": "string",
+                "description": "The vertical constraint to apply."
+              },
+              "horizontal": {
+                "enum": [
+                  "left",
+                  "right",
+                  "center",
+                  "scale",
+                  "stretch"
+                ],
+                "type": "string",
+                "description": "The horizontal constraint to apply."
+              }
+            },
+            "description": "A single constraint entry to apply.",
+            "additionalProperties": false
+          },
+          "constraints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/constraint"
+            },
+            "description": "An array of constraint entries to apply in batch."
+          },
+          "applyToChildren": {
+            "type": "boolean",
+            "description": "If true, apply constraints to all children of the node(s)."
+          },
+          "maintainAspectRatio": {
+            "type": "boolean",
+            "description": "If true, maintain the aspect ratio when applying constraints."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_constraint",
+      "description": "Get constraints for one or more Figma nodes (optionally including children).\n\nReturns: Array of constraint info for each node, including children if requested.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The ID of a single node to get constraints for."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of node IDs to get constraints for in batch."
+          },
+          "includeChildren": {
+            "type": "boolean",
+            "description": "If true, include constraints for all children of the node(s)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "subscribe_event",
+      "description": "Subscribe or unsubscribe to a Figma event (e.g., selection_change, document_change).\n\nReturns: { subscriptionId } for subscribe, { success: true } for unsubscribe",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "eventType",
+          "subscribe"
+        ],
+        "properties": {
+          "filter": {},
+          "eventType": {
+            "type": "string"
+          },
+          "subscribe": {
+            "type": "boolean"
+          },
+          "subscriptionId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_button",
+      "annotations": {
+        "title": "Create Button",
+        "extraInfo": "Creates a visually complete button with customizable style and text.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"x\":100,\"y\":200,\"width\":120,\"height\":40,\"text\":\"Click Me\",\"background\":{\"r\":0.2,\"g\":0.5,\"b\":0.8,\"a\":1},\"textColor\":{\"r\":1,\"g\":1,\"b\":1,\"a\":1},\"fontSize\":16,\"fontWeight\":600,\"cornerRadius\":8,\"name\":\"Primary Button\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Width and height must be within allowed range.",
+          "Text must be a non-empty string.",
+          "Color values must be between 0 and 1.",
+          "If parentId is invalid, the button will be added to the root."
+        ]
+      },
+      "description": "Creates a complete button with background and text in Figma at the specified coordinates. You can customize size, text, colors, font, corner radius, name, and parent node.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created button's frame, background, and text node IDs.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "x": {
+            "type": "number",
+            "maximum": 10000,
+            "minimum": -10000,
+            "description": "The X coordinate for the button on the Figma canvas."
+          },
+          "y": {
+            "type": "number",
+            "maximum": 10000,
+            "minimum": -10000,
+            "description": "The Y coordinate for the button on the Figma canvas."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "The name to assign to the button node."
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "description": "The text label for the button."
+          },
+          "width": {
+            "type": "number",
+            "maximum": 2000,
+            "minimum": 1,
+            "description": "The width of the button in pixels."
+          },
+          "height": {
+            "type": "number",
+            "maximum": 2000,
+            "minimum": 1,
+            "description": "The height of the button in pixels."
+          },
+          "buttons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "x",
+                "y"
+              ],
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "maximum": 10000,
+                  "minimum": -10000,
+                  "description": "The X coordinate for the button on the Figma canvas."
+                },
+                "y": {
+                  "type": "number",
+                  "maximum": 10000,
+                  "minimum": -10000,
+                  "description": "The Y coordinate for the button on the Figma canvas."
+                },
+                "name": {
+                  "type": "string",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "description": "The name to assign to the button node."
+                },
+                "text": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "description": "The text label for the button."
+                },
+                "width": {
+                  "type": "number",
+                  "maximum": 2000,
+                  "minimum": 1,
+                  "description": "The width of the button in pixels."
+                },
+                "height": {
+                  "type": "number",
+                  "maximum": 2000,
+                  "minimum": 1,
+                  "description": "The height of the button in pixels."
+                },
+                "fontSize": {
+                  "type": "number",
+                  "maximum": 200,
+                  "minimum": 1,
+                  "description": "The font size for the button text."
+                },
+                "parentId": {
+                  "type": "string",
+                  "description": "The parent node ID to attach the button to."
+                },
+                "textColor": {
+                  "type": "object",
+                  "required": [
+                    "r",
+                    "g",
+                    "b"
+                  ],
+                  "properties": {
+                    "a": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Alpha channel (0-1)"
+                    },
+                    "b": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Blue channel (0-1)"
+                    },
+                    "g": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Green channel (0-1)"
+                    },
+                    "r": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Red channel (0-1)"
+                    }
+                  },
+                  "description": "The text color of the button as RGBA.",
+                  "additionalProperties": false
+                },
+                "background": {
+                  "type": "object",
+                  "required": [
+                    "r",
+                    "g",
+                    "b"
+                  ],
+                  "properties": {
+                    "a": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Alpha channel (0-1)"
+                    },
+                    "b": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Blue channel (0-1)"
+                    },
+                    "g": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Green channel (0-1)"
+                    },
+                    "r": {
+                      "type": "number",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "description": "Red channel (0-1)"
+                    }
+                  },
+                  "description": "The background color of the button as RGBA.",
+                  "additionalProperties": false
+                },
+                "fontWeight": {
+                  "type": "number",
+                  "maximum": 1000,
+                  "minimum": 100,
+                  "description": "The font weight for the button text."
+                },
+                "cornerRadius": {
+                  "type": "number",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "description": "The corner radius for the button."
+                }
+              },
+              "description": "A single button creation entry.",
+              "additionalProperties": false
+            },
+            "description": "An array of button creation entries for batch creation."
+          },
+          "fontSize": {
+            "type": "number",
+            "maximum": 200,
+            "minimum": 1,
+            "description": "The font size for the button text."
+          },
+          "parentId": {
+            "type": "string",
+            "description": "The parent node ID to attach the button to."
+          },
+          "textColor": {
+            "type": "object",
+            "required": [
+              "r",
+              "g",
+              "b"
+            ],
+            "properties": {
+              "a": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Alpha channel (0-1)"
+              },
+              "b": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Blue channel (0-1)"
+              },
+              "g": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Green channel (0-1)"
+              },
+              "r": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Red channel (0-1)"
+              }
+            },
+            "description": "The text color of the button as RGBA.",
+            "additionalProperties": false
+          },
+          "background": {
+            "type": "object",
+            "required": [
+              "r",
+              "g",
+              "b"
+            ],
+            "properties": {
+              "a": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Alpha channel (0-1)"
+              },
+              "b": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Blue channel (0-1)"
+              },
+              "g": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Green channel (0-1)"
+              },
+              "r": {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0,
+                "description": "Red channel (0-1)"
+              }
+            },
+            "description": "The background color of the button as RGBA.",
+            "additionalProperties": false
+          },
+          "fontWeight": {
+            "type": "number",
+            "maximum": 1000,
+            "minimum": 100,
+            "description": "The font weight for the button text."
+          },
+          "cornerRadius": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 0,
+            "description": "The corner radius for the button."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_variable",
+      "annotations": {
+        "title": "Create/Update/Delete Figma Variable(s)",
+        "extraInfo": "Creates, updates, or deletes Figma Variables (design tokens) depending on which parameters are provided.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"variables\":{\"name\":\"Primary Color\",\"type\":\"COLOR\",\"value\":\"#3366FF\",\"collection\":\"Theme\"}},{\"variables\":{\"id\":\"var123\",\"name\":\"Primary Color\",\"value\":\"#123456\"}},{\"variables\":[{\"name\":\"Spacing XS\",\"type\":\"NUMBER\",\"value\":4,\"collection\":\"Spacing\"},{\"id\":\"var123\",\"value\":\"#654321\"}]},{\"ids\":\"var123\"},{\"ids\":[\"var123\",\"var456\"]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Name must be a non-empty string for create.",
+          "Type must be one of COLOR, NUMBER, STRING, BOOLEAN.",
+          "Value must match the type.",
+          "Each update must include an id.",
+          "Each id must be a non-empty string for delete."
+        ]
+      },
+      "description": "Creates, updates, or deletes one or more Figma Variables (design tokens).\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the result or summary.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ids": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "maxItems": 50,
+                "minItems": 1
+              }
+            ],
+            "description": "One or more variable IDs to delete. Can be a single string or an array of strings."
+          },
+          "variables": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                  },
+                  "type": {
+                    "enum": [
+                      "COLOR",
+                      "NUMBER",
+                      "STRING",
+                      "BOOLEAN"
+                    ],
+                    "type": "string"
+                  },
+                  "value": {},
+                  "collection": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type",
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "mode": {
+                    "$ref": "#/properties/variables/anyOf/0/properties/mode"
+                  },
+                  "name": {
+                    "$ref": "#/properties/variables/anyOf/0/properties/name"
+                  },
+                  "type": {
+                    "$ref": "#/properties/variables/anyOf/0/properties/type"
+                  },
+                  "value": {
+                    "$ref": "#/properties/variables/anyOf/0/properties/value"
+                  },
+                  "collection": {
+                    "$ref": "#/properties/variables/anyOf/0/properties/collection"
+                  },
+                  "description": {
+                    "$ref": "#/properties/variables/anyOf/0/properties/description"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/variables/anyOf/0"
+                },
+                "maxItems": 50,
+                "minItems": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "type",
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "mode": {
+                      "$ref": "#/properties/variables/anyOf/0/properties/mode"
+                    },
+                    "name": {
+                      "$ref": "#/properties/variables/anyOf/0/properties/name"
+                    },
+                    "type": {
+                      "$ref": "#/properties/variables/anyOf/0/properties/type"
+                    },
+                    "value": {
+                      "$ref": "#/properties/variables/anyOf/0/properties/value"
+                    },
+                    "collection": {
+                      "$ref": "#/properties/variables/anyOf/0/properties/collection"
+                    },
+                    "description": {
+                      "$ref": "#/properties/variables/anyOf/0/properties/description"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "maxItems": 50,
+                "minItems": 1
+              }
+            ],
+            "description": "One or more variable definitions to create or update. Can be a single object or an array."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_annotation",
+      "annotations": {
+        "title": "Get Annotation(s)",
+        "extraInfo": "Use to retrieve annotation(s) for one or more nodes.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\"},{\"nodeIds\":[\"123:456\",\"789:101\"]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns empty array if node(s) have no annotations.",
+          "Throws error if node(s) not found."
+        ]
+      },
+      "description": "Get annotation(s) for one or more Figma nodes.\n\nReturns:\n  - For single: { nodeId, annotations }\n  - For batch: Array<{ nodeId, annotations }>\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The ID of a single node to get annotations for. Optional."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of node IDs to get annotations for in batch. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_annotation",
+      "annotations": {
+        "title": "Set Annotation(s)",
+        "extraInfo": "Use to set, update, or delete annotation(s) for one or more nodes.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"entry\":{\"nodeId\":\"123:456\",\"annotation\":{\"labelMarkdown\":\"## Note\"}}},{\"entries\":[{\"nodeId\":\"123:456\",\"annotation\":{\"label\":\"A\"}},{\"nodeId\":\"789:101\",\"annotation\":{\"labelMarkdown\":\"**B**\"},\"delete\":true}]}]",
+        "idempotentHint": false,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Throws error if node(s) not found.",
+          "If delete is true, annotation(s) are removed for the node(s)."
+        ]
+      },
+      "description": "Set, update, or delete annotation(s) for one or more Figma nodes.\n\nReturns:\n  - For single: { nodeId, updated/deleted }\n  - For batch: Array<{ nodeId, updated/deleted }>\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "entry": {
+            "type": "object",
+            "required": [
+              "nodeId"
+            ],
+            "properties": {
+              "delete": {
+                "type": "boolean"
+              },
+              "nodeId": {
+                "type": "string"
+              },
+              "annotation": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "labelMarkdown": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "description": "A single annotation operation to perform. Optional.",
+            "additionalProperties": false
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/entry"
+            },
+            "description": "An array of annotation operations to perform in batch. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "boolean",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Perform boolean operations (union, subtract, intersect, exclude) on Figma nodes.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the result.\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "group_node",
+      "annotations": {
+        "title": "Group or Ungroup Nodes",
+        "extraInfo": "Grouping is useful for organizing layers and applying transformations collectively. Ungrouping is useful for breaking apart grouped elements for individual editing.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"group\":true,\"nodeIds\":[\"123:456\",\"789:101\"],\"name\":\"My Group\"},{\"group\":false,\"nodeId\":\"123:456\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "If grouping, all nodeIds must be valid and belong to the same parent.",
+          "Grouping nodes changes their z-order and parent.",
+          "Name is optional but must be non-empty if provided.",
+          "If ungrouping, only group nodes can be ungrouped.",
+          "Ungrouping releases all children to the parent.",
+          "nodeId must be a valid group node."
+        ]
+      },
+      "description": "Groups or ungroups nodes in Figma, depending on the 'group' flag.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the result.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "group"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Optional. Name for the group. If provided, must be a non-empty string up to 100 characters."
+          },
+          "group": {
+            "type": "boolean",
+            "description": "If true, group nodes; if false, ungroup a group node."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma group node ID to ungroup. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "A Figma node ID. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+            },
+            "maxItems": 100,
+            "minItems": 2,
+            "description": "Array of node IDs. Must contain at least 2 and at most 100 items."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_node",
+      "description": "Deletes one or more nodes in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the deleted node's ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to delete. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "A Figma node ID. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "description": "Array of node IDs. Must contain at least 1 and at most 100 items."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_node",
+      "annotations": {
+        "title": "Insert Child Node(s)",
+        "extraInfo": "This command is critical for managing node hierarchies in Figma. Use with valid node IDs to avoid unexpected behavior.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"parentId\":\"123:456\",\"childId\":\"789:101\",\"index\":0},{\"operations\":[{\"parentId\":\"1:23\",\"childId\":\"4:56\",\"index\":0,\"maintainPosition\":true},{\"parentId\":\"7:89\",\"childId\":\"0:12\",\"index\":2}],\"options\":{\"skipErrors\":true}}]",
+        "idempotentHint": false,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Index must be a non-negative integer if provided.",
+          "If the parentId or childId is invalid, the command may fail or insert at root.",
+          "Omitting index appends the child at the end.",
+          "If skipErrors is false, the first error will abort the batch.",
+          "If maintainPosition is true, the child's absolute position will be preserved relative to the canvas.",
+          "All parentId and childId values must be valid Figma node IDs."
+        ],
+        "detailedDescription": "Supports both single and batch insertions. For batch, provide an 'operations' array."
+      },
+      "description": "Sets or inserts one or more child nodes into parent nodes at optional index positions in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the parentId, childId, index, success status, and any error message.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Optional insertion index (0-based)"
+          },
+          "childId": {
+            "type": "string",
+            "description": "ID of the child node to insert"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "skipErrors": {
+                "type": "boolean",
+                "description": "If true, skip errors and continue processing remaining operations in batch mode."
+              }
+            },
+            "description": "Options for the operation (e.g., skipErrors). Optional.",
+            "additionalProperties": false
+          },
+          "parentId": {
+            "type": "string",
+            "description": "ID of the parent node"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "parentId",
+                "childId"
+              ],
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Optional insertion index (0-based)"
+                },
+                "childId": {
+                  "type": "string",
+                  "description": "ID of the child node to insert"
+                },
+                "parentId": {
+                  "type": "string",
+                  "description": "ID of the parent node"
+                },
+                "maintainPosition": {
+                  "type": "boolean",
+                  "description": "Maintain child's absolute position (default: false)"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of set/insert operations to perform in batch. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "flatten_node",
+      "description": "Flatten one or more nodes in Figma, or the current selection, merging all child vector layers and shapes into a single vector layer.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the results for each node.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "ID of the node to flatten. Must be a Frame, Group, or node that supports flattening."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "description": "Array of Figma node IDs to flatten. Must contain 1 to 100 items."
+          },
+          "selection": {
+            "type": "boolean",
+            "description": "If true, use the current Figma selection for the operation. If true, nodeId and nodeIds are ignored."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "duplicate_node",
+      "description": "Clones one or more nodes in Figma. Accepts either a single node config (via 'node') or an array of configs (via 'nodes'). Optionally, you can specify positions, offsets, and parent.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the new node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "node": {
+            "type": "object",
+            "required": [
+              "nodeId"
+            ],
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "description": "ID of the node to clone."
+              },
+              "offsetX": {
+                "type": "number",
+                "description": "Optional X offset to apply to the cloned node's position."
+              },
+              "offsetY": {
+                "type": "number",
+                "description": "Optional Y offset to apply to the cloned node's position."
+              },
+              "parentId": {
+                "type": "string",
+                "description": "Optional parent node ID to attach the cloned node to."
+              },
+              "position": {
+                "type": "object",
+                "required": [
+                  "x",
+                  "y"
+                ],
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "description": "X coordinate for the new node's position."
+                  },
+                  "y": {
+                    "type": "number",
+                    "description": "Y coordinate for the new node's position."
+                  }
+                },
+                "description": "Optional absolute position for the cloned node.",
+                "additionalProperties": false
+              }
+            },
+            "description": "A single node clone configuration. Optional.",
+            "additionalProperties": false
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/node"
+            },
+            "description": "An array of node clone configurations for batch cloning. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "rename_layer",
+      "annotations": {
+        "title": "Rename Layer(s)",
+        "extraInfo": "Use this command to rename one or more nodes with optional autoRename control.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"rename\":{\"nodeId\":\"123:456\",\"newName\":\"New Name\",\"setAutoRename\":true}},{\"renames\":[{\"nodeId\":\"123:456\",\"newName\":\"Layer 1\"},{\"nodeId\":\"789:101\",\"newName\":\"Layer 2\",\"setAutoRename\":false}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID.",
+          "newName must be a non-empty string up to 100 characters.",
+          "setAutoRename is optional and controls TextNode autoRename behavior."
+        ]
+      },
+      "description": "Renames one or more nodes in Figma. Accepts either a single rename config (via 'rename') or an array of configs (via 'renames').\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the original and new name(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "rename": {
+            "type": "object",
+            "required": [
+              "nodeId",
+              "newName"
+            ],
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "description": "The unique Figma node ID to rename. Must be a string in the format '123:456'."
+              },
+              "newName": {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1,
+                "description": "The new name for the node. Must be a non-empty string up to 100 characters."
+              },
+              "setAutoRename": {
+                "type": "boolean",
+                "description": "Whether to preserve TextNode autoRename"
+              }
+            },
+            "description": "A single rename configuration object. Optional.",
+            "additionalProperties": false
+          },
+          "renames": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/rename"
+            },
+            "description": "An array of rename configuration objects for batch renaming. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reorder_node",
+      "annotations": {
+        "title": "Reorder Nodes",
+        "extraInfo": "Reordering is useful for changing the stacking order of layers, and batch reordering is useful for complex layer management.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"reorder\":{\"nodeId\":\"123:456\",\"direction\":\"up\"}},{\"reorders\":[{\"nodeId\":\"123:456\",\"direction\":\"up\"},{\"nodeId\":\"789:101\",\"index\":1}]},{\"reorders\":[{\"nodeId\":\"123:456\",\"direction\":\"front\"}],\"options\":{\"skip_errors\":true}}]",
+        "idempotentHint": false,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Index out of bounds will throw an error unless skip_errors is set.",
+          "Each node must have a valid parent with children array.",
+          "You must provide either 'reorder' or 'reorders' as input."
+        ]
+      },
+      "description": "Reorders one or more nodes in their parents' children arrays. Accepts either a single reorder config (via 'reorder') or an array of configs (via 'reorders'). Optionally, you can provide options such as skip_errors.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the results and any errors.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "options": {
+            "type": "object",
+            "properties": {
+              "skip_errors": {
+                "type": "boolean",
+                "description": "If true, skip errors and continue processing remaining operations in batch mode."
+              }
+            },
+            "description": "Options for the operation (e.g., skip_errors). Optional.",
+            "additionalProperties": false
+          },
+          "reorder": {
+            "type": "object",
+            "required": [
+              "nodeId"
+            ],
+            "properties": {
+              "index": {
+                "type": "integer",
+                "description": "The new index to move the node to (0-based). Optional."
+              },
+              "nodeId": {
+                "type": "string",
+                "description": "The ID of the node to reorder."
+              },
+              "direction": {
+                "enum": [
+                  "up",
+                  "down",
+                  "front",
+                  "back"
+                ],
+                "type": "string",
+                "description": "The direction to move the node: 'up', 'down', 'front', or 'back'. Optional."
+              }
+            },
+            "description": "A single reorder configuration object. Each object should include nodeId and optional direction or index.",
+            "additionalProperties": false
+          },
+          "reorders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/reorder"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_node_info",
+      "annotations": {
+        "title": "Get Node Info (Unified)",
+        "extraInfo": "Unified version of get_node_info and get_nodes_info. Use this command to inspect properties and metadata of one or more Figma nodes.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\"},{\"nodeIds\":[\"123:456\",\"789:101\"]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns an error if any nodeId is invalid or not found.",
+          "Result is an array of node info objects (even for single).",
+          "Large requests may impact performance."
+        ]
+      },
+      "description": "Get detailed information about one or more nodes in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the node(s) info as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to get information about. Must be a string in the format '123:456'."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "A Figma node ID. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "description": "An array of Figma node IDs to get information about. Each must be a string in the format '123:456'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_matrix_transform",
+      "annotations": {
+        "title": "Set Matrix Transform (Single or Batch)",
+        "extraInfo": "Supports both single and batch matrix transforms. Matrix must be a 6-element array.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"entry\":{\"nodeId\":\"123:456\",\"matrix\":[1,0,0,1,100,200]}},{\"entries\":[{\"nodeId\":\"123:456\",\"matrix\":[1,0,0,1,100,200]},{\"nodeId\":\"789:101\",\"matrix\":[0.5,0,0,0.5,0,0]}],\"options\":{\"skipErrors\":true}}]",
+        "idempotentHint": false,
+        "destructiveHint": true,
+        "edgeCaseWarnings": [
+          "Returns an error if any nodeId is invalid or not found (unless skipErrors is true).",
+          "Result is an array of result objects (even for single)."
+        ]
+      },
+      "description": "Set a transformation matrix on one or more Figma nodes (single or batch).\n\nParameters:\n  - entry: { nodeId: string, matrix: number[] } (optional, for single)\n  - entries: Array<{ nodeId: string, matrix: number[] }> (optional, for batch)\n  - options: { skipErrors?: boolean } (optional)\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the result for each node.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "entry": {
+            "type": "object",
+            "required": [
+              "nodeId",
+              "matrix"
+            ],
+            "properties": {
+              "matrix": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "maxItems": 6,
+                "minItems": 6
+              },
+              "nodeId": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "nodeId",
+                "matrix"
+              ],
+              "properties": {
+                "matrix": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 6,
+                  "minItems": 6
+                },
+                "nodeId": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "skipErrors": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_grid",
+      "description": "Create, update, or delete one or more layout grids on Figma nodes (FRAME, COMPONENT, INSTANCE).\n\nReturns: Array of result objects for each operation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "entry": {
+            "type": "object",
+            "required": [
+              "nodeId"
+            ],
+            "properties": {
+              "delete": {
+                "type": "boolean"
+              },
+              "nodeId": {
+                "type": "string"
+              },
+              "gridIndex": {
+                "type": "number"
+              },
+              "properties": {
+                "type": "object",
+                "required": [
+                  "pattern"
+                ],
+                "properties": {
+                  "color": {
+                    "type": "object",
+                    "required": [
+                      "r",
+                      "g",
+                      "b"
+                    ],
+                    "properties": {
+                      "a": {
+                        "type": "number",
+                        "maximum": 1,
+                        "minimum": 0
+                      },
+                      "b": {
+                        "type": "number",
+                        "maximum": 1,
+                        "minimum": 0
+                      },
+                      "g": {
+                        "type": "number",
+                        "maximum": 1,
+                        "minimum": 0
+                      },
+                      "r": {
+                        "type": "number",
+                        "maximum": 1,
+                        "minimum": 0
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "count": {
+                    "type": "number"
+                  },
+                  "offset": {
+                    "type": "number"
+                  },
+                  "pattern": {
+                    "enum": [
+                      "GRID",
+                      "COLUMNS",
+                      "ROWS"
+                    ],
+                    "type": "string"
+                  },
+                  "visible": {
+                    "type": "boolean"
+                  },
+                  "alignment": {
+                    "enum": [
+                      "MIN",
+                      "MAX",
+                      "STRETCH",
+                      "CENTER"
+                    ],
+                    "type": "string"
+                  },
+                  "gutterSize": {
+                    "type": "number"
+                  },
+                  "sectionSize": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/entry"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_grid",
+      "description": "Get all layout grids for one or more Figma nodes (FRAME, COMPONENT, INSTANCE).\n\nReturns: For single: { nodeId, grids: [...] }, for batch: Array<{ nodeId, grids: [...] }>.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_guide",
+      "description": "Add or delete one or more guides on the current Figma page.\n\nReturns: Array of result objects for each operation.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "guide": {
+            "type": "object",
+            "required": [
+              "axis",
+              "offset"
+            ],
+            "properties": {
+              "axis": {
+                "enum": [
+                  "X",
+                  "Y"
+                ],
+                "type": "string"
+              },
+              "delete": {
+                "type": "boolean"
+              },
+              "offset": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "guides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/guide"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_guide",
+      "description": "Get all guides on the current Figma page.\n\nReturns: Array of guides, each with { axis, offset }",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_page",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Create, delete, rename, or set current page (single or batch).\n\nReturns: Array of result objects for each operation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_page",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Get info for one, many, or all pages.\n\nReturns: For single: { pageId, name, isActive }, for batch: Array<{ pageId, name, isActive }>.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "create_rectangle",
+      "annotations": {
+        "title": "Create Rectangle(s)",
+        "extraInfo": "Useful for generating UI elements, backgrounds, or design primitives programmatically. Batch creation is efficient for generating multiple design elements at once.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"rectangle\":{\"x\":100,\"y\":200,\"width\":300,\"height\":150,\"name\":\"Button Background\",\"cornerRadius\":8}},{\"rectangles\":[{\"x\":10,\"y\":20,\"width\":100,\"height\":50,\"name\":\"Rect1\"},{\"x\":120,\"y\":20,\"width\":80,\"height\":40}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Width and height must be greater than zero.",
+          "Corner radius should not exceed half the smallest dimension.",
+          "If parentId is invalid, the rectangle will be added to the root."
+        ]
+      },
+      "description": "Creates one or more rectangle shape nodes in the specified Figma document. Accepts either a single rectangle config (via 'rectangle') or an array of configs (via 'rectangles'). Optionally, you can provide a name, a parent node ID to attach the rectangle(s) to, and a corner radius for rounded corners.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created rectangle node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "rectangle": {
+            "type": "object",
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The X coordinate (in Figma canvas units, pixels) for the top-left corner of the rectangle. Must be >= 0. Example: 100"
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The Y coordinate (in Figma canvas units, pixels) for the top-left corner of the rectangle. Must be >= 0. Example: 200"
+              },
+              "name": {
+                "type": "string",
+                "description": "The name to assign to the rectangle node in Figma. Example: 'Button Background'"
+              },
+              "width": {
+                "type": "number",
+                "description": "The width of the rectangle in pixels. Must be > 0. Example: 300",
+                "exclusiveMinimum": 0
+              },
+              "height": {
+                "type": "number",
+                "description": "The height of the rectangle in pixels. Must be > 0. Example: 150",
+                "exclusiveMinimum": 0
+              },
+              "parentId": {
+                "type": "string",
+                "description": "The Figma node ID of the parent to attach the rectangle to. If omitted, the rectangle is added to the root."
+              },
+              "fillColor": {
+                "description": "Optional RGBA fill color for the rectangle. Example: { r: 0.2235, g: 1, b: 0.0784, a: 1 }"
+              },
+              "strokeColor": {
+                "description": "Optional RGBA stroke color for the rectangle. Example: { r: 0, g: 0, b: 0, a: 1 }"
+              },
+              "cornerRadius": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The corner radius (in pixels) for rounded corners. Must be >= 0. Example: 8"
+              },
+              "strokeWeight": {
+                "type": "number",
+                "description": "Optional stroke weight for the rectangle."
+              }
+            },
+            "description": "A single rectangle configuration object. Each object should include coordinates, dimensions, and optional properties for a rectangle.",
+            "additionalProperties": false
+          },
+          "rectangles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "x",
+                "y",
+                "width",
+                "height"
+              ],
+              "properties": {
+                "x": {
+                  "$ref": "#/properties/rectangle/properties/x"
+                },
+                "y": {
+                  "$ref": "#/properties/rectangle/properties/y"
+                },
+                "name": {
+                  "$ref": "#/properties/rectangle/properties/name"
+                },
+                "width": {
+                  "$ref": "#/properties/rectangle/properties/width"
+                },
+                "height": {
+                  "$ref": "#/properties/rectangle/properties/height"
+                },
+                "parentId": {
+                  "$ref": "#/properties/rectangle/properties/parentId"
+                },
+                "fillColor": {
+                  "$ref": "#/properties/rectangle/properties/fillColor"
+                },
+                "strokeColor": {
+                  "$ref": "#/properties/rectangle/properties/strokeColor"
+                },
+                "cornerRadius": {
+                  "$ref": "#/properties/rectangle/properties/cornerRadius"
+                },
+                "strokeWeight": {
+                  "$ref": "#/properties/rectangle/properties/strokeWeight"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of rectangle configuration objects. Each object should include coordinates, dimensions, and optional properties for a rectangle."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_frame",
+      "annotations": {
+        "title": "Create Frame(s)",
+        "extraInfo": "Useful for generating UI containers, artboards, or design primitives programmatically. Batch creation is efficient for generating multiple frames at once. Corner radius support enables creation of modern rounded UI elements.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"frame\":{\"x\":50,\"y\":100,\"width\":400,\"height\":300,\"name\":\"Main Frame\",\"cornerRadius\":12}},{\"frame\":{\"x\":50,\"y\":100,\"width\":400,\"height\":300,\"name\":\"Card Frame\",\"cornerRadius\":[16,16,8,8]}},{\"frames\":[{\"x\":10,\"y\":20,\"width\":100,\"height\":50,\"name\":\"Frame1\",\"cornerRadius\":8},{\"x\":120,\"y\":20,\"width\":80,\"height\":40,\"cornerRadius\":[4,4,0,0]}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Width and height must be greater than zero.",
+          "If parentId is invalid, the frame will be added to the root.",
+          "Fill and stroke colors must be valid color objects.",
+          "Corner radius values must be non-negative numbers.",
+          "Corner radius array must contain exactly 4 values [topLeft, topRight, bottomRight, bottomLeft]."
+        ]
+      },
+      "description": "Creates one or more frame nodes in the specified Figma document. Accepts either a single frame config (via 'frame') or an array of configs (via 'frames'). Optionally, you can provide a name, a parent node ID, fill color, stroke color, stroke weight, and corner radius.\n\nCorner radius can be:\n- A single number for uniform corners (e.g., 8)\n- An array of 4 numbers for individual corners [topLeft, topRight, bottomRight, bottomLeft] (e.g., [8, 8, 0, 0])\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created frame node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "frame": {
+            "type": "object",
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "X coordinate for the top-left corner. Example: 50"
+              },
+              "y": {
+                "type": "number",
+                "description": "Y coordinate for the top-left corner. Example: 100"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name for the frame node. Example: 'Main Frame'"
+              },
+              "width": {
+                "type": "number",
+                "description": "Width in pixels. Example: 400"
+              },
+              "height": {
+                "type": "number",
+                "description": "Height in pixels. Example: 300"
+              },
+              "parentId": {
+                "type": "string",
+                "description": "Figma node ID of the parent."
+              },
+              "fillColor": {
+                "description": "Fill color for the frame."
+              },
+              "strokeColor": {
+                "description": "Stroke color for the frame."
+              },
+              "cornerRadius": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Uniform corner radius for all corners. Example: 8"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "description": "Individual corner radii [topLeft, topRight, bottomRight, bottomLeft]. Example: [8, 8, 0, 0]"
+                  }
+                ],
+                "description": "Corner radius configuration. Use a single number for uniform corners or array of 4 numbers for individual corner control."
+              },
+              "strokeWeight": {
+                "type": "number",
+                "description": "Stroke weight for the frame."
+              }
+            },
+            "description": "A single frame configuration object. Each object should include coordinates, dimensions, and optional properties for a frame including corner radius.",
+            "additionalProperties": false
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "x",
+                "y",
+                "width",
+                "height"
+              ],
+              "properties": {
+                "x": {
+                  "$ref": "#/properties/frame/properties/x"
+                },
+                "y": {
+                  "$ref": "#/properties/frame/properties/y"
+                },
+                "name": {
+                  "$ref": "#/properties/frame/properties/name"
+                },
+                "width": {
+                  "$ref": "#/properties/frame/properties/width"
+                },
+                "height": {
+                  "$ref": "#/properties/frame/properties/height"
+                },
+                "parentId": {
+                  "$ref": "#/properties/frame/properties/parentId"
+                },
+                "fillColor": {
+                  "$ref": "#/properties/frame/properties/fillColor"
+                },
+                "strokeColor": {
+                  "$ref": "#/properties/frame/properties/strokeColor"
+                },
+                "cornerRadius": {
+                  "$ref": "#/properties/frame/properties/cornerRadius"
+                },
+                "strokeWeight": {
+                  "$ref": "#/properties/frame/properties/strokeWeight"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of frame configuration objects. Each object should include coordinates, dimensions, and optional properties for a frame including corner radius."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_line",
+      "annotations": {
+        "title": "Create Line(s)",
+        "extraInfo": "Useful for generating connectors, dividers, or design primitives programmatically. Batch creation is efficient for generating multiple lines or connectors at once.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"line\":{\"x1\":10,\"y1\":20,\"x2\":110,\"y2\":20}},{\"lines\":[{\"x1\":10,\"y1\":20,\"x2\":110,\"y2\":20},{\"x1\":20,\"y1\":30,\"x2\":120,\"y2\":30}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Start and end points must not be identical.",
+          "If parentId is invalid, the line will be added to the root.",
+          "Stroke color must be a valid color object."
+        ]
+      },
+      "description": "Creates one or more line nodes in the specified Figma document. Accepts either a single line config (via 'line') or an array of configs (via 'lines'). Optionally, you can provide a parent node ID, stroke color, and stroke weight.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created line node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "line": {
+            "type": "object",
+            "required": [
+              "x1",
+              "y1",
+              "x2",
+              "y2"
+            ],
+            "properties": {
+              "x1": {
+                "type": "number",
+                "description": "X coordinate for the start point. Example: 10"
+              },
+              "x2": {
+                "type": "number",
+                "description": "X coordinate for the end point. Example: 110"
+              },
+              "y1": {
+                "type": "number",
+                "description": "Y coordinate for the start point. Example: 20"
+              },
+              "y2": {
+                "type": "number",
+                "description": "Y coordinate for the end point. Example: 20"
+              },
+              "parentId": {
+                "type": "string",
+                "description": "Figma node ID of the parent."
+              },
+              "strokeColor": {
+                "description": "Stroke color for the line."
+              },
+              "strokeWeight": {
+                "type": "number",
+                "description": "Stroke weight for the line."
+              }
+            },
+            "description": "A single line configuration object. Each object should include coordinates, dimensions, and optional properties for a line.",
+            "additionalProperties": false
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+              ],
+              "properties": {
+                "x1": {
+                  "$ref": "#/properties/line/properties/x1"
+                },
+                "x2": {
+                  "$ref": "#/properties/line/properties/x2"
+                },
+                "y1": {
+                  "$ref": "#/properties/line/properties/y1"
+                },
+                "y2": {
+                  "$ref": "#/properties/line/properties/y2"
+                },
+                "parentId": {
+                  "$ref": "#/properties/line/properties/parentId"
+                },
+                "strokeColor": {
+                  "$ref": "#/properties/line/properties/strokeColor"
+                },
+                "strokeWeight": {
+                  "$ref": "#/properties/line/properties/strokeWeight"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of line configuration objects. Each object should include coordinates, dimensions, and optional properties for a line."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_ellipse",
+      "annotations": {
+        "title": "Create Ellipse(s)",
+        "extraInfo": "Useful for generating circles, ovals, or design primitives programmatically. Batch creation is efficient for generating multiple ellipses or circles at once.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"ellipse\":{\"x\":60,\"y\":80,\"width\":120,\"height\":90,\"name\":\"Ellipse1\"}},{\"ellipses\":[{\"x\":10,\"y\":20,\"width\":100,\"height\":50,\"name\":\"Ellipse1\"},{\"x\":120,\"y\":20,\"width\":80,\"height\":40}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Width and height must be greater than zero.",
+          "If parentId is invalid, the ellipse will be added to the root.",
+          "Fill and stroke colors must be valid color objects."
+        ]
+      },
+      "description": "Creates one or more ellipse nodes in the specified Figma document. Accepts either a single ellipse config (via 'ellipse') or an array of configs (via 'ellipses'). Optionally, you can provide a name, a parent node ID, fill color, stroke color, and stroke weight.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created ellipse node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ellipse": {
+            "type": "object",
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "X coordinate for the top-left corner. Example: 60"
+              },
+              "y": {
+                "type": "number",
+                "description": "Y coordinate for the top-left corner. Example: 80"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name for the ellipse node. Example: 'Ellipse1'"
+              },
+              "width": {
+                "type": "number",
+                "description": "Width in pixels. Example: 120"
+              },
+              "height": {
+                "type": "number",
+                "description": "Height in pixels. Example: 90"
+              },
+              "parentId": {
+                "type": "string",
+                "description": "Figma node ID of the parent."
+              },
+              "fillColor": {
+                "description": "Fill color for the ellipse."
+              },
+              "strokeColor": {
+                "description": "Stroke color for the ellipse."
+              },
+              "strokeWeight": {
+                "type": "number",
+                "description": "Stroke weight for the ellipse."
+              }
+            },
+            "description": "A single ellipse configuration object. Each object should include coordinates, dimensions, and optional properties for an ellipse.",
+            "additionalProperties": false
+          },
+          "ellipses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "x",
+                "y",
+                "width",
+                "height"
+              ],
+              "properties": {
+                "x": {
+                  "$ref": "#/properties/ellipse/properties/x"
+                },
+                "y": {
+                  "$ref": "#/properties/ellipse/properties/y"
+                },
+                "name": {
+                  "$ref": "#/properties/ellipse/properties/name"
+                },
+                "width": {
+                  "$ref": "#/properties/ellipse/properties/width"
+                },
+                "height": {
+                  "$ref": "#/properties/ellipse/properties/height"
+                },
+                "parentId": {
+                  "$ref": "#/properties/ellipse/properties/parentId"
+                },
+                "fillColor": {
+                  "$ref": "#/properties/ellipse/properties/fillColor"
+                },
+                "strokeColor": {
+                  "$ref": "#/properties/ellipse/properties/strokeColor"
+                },
+                "strokeWeight": {
+                  "$ref": "#/properties/ellipse/properties/strokeWeight"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of ellipse configuration objects. Each object should include coordinates, dimensions, and optional properties for an ellipse."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_polygon",
+      "annotations": {
+        "title": "Create Polygon(s)",
+        "extraInfo": "Batch creation is efficient for generating multiple polygons or stars at once.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"polygon\":{\"x\":10,\"y\":20,\"width\":100,\"height\":100,\"sides\":5}},{\"polygons\":[{\"x\":10,\"y\":20,\"width\":100,\"height\":100,\"sides\":5},{\"x\":120,\"y\":20,\"width\":80,\"height\":80,\"sides\":6}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Each polygon must have at least 3 sides.",
+          "Width and height must be greater than zero.",
+          "If parentId is invalid, polygons will be added to the root.",
+          "Fill and stroke colors must be valid color objects."
+        ]
+      },
+      "description": "Creates one or more polygons in Figma. Accepts either a single polygon config (via 'polygon') or an array of configs (via 'polygons'). Optionally, you can provide a name, a parent node ID, fill color, stroke color, and stroke weight.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created polygon node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "polygon": {
+            "type": "object",
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height",
+              "sides"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "X coordinate for the top-left corner. Example: 10"
+              },
+              "y": {
+                "type": "number",
+                "description": "Y coordinate for the top-left corner. Example: 20"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name for the polygon node."
+              },
+              "sides": {
+                "type": "number",
+                "minimum": 3,
+                "description": "Number of sides (minimum 3). Example: 5"
+              },
+              "width": {
+                "type": "number",
+                "description": "Width in pixels. Example: 100"
+              },
+              "height": {
+                "type": "number",
+                "description": "Height in pixels. Example: 100"
+              },
+              "parentId": {
+                "type": "string",
+                "description": "Figma node ID of the parent."
+              },
+              "fillColor": {
+                "description": "Fill color for the polygon."
+              },
+              "strokeColor": {
+                "description": "Stroke color for the polygon."
+              },
+              "strokeWeight": {
+                "type": "number",
+                "description": "Stroke weight for the polygon."
+              }
+            },
+            "description": "A single polygon configuration object. Each object should include coordinates, dimensions, and optional properties for a polygon.",
+            "additionalProperties": false
+          },
+          "polygons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "x",
+                "y",
+                "width",
+                "height",
+                "sides"
+              ],
+              "properties": {
+                "x": {
+                  "$ref": "#/properties/polygon/properties/x"
+                },
+                "y": {
+                  "$ref": "#/properties/polygon/properties/y"
+                },
+                "name": {
+                  "$ref": "#/properties/polygon/properties/name"
+                },
+                "sides": {
+                  "$ref": "#/properties/polygon/properties/sides"
+                },
+                "width": {
+                  "$ref": "#/properties/polygon/properties/width"
+                },
+                "height": {
+                  "$ref": "#/properties/polygon/properties/height"
+                },
+                "parentId": {
+                  "$ref": "#/properties/polygon/properties/parentId"
+                },
+                "fillColor": {
+                  "$ref": "#/properties/polygon/properties/fillColor"
+                },
+                "strokeColor": {
+                  "$ref": "#/properties/polygon/properties/strokeColor"
+                },
+                "strokeWeight": {
+                  "$ref": "#/properties/polygon/properties/strokeWeight"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of polygon configuration objects. Each object should include coordinates, dimensions, and optional properties for a polygon."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_mask",
+      "annotations": {
+        "title": "Set Mask (Single or Batch)",
+        "extraInfo": "Returns an array of result objects for each mask operation.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"targetNodeId\":\"123:456\",\"maskNodeId\":\"789:012\"},{\"operations\":[{\"targetNodeId\":\"123:456\",\"maskNodeId\":\"789:012\"},{\"targetNodeId\":\"234:567\",\"maskNodeId\":\"890:123\"}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Both targetNodeId and maskNodeId are required for single operation.",
+          "Each operation in batch must have both targetNodeId and maskNodeId."
+        ]
+      },
+      "description": "Applies a mask in Figma. Supports single or batch:\n- Single: { targetNodeId, maskNodeId, channelId? }\n- Batch: { operations: [ { targetNodeId, maskNodeId, channelId? }, ... ] }\nReturns an array of result objects.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "targetNodeId",
+          "maskNodeId",
+          "operations"
+        ],
+        "properties": {
+          "parentId": {
+            "type": "string",
+            "description": "Optional parent node ID for the resulting mask group"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Channel ID for communication"
+          },
+          "maskNodeId": {
+            "type": "string",
+            "description": "ID of the node to use as mask"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "targetNodeId",
+                "maskNodeId"
+              ],
+              "properties": {
+                "channelId": {
+                  "type": "string",
+                  "description": "Channel ID for communication"
+                },
+                "maskNodeId": {
+                  "type": "string",
+                  "description": "ID of the node to use as mask"
+                },
+                "targetNodeId": {
+                  "type": "string",
+                  "description": "ID of the node to be masked"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "targetNodeId": {
+            "type": "string",
+            "description": "ID of the node to be masked"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_fill_and_stroke",
+      "description": "Sets fill and/or stroke color(s) and/or stroke weight for one or more nodes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "fill": {
+            "description": "The fill color(s) to set. Can be a single fill or an array of fills."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to update. Provide either nodeId or nodeIds, not both."
+          },
+          "stroke": {
+            "description": "The stroke color(s) to set. Can be a single stroke or an array of strokes."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of Figma node IDs to update. Provide either nodeId or nodeIds, not both."
+          },
+          "fillColor": {
+            "description": "The fill color to set as RGBA object."
+          },
+          "strokeColor": {
+            "description": "The stroke color to set as RGBA object."
+          },
+          "strokeWeight": {
+            "type": "number",
+            "description": "The stroke weight to set in pixels."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_fill_and_stroke",
+      "description": "Gets fill and/or stroke color(s) and stroke weight for one or more nodes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to query. Provide either nodeId or nodeIds, not both."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of Figma node IDs to query. Provide either nodeId or nodeIds, not both."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_gradient_style",
+      "annotations": {
+        "title": "Create Gradient Style (Single or Batch)",
+        "extraInfo": "Creates one or more reusable gradient styles for fills or strokes.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"gradients\":{\"name\":\"Primary Gradient\",\"gradientType\":\"LINEAR\",\"stops\":[{\"position\":0,\"color\":[1,0,0,1]},{\"position\":1,\"color\":[0,0,1,1]}]}},{\"gradients\":[{\"name\":\"Primary Gradient\",\"gradientType\":\"LINEAR\",\"stops\":[{\"position\":0,\"color\":[1,0,0,1]},{\"position\":1,\"color\":[0,0,1,1]}]},{\"name\":\"Secondary Gradient\",\"gradientType\":\"RADIAL\",\"stops\":[{\"position\":0,\"color\":[0,1,0,1]},{\"position\":1,\"color\":[0,0,0,1]}]}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Name must be a non-empty string.",
+          "At least two color stops are required.",
+          "Color values must be between 0 and 1."
+        ]
+      },
+      "description": "Creates one or more gradient style variables in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created gradient(s) ID(s) or a summary.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "gradients"
+        ],
+        "properties": {
+          "gradients": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "name",
+                  "gradientType",
+                  "stops"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "description": "Optional. Gradient mode."
+                  },
+                  "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "description": "Name for the gradient style. Must be a non-empty string up to 100 characters."
+                  },
+                  "stops": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "position",
+                        "color"
+                      ],
+                      "properties": {
+                        "color": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Red channel (0-1)"
+                            },
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Green channel (0-1)"
+                            },
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Blue channel (0-1)"
+                            },
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Alpha channel (0-1)"
+                            }
+                          ],
+                          "maxItems": 4,
+                          "minItems": 4,
+                          "description": "RGBA color array (4 numbers, each 0-1)."
+                        },
+                        "position": {
+                          "type": "number",
+                          "maximum": 1,
+                          "minimum": 0,
+                          "description": "Position of the stop (0-1)."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "maxItems": 10,
+                    "minItems": 2,
+                    "description": "Array of color stops. Each stop is an object with position and color. Must contain 2 to 10 stops."
+                  },
+                  "opacity": {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "description": "Optional. Opacity of the gradient (0-1)."
+                  },
+                  "gradientType": {
+                    "enum": [
+                      "LINEAR",
+                      "RADIAL",
+                      "ANGULAR",
+                      "DIAMOND"
+                    ],
+                    "type": "string",
+                    "description": "Type of gradient: \"LINEAR\", \"RADIAL\", \"ANGULAR\", or \"DIAMOND\"."
+                  },
+                  "transformMatrix": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    },
+                    "description": "Optional. Transform matrix for the gradient."
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/gradients/anyOf/0"
+                },
+                "maxItems": 20,
+                "minItems": 1
+              }
+            ],
+            "description": "One or more gradient style definitions to create. Can be a single object or an array."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_gradient",
+      "annotations": {
+        "title": "Set Gradient (Single or Batch, Direct or Style Variable)",
+        "extraInfo": "Supports both direct and style variable gradient application, single or batch.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"entries\":{\"nodeId\":\"123:456\",\"gradientType\":\"LINEAR\",\"stops\":[{\"position\":0,\"color\":[1,0,0,1]},{\"position\":1,\"color\":[0,0,1,1]}],\"applyTo\":\"FILL\"}},{\"entries\":{\"nodeId\":\"123:456\",\"gradientStyleId\":\"S:gradient123\",\"applyTo\":\"FILL\"}},{\"entries\":[{\"nodeId\":\"123:456\",\"gradientType\":\"LINEAR\",\"stops\":[{\"position\":0,\"color\":[1,0,0,1]},{\"position\":1,\"color\":[0,0,1,1]}],\"applyTo\":\"FILL\"},{\"nodeId\":\"789:101\",\"gradientStyleId\":\"S:gradient123\",\"applyTo\":\"STROKE\"}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Each entry must have a valid nodeId and either direct gradient args or gradientStyleId.",
+          "If using direct args, both gradientType and stops are required."
+        ]
+      },
+      "description": "Set a gradient on one or more nodes in Figma, either directly or by style variable.\n\nReturns:\n  - content: Array containing a text message with the updated node(s) ID(s) or a summary.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entries"
+        ],
+        "properties": {
+          "entries": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "nodeId"
+                ],
+                "properties": {
+                  "stops": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "position",
+                        "color"
+                      ],
+                      "properties": {
+                        "color": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Red channel (0-1)"
+                            },
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Green channel (0-1)"
+                            },
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Blue channel (0-1)"
+                            },
+                            {
+                              "type": "number",
+                              "maximum": 1,
+                              "minimum": 0,
+                              "description": "Alpha channel (0-1)"
+                            }
+                          ],
+                          "maxItems": 4,
+                          "minItems": 4,
+                          "description": "RGBA color array (4 numbers, each 0-1)."
+                        },
+                        "position": {
+                          "type": "number",
+                          "maximum": 1,
+                          "minimum": 0,
+                          "description": "Position of the stop (0-1)."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "maxItems": 10,
+                    "minItems": 2,
+                    "description": "Array of color stops. Each stop is an object with position and color. Must contain 2 to 10 stops."
+                  },
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The unique Figma node ID to update."
+                  },
+                  "applyTo": {
+                    "enum": [
+                      "FILL",
+                      "STROKE",
+                      "BOTH"
+                    ],
+                    "type": "string",
+                    "description": "Where to apply the gradient: \"FILL\", \"STROKE\", or \"BOTH\"."
+                  },
+                  "gradientType": {
+                    "enum": [
+                      "LINEAR",
+                      "RADIAL",
+                      "ANGULAR",
+                      "DIAMOND"
+                    ],
+                    "type": "string",
+                    "description": "Type of gradient: \"LINEAR\", \"RADIAL\", \"ANGULAR\", or \"DIAMOND\"."
+                  },
+                  "gradientStyleId": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "description": "The ID of the gradient style to apply."
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/entries/anyOf/0"
+                },
+                "maxItems": 100,
+                "minItems": 1
+              }
+            ],
+            "description": "One or more gradient set operations to perform. Can be a single object or an array."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_effect",
+      "annotations": {
+        "title": "Set Effect (Single or Batch, Direct or Style Variable)",
+        "extraInfo": "Supports both direct and style variable effect application, single or batch.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"entries\":{\"nodeId\":\"123:456\",\"effects\":{\"type\":\"DROP_SHADOW\",\"color\":{\"r\":0,\"g\":0,\"b\":0,\"a\":1},\"radius\":4}}},{\"entries\":[{\"nodeId\":\"123:456\",\"effects\":[{\"type\":\"DROP_SHADOW\",\"color\":{\"r\":0,\"g\":0,\"b\":0,\"a\":1},\"radius\":4}]},{\"nodeId\":\"789:101\",\"effectStyleId\":\"S:effect123\"}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Each entry must have a valid nodeId and either effects or effectStyleId."
+        ]
+      },
+      "description": "Set effect(s) directly or by style variable on one or more nodes in Figma.\n\nReturns:\n  - content: Array containing a text message with the updated node(s) ID(s) or a summary.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "entries"
+        ],
+        "properties": {
+          "entries": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "nodeId"
+                ],
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The unique Figma node ID to update."
+                  },
+                  "effects": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "required": [
+                          "nodeId",
+                          "effectStyleId"
+                        ],
+                        "properties": {
+                          "nodeId": {
+                            "type": "string",
+                            "description": "The unique Figma node ID to update. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+                          },
+                          "effectStyleId": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "minLength": 1,
+                            "description": "The ID of the effect style to apply. Must be a non-empty string. Maximum length 100 characters."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/properties/entries/anyOf/0/properties/effects/anyOf/0"
+                        },
+                        "maxItems": 20,
+                        "minItems": 1
+                      }
+                    ],
+                    "description": "Effect or array of effects to set directly."
+                  },
+                  "effectStyleId": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "description": "Optional. The ID of the effect style variable to apply."
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/entries/anyOf/0"
+                },
+                "maxItems": 100,
+                "minItems": 1
+              }
+            ],
+            "description": "One or more effect set operations to perform. Can be a single object or an array."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "apply_effect_style",
+      "annotations": {
+        "title": "Set Effect Style ID",
+        "extraInfo": "Applies a predefined effect style to a node.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"effectStyleId\":\"effect123\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID.",
+          "effectStyleId must be a valid effect style identifier.",
+          "Applying an invalid style ID will cause failure."
+        ]
+      },
+      "description": "Applies an effect style to a node in Figma.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the updated node's ID.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId",
+          "effectStyleId"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to update. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+          },
+          "effectStyleId": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "The ID of the effect style to apply. Must be a non-empty string. Maximum length 100 characters."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_doc_style",
+      "annotations": {
+        "title": "Get Doc Style",
+        "extraInfo": "Use this command to list all shared styles in the current Figma document.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns an empty array if no styles exist.",
+          "Result includes all color, text, and effect styles.",
+          "Large documents may return a large JSON object."
+        ]
+      },
+      "description": "Get all styles from the current Figma document.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the styles info as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_node_style",
+      "annotations": {
+        "title": "Get Node Style (Unified)",
+        "extraInfo": "Use this command to inspect all style properties of one or more nodes.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\"},{\"nodeIds\":[\"123:456\",\"789:101\"]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns an error if any nodeId is invalid or not found.",
+          "Result is an array of { nodeId, styles } objects (even for single)."
+        ]
+      },
+      "description": "Get all style properties (fills, strokes, effects, text styles, style IDs, etc.) for one or more nodes.\n\nReturns:\n  - Array of { nodeId, styles } objects, one per node.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_text_style",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The ID of a single node to extract text style from. Optional."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of node IDs to extract text style from in batch. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "load_font_async",
+      "description": "Load a font asynchronously in Figma.\n\nReturns:\n  - content: Array containing a text message with the loaded font.\n    Example: { \"content\": [{ \"type\": \"text\", \"text\": \"Font loaded: Roboto\" }] }\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "family"
+        ],
+        "properties": {
+          "style": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "Optional. The font style to set (e.g., 'Bold', 'Italic'). If provided, must be a non-empty string. Maximum length 100 characters."
+          },
+          "family": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "description": "The font family to set. Must be a non-empty string. Maximum length 100 characters."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_svg_vector",
+      "annotations": {
+        "title": "Get SVG Vector (Unified)",
+        "extraInfo": "Use this command to extract SVG markup from one or more vector nodes.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\"},{\"nodeIds\":[\"123:456\",\"789:101\"]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Returns an error if any nodeId is invalid, not found, or not a vector.",
+          "Result is an array of { nodeId, svg } objects (even for single)."
+        ]
+      },
+      "description": "Get SVG markup for one or more vector nodes.\n\nReturns:\n  - Array of { nodeId, svg } objects, one per node.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to extract SVG from. Provide either nodeId or nodeIds, not both."
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of Figma node IDs to extract SVG from. Provide either nodeId or nodeIds, not both."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_svg_vector",
+      "annotations": {
+        "title": "Insert SVG Vector(s)",
+        "extraInfo": "Use this command to insert one or more SVG vectors into the Figma document.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"svg\":{\"svg\":\"<svg>...</svg>\",\"x\":0,\"y\":0,\"name\":\"My SVG\"}},{\"svgs\":[{\"svg\":\"<svg>...</svg>\",\"x\":0,\"y\":0,\"name\":\"My SVG\"}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "SVG content must be valid SVG markup or a valid URL.",
+          "Coordinates must be within the canvas bounds.",
+          "If parentId is invalid, the SVG will be added to the root."
+        ]
+      },
+      "description": "Sets or inserts one or more SVG vectors in Figma. Accepts either a single SVG config (via 'svg') or an array of configs (via 'svgs').\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the inserted SVG vector node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "svg": {
+            "type": "object",
+            "required": [
+              "svg"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "default": 0,
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "Optional. X coordinate for the SVG. Must be between -10,000 and 10,000. Defaults to 0."
+              },
+              "y": {
+                "type": "number",
+                "default": 0,
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "Optional. Y coordinate for the SVG. Must be between -10,000 and 10,000. Defaults to 0."
+              },
+              "svg": {
+                "type": "string",
+                "maxLength": 100000,
+                "minLength": 1,
+                "description": "The SVG content (raw SVG text or URL). Must be a non-empty string up to 100,000 characters."
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1,
+                "description": "Optional. Name for the SVG node. If provided, must be a non-empty string up to 100 characters."
+              },
+              "parentId": {
+                "type": "string",
+                "description": "Optional. Figma node ID of the parent. If provided, must be a string in the format '123:456'."
+              }
+            },
+            "description": "A single SVG vector configuration. Optional.",
+            "additionalProperties": false
+          },
+          "svgs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "svg"
+              ],
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "default": 0,
+                  "maximum": 10000,
+                  "minimum": -10000,
+                  "description": "Optional. X coordinate for the SVG. Must be between -10,000 and 10,000. Defaults to 0."
+                },
+                "y": {
+                  "type": "number",
+                  "default": 0,
+                  "maximum": 10000,
+                  "minimum": -10000,
+                  "description": "Optional. Y coordinate for the SVG. Must be between -10,000 and 10,000. Defaults to 0."
+                },
+                "svg": {
+                  "type": "string",
+                  "maxLength": 100000,
+                  "minLength": 1,
+                  "description": "The SVG content (raw SVG text or URL). Must be a non-empty string up to 100,000 characters."
+                },
+                "name": {
+                  "type": "string",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "description": "Optional. Name for the SVG node. If provided, must be a non-empty string up to 100 characters."
+                },
+                "parentId": {
+                  "type": "string",
+                  "description": "Optional. Figma node ID of the parent. If provided, must be a string in the format '123:456'."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of SVG vector configurations for batch insertion. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_styled_text_segments",
+      "annotations": {
+        "title": "Get Styled Text Segments",
+        "extraInfo": "Use this command to analyze style runs within a text node for advanced formatting.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"property\":\"fontSize\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid text node.",
+          "property must be a supported style property.",
+          "Returns an error if the node is not a text node."
+        ]
+      },
+      "description": "Get text segments with specific styling in a text node.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the styled text segments as JSON.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId",
+          "property"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma text node ID to analyze. Must be a string in the format '123:456'."
+          },
+          "property": {
+            "enum": [
+              "fillStyleId",
+              "fontName",
+              "fontSize",
+              "textCase",
+              "textDecoration",
+              "textStyleId",
+              "fills",
+              "letterSpacing",
+              "lineHeight",
+              "fontWeight"
+            ],
+            "type": "string",
+            "description": "The style property to analyze segments by. Must be one of the allowed style property names."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scan_text_nodes",
+      "annotations": {
+        "title": "Scan Text Nodes",
+        "extraInfo": "Scans all descendant text nodes for content and style analysis.",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\"}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma node ID.",
+          "Large nodes may take longer to scan.",
+          "Returns a summary and all found text nodes."
+        ]
+      },
+      "description": "Scan all text nodes in the selected Figma node.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the scan status and results.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "nodeId"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma node ID to scan. Must be a string in the format '123:456'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_text_content",
+      "annotations": {
+        "title": "Set Text Content (Unified)",
+        "extraInfo": "Use this command to update the text content of one or more text nodes.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"text\":\"Hello, world!\"},{\"texts\":[{\"nodeId\":\"123:457\",\"text\":\"Hello\"},{\"nodeId\":\"123:458\",\"text\":\"World\"}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma text node ID.",
+          "Text must be a non-empty string up to 10,000 characters.",
+          "Batch update replaces text content for all specified nodes.",
+          "You must provide either (nodeId + text) or texts."
+        ]
+      },
+      "description": "Sets the text content of one or more text nodes in Figma.\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the update result.\n\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 10000,
+            "minLength": 1,
+            "description": "The new text content to set for the node. Must be a non-empty string. Maximum length 10,000 characters."
+          },
+          "texts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "nodeId",
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "maxLength": 10000,
+                  "minLength": 1,
+                  "description": "The new text content to set for the child node. Must be a non-empty string. Maximum length 10,000 characters."
+                },
+                "nodeId": {
+                  "type": "string",
+                  "description": "The unique Figma child text node ID to update. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+                }
+              },
+              "additionalProperties": false
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "description": "Array of objects specifying nodeId and text for each child text node to update. Must contain 1 to 100 items."
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma text node ID to update. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_text_style",
+      "annotations": {
+        "title": "Set Text Style (Unified)",
+        "extraInfo": "Use this command to update one or more text style properties for one or more nodes.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"nodeId\":\"123:456\",\"styles\":{\"fontSize\":18,\"fontWeight\":700}},{\"entries\":[{\"nodeId\":\"123:456\",\"styles\":{\"fontSize\":18}},{\"nodeId\":\"789:101\",\"styles\":{\"fontWeight\":400,\"letterSpacing\":2}}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "nodeId must be a valid Figma text node ID.",
+          "At least one style property must be provided.",
+          "Batch update replaces style properties for all specified nodes.",
+          "You must provide either (nodeId + styles) or entries."
+        ]
+      },
+      "description": "Sets one or more text style properties (font, size, weight, spacing, case, decoration, etc.) on one or more nodes in Figma.\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the update result.\n\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The unique Figma text node ID to update. Must be a string in the format '123:456' or a complex instance ID like 'I422:10713;1082:2236'."
+          },
+          "styles": {
+            "type": "object",
+            "properties": {
+              "fills": {
+                "type": "array",
+                "description": "Array of fill objects - fully supported by Plugin API"
+              },
+              "fontName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "family",
+                      "style"
+                    ],
+                    "properties": {
+                      "style": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1,
+                        "description": "Font style (e.g., 'Regular', 'Bold', 'Italic')"
+                      },
+                      "family": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1,
+                        "description": "Font family name"
+                      }
+                    },
+                    "description": "Font name object with family and style",
+                    "additionalProperties": false
+                  }
+                ],
+                "description": "Font name as string (family name) or object with family and style"
+              },
+              "fontSize": {
+                "type": "number",
+                "maximum": 200,
+                "minimum": 1,
+                "description": "Font size in pixels. Must be between 1 and 200."
+              },
+              "maxLines": {
+                "type": "number",
+                "minimum": 1,
+                "description": "Maximum number of lines for text truncation - only works when textTruncation is 'ENDING'"
+              },
+              "textCase": {
+                "enum": [
+                  "ORIGINAL",
+                  "UPPER",
+                  "LOWER",
+                  "TITLE",
+                  "SMALL_CAPS",
+                  "SMALL_CAPS_FORCED"
+                ],
+                "type": "string",
+                "description": "Text case transformation"
+              },
+              "fontColor": {
+                "type": "object",
+                "required": [
+                  "r",
+                  "g",
+                  "b"
+                ],
+                "properties": {
+                  "a": {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "description": "Alpha channel (0-1)"
+                  },
+                  "b": {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "description": "Blue channel (0-1)"
+                  },
+                  "g": {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "description": "Green channel (0-1)"
+                  },
+                  "r": {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "description": "Red channel (0-1)"
+                  }
+                },
+                "description": "Font color as RGBA object - implemented via fills property",
+                "additionalProperties": false
+              },
+              "fontWeight": {
+                "type": "number",
+                "maximum": 1000,
+                "minimum": 100,
+                "description": "Font weight. Must be between 100 and 1000."
+              },
+              "lineHeight": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "Line height as multiplier (e.g., 1.6)"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "value",
+                      "unit"
+                    ],
+                    "properties": {
+                      "unit": {
+                        "enum": [
+                          "PIXELS",
+                          "PERCENT",
+                          "AUTO",
+                          "MULTIPLIER"
+                        ],
+                        "type": "string",
+                        "description": "Line height unit"
+                      },
+                      "value": {
+                        "type": "number",
+                        "description": "Line height value"
+                      }
+                    },
+                    "description": "Line height with value and unit",
+                    "additionalProperties": false
+                  }
+                ],
+                "description": "Line height as number or object with value and unit"
+              },
+              "letterSpacing": {
+                "type": "object",
+                "required": [
+                  "value",
+                  "unit"
+                ],
+                "properties": {
+                  "unit": {
+                    "enum": [
+                      "PIXELS",
+                      "PERCENT"
+                    ],
+                    "type": "string",
+                    "description": "Letter spacing unit"
+                  },
+                  "value": {
+                    "type": "number",
+                    "description": "Letter spacing value"
+                  }
+                },
+                "description": "Letter spacing with value and unit",
+                "additionalProperties": false
+              },
+              "textAutoResize": {
+                "enum": [
+                  "NONE",
+                  "WIDTH_AND_HEIGHT",
+                  "HEIGHT",
+                  "TRUNCATE"
+                ],
+                "type": "string",
+                "description": "Text auto-resize behavior - Plugin API supported with 4 options"
+              },
+              "textDecoration": {
+                "enum": [
+                  "NONE",
+                  "UNDERLINE",
+                  "STRIKETHROUGH"
+                ],
+                "type": "string",
+                "description": "Text decoration type"
+              },
+              "textTruncation": {
+                "enum": [
+                  "DISABLED",
+                  "ENDING"
+                ],
+                "type": "string",
+                "description": "Text truncation behavior - Plugin API supported"
+              },
+              "paragraphSpacing": {
+                "type": "number",
+                "maximum": 1000,
+                "minimum": 0,
+                "description": "Paragraph spacing in pixels. Must be between 0 and 1000."
+              },
+              "textAlignVertical": {
+                "enum": [
+                  "TOP",
+                  "CENTER",
+                  "BOTTOM"
+                ],
+                "type": "string",
+                "description": "Vertical text alignment - Plugin API supported"
+              },
+              "textAlignHorizontal": {
+                "enum": [
+                  "LEFT",
+                  "CENTER",
+                  "RIGHT",
+                  "JUSTIFIED"
+                ],
+                "type": "string",
+                "description": "Horizontal text alignment - Plugin API supported"
+              }
+            },
+            "description": "Text style properties object - includes all Figma Plugin API supported properties (updated with corrected truncation support)",
+            "additionalProperties": false
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "nodeId",
+                "styles"
+              ],
+              "properties": {
+                "nodeId": {
+                  "$ref": "#/properties/nodeId"
+                },
+                "styles": {
+                  "$ref": "#/properties/styles"
+                }
+              },
+              "description": "A single text style update entry with nodeId and styles",
+              "additionalProperties": false
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "description": "Array of text style update entries. Must contain 1 to 100 items."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_text",
+      "annotations": {
+        "title": "Create Text(s)",
+        "extraInfo": "Supports both regular and bounded text. Batch creation is efficient for adding many labels or text boxes at once.",
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "usageExamples": "[{\"text\":{\"x\":100,\"y\":200,\"text\":\"Hello, world!\",\"fontSize\":16,\"fontWeight\":400,\"name\":\"Greeting\"}},{\"text\":{\"x\":100,\"y\":200,\"width\":300,\"height\":100,\"text\":\"This is a bounded text box.\",\"fontSize\":14,\"fontWeight\":500,\"name\":\"Description\"}},{\"texts\":[{\"x\":10,\"y\":20,\"text\":\"A\"},{\"x\":30,\"y\":40,\"width\":120,\"height\":60,\"text\":\"B\",\"fontSize\":18}]}]",
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "edgeCaseWarnings": [
+          "Text content must be a non-empty string.",
+          "Font size and weight must be within supported ranges.",
+          "If width and height are provided, both must be positive.",
+          "If parentId is invalid, the text will be added to the root."
+        ]
+      },
+      "description": "Creates one or more text elements in Figma. Accepts either a single text config (via 'text') or an array of configs (via 'texts').\nIf 'width' and 'height' are provided, creates a bounded text box; otherwise, creates a regular text node.\n\nReturns:\n  - content: Array of objects. Each object contains a type: \"text\" and a text field with the created text node ID(s).\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "text": {
+            "type": "object",
+            "required": [
+              "x",
+              "y",
+              "text",
+              "name"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "X coordinate for the text element. Must be between -10,000 and 10,000."
+              },
+              "y": {
+                "type": "number",
+                "maximum": 10000,
+                "minimum": -10000,
+                "description": "Y coordinate for the text element. Must be between -10,000 and 10,000."
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1,
+                "description": "Name for the text node. Must be a non-empty string up to 100 characters."
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 10000,
+                "minLength": 1,
+                "description": "The text content. Must be a non-empty string up to 10,000 characters."
+              },
+              "width": {
+                "type": "number",
+                "maximum": 2000,
+                "minimum": 1,
+                "description": "Optional. Width of the text box. If provided, creates a bounded text box. Must be between 1 and 2000."
+              },
+              "height": {
+                "type": "number",
+                "maximum": 2000,
+                "minimum": 1,
+                "description": "Optional. Height of the text box. If provided, creates a bounded text box. Must be between 1 and 2000."
+              },
+              "fontSize": {
+                "type": "number",
+                "maximum": 200,
+                "minimum": 1,
+                "description": "Optional. Font size. Must be between 1 and 200."
+              },
+              "parentId": {
+                "type": "string",
+                "pattern": "^\\d+:\\d+$",
+                "description": "Optional. Figma node ID of the parent. If provided, must be a string in the format '123:456'."
+              },
+              "fontColor": {
+                "description": "Optional. Font color."
+              },
+              "fontWeight": {
+                "type": "number",
+                "maximum": 1000,
+                "minimum": 100,
+                "description": "Optional. Font weight. Must be between 100 and 1000."
+              }
+            },
+            "description": "A single text element configuration. Optional.",
+            "additionalProperties": false
+          },
+          "texts": {
+            "type": "object",
+            "required": [
+              "texts"
+            ],
+            "properties": {
+              "texts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/text"
+                },
+                "minItems": 1,
+                "description": "Array of text configurations for batch creation"
+              }
+            },
+            "description": "An array of text element configurations for batch creation. Optional.",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_vector",
+      "annotations": {
+        "title": "Create Vector(s)",
+        "readOnlyHint": false,
+        "idempotentHint": false
+      },
+      "description": "Creates one or more vector nodes in Figma. Use 'vector' for single or 'vectors' for batch.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "vector": {
+            "type": "object",
+            "required": [
+              "vectorPaths"
+            ],
+            "properties": {
+              "x": {
+                "type": "number",
+                "default": 0
+              },
+              "y": {
+                "type": "number",
+                "default": 0
+              },
+              "name": {
+                "type": "string"
+              },
+              "width": {
+                "type": "number",
+                "default": 100
+              },
+              "height": {
+                "type": "number",
+                "default": 100
+              },
+              "parentId": {
+                "type": "string",
+                "description": "Optional parent node ID."
+              },
+              "vectorPaths": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "windingRule",
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    },
+                    "windingRule": {
+                      "enum": [
+                        "EVENODD",
+                        "NONZERO"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "minItems": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "vectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/properties/vector"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_vector",
+      "annotations": {
+        "title": "Get Vector(s)",
+        "readOnlyHint": true,
+        "idempotentHint": true
+      },
+      "description": "Retrieves one or more vector nodes by ID(s). Accepts 'nodeId' or 'nodeIds'.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@amalinakurniasari/figmamcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "port": {
+            "type": "number",
+            "default": 443,
+            "description": "Figma socket server port"
+          },
+          "serverUrl": {
+            "type": "string",
+            "default": "generator.digitaltelkom.id/socket",
+            "description": "Figma socket server host"
+          },
+          "reconnectInterval": {
+            "type": "number",
+            "default": 2000,
+            "description": "Base reconnect interval in milliseconds"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

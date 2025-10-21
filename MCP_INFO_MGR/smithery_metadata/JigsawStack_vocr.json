@@ -1,0 +1,73 @@
+{
+  "qualifiedName": "@JigsawStack/vocr",
+  "displayName": "JigsawStack vOCR",
+  "description": "OCR + AI = Magic: \nExtract data from any image in a consistent structure with fine-tuned vLLMs for the highest accuracy. Learn more about AI backed OCR here: https://jigsawstack.com/docs/api-reference/ai/vocr Get your jigsawstack API key here: https://jigsawstack.com/dashboard/",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/11db389a-f17a-415d-9347-f3badfe02fd4.jpg",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "vocr",
+      "description": "Extract text from an image",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL for the image input."
+          },
+          "prompt": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Prompt for OCR extraction."
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of prompts for OCR extraction."
+              }
+            ],
+            "description": "Prompt(s) for OCR extraction."
+          },
+          "page_range": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Page range to extract from (for multi-page files)."
+          },
+          "file_store_key": {
+            "type": "string",
+            "description": "Optional file store key."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@JigsawStack/vocr/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "jigsawstackApiKey"
+        ],
+        "properties": {
+          "jigsawstackApiKey": {
+            "type": "string",
+            "description": "Configuration for Jigsawstack Api Key"
+          }
+        }
+      }
+    }
+  ]
+}

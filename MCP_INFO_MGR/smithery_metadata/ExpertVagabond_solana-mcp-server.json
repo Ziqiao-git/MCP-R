@@ -1,0 +1,291 @@
+{
+  "qualifiedName": "@ExpertVagabond/solana-mcp-server",
+  "displayName": "Solana MCP Server",
+  "description": "Create and import Solana wallets, manage balances, and view account information. Transfer SOL and SPL tokens, request airdrops on devnet/testnet, and set up token accounts. Switch networks and inspect transactions to streamline development and testing.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/solana.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ExpertVagabond/solana-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_wallet",
+      "description": "Create a new Solana wallet",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the wallet"
+          }
+        }
+      }
+    },
+    {
+      "name": "import_wallet",
+      "description": "Import an existing wallet from private key or mnemonic",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "privateKey"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the wallet"
+          },
+          "privateKey": {
+            "type": "string",
+            "description": "Private key in base58 format"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_wallets",
+      "description": "List all created/imported wallets",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_balance",
+      "description": "Get SOL balance for a wallet",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "walletName"
+        ],
+        "properties": {
+          "walletName": {
+            "type": "string",
+            "description": "Name of the wallet"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_token_balance",
+      "description": "Get SPL token balance for a wallet",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "walletName",
+          "tokenMint"
+        ],
+        "properties": {
+          "tokenMint": {
+            "type": "string",
+            "description": "Token mint address"
+          },
+          "walletName": {
+            "type": "string",
+            "description": "Name of the wallet"
+          }
+        }
+      }
+    },
+    {
+      "name": "transfer_sol",
+      "description": "Transfer SOL between wallets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fromWallet",
+          "toAddress",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount in SOL"
+          },
+          "toAddress": {
+            "type": "string",
+            "description": "Recipient address"
+          },
+          "fromWallet": {
+            "type": "string",
+            "description": "Name of the sender wallet"
+          }
+        }
+      }
+    },
+    {
+      "name": "transfer_tokens",
+      "description": "Transfer SPL tokens between wallets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "fromWallet",
+          "toAddress",
+          "tokenMint",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount of tokens to transfer"
+          },
+          "toAddress": {
+            "type": "string",
+            "description": "Recipient address"
+          },
+          "tokenMint": {
+            "type": "string",
+            "description": "Token mint address"
+          },
+          "fromWallet": {
+            "type": "string",
+            "description": "Name of the sender wallet"
+          }
+        }
+      }
+    },
+    {
+      "name": "airdrop_sol",
+      "description": "Request SOL airdrop for testing (devnet/testnet only)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "walletName"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount of SOL to airdrop (default: 1)"
+          },
+          "walletName": {
+            "type": "string",
+            "description": "Name of the wallet"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_account_info",
+      "description": "Get detailed account information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Account address"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_transaction",
+      "description": "Get transaction details by signature",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "signature"
+        ],
+        "properties": {
+          "signature": {
+            "type": "string",
+            "description": "Transaction signature"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_recent_blockhash",
+      "description": "Get recent blockhash for transaction building",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "switch_network",
+      "description": "Switch Solana network",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "network"
+        ],
+        "properties": {
+          "network": {
+            "enum": [
+              "mainnet",
+              "devnet",
+              "testnet",
+              "localhost"
+            ],
+            "type": "string",
+            "description": "Network to switch to"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_network_info",
+      "description": "Get current network information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "create_token_account",
+      "description": "Create associated token account for SPL tokens",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "walletName",
+          "tokenMint"
+        ],
+        "properties": {
+          "tokenMint": {
+            "type": "string",
+            "description": "Token mint address"
+          },
+          "walletName": {
+            "type": "string",
+            "description": "Name of the wallet"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_token_accounts",
+      "description": "Get all token accounts for a wallet",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "walletName"
+        ],
+        "properties": {
+          "walletName": {
+            "type": "string",
+            "description": "Name of the wallet"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ExpertVagabond/solana-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

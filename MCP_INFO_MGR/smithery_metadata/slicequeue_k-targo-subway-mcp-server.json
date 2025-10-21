@@ -1,0 +1,151 @@
+{
+  "qualifiedName": "@slicequeue/k-targo-subway-mcp-server",
+  "displayName": "K-Targo Subway Server",
+  "description": "Provide real-time and comprehensive subway information for South Korea, including station search and train timetables. Access up-to-date data via the national Tago API to enhance transportation-related applications. Seamlessly integrate with MCP clients to query subway details efficiently.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "search_subway_station",
+      "title": "search_subway_station",
+      "description": "지하철역 이름으로 역 정보를 검색합니다. 역 ID, 역 이름, 노선 정보를 반환합니다. '역' 접미사는 자동으로 제거됩니다 (예: '강남역' → '강남').",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "stationName"
+        ],
+        "properties": {
+          "pageNo": {
+            "type": "number",
+            "default": 1,
+            "description": "페이지 번호 (기본값: 1)"
+          },
+          "numOfRows": {
+            "type": "number",
+            "default": 10,
+            "description": "한 페이지당 결과 수 (기본값: 10)"
+          },
+          "stationName": {
+            "type": "string",
+            "description": "검색할 지하철역 이름 (예: 강남, 강남역, 홍대입구, 홍대입구역)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_subway_timetable",
+      "title": "get_subway_timetable",
+      "description": "지하철역의 시간표를 조회합니다. 요일별, 상하행별 시간표를 제공합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "stationId",
+          "dailyType",
+          "upDownType"
+        ],
+        "properties": {
+          "pageNo": {
+            "type": "number",
+            "default": 1,
+            "description": "페이지 번호 (기본값: 1)"
+          },
+          "dailyType": {
+            "enum": [
+              "WEEKDAY",
+              "SATURDAY",
+              "SUNDAY"
+            ],
+            "type": "string",
+            "description": "요일 구분 (WEEKDAY: 평일, SATURDAY: 토요일, SUNDAY: 일요일/공휴일)"
+          },
+          "numOfRows": {
+            "type": "number",
+            "default": 20,
+            "description": "한 페이지당 결과 수 (기본값: 20)"
+          },
+          "stationId": {
+            "type": "string",
+            "description": "지하철역 ID (search_subway_station 도구로 먼저 검색하여 얻을 수 있음)"
+          },
+          "upDownType": {
+            "enum": [
+              "UP",
+              "DOWN"
+            ],
+            "type": "string",
+            "description": "상하행 구분 (UP: 상행/서울방향, DOWN: 하행/서울반대방향)"
+          },
+          "filterNonArrive": {
+            "type": "boolean",
+            "default": true,
+            "description": "정차하지 않는 열차 필터링 여부 (기본값: true)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_all_subway_timetables",
+      "title": "get_all_subway_timetables",
+      "description": "지하철역의 모든 요일, 모든 방향의 시간표를 한 번에 조회합니다. 평일/토요일/일요일, 상행/하행 모든 조합을 제공합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "stationId"
+        ],
+        "properties": {
+          "pageNo": {
+            "type": "number",
+            "default": 1,
+            "description": "페이지 번호 (기본값: 1)"
+          },
+          "delayMsec": {
+            "type": "number",
+            "default": 1000,
+            "description": "API 호출 간 지연 시간 (밀리초, 기본값: 1000)"
+          },
+          "numOfRows": {
+            "type": "number",
+            "default": 100,
+            "description": "한 페이지당 결과 수 (기본값: 100)"
+          },
+          "stationId": {
+            "type": "string",
+            "description": "지하철역 ID (search_subway_station 도구로 먼저 검색하여 얻을 수 있음)"
+          },
+          "filterNonArrive": {
+            "type": "boolean",
+            "default": true,
+            "description": "정차하지 않는 열차 필터링 여부 (기본값: true)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@slicequeue/k-targo-subway-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "govApiKey"
+        ],
+        "properties": {
+          "govApiKey": {
+            "type": "string",
+            "description": "API key for the 국토교통부_(TAGO)_지하철정보 API"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "qualifiedName": "@clado-ai/search-mcp",
+  "displayName": "Clado",
+  "description": "Find and qualify prospects from LinkedIn using powerful search and filters. Enrich profiles and retrieve emails and phone numbers to build outreach lists. Analyze posts and reactions to understand engagement and prioritize leads.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@clado-ai/search-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_for_users",
+      "description": "Search for users on Clado using filters like query, school, and match threshold.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 30,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of profiles to return (1–100)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Natural language search query to find LinkedIn profiles"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "schools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of school names to filter results by, e.g., ['Stanford', 'MIT']"
+          },
+          "companies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of company names to filter results by"
+          },
+          "search_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID from previous search for pagination"
+          },
+          "advanced_filtering": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable AI agent-based filtering to improve result quality"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enrich_linkedin",
+      "description": "Retrieves detailed profile information for a specific LinkedIn URL. Each successful lookup costs 1 credit.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "linkedin_url"
+        ],
+        "properties": {
+          "linkedin_url": {
+            "type": "string",
+            "description": "The LinkedIn profile URL to look up."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "retrieve_contacts",
+      "description": "Retrieves email addresses and phone numbers for LinkedIn profiles. Supports reverse lookup via email or phone. Email enrichment costs 4 credits if found, phone enrichment costs 10 credits if found.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address to find profile and get contact information (e.g., 'john.doe@example.com')"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number to find profile and get contact information (e.g., '+1234567890')"
+          },
+          "linkedin_url": {
+            "type": "string",
+            "description": "LinkedIn profile URL to get contact information for (e.g., 'https://www.linkedin.com/in/username')"
+          },
+          "email_enrichment": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, returns emails (costs 4 credits if email found). Can be combined with phone_enrichment"
+          },
+          "phone_enrichment": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, returns phone numbers (costs 10 credits if phone found). Can be combined with email_enrichment"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scrape_linkedin",
+      "description": "Retrieves detailed profile data and posts with comments from a LinkedIn profile URL using RapidAPI. Each request costs 2 credits.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "linkedin_url"
+        ],
+        "properties": {
+          "linkedin_url": {
+            "type": "string",
+            "description": "The LinkedIn profile URL to scrape."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "linkedin_post_reactions",
+      "description": "Retrieves reactions and engagement data for a specific LinkedIn post URL.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "post_url"
+        ],
+        "properties": {
+          "post_url": {
+            "type": "string",
+            "description": "The LinkedIn post URL to analyze for reactions."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@clado-ai/search-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "cladoApiKey"
+        ],
+        "properties": {
+          "cladoApiKey": {
+            "type": "string",
+            "description": "Clado API key for authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

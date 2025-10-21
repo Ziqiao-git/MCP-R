@@ -1,0 +1,1204 @@
+{
+  "qualifiedName": "@stanislavlysenko0912/todoist-mcp-server",
+  "displayName": "Todoist MCP Server",
+  "description": "Integrate your AI assistants with Todoist for seamless task management. Manage tasks, projects, comments, and labels using natural language commands. Enhance your productivity by interacting with Todoist through conversational AI.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_comments_list",
+      "description": "Get comments list from Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "Filter by task"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Filter by project"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_comments",
+      "description": "Create new comments in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "content"
+              ],
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "Markdown-formatted text and hyperlinks"
+                },
+                "task_id": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_comments",
+      "description": "Get comments from Todoist by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_comments",
+      "description": "Update comments in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "content"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Markdown-formatted text and hyperlinks"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_comments",
+      "description": "Delete comments in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_labels_list",
+      "description": "Get all personal labels from Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_labels",
+      "description": "Create a new personal labels in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Refer to the name column in the `utils_get_colors` tool for more info"
+                },
+                "order": {
+                  "type": "integer"
+                },
+                "is_favorite": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_labels",
+      "description": "Get a personal label from Todoist\nEither 'id' or the 'name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the label to retrieve (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the label to retrieve"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_labels",
+      "description": "Update a personal label in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Refer to the name column in the `utils_get_colors` tool for more info"
+                },
+                "order": {
+                  "type": "integer"
+                },
+                "is_favorite": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_labels",
+      "description": "Delete a personal label in Todoist\nEither 'id' or the 'name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the label to delete (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the label to delete"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_shared_labels",
+      "description": "Get all shared labels from Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "rename_shared_labels",
+      "description": "Rename a shared label in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "new_name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "new_name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove_shared_labels",
+      "description": "Remove a shared label in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_projects_list",
+      "description": "Get all projects from Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_projects",
+      "description": "Create new projects in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "color": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "string"
+                },
+                "view_style": {
+                  "enum": [
+                    "list",
+                    "board"
+                  ],
+                  "type": "string"
+                },
+                "is_favorite": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_projects",
+      "description": "Get projects from Todoist\nEither 'id' or the 'name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the project to retrieve (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the project to retrieve"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_projects",
+      "description": "Update projects in Todoist\nEither 'id' or the 'name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the project to update (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the project to update"
+                },
+                "color": {
+                  "type": "string"
+                },
+                "view_style": {
+                  "enum": [
+                    "list",
+                    "board"
+                  ],
+                  "type": "string"
+                },
+                "is_favorite": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_projects",
+      "description": "Delete projects from Todoist\nEither 'id' or the 'name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the project to delete (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the project to delete"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_collaborators",
+      "description": "Get all collaborators for a project in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "move_projects",
+      "description": "Move a projects to a different parent in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "parent_id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the project to move (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the project to move"
+                },
+                "parent_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sections_list",
+      "description": "Get sections list from Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_sections",
+      "description": "Create new sections in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "project_id"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "order": {
+                  "type": "integer"
+                },
+                "project_id": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sections",
+      "description": "Get sections from Todoist\nEither 'id' or the 'name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the section to retrieve (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the section to retrieve"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_sections",
+      "description": "Update sections in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_sections",
+      "description": "Delete sections in Todoist\nEither 'id' or the 'name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID of the section to delete (preferred over name)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the section to delete"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_tasks_list",
+      "description": "Get tasks list from Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ids": {
+            "type": "string",
+            "description": "Comma-separated list of task IDs"
+          },
+          "label": {
+            "type": "string",
+            "description": "Filter by label"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50
+          },
+          "filter": {
+            "type": "string",
+            "description": "Natural language english filter like \"search: keyword\", \"today\", \"date before: +4 hours\", \"date after: May 5\", \"no date\", \"no time\", \"overdue\", \"7 days & @waiting\", \"created before: -365 days\", \"assigned to: person\", \"added by: me\", \"#Project & !assigned\", \"subtask\", \"!subtask\", \"P1 | P2\", \"today & @email\", \"@work | @office\", \"(today | overdue) & #Work\", \"all & 7 days\", \"!assigned\", \"Today & !#Work\""
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Filter by project"
+          },
+          "section_id": {
+            "type": "string",
+            "description": "Filter by section"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_tasks",
+      "description": "Create new tasks in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "content"
+              ],
+              "properties": {
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Task title (brief). May contain markdown-formatted text and hyperlinks"
+                },
+                "due_date": {
+                  "type": "string",
+                  "description": "Due date in YYYY-MM-DD format relative to user timezone (when you plan to work on task)"
+                },
+                "due_lang": {
+                  "type": "string",
+                  "description": "2-letter code specifying language in case due_string is not written in english"
+                },
+                "duration": {
+                  "type": "integer",
+                  "description": "A positive (greater than zero) integer for the amount of duration_unit the task will take",
+                  "exclusiveMinimum": 0
+                },
+                "priority": {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1,
+                  "description": "From 1 (urgent) to 4 (normal)"
+                },
+                "parent_id": {
+                  "type": "string"
+                },
+                "due_string": {
+                  "type": "string",
+                  "description": "Human defined task due date (ex.: \"next Monday\", \"Tomorrow\"). Value is set using local (not UTC) time, if not in english provided, due_lang should be set to the language of the string"
+                },
+                "project_id": {
+                  "type": "string",
+                  "description": "Task project ID. If not set, task is put to user's Inbox"
+                },
+                "section_id": {
+                  "type": "string"
+                },
+                "assignee_id": {
+                  "type": "string",
+                  "description": "The responsible user ID (only applies to shared tasks)"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description (detailed). May contain markdown-formatted text and hyperlinks"
+                },
+                "due_datetime": {
+                  "type": "string",
+                  "description": "Specific date and time in RFC3339 format in UTC"
+                },
+                "deadline_date": {
+                  "type": "string",
+                  "description": "Deadline date in YYYY-MM-DD format relative to user timezone (fixed date when task must be completed, for tasks with external consequences)"
+                },
+                "deadline_lang": {
+                  "type": "string",
+                  "description": "2-letter code specifying language of deadline"
+                },
+                "duration_unit": {
+                  "enum": [
+                    "minute",
+                    "day"
+                  ],
+                  "type": "string",
+                  "description": "The unit of time that the duration field represents. Must be either minute or day"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_tasks",
+      "description": "Get tasks from Todoist\nEither 'task_id' or the 'task_name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "string",
+                  "description": "ID of the task to retrieve (preferred)"
+                },
+                "task_name": {
+                  "type": "string",
+                  "description": "Name of the task to retrieve (if ID not provided)"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_tasks",
+      "description": "Update tasks in Todoist\nEither 'task_id' or the 'task_name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "content"
+              ],
+              "properties": {
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Task title (brief). May contain markdown-formatted text and hyperlinks"
+                },
+                "task_id": {
+                  "type": "string"
+                },
+                "due_date": {
+                  "type": "string",
+                  "description": "Due date in YYYY-MM-DD format relative to user timezone (when you plan to work on task)"
+                },
+                "due_lang": {
+                  "type": "string",
+                  "description": "2-letter code specifying language in case due_string is not written in english"
+                },
+                "duration": {
+                  "type": "integer",
+                  "description": "A positive (greater than zero) integer for the amount of duration_unit the task will take",
+                  "exclusiveMinimum": 0
+                },
+                "priority": {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1,
+                  "description": "From 1 (urgent) to 4 (normal)"
+                },
+                "task_name": {
+                  "type": "string"
+                },
+                "due_string": {
+                  "type": "string",
+                  "description": "Human defined task due date (ex.: \"next Monday\", \"Tomorrow\"). Value is set using local (not UTC) time, if not in english provided, due_lang should be set to the language of the string"
+                },
+                "assignee_id": {
+                  "type": "string",
+                  "description": "The responsible user ID (only applies to shared tasks)"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description (detailed). May contain markdown-formatted text and hyperlinks"
+                },
+                "due_datetime": {
+                  "type": "string",
+                  "description": "Specific date and time in RFC3339 format in UTC"
+                },
+                "deadline_date": {
+                  "type": "string",
+                  "description": "Deadline date in YYYY-MM-DD format relative to user timezone (fixed date when task must be completed, for tasks with external consequences)"
+                },
+                "deadline_lang": {
+                  "type": "string",
+                  "description": "2-letter code specifying language of deadline"
+                },
+                "duration_unit": {
+                  "enum": [
+                    "minute",
+                    "day"
+                  ],
+                  "type": "string",
+                  "description": "The unit of time that the duration field represents. Must be either minute or day"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "close_tasks",
+      "description": "Close tasks in Todoist\nEither 'task_id' or the 'task_name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "string"
+                },
+                "task_name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reopen_tasks",
+      "description": "Reopen tasks in Todoist\nEither 'task_id' or the 'task_name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "string"
+                },
+                "task_name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_tasks",
+      "description": "Delete tasks from Todoist\nEither 'task_id' or the 'task_name' to identify the target.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "string"
+                },
+                "task_name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "move_tasks",
+      "description": "Move tasks to a different parent or section in Todoist. Exactly one of parent_id, section_id, or project_id must be provided",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "string"
+                },
+                "task_name": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "string"
+                },
+                "section_id": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_completed_tasks",
+      "description": "Get completed tasks from Todoist with filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "description": "Number of tasks to return (max 200)"
+          },
+          "since": {
+            "type": "string",
+            "description": "Return tasks completed since this date (YYYY-MM-DD format)"
+          },
+          "until": {
+            "type": "string",
+            "description": "Return tasks completed until this date (YYYY-MM-DD format)"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Offset for pagination"
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Filter by specific parent task ID"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Filter by specific project ID"
+          },
+          "section_id": {
+            "type": "string",
+            "description": "Filter by specific section ID"
+          },
+          "annotation_type": {
+            "type": "string",
+            "description": "Filter by annotation type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "utils_get_colors",
+      "description": "Get available colors for projects, labels, filters in Todoist",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@stanislavlysenko0912/todoist-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "The API key for the Todoist server."
+          }
+        }
+      }
+    }
+  ]
+}

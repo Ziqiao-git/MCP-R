@@ -1,0 +1,1217 @@
+{
+  "qualifiedName": "@rishipradeep-think41/google-drive-mcp",
+  "displayName": "Google Drive",
+  "description": "Enable seamless access and management of Google Drive files through a standardized protocol. Facilitate listing, reading, and interacting with Google Drive resources directly from your LLM applications. Simplify integration with Google Drive by exposing its capabilities as MCP tools and resources.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/e0149368-72b3-4dd0-90c5-02e42403b7ba.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@rishipradeep-think41/google-drive-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "drive_changes",
+      "description": "List changes in Drive",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "startPageToken"
+        ],
+        "properties": {
+          "startPageToken": {
+            "type": "string",
+            "description": "Token to start listing changes from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_file_metadata",
+      "description": "Get metadata of a file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "ID of the file to retrieve metadata for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_folder_children",
+      "description": "List contents of a folder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "folderId"
+        ],
+        "properties": {
+          "folderId": {
+            "type": "string",
+            "description": "ID of the folder to list contents of"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "Number of results to return"
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Token for pagination"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_search",
+      "description": "Search files in Google Drive",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Query string to search files"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "Number of items to return"
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Pagination token"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_file_content",
+      "description": "Retrieve content of a Google Drive file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "ID of the file to retrieve content from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_create",
+      "description": "Create file or folder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "mimeType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the file or folder"
+          },
+          "parents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Parent folder IDs"
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type of the file/folder"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_upload",
+      "description": "Upload or update file content",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "string",
+            "description": "Base64 encoded data"
+          },
+          "fileId": {
+            "type": "string",
+            "description": "ID of the file to update"
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type of the data"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_append_text",
+      "description": "Append plain text to an existing text file in Drive",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text to append to the file"
+          },
+          "fileId": {
+            "type": "string",
+            "description": "ID of the file to append to"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_delete",
+      "description": "Trash or delete a file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "ID of the file to delete"
+          },
+          "permanent": {
+            "type": "boolean",
+            "description": "Whether to delete permanently"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_share",
+      "description": "Manage file permissions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId",
+          "role",
+          "type"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "reader",
+              "commenter",
+              "writer"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "user",
+              "group",
+              "domain",
+              "anyone"
+            ],
+            "type": "string"
+          },
+          "fileId": {
+            "type": "string",
+            "description": "ID of the file to share"
+          },
+          "emailAddress": {
+            "type": "string",
+            "description": "Email to share with"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_comment",
+      "description": "Add a comment to a file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId",
+          "content"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "Id of the file to add the comment to"
+          },
+          "content": {
+            "type": "string",
+            "description": "The comment to be added"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_copy",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Copy a file or folder to a new location",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_rename",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Rename a file or folder",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_star",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Star or unstar a file or folder",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_restore",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Restore a file from the trash",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_versions_list",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "List all versions of a file",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_versions_delete",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Delete a specific version of a file",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_lock",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Lock or unlock a file to prevent changes (Google Workspace only)",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_shortcut_create",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Create a shortcut to a file or folder",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_permissions_list",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "List all permissions of a file or folder",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_permission_update",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Update a user's permission on a file or folder",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_permission_delete",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Remove a user's access from a file or folder by permission ID",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_permission_add_domain",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Share file or folder with everyone in a domain",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_permission_add_anyone",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Allow anyone with the link to access a file or folder",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_list_comments",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "List all comments on a file",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_delete_comment",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Delete a comment from a file",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_reply_to_comment",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Reply to a comment on a file",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_list_replies",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "List all replies to a comment on a file",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_delete_reply",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Delete a reply to a comment on a file",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_move",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Move a file to different folder(s)",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_file_empty_trash",
+      "annotations": {
+        "_def": {
+          "catchall": {
+            "_def": {
+              "typeName": "ZodNever"
+            },
+            "~standard": {
+              "vendor": "zod",
+              "version": 1
+            }
+          },
+          "typeName": "ZodObject",
+          "unknownKeys": "strip"
+        },
+        "_cached": null,
+        "~standard": {
+          "vendor": "zod",
+          "version": 1
+        }
+      },
+      "description": "Permanently delete all trashed files",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "drive_shared_drives_list",
+      "description": "List all accessible Shared Drives",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "pageSize": {
+            "type": "number",
+            "description": "Number of Shared Drives to return"
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Token for pagination"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_shared_drive_get",
+      "description": "Get metadata for a specific Shared Drive",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "driveId"
+        ],
+        "properties": {
+          "driveId": {
+            "type": "string",
+            "description": "ID of the Shared Drive"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_shared_drive_create",
+      "description": "Create a new Shared Drive",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the new Shared Drive"
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "Whether the Shared Drive should be hidden"
+          },
+          "colorRgb": {
+            "type": "string",
+            "description": "Color for the Shared Drive in RGB format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_shared_drive_delete",
+      "description": "Delete a Shared Drive",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "driveId"
+        ],
+        "properties": {
+          "driveId": {
+            "type": "string",
+            "description": "ID of the Shared Drive to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_shared_drive_update",
+      "description": "Update a Shared Drive's metadata",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "driveId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "New name for the Shared Drive"
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "Whether the Shared Drive should be hidden"
+          },
+          "driveId": {
+            "type": "string",
+            "description": "ID of the Shared Drive to update"
+          },
+          "colorRgb": {
+            "type": "string",
+            "description": "New color for the Shared Drive"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_shared_drive_files",
+      "description": "List files in a Shared Drive",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "driveId"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "driveId": {
+            "type": "string",
+            "description": "ID of the Shared Drive"
+          },
+          "orderBy": {
+            "type": "string",
+            "description": "Sort order (e.g., 'name', 'modifiedTime desc')"
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "Number of files to return"
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Token for pagination"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_storage_quota",
+      "description": "Get storage quota information for the user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_storage_breakdown",
+      "description": "Get storage usage breakdown by file type",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "maxResults": {
+            "type": "number",
+            "description": "Maximum number of file types to return"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_batch_get_metadata",
+      "description": "Get metadata for multiple files in a single request",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileIds"
+        ],
+        "properties": {
+          "fields": {
+            "type": "string",
+            "description": "Comma-separated list of fields to include"
+          },
+          "fileIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of file IDs to retrieve metadata for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_batch_update_permissions",
+      "description": "Update permissions for multiple files at once",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operations"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "fileId",
+                "permissionDetails"
+              ],
+              "properties": {
+                "fileId": {
+                  "type": "string",
+                  "description": "ID of the file to update permissions for"
+                },
+                "permissionDetails": {
+                  "type": "object",
+                  "required": [
+                    "role",
+                    "type"
+                  ],
+                  "properties": {
+                    "role": {
+                      "enum": [
+                        "reader",
+                        "commenter",
+                        "writer",
+                        "organizer"
+                      ],
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "user",
+                        "group",
+                        "domain",
+                        "anyone"
+                      ],
+                      "type": "string"
+                    },
+                    "domain": {
+                      "type": "string"
+                    },
+                    "emailAddress": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of operations to perform"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_batch_delete",
+      "description": "Delete multiple files or folders at once",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileIds"
+        ],
+        "properties": {
+          "fileIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of file IDs to delete"
+          },
+          "permanent": {
+            "type": "boolean",
+            "description": "Whether to delete permanently (true) or move to trash (false)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_batch_copy",
+      "description": "Copy multiple files to a destination folder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operations"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "fileId"
+              ],
+              "properties": {
+                "fileId": {
+                  "type": "string",
+                  "description": "ID of the file to copy"
+                },
+                "newName": {
+                  "type": "string",
+                  "description": "New name for the copy (optional)"
+                },
+                "destinationFolderId": {
+                  "type": "string",
+                  "description": "ID of the destination folder"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of copy operations to perform"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drive_batch_move",
+      "description": "Move multiple files to a destination folder",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operations"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "fileId",
+                "destinationFolderId"
+              ],
+              "properties": {
+                "fileId": {
+                  "type": "string",
+                  "description": "ID of the file to move"
+                },
+                "destinationFolderId": {
+                  "type": "string",
+                  "description": "ID of the destination folder"
+                },
+                "removeFromCurrentFolders": {
+                  "type": "boolean",
+                  "description": "Whether to remove from current folders (true) or keep in current folders (false)"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of move operations to perform"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@rishipradeep-think41/google-drive-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "CLIENT_ID",
+          "CLIENT_SECRET",
+          "REFRESH_TOKEN"
+        ],
+        "properties": {
+          "CLIENT_ID": {
+            "type": "string",
+            "description": "Google client id"
+          },
+          "CLIENT_SECRET": {
+            "type": "string",
+            "description": "Google client secret"
+          },
+          "REFRESH_TOKEN": {
+            "type": "string",
+            "description": "Google refresh token"
+          }
+        }
+      }
+    }
+  ]
+}

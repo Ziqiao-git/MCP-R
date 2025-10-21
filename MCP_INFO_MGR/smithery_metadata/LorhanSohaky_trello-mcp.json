@@ -1,0 +1,86 @@
+{
+  "qualifiedName": "@LorhanSohaky/trello-mcp",
+  "displayName": "Trello Integration Server",
+  "description": "Enable AI assistants to seamlessly retrieve detailed Trello card information using a standardized interface. Access card data by ID or public link with robust type validation and optional read-only mode for safe operations. Integrate Trello project management data into your AI workflows effortlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/trello.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@LorhanSohaky/trello-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "getCardById",
+      "description": "Get a Trello card by its ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "idCard"
+        ],
+        "properties": {
+          "idCard": {
+            "type": "string",
+            "description": "The ID of the Trello card to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getCardByLink",
+      "description": "Get a Trello card by its link",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "link"
+        ],
+        "properties": {
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "description": "The link of the Trello card to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@LorhanSohaky/trello-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey",
+          "apiToken"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Trello API Key"
+          },
+          "apiToken": {
+            "type": "string",
+            "description": "Trello API Token"
+          },
+          "readOnly": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable read-only mode"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

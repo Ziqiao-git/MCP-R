@@ -1,0 +1,183 @@
+{
+  "qualifiedName": "@Jongtae/nodit-mcp-smithery",
+  "displayName": "Nodit Blockchain API Tools",
+  "description": "Provide seamless integration with blockchain APIs to empower your applications with real-time blockchain data and operations. Enable efficient access and manipulation of blockchain resources through standardized tools and protocols. Enhance your development workflow with ready-to-use blockchain context capabilities.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Jongtae/nodit-mcp-smithery",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_nodit_api_categories",
+      "description": "Lists available Nodit API categories from Nodit Blockchain Context. To use the Nodit API tool, you must first call this tool.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_nodit_node_apis",
+      "description": "Lists available Nodit API operations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_nodit_data_apis",
+      "description": "Lists available Nodit Data API operations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_nodit_webhook_apis",
+      "description": "Lists available Nodit Webhook API operations.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_nodit_aptos_indexer_api_query_root",
+      "description": "Lists all query roots available in the Nodit Aptos Indexer GraphQL API.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_nodit_aptos_indexer_api_spec",
+      "description": "Returns the GraphQL specification for a specific query root in the Nodit Aptos Indexer API.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "queryRoot"
+        ],
+        "properties": {
+          "queryRoot": {
+            "type": "string",
+            "description": "The name of the query root to get the specification for. Use list_nodit_aptos_indexer_api_query_root to see available query roots."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "call_nodit_aptos_indexer_api",
+      "description": "Calls a Nodit Aptos Indexer API. Returns the API response. Before making the call, it's recommended to verify the detailed API specifications using the 'get_nodit_aptos_indexer_api_spec' tool. Please note that using this tool will consume your API quota.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "network",
+          "requestBody"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Nodit network to call. e.g. 'mainnet' or 'testnet'."
+          },
+          "requestBody": {
+            "type": "object",
+            "description": "Graphql request body matching the API's spec.",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_nodit_api_spec",
+      "description": "Gets the fully resolved spec details for a Nodit Blockchain Context API operationId. Returns details as a JSON string.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "operationId"
+        ],
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "description": "The operationId to get the resolved specification for."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "call_nodit_api",
+      "description": "This function calls a specific Nodit Blockchain Context API using its operationId. Before making the call, it's recommended to verify the detailed API specifications using the 'get_nodit_api_spec' tool. Please note that using this tool will consume your API quota.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "protocol",
+          "network",
+          "operationId",
+          "requestBody"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Nodit network to call. e.g. 'mainnet' or 'amoy'."
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Nodit protocol to call. e.g. 'ethereum' or 'polygon'."
+          },
+          "operationId": {
+            "type": "string",
+            "description": "Nodit API operationId to call."
+          },
+          "requestBody": {
+            "type": "object",
+            "description": "JSON request body matching the API's spec.",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Jongtae/nodit-mcp-smithery/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "noditApiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "noditApiKey": {
+            "type": "string",
+            "description": "Your Nodit API Key"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

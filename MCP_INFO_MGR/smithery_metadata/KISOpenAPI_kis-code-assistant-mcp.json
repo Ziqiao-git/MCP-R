@@ -1,0 +1,946 @@
+{
+  "qualifiedName": "@KISOpenAPI/kis-code-assistant-mcp",
+  "displayName": "한국투자 코딩도우미 MCP",
+  "description": "한국투자 코딩도우미 MCP (KIS Code Assistant MCP)\n한국투자 코딩도우미 MCP는 한국투자증권의 수많은 Open API 중에서 자연어 검색으로 관련 API를 찾고, 호출 예제(파라미터 포함)까지 자동 구성해주는 MCP 서버입니다.\n\n\"무엇을 하고 싶은지\"만 말하면, 관련 API를 추천하고 예시 호출 코드를 만들어 드립니다.\n- 자연어 검색: \"삼성전자 현재가 보여줘\", \"해외주식 잔고 확인\" 같은 자연어 문장으로 탐색\n- 예제 호출 구성: 필요 파라미터와 응답 구조를 함께 안내\n- 실시간 업데이트: 최신 API 정보를 항상 반영합니다\n\nKIS Code Assistant MCP helps you find stock and trading APIs with simple natural language.\nJust say what you want, and it builds example calls with parameters instantly.\n\n",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/e0ddc8e2-6cbb-4e7f-ab94-839591173113.webp",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@KISOpenAPI/kis-code-assistant-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_auth_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "인증",
+      "description": "인증 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[인증]\nex) 인증 토큰 발급해줘. -> subcategory=\"인증\", function_name=\"auth_token\"\nex) 웹소켓 연결 방법 알려줘. -> subcategory=\"인증\", function_name=\"auth_ws_token\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_domestic_stock_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "국내주식",
+      "description": "국내주식 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[기본시세]\nex) 삼성전자 현재 매수/매도 호가와 잔량 알려줘. -> subcategory=\"기본시세\", api_name=\"주식현재가 호가/예상체결\", function_name=\"inquire_asking_price_exp_ccn\"\nex) SK하이닉스 시간외 단일가 예상 체결가 조회해줘. -> subcategory=\"기본시세\", api_name=\"주식현재가 시간외일자별주가\", description=\"예상 체결가\"\nex) 코스피 지수 일봉 데이터 보여줘. -> subcategory=\"기본시세\", function_name=\"inquire_daily_itemchartprice\"\nex) 삼성전자 총 매도호가 잔량 알려줘. -> subcategory=\"기본시세\", response=\"총 매도호가 잔량\"\nex) SK하이닉스 누적 거래대금 보여줘. -> subcategory=\"기본시세\", response=\"누적 거래대금\"\nex) 삼성전자 52주 최고가 날짜 알려줘. -> subcategory=\"기본시세\", response=\"52주일 최고가 일자\"\nex) 코스피 상한가, 하한가 알려줘. -> subcategory=\"기본시세\", response=\"상한가\"\nex) 삼성전자 시가총액 확인해줘. -> subcategory=\"기본시세\", response=\"HTS 시가총액\"\nex) SK하이닉스 PER과 PBR 알려줘. -> subcategory=\"기본시세\", response=\"PER\"\n\n[순위분석] \nex) 오늘 거래대금 상위 종목 보여줘. -> subcategory=\"순위분석\"\nex) 등락률 순위 알려줘. -> subcategory=\"순위분석\", function_name=\"fluctuation\"\nex) 등락률 상위 종목들의 데이터 순위 보여줘. -> subcategory=\"순위분석\", response=\"데이터 순위\"\nex) 거래량 많은 종목 순위 알려줘. -> subcategory=\"순위분석\", response=\"누적 거래량\"\n\n[ELW시세]\nex) ELW 현재가 시세 보여줘. -> subcategory=\"ELW시세\", function_name=\"inquire_elw_price\"\n\n[업종/기타]\nex) 코스피 업종별 지수 현황 알려줘. -> subcategory=\"업종/기타\", function_name=\"inquire_index_price\"\nex) 오늘 주요 뉴스 제목들 보여줘. -> subcategory=\"업종/기타\", function_name=\"news_title\"\n\n[주문/계좌]\nex) 내 주식 잔고 조회해줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_balance\"\nex) 오늘 내 주문 체결 내역 보여줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_daily_ccld\"\nex) 내 계좌 총체결수량 보여줘. -> subcategory=\"주문/계좌\", response=\"총체결수량\"\nex) 오늘 내 매매 수수료 얼마 나왔어? -> subcategory=\"주문/계좌\", response=\"수수료\"\nex) 내 계좌 평가손익금액 알려줘. -> subcategory=\"주문/계좌\", response=\"평가손익금액\"\nex) 배당락일 다가오는 종목 있어? -> subcategory=\"주문/계좌\", response=\"배당락일\"\n\n[시세분석]\nex) 관심종목 시세 조회해줘. -> subcategory=\"시세분석\", function_name=\"intstock_multprice\"\n\n[종목정보]\nex) 삼성전자 종목 기본 정보 알려줘. -> subcategory=\"종목정보\", function_name=\"search_stock_info\"\nex) 상품 기본 정보 조회해줘. -> subcategory=\"종목정보\", function_name=\"search_info\"\n\n[실시간시세]\nex) 삼성전자 주가 실시간으로 계속 받아줘. -> subcategory=\"실시간시세\", function_name=\"ccnl_krx\"\nex) 코스피 지수 장 마감 전 예상체결가 알려줘. -> subcategory=\"실시간시세\", function_name=\"index_exp_ccnl\"\nex) SK하이닉스 매수매도 호가 실시간 모니터링해줘. -> subcategory=\"실시간시세\", function_name=\"asking_price_total\"\nex) 장 시작했는지 VI 발동됐는지 실시간으로 알려줘. -> subcategory=\"실시간시세\", function_name=\"market_status_krx\"\nex) 내 주문이 체결되면 바로 알림 받고 싶어. -> subcategory=\"실시간시세\", function_name=\"ccnl_notice\"\nex) 시간외단일가 시간대 호가 변동 실시간으로 봐줘. -> subcategory=\"실시간시세\", function_name=\"overtime_asking_price_krx\"\nex) 기관 프로그램매매 동향 실시간으로 추적해줘. -> subcategory=\"실시간시세\", function_name=\"program_trade_krx\"\nex) 삼성전자 실시간 체결 현황 웹소켓으로 받아줘. -> subcategory=\"실시간시세\", description=\"실시간 체결가\"\nex) 장중 회원사별 거래 현황 실시간으로 보여줘. -> subcategory=\"실시간시세\", response=\"회원사별 거래량\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_domestic_bond_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "국내채권",
+      "description": "국내채권 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[기본시세]\nex) 국고채 3년물 호가창에서 총 매도호가 잔량 알려줘. -> subcategory=\"기본시세\", description=\"총 매도호가 잔량\"\nex) 국고채 10년물 발행정보 확인해줘. -> subcategory=\"기본시세\", api_name=\"장내채권 발행정보\", function_name=\"issue_info\"\nex) 장내채권 현재가 시세 조회해줘. -> subcategory=\"기본시세\", function_name=\"inquire_price\"\nex) 채권 호가 정보 보여줘. -> subcategory=\"기본시세\", function_name=\"inquire_asking_price\"\nex) 국고채 발행일자 확인해줘. -> subcategory=\"기본시세\", response=\"발행일자\"\nex) 채권 만기일자 알려줘. -> subcategory=\"기본시세\", response=\"만기일자\"\nex) 국고채 표면금리 얼마야? -> subcategory=\"기본시세\", response=\"표면금리\"\n\n[주문/계좌]\nex) 오늘 내 채권 주문의 총체결수량합계 보여줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_daily_ccld\", api_name=\"장내채권 주문체결내역\"\nex) 내 채권 잔고 조회해줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_balance\"\nex) 채권 매수가능조회 해줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_psbl_order\"\nex) 채권 총체결수량합계 보여줘. -> subcategory=\"주문/계좌\", response=\"총체결수량합계\"\n\n[실시간시세]\nex) 국고채 3년물 금리 변동 실시간으로 추적해줘. -> subcategory=\"실시간시세\", function_name=\"bond_ccnl\"\nex) 회사채 매수매도 호가 실시간으로 모니터링해줘. -> subcategory=\"실시간시세\", function_name=\"bond_asking_price\"\nex) 채권지수 움직임 실시간으로 받아줘. -> subcategory=\"실시간시세\", function_name=\"bond_index_ccnl\"\nex) 채권 체결가격 변화 웹소켓으로 받고 싶어. -> subcategory=\"실시간시세\", description=\"실시간 체결가\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_domestic_futureoption_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "국내선물옵션",
+      "description": "국내선물옵션 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[기본시세]\nex) 코스피200 선물 현재 호가 상황 알려줘. -> subcategory=\"기본시세\", api_name=\"선물옵션 시세호가\", function_name=\"inquire_asking_price\"\nex) 30초봉으로 오늘 최고가/최저가 조회해줘. -> subcategory=\"기본시세\", function_name=\"inquire_time_fuopchartprice\", description=\"선물 최고가\"\nex) 선물옵션 현재가 시세 보여줘. -> subcategory=\"기본시세\", function_name=\"inquire_price\"\nex) 국내선물 기초자산 시세 알려줘. -> subcategory=\"기본시세\", function_name=\"display_board_top\"\nex) 선물 총 매도호가 잔량 알려줘. -> subcategory=\"기본시세\", response=\"총 매도호가 잔량\"\nex) 선물 상한가, 하한가 확인해줘. -> subcategory=\"기본시세\", response=\"선물 상한가\"\n\n[주문/계좌]\nex) 내 선물옵션 계좌 총자산 현황 알려줘. -> subcategory=\"주문/계좌\", api_name=\"선물옵션 총자산현황\", function_name=\"inquire_deposit\"\nex) 선물옵션 잔고 조회해줘. -> subcategory=\"주문/계좌\", description=\"잔고\"\nex) 내 계좌 현금증거금 얼마야? -> subcategory=\"주문/계좌\", response=\"현금증거금\"\nex) 평가손익금액 보여줘. -> subcategory=\"주문/계좌\", response=\"평가손익금액\"\n\n[실시간시세]\nex) 코스피200 선물 가격 실시간으로 추적해줘. -> subcategory=\"실시간시세\", function_name=\"index_futures_realtime_conclusion\"\nex) 선물 매수매도 호가 실시간으로 모니터링해줘. -> subcategory=\"실시간시세\", function_name=\"index_futures_realtime_quote\"\nex) 옵션 체결가 실시간 변동 알려줘. -> subcategory=\"실시간시세\", function_name=\"index_option_realtime_conclusion\"\nex) 내 선물 주문 체결되면 바로 알림해줘. -> subcategory=\"실시간시세\", function_name=\"fuopt_ccnl_notice\"\nex) 야간선물 거래 실시간으로 받아줘. -> subcategory=\"실시간시세\", function_name=\"krx_ngt_futures_ccnl\"\nex) 상품선물 WTI 원유 실시간 시세 보여줘. -> subcategory=\"실시간시세\", function_name=\"commodity_futures_realtime_conclusion\"\nex) 주식선물 실시간 체결가 웹소켓으로 받고 싶어. -> subcategory=\"실시간시세\", description=\"실시간 체결가\"\nex) 옵션 그리스 지표 실시간 변화 추적해줘. -> subcategory=\"실시간시세\", response=\"델타, 감마, 베가\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_overseas_stock_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "해외주식",
+      "description": "해외주식 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[기본시세]\nex) 테슬라 현재 1호가 매수/매도 가격 알려줘. -> subcategory=\"기본시세\", api_name=\"해외주식 현재가 1호가\", function_name=\"inquire_asking_price\"\nex) 애플 현재 체결가 알려줘. -> subcategory=\"기본시세\", function_name=\"price\", api_name=\"해외주식 현재체결가\"\nex) 해외주식 분봉 차트 보여줘. -> subcategory=\"기본시세\", function_name=\"inquire_time_itemchartprice\"\nex) 해외주식 일봉 데이터 조회해줘. -> subcategory=\"기본시세\", function_name=\"inquire_daily_chartprice\"\nex) 애플 52주 최고가 날짜 알려줘. -> subcategory=\"기본시세\", response=\"52주최고일자\"\nex) 테슬라 원화환산 당일가격 보여줘. -> subcategory=\"기본시세\", response=\"원환산당일가격\"\n\n[시세분석]\nex) 애플 다음 배당락일과 지급일 알려줘. -> subcategory=\"시세분석\", function_name=\"rights_by_ice\", api_name=\"해외주식 권리종합\"\nex) 나스닥 상승률 순위 보여줘. -> subcategory=\"시세분석\", function_name=\"updown_rate\"\nex) 해외주식 거래량 순위 알려줘. -> subcategory=\"시세분석\", function_name=\"trade_vol\"\nex) 엔비디아 권리유형 뭐가 있어? -> subcategory=\"시세분석\", response=\"권리유형\"\n\n[주문/계좌]\nex) 내 계좌의 해외주식 잔고 알려줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_balance\", api_name=\"해외주식 잔고\"\nex) 해외주식 체결기준 현재잔고 보여줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_present_balance\"\nex) 해외주식 평가손익 보여줘. -> subcategory=\"주문/계좌\", response=\"평가손익\"\n\n[실시간시세]\nex) 테슬라 주가 실시간으로 계속 받아줘. -> subcategory=\"실시간시세\", function_name=\"delayed_ccnl\"\nex) 애플 매수매도 호가 실시간 모니터링해줘. -> subcategory=\"실시간시세\", function_name=\"asking_price\"\nex) 내 해외주식 주문 체결되면 즉시 알림받고 싶어. -> subcategory=\"실시간시세\", function_name=\"ccnl_notice\"\nex) 나스닥 종목들 실시간 지연시세 받아줘. -> subcategory=\"실시간시세\", function_name=\"delayed_ccnl\"\nex) 홍콩주식 실시간 호가 변동 추적해줘. -> subcategory=\"실시간시세\", function_name=\"delayed_asking_price_asia\"\nex) 미국 주간거래 실시간 시세 모니터링해줘. -> subcategory=\"실시간시세\", description=\"주간거래 실시간\"\nex) 해외주식 체결 통보 웹소켓으로 받고 싶어. -> subcategory=\"실시간시세\", response=\"체결통보\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_overseas_futureoption_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "해외선물옵션",
+      "description": "해외선물옵션 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[기본시세]\nex) WTI 원유 선물 현재가 알려줘. -> subcategory=\"기본시세\", api_name=\"해외선물종목현재가\", function_name=\"inquire_price\"\nex) 해외선물 분봉 차트 조회해줘. -> subcategory=\"기본시세\", function_name=\"inquire_time_futurechartprice\"\nex) 해외옵션 호가 정보 보여줘. -> subcategory=\"기본시세\", function_name=\"opt_asking_price\"\nex) 해외선물 호가단위 확인해줘. -> subcategory=\"기본시세\", response=\"호가단위\"\n\n[주문/계좌]\nex) 오늘 내 해외선물옵션 주문 내역 보여줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_ccld\", api_name=\"해외선물옵션 당일주문내역조회\"\nex) 해외선물옵션 미결제 잔고 조회해줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_unpd\"\nex) 해외선물옵션 예수금 현황 알려줘. -> subcategory=\"주문/계좌\", function_name=\"inquire_deposit\"\nex) 내 계좌 순손익금액 얼마야? -> subcategory=\"주문/계좌\", response=\"순손익금액\"\n\n[실시간시세]\nex) WTI 원유 선물 가격 실시간으로 추적해줘. -> subcategory=\"실시간시세\", function_name=\"ccnl\"\nex) CME 선물 호가 실시간 모니터링해줘. -> subcategory=\"실시간시세\", function_name=\"asking_price\"\nex) 내 해외선물 주문 체결되면 바로 알림해줘. -> subcategory=\"실시간시세\", function_name=\"ccnl_notice\"\nex) 해외선물옵션 주문내역 실시간 통보받고 싶어. -> subcategory=\"실시간시세\", function_name=\"order_notice\"\nex) 금 선물 시세 변동 웹소켓으로 받아줘. -> subcategory=\"실시간시세\", description=\"실시간 체결가\"\nex) SGX 선물 유료시세 실시간으로 받고 싶어. -> subcategory=\"실시간시세\", response=\"유료시세\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_elw_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "ELW",
+      "description": "ELW 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[ELW시세]\nex) ELW 거래량 순위 보여줘. -> subcategory=\"ELW시세\", api_name=\"ELW 거래량순위\", function_name=\"volume_rank\"\nex) 삼성전자 콜 ELW 현재가, 시가, 고가, 저가 알려줘. -> subcategory=\"ELW시세\", function_name=\"inquire_elw_price\"\nex) 오늘 가장 많이 거래된 ELW 알려줘. -> subcategory=\"ELW시세\", description=\"누적거래량\"\nex) ELW 현재가 시세 조회해줘. -> subcategory=\"ELW시세\", function_name=\"inquire_elw_price\"\nex) ELW 잔존일수 확인해줘. -> subcategory=\"ELW시세\", response=\"잔존일수\"\n\n[실시간시세]\nex) 삼성전자 콜 ELW 실시간 시세 받아줘. -> subcategory=\"실시간시세\", function_name=\"elw_ccnl\"\nex) ELW 매수매도 호가 실시간 모니터링해줘. -> subcategory=\"실시간시세\", function_name=\"elw_asking_price\"\nex) ELW 예상체결가 실시간으로 알려줘. -> subcategory=\"실시간시세\", function_name=\"elw_exp_ccnl\"\nex) 권리행사일 다가오는 ELW 실시간 추적해줘. -> subcategory=\"실시간시세\", description=\"실시간 체결가\"\nex) ELW 델타값 변화 웹소켓으로 받고 싶어. -> subcategory=\"실시간시세\", response=\"델타값 변화\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_etfetn_api",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "ETF/ETN",
+      "description": "ETF/ETN 카테고리에 대한 검색 결과를 반환합니다.\n\n검색 파라미터:\nquery: 사용자의 원본 질문을 그대로 입력하세요 (로깅용)\nsubcategory: 카테고리 내 서브카테고리 검색\napi_name: 특정 API 이름 검색\nfunction_name: 특정 함수 이름 검색\ndescription: 함수에 대한 설명 검색\nresponse: 응답 데이터 내용으로 검색\n\n출력 형태: JSON 객체로 반환\n- 단순 개수 조회: category/subcategory만 지정시 → API 목록만 반환\n- 상세 검색: 여러 조건 지정시 → 매칭되는 API의 상세 정보 반환\n- status: \"success\"/\"error\"/\"no_results\"\n- total_count: 총 검색 결과 수\n- results: API 정보 배열 (function_name, api_name, category, subcategory)\n\n검색 전략 가이드라인:\n1. 첫 번째 검색에서 결과가 없으면, 다른 파라미터 조합으로 재시도\n2. description 파라미터는 정확히 매칭되는 키워드만 사용 \n3. 검색 실패시 순서: query만 → function_name → api_name → subcategory 순으로 시도\n4. \"재무\", \"financial\", \"매출\", \"revenue\" 등 핵심 키워드는 function_name이나 api_name으로 우선 검색\n\n예시 검색 전략:\n- 재무 정보 요청시: function_name=\"financial\" 또는 function_name=\"finance\" 우선 시도\n- 실시간 데이터: subcategory=\"실시간시세\" 우선 시도  \n- 매출액/실적: response=\"매출액\" 또는 function_name=\"financial\" 시도\n\n[기본시세]\nex) KODEX 200 ETF NAV 추이 보여줘. -> subcategory=\"기본시세\", api_name=\"NAV 비교추이(종목)\", function_name=\"nav_comparison_trend\"\nex) TIGER 나스닥100 ETN 현재가 알려줘. -> subcategory=\"기본시세\", function_name=\"inquire_price\", api_name=\"ETF/ETN 현재가\"\nex) 오늘 KODEX 200 ETF 시가, 고가, 저가 NAV 각각 알려줘. -> subcategory=\"기본시세\", description=\"NAV\"\nex) ETF 현재가 조회해줘. -> subcategory=\"기본시세\", api_name=\"ETF/ETN 현재가\"\nex) ETF NAV 비교 분석해줘. -> subcategory=\"기본시세\", function_name=\"nav_comparison_trend\"\nex) ETF 설정액 얼마야? -> subcategory=\"기본시세\", response=\"설정액\"\nex) ETF 배당주기 확인해줘. -> subcategory=\"기본시세\", response=\"ETF 배당 주기\"\n\n[실시간시세]\nex) KODEX 200 ETF NAV 실시간으로 추적해줘. -> subcategory=\"실시간시세\", function_name=\"etf_nav_trend\"\nex) TIGER 나스닥100 ETN 실시간 시세 받아줘. -> subcategory=\"실시간시세\", function_name=\"etf_nav_trend\"\nex) ETF와 기초지수 괴리율 실시간 모니터링해줘. -> subcategory=\"실시간시세\", description=\"NAV 추이\"\nex) 레버리지 ETF 실시간 변동률 알려줘. -> subcategory=\"실시간시세\", response=\"실시간 NAV\"\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": null
+          },
+          "api_name": {
+            "type": "string",
+            "title": "Api Name",
+            "default": null
+          },
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": null
+          },
+          "subcategory": {
+            "type": "string",
+            "title": "Subcategory",
+            "default": null
+          },
+          "function_name": {
+            "type": "string",
+            "title": "Function Name",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "total_count",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "error",
+              "no_results"
+            ],
+            "type": "string",
+            "description": "검색 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "function_name",
+                "api_name",
+                "category",
+                "subcategory"
+              ],
+              "properties": {
+                "api_name": {
+                  "type": "string",
+                  "description": "API 이름"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "카테고리"
+                },
+                "subcategory": {
+                  "type": "string",
+                  "description": "서브카테고리"
+                },
+                "function_name": {
+                  "type": "string",
+                  "description": "API 함수명"
+                }
+              }
+            },
+            "description": "검색된 API 목록"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "총 검색 결과 수"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_source_code",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "title": "소스코드 읽기",
+      "description": "API 검색 결과의 URL에서 실제 GitHub 코드를 가져옵니다.\n    \n    파라미터:\n    - url_main: 메인 호출 파일 URL (필수)\n    - url_chk: 테스트 호출 파일 URL (선택)\n    \n    사용 예시:\n    1. api_search tool로 원하는 API를 찾습니다\n    2. 검색 결과에서 url_main, url_chk를 확인합니다  \n    3. 이 tool을 사용해서 실제 GitHub 코드를 가져옵니다\n    ",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url_main"
+        ],
+        "properties": {
+          "url_chk": {
+            "type": "string",
+            "title": "Url Chk",
+            "default": null
+          },
+          "url_main": {
+            "type": "string",
+            "title": "Url Main"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "results"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "partial_success",
+              "error"
+            ],
+            "type": "string",
+            "description": "전체 작업 상태"
+          },
+          "message": {
+            "type": "string",
+            "description": "상태 메시지"
+          },
+          "results": {
+            "type": "object",
+            "properties": {
+              "main": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "실제 코드 내용"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              },
+              "check": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "실제 코드 내용"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "description": "각 URL별 코드 가져오기 결과"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@KISOpenAPI/kis-code-assistant-mcp/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

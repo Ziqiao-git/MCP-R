@@ -1,0 +1,205 @@
+{
+  "qualifiedName": "@gilberth/mcp-cloudflare",
+  "displayName": "Cloudflare DNS Manager",
+  "description": "Manage your Cloudflare DNS records seamlessly through AI agents. List, create, update, and delete DNS records with full support for various record types and Cloudflare API features. Securely control your domain's DNS settings with scoped API tokens and easy integration.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@gilberth/mcp-cloudflare",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_dns_records",
+      "description": "List all DNS records for the configured zone",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Filter by record name (optional)"
+          },
+          "type": {
+            "enum": [
+              "A",
+              "AAAA",
+              "CNAME",
+              "MX",
+              "TXT",
+              "NS",
+              "SRV",
+              "CAA",
+              "PTR"
+            ],
+            "type": "string",
+            "description": "Filter by record type (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_dns_record",
+      "description": "Get a specific DNS record by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recordId"
+        ],
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "description": "The DNS record ID"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_dns_record",
+      "description": "Create a new DNS record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "type",
+          "name",
+          "content"
+        ],
+        "properties": {
+          "ttl": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Time to live (TTL) in seconds (default: 1 for auto)"
+          },
+          "name": {
+            "type": "string",
+            "description": "DNS record name"
+          },
+          "type": {
+            "enum": [
+              "A",
+              "AAAA",
+              "CNAME",
+              "MX",
+              "TXT",
+              "NS",
+              "SRV",
+              "CAA",
+              "PTR"
+            ],
+            "type": "string",
+            "description": "DNS record type"
+          },
+          "content": {
+            "type": "string",
+            "description": "DNS record content"
+          },
+          "proxied": {
+            "type": "boolean",
+            "description": "Whether the record should be proxied through Cloudflare"
+          },
+          "priority": {
+            "type": "number",
+            "description": "Priority (for MX records)"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_dns_record",
+      "description": "Update an existing DNS record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recordId"
+        ],
+        "properties": {
+          "ttl": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Time to live (TTL) in seconds"
+          },
+          "name": {
+            "type": "string",
+            "description": "DNS record name"
+          },
+          "type": {
+            "enum": [
+              "A",
+              "AAAA",
+              "CNAME",
+              "MX",
+              "TXT",
+              "NS",
+              "SRV",
+              "CAA",
+              "PTR"
+            ],
+            "type": "string",
+            "description": "DNS record type"
+          },
+          "content": {
+            "type": "string",
+            "description": "DNS record content"
+          },
+          "proxied": {
+            "type": "boolean",
+            "description": "Whether the record should be proxied through Cloudflare"
+          },
+          "priority": {
+            "type": "number",
+            "description": "Priority (for MX records)"
+          },
+          "recordId": {
+            "type": "string",
+            "description": "The DNS record ID to update"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_dns_record",
+      "description": "Delete a DNS record",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recordId"
+        ],
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "description": "The DNS record ID to delete"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@gilberth/mcp-cloudflare/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "cloudflareApiToken",
+          "cloudflareZoneId"
+        ],
+        "properties": {
+          "cloudflareEmail": {
+            "type": "string",
+            "description": "Your Cloudflare account email (only needed for legacy API keys)"
+          },
+          "cloudflareZoneId": {
+            "type": "string",
+            "description": "The Zone ID of your domain in Cloudflare"
+          },
+          "cloudflareApiToken": {
+            "type": "string",
+            "description": "Your Cloudflare API Token with Zone:Edit permissions"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,858 @@
+{
+  "qualifiedName": "@vyb1ng/plex-mcp",
+  "displayName": "Plex Media Library Search Server",
+  "description": "Enable seamless searching and browsing of your Plex media libraries through an MCP server. Authenticate securely with Plex via OAuth or static tokens and retrieve rich metadata for movies, shows, music, playlists, and more. Manage your Plex content efficiently with comprehensive tools for playlists, collections, and media information.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/545985a1-600a-4749-81c7-21052b6ea36e.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "search_plex",
+      "description": "Search for movies, TV shows, and other content in Plex libraries",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "mood": {
+            "enum": [
+              "energetic",
+              "calm",
+              "aggressive",
+              "melancholic",
+              "uplifting",
+              "dark",
+              "romantic",
+              "mysterious"
+            ],
+            "type": "string",
+            "description": "Filter by mood/energy classification"
+          },
+          "type": {
+            "enum": [
+              "movie",
+              "show",
+              "episode",
+              "artist",
+              "album",
+              "track"
+            ],
+            "type": "string",
+            "description": "Type of content to search for (optional)"
+          },
+          "year": {
+            "type": "number",
+            "description": "Filter by release year"
+          },
+          "actor": {
+            "type": "string",
+            "description": "Filter by actor/cast member name"
+          },
+          "genre": {
+            "type": "string",
+            "description": "Filter by genre (e.g., Action, Comedy, Rock, Jazz)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of results to return (default: 10)"
+          },
+          "query": {
+            "type": "string",
+            "description": "The search query (movie title, show name, etc.)"
+          },
+          "bpmMax": {
+            "type": "number",
+            "description": "Maximum BPM (beats per minute)"
+          },
+          "bpmMin": {
+            "type": "number",
+            "description": "Minimum BPM (beats per minute)"
+          },
+          "studio": {
+            "type": "string",
+            "description": "Filter by studio/label (e.g., Warner Bros, Sony Music)"
+          },
+          "writer": {
+            "type": "string",
+            "description": "Filter by writer name"
+          },
+          "director": {
+            "type": "string",
+            "description": "Filter by director name"
+          },
+          "year_max": {
+            "type": "number",
+            "description": "Filter by maximum release year"
+          },
+          "year_min": {
+            "type": "number",
+            "description": "Filter by minimum release year"
+          },
+          "rating_max": {
+            "type": "number",
+            "description": "Maximum rating (0-10 scale)"
+          },
+          "rating_min": {
+            "type": "number",
+            "description": "Minimum rating (0-10 scale)"
+          },
+          "resolution": {
+            "enum": [
+              "4k",
+              "1080",
+              "720",
+              "480",
+              "sd"
+            ],
+            "type": "string",
+            "description": "Filter by video resolution"
+          },
+          "added_after": {
+            "type": "string",
+            "description": "Filter items added to library after this date (YYYY-MM-DD format)"
+          },
+          "musical_key": {
+            "type": "string",
+            "description": "Filter by musical key (e.g., 'C', 'G', 'Am', 'F#m')"
+          },
+          "added_before": {
+            "type": "string",
+            "description": "Filter items added to library before this date (YYYY-MM-DD format)"
+          },
+          "audio_format": {
+            "enum": [
+              "lossless",
+              "lossy",
+              "mp3",
+              "flac",
+              "aac"
+            ],
+            "type": "string",
+            "description": "Filter by audio format (for music)"
+          },
+          "duration_max": {
+            "type": "number",
+            "description": "Maximum duration in minutes"
+          },
+          "duration_min": {
+            "type": "number",
+            "description": "Minimum duration in minutes"
+          },
+          "loudness_max": {
+            "type": "number",
+            "description": "Maximum loudness in LUFS"
+          },
+          "loudness_min": {
+            "type": "number",
+            "description": "Minimum loudness in LUFS"
+          },
+          "never_played": {
+            "type": "boolean",
+            "description": "Filter to only show never played items"
+          },
+          "file_size_max": {
+            "type": "number",
+            "description": "Maximum file size in MB"
+          },
+          "file_size_min": {
+            "type": "number",
+            "description": "Minimum file size in MB"
+          },
+          "content_rating": {
+            "type": "string",
+            "description": "Filter by content rating (G, PG, PG-13, R, etc.)"
+          },
+          "play_count_max": {
+            "type": "number",
+            "description": "Maximum play count for results"
+          },
+          "play_count_min": {
+            "type": "number",
+            "description": "Minimum play count for results"
+          },
+          "dynamic_range_max": {
+            "type": "number",
+            "description": "Maximum dynamic range in dB"
+          },
+          "dynamic_range_min": {
+            "type": "number",
+            "description": "Minimum dynamic range in dB"
+          },
+          "last_played_after": {
+            "type": "string",
+            "description": "Filter items played after this date (YYYY-MM-DD format)"
+          },
+          "acoustic_ratio_max": {
+            "type": "number",
+            "description": "Maximum acoustic content ratio (0-1, where 1 is fully acoustic)"
+          },
+          "acoustic_ratio_min": {
+            "type": "number",
+            "description": "Minimum acoustic content ratio (0-1, where 1 is fully acoustic)"
+          },
+          "last_played_before": {
+            "type": "string",
+            "description": "Filter items played before this date (YYYY-MM-DD format)"
+          },
+          "played_in_last_days": {
+            "type": "number",
+            "description": "Filter items played in the last N days"
+          }
+        }
+      }
+    },
+    {
+      "name": "browse_libraries",
+      "description": "List all available Plex libraries (Movies, TV Shows, Music, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "browse_library",
+      "description": "Browse content within a specific Plex library with filtering and sorting options",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "library_id"
+        ],
+        "properties": {
+          "mood": {
+            "enum": [
+              "energetic",
+              "calm",
+              "aggressive",
+              "melancholic",
+              "uplifting",
+              "dark",
+              "romantic",
+              "mysterious"
+            ],
+            "type": "string",
+            "description": "Filter by mood/energy classification"
+          },
+          "sort": {
+            "enum": [
+              "titleSort",
+              "addedAt",
+              "originallyAvailableAt",
+              "rating",
+              "viewCount",
+              "lastViewedAt"
+            ],
+            "type": "string",
+            "default": "titleSort",
+            "description": "Sort order (default: titleSort)"
+          },
+          "year": {
+            "type": "number",
+            "description": "Filter by release year"
+          },
+          "actor": {
+            "type": "string",
+            "description": "Filter by actor/cast member name"
+          },
+          "genre": {
+            "type": "string",
+            "description": "Filter by genre"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Maximum number of results to return (default: 20)"
+          },
+          "bpmMax": {
+            "type": "number",
+            "description": "Maximum BPM (beats per minute)"
+          },
+          "bpmMin": {
+            "type": "number",
+            "description": "Minimum BPM (beats per minute)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of results to skip (for pagination, default: 0)"
+          },
+          "studio": {
+            "type": "string",
+            "description": "Filter by studio/label (e.g., Warner Bros, Sony Music)"
+          },
+          "writer": {
+            "type": "string",
+            "description": "Filter by writer name"
+          },
+          "director": {
+            "type": "string",
+            "description": "Filter by director name"
+          },
+          "year_max": {
+            "type": "number",
+            "description": "Filter by maximum release year"
+          },
+          "year_min": {
+            "type": "number",
+            "description": "Filter by minimum release year"
+          },
+          "library_id": {
+            "type": "string",
+            "description": "The library ID (key) to browse"
+          },
+          "rating_max": {
+            "type": "number",
+            "description": "Maximum rating (0-10 scale)"
+          },
+          "rating_min": {
+            "type": "number",
+            "description": "Minimum rating (0-10 scale)"
+          },
+          "resolution": {
+            "enum": [
+              "4k",
+              "1080",
+              "720",
+              "480",
+              "sd"
+            ],
+            "type": "string",
+            "description": "Filter by video resolution"
+          },
+          "added_after": {
+            "type": "string",
+            "description": "Filter items added to library after this date (YYYY-MM-DD format)"
+          },
+          "musical_key": {
+            "type": "string",
+            "description": "Filter by musical key (e.g., 'C', 'G', 'Am', 'F#m')"
+          },
+          "added_before": {
+            "type": "string",
+            "description": "Filter items added to library before this date (YYYY-MM-DD format)"
+          },
+          "audio_format": {
+            "enum": [
+              "lossless",
+              "lossy",
+              "mp3",
+              "flac",
+              "aac"
+            ],
+            "type": "string",
+            "description": "Filter by audio format (for music)"
+          },
+          "duration_max": {
+            "type": "number",
+            "description": "Maximum duration in minutes"
+          },
+          "duration_min": {
+            "type": "number",
+            "description": "Minimum duration in minutes"
+          },
+          "loudness_max": {
+            "type": "number",
+            "description": "Maximum loudness in LUFS"
+          },
+          "loudness_min": {
+            "type": "number",
+            "description": "Minimum loudness in LUFS"
+          },
+          "never_played": {
+            "type": "boolean",
+            "description": "Filter to only show never played items"
+          },
+          "file_size_max": {
+            "type": "number",
+            "description": "Maximum file size in MB"
+          },
+          "file_size_min": {
+            "type": "number",
+            "description": "Minimum file size in MB"
+          },
+          "content_rating": {
+            "type": "string",
+            "description": "Filter by content rating (G, PG, PG-13, R, etc.)"
+          },
+          "play_count_max": {
+            "type": "number",
+            "description": "Maximum play count for results"
+          },
+          "play_count_min": {
+            "type": "number",
+            "description": "Minimum play count for results"
+          },
+          "dynamic_range_max": {
+            "type": "number",
+            "description": "Maximum dynamic range in dB"
+          },
+          "dynamic_range_min": {
+            "type": "number",
+            "description": "Minimum dynamic range in dB"
+          },
+          "last_played_after": {
+            "type": "string",
+            "description": "Filter items played after this date (YYYY-MM-DD format)"
+          },
+          "acoustic_ratio_max": {
+            "type": "number",
+            "description": "Maximum acoustic content ratio (0-1, where 1 is fully acoustic)"
+          },
+          "acoustic_ratio_min": {
+            "type": "number",
+            "description": "Minimum acoustic content ratio (0-1, where 1 is fully acoustic)"
+          },
+          "last_played_before": {
+            "type": "string",
+            "description": "Filter items played before this date (YYYY-MM-DD format)"
+          },
+          "played_in_last_days": {
+            "type": "number",
+            "description": "Filter items played in the last N days"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_recently_added",
+      "description": "Get recently added content from Plex libraries",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 15,
+            "description": "Maximum number of results to return (default: 15)"
+          },
+          "chunk_size": {
+            "type": "number",
+            "description": "Number of items to return per chunk for pagination (optional)"
+          },
+          "library_id": {
+            "type": "string",
+            "description": "Specific library ID to get recent content from (optional, defaults to all libraries)"
+          },
+          "chunk_offset": {
+            "type": "number",
+            "description": "Offset for pagination, number of items to skip (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_watch_history",
+      "description": "Get playback history for the Plex server",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Maximum number of history items to return (default: 20)"
+          },
+          "account_id": {
+            "type": "string",
+            "description": "Filter by specific account/user ID (optional)"
+          },
+          "chunk_size": {
+            "type": "number",
+            "description": "Number of items to return per chunk for pagination (optional)"
+          },
+          "chunk_offset": {
+            "type": "number",
+            "description": "Offset for pagination, number of items to skip (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_on_deck",
+      "description": "Get 'On Deck' items (continue watching) for users",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 15,
+            "description": "Maximum number of items to return (default: 15)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_playlists",
+      "description": "List all playlists on the Plex server",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "playlist_type": {
+            "enum": [
+              "audio",
+              "video",
+              "photo"
+            ],
+            "type": "string",
+            "description": "Filter by playlist type (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "browse_playlist",
+      "description": "Browse and view the contents of a specific playlist with full track metadata",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "playlist_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum number of items to return (default: 50)"
+          },
+          "playlist_id": {
+            "type": "string",
+            "description": "The ID of the playlist to browse"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_playlist",
+      "description": "Create a new regular playlist on the Plex server. Requires an initial item (item_key parameter) to be created successfully. Smart playlists are not supported due to their complex filter requirements.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "title",
+          "type",
+          "item_key"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "audio",
+              "video",
+              "photo"
+            ],
+            "type": "string",
+            "description": "The type of playlist to create"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title/name for the new playlist"
+          },
+          "item_key": {
+            "type": "string",
+            "description": "The key of an initial item to add to the playlist. Required for playlist creation. Get item keys from search_plex or browse_library results."
+          }
+        }
+      }
+    },
+    {
+      "name": "add_to_playlist",
+      "description": "Add items to an existing playlist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "playlist_id",
+          "item_keys"
+        ],
+        "properties": {
+          "item_keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of item keys (ratingKey) to add to the playlist"
+          },
+          "playlist_id": {
+            "type": "string",
+            "description": "The playlist ID (ratingKey) to add items to"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_playlist",
+      "description": "Delete an existing playlist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "playlist_id"
+        ],
+        "properties": {
+          "playlist_id": {
+            "type": "string",
+            "description": "The playlist ID (ratingKey) to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_watched_status",
+      "description": "Check watch status and progress for specific content items",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "item_keys"
+        ],
+        "properties": {
+          "item_keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of item keys (ratingKey) to check watch status for"
+          },
+          "account_id": {
+            "type": "string",
+            "description": "Specific account/user ID to check status for (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_collections",
+      "description": "List all collections available on the Plex server",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "library_id": {
+            "type": "string",
+            "description": "Filter collections by specific library ID (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "browse_collection",
+      "description": "Browse content within a specific collection",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "collection_id"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "titleSort",
+              "addedAt",
+              "originallyAvailableAt",
+              "rating",
+              "viewCount",
+              "lastViewedAt"
+            ],
+            "type": "string",
+            "default": "titleSort",
+            "description": "Sort order (default: titleSort)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Maximum number of results to return (default: 20)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Number of results to skip (for pagination, default: 0)"
+          },
+          "collection_id": {
+            "type": "string",
+            "description": "The collection ID (ratingKey) to browse"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_media_info",
+      "description": "Get detailed technical information about media files (codecs, bitrates, file sizes, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "item_key"
+        ],
+        "properties": {
+          "item_key": {
+            "type": "string",
+            "description": "The item key (ratingKey) to get media information for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_library_stats",
+      "description": "Get comprehensive statistics about Plex libraries (storage usage, file counts, content breakdown, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "library_id": {
+            "type": "string",
+            "description": "Specific library ID to get stats for (optional, defaults to all libraries)"
+          },
+          "include_details": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include detailed breakdowns by file type, resolution, codec, etc. (default: false)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_listening_stats",
+      "description": "Get detailed listening statistics and music recommendations based on play history and patterns",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "Specific account/user ID to analyze (optional, defaults to all users)"
+          },
+          "time_period": {
+            "enum": [
+              "week",
+              "month",
+              "quarter",
+              "year",
+              "all"
+            ],
+            "type": "string",
+            "default": "month",
+            "description": "Time period to analyze (default: month)"
+          },
+          "music_library_id": {
+            "type": "string",
+            "description": "Specific music library ID to analyze (optional, auto-detects music libraries)"
+          },
+          "include_recommendations": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include music recommendations based on listening patterns (default: true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "discover_music",
+      "description": "Natural language music discovery with smart recommendations based on your preferences and library",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of results to return (default: 10)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Natural language query (e.g., 'songs from the 90s', 'rock bands I haven't heard', 'something like Modest Mouse')"
+          },
+          "context": {
+            "type": "string",
+            "description": "Additional context for the search (optional)"
+          }
+        }
+      }
+    },
+    {
+      "name": "authenticate_plex",
+      "description": "Initiate Plex OAuth authentication flow to get user login URL",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "check_auth_status",
+      "description": "Check if Plex authentication is complete and retrieve the auth token",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "pin_id": {
+            "type": "string",
+            "description": "Optional pin ID to check. If not provided, uses the last requested pin."
+          }
+        }
+      }
+    },
+    {
+      "name": "clear_auth",
+      "description": "Clear stored authentication credentials",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "validate_llm_response",
+      "description": "Validate LLM response format and content against expected schemas for different prompt types",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "response",
+          "prompt_type"
+        ],
+        "properties": {
+          "response": {
+            "type": "object",
+            "description": "The LLM response object to validate"
+          },
+          "prompt_type": {
+            "enum": [
+              "playlist_description",
+              "content_recommendation",
+              "smart_playlist_rules",
+              "media_analysis"
+            ],
+            "type": "string",
+            "description": "The type of prompt that generated this response"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@vyb1ng/plex-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "plexUrl"
+        ],
+        "properties": {
+          "plexUrl": {
+            "type": "string",
+            "description": "URL of the Plex server"
+          },
+          "plexToken": {
+            "type": "string",
+            "description": "Plex authentication token (optional - can authenticate interactively)"
+          },
+          "plexVerifySsl": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to verify Plex server SSL certificate"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "qualifiedName": "@pinkpixel-dev/mem0-mcp-server",
+  "displayName": "Mem0 Memory Server",
+  "description": "Enable AI agents to store, search, and delete persistent memories across sessions to enhance context retention and recall. Integrate seamlessly with Mem0.ai's cloud or self-hosted Supabase storage for scalable and reliable memory management. Optimize your LLM applications with advanced filtering, semantic search, and flexible storage modes tailored to your needs.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/mem0.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "add_memory",
+      "description": "Stores a piece of text as a memory in Mem0.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "appId": {
+            "type": "string",
+            "description": "Optional app ID - application identifier (legacy parameter). If not provided, uses DEFAULT_APP_ID environment variable."
+          },
+          "infer": {
+            "type": "boolean",
+            "description": "Optional whether to infer memories or directly store messages (default: true, for cloud API)."
+          },
+          "orgId": {
+            "type": "string",
+            "description": "Optional organization ID - for mem0 organization-level management. If not provided, uses DEFAULT_ORG_ID environment variable."
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID to associate with the memory. If not provided, uses DEFAULT_USER_ID environment variable."
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Optional agent ID - identifies the LLM/agent making the tool call. If not provided, uses DEFAULT_AGENT_ID environment variable."
+          },
+          "content": {
+            "type": "string",
+            "description": "The text content to store as memory."
+          },
+          "excludes": {
+            "type": "string",
+            "description": "Optional specific preferences to exclude from the memory (for cloud API)."
+          },
+          "includes": {
+            "type": "string",
+            "description": "Optional specific preferences to include in the memory (for cloud API)."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Optional key-value metadata."
+          },
+          "immutable": {
+            "type": "boolean",
+            "description": "Optional whether the memory is immutable (default: false, for cloud API)."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Optional project ID - for mem0 Pro plan project organization (e.g., proj_ABC123). If not provided, uses DEFAULT_PROJECT_ID environment variable."
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Optional session ID to associate with the memory."
+          },
+          "outputFormat": {
+            "type": "string",
+            "description": "Optional format version, either v1.0 (deprecated) or v1.1 (recommended, for cloud API)."
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Optional when the memory will expire (format: YYYY-MM-DD, for cloud API)."
+          },
+          "customCategories": {
+            "type": "object",
+            "description": "Optional list of categories with names and descriptions (for cloud API)."
+          },
+          "customInstructions": {
+            "type": "string",
+            "description": "Optional project-specific guidelines for handling and organizing memories (for cloud API)."
+          }
+        }
+      }
+    },
+    {
+      "name": "search_memory",
+      "description": "Searches stored memories in Mem0 based on a query.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "topK": {
+            "type": "number",
+            "description": "Optional number of top results to return (default: 10, for cloud API)."
+          },
+          "appId": {
+            "type": "string",
+            "description": "Optional app ID - application identifier (legacy parameter). If not provided, uses DEFAULT_APP_ID environment variable."
+          },
+          "orgId": {
+            "type": "string",
+            "description": "Optional organization ID - for mem0 organization-level management. If not provided, uses DEFAULT_ORG_ID environment variable."
+          },
+          "query": {
+            "type": "string",
+            "description": "The search query."
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional specific fields to include in the response (for cloud API)."
+          },
+          "rerank": {
+            "type": "boolean",
+            "description": "Optional whether to rerank the memories (default: false, for cloud API)."
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID to filter search. If not provided, uses DEFAULT_USER_ID environment variable."
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Optional agent ID - identifies the LLM/agent making the tool call. If not provided, uses DEFAULT_AGENT_ID environment variable."
+          },
+          "filters": {
+            "type": "object",
+            "description": "Optional key-value filters for metadata."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Optional project ID - for mem0 Pro plan project organization (e.g., proj_ABC123). If not provided, uses DEFAULT_PROJECT_ID environment variable."
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Optional session ID to filter search."
+          },
+          "threshold": {
+            "type": "number",
+            "description": "Optional similarity threshold for results (for cloud API)."
+          },
+          "keywordSearch": {
+            "type": "boolean",
+            "description": "Optional whether to search based on keywords (default: false, for cloud API)."
+          },
+          "filterMemories": {
+            "type": "boolean",
+            "description": "Optional whether to filter the memories (default: false, for cloud API)."
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_memory",
+      "description": "Deletes a specific memory by ID from Mem0.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "memoryId"
+        ],
+        "properties": {
+          "appId": {
+            "type": "string",
+            "description": "Optional app ID - application identifier (legacy parameter). If not provided, uses DEFAULT_APP_ID environment variable."
+          },
+          "orgId": {
+            "type": "string",
+            "description": "Optional organization ID - for mem0 organization-level management. If not provided, uses DEFAULT_ORG_ID environment variable."
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID associated with the memory. If not provided, uses DEFAULT_USER_ID environment variable."
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Optional agent ID - identifies the LLM/agent making the tool call. If not provided, uses DEFAULT_AGENT_ID environment variable."
+          },
+          "memoryId": {
+            "type": "string",
+            "description": "The unique ID of the memory to delete."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Optional project ID - for mem0 Pro plan project organization (e.g., proj_ABC123). If not provided, uses DEFAULT_PROJECT_ID environment variable."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@pinkpixel-dev/mem0-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "mem0ApiKey",
+          "defaultUserId"
+        ],
+        "properties": {
+          "mem0ApiKey": {
+            "type": "string",
+            "description": "API key for Mem0 cloud storage mode"
+          },
+          "defaultAppId": {
+            "type": "string",
+            "default": "",
+            "description": "Default app ID for project scoping"
+          },
+          "defaultUserId": {
+            "type": "string",
+            "description": "Default user ID for memory operations"
+          },
+          "defaultAgentId": {
+            "type": "string",
+            "default": "",
+            "description": "Default agent ID for identifying the LLM/agent"
+          }
+        }
+      }
+    }
+  ]
+}

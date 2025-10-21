@@ -1,0 +1,100 @@
+{
+  "qualifiedName": "@DaInfernalCoder/perplexity-mcp",
+  "displayName": "Perplexity-researcher-mcp",
+  "description": "Utilize advanced API capabilities to enhance your coding experience.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.perplexity.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Quick search for simple queries using Perplexity's Sonar Pro model. Best for straightforward questions and basic information lookup.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query or question"
+          },
+          "force_model": {
+            "type": "boolean",
+            "default": false,
+            "description": "Optional: Force using this model even if query seems complex"
+          }
+        }
+      }
+    },
+    {
+      "name": "reason",
+      "description": "Handles complex, multi-step tasks using Perplexity's Sonar Reasoning Pro model. Best for explanations, comparisons, and problem-solving.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The complex query or task to reason about"
+          },
+          "force_model": {
+            "type": "boolean",
+            "default": false,
+            "description": "Optional: Force using this model even if query seems simple/research-oriented"
+          }
+        }
+      }
+    },
+    {
+      "name": "deep_research",
+      "description": "Conducts in-depth analysis and generates detailed reports using Perplexity's Sonar Deep Research model. Best for comprehensive research topics.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The research topic or question to investigate in depth"
+          },
+          "focus_areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: Specific aspects or areas to focus on"
+          },
+          "force_model": {
+            "type": "boolean",
+            "default": false,
+            "description": "Optional: Force using this model even if query seems simple"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@DaInfernalCoder/perplexity-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "perplexityApiKey"
+        ],
+        "properties": {
+          "perplexityApiKey": {
+            "type": "string",
+            "description": "The API key for the Perplexity API."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "qualifiedName": "@lukaskostka99/marketing-miner-mcp",
+  "displayName": "Marketing Miner",
+  "description": "Discover keyword suggestions and search volume data from Marketing Miner. Speed up SEO research with question, new, and trending ideas and optional keyword metrics across Czech, Slovak, Polish, Hungarian, Romanian, UK, and US markets.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@lukaskostka99/marketing-miner-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_keyword_suggestions",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Získá návrhy klíčových slov z Marketing Miner API.\nlang: cs/sk/pl/hu/ro/gb/us\nsuggestions_type: questions/new/trending (volitelné)\nwith_keyword_data: bool (volitelné)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "lang",
+          "keyword"
+        ],
+        "properties": {
+          "lang": {
+            "type": "string",
+            "title": "Lang"
+          },
+          "keyword": {
+            "type": "string",
+            "title": "Keyword"
+          },
+          "suggestions_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggestions Type",
+            "default": null
+          },
+          "with_keyword_data": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "With Keyword Data",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "get_search_volume_data",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Získá data o hledanosti klíčového slova z Marketing Miner API.\nlang: cs/sk/pl/hu/ro/gb/us",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "lang",
+          "keyword"
+        ],
+        "properties": {
+          "lang": {
+            "type": "string",
+            "title": "Lang"
+          },
+          "keyword": {
+            "type": "string",
+            "title": "Keyword"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@lukaskostka99/marketing-miner-mcp/mcp",
+      "configSchema": {}
+    }
+  ]
+}

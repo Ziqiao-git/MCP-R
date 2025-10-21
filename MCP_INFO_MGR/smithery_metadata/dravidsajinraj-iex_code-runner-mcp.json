@@ -1,0 +1,182 @@
+{
+  "qualifiedName": "@dravidsajinraj-iex/code-runner-mcp",
+  "displayName": "Code Runner",
+  "description": "Execute JavaScript and Python code securely in isolated environments with comprehensive security restrictions. Pass dynamic input variables and receive detailed execution results including output, errors, and resource usage. Benefit from a security-first design that blocks dangerous operations and enforces execution timeouts to protect your system.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@dravidsajinraj-iex/code-runner-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "execute_code",
+      "description": "Execute JavaScript or Python code securely with comprehensive error handling and security measures",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "language",
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to execute"
+          },
+          "input": {
+            "type": "string",
+            "description": "Input data for the program (stdin)"
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Execution timeout in milliseconds (max 60000)"
+          },
+          "language": {
+            "enum": [
+              "javascript",
+              "python"
+            ],
+            "type": "string",
+            "description": "Programming language to execute"
+          },
+          "memoryLimit": {
+            "type": "number",
+            "description": "Memory limit in MB (max 512)"
+          },
+          "enableNetworking": {
+            "type": "boolean",
+            "description": "Enable network access for this execution"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_code_with_variables",
+      "description": "Execute JavaScript or Python code with dynamic input variables that can be defined and passed as key-value pairs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "language",
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to execute"
+          },
+          "input": {
+            "type": "string",
+            "description": "Additional input data for the program (stdin)"
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Execution timeout in milliseconds (max 60000)"
+          },
+          "language": {
+            "enum": [
+              "javascript",
+              "python"
+            ],
+            "type": "string",
+            "description": "Programming language to execute"
+          },
+          "variables": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Dynamic input variables as key-value pairs. Can be a JSON object or a JSON string (e.g., {\"name\": \"John\", \"age\": 25, \"items\": [1,2,3]} or \"{\\\"name\\\": \\\"John\\\", \\\"age\\\": 25}\")"
+          },
+          "memoryLimit": {
+            "type": "number",
+            "description": "Memory limit in MB (max 512)"
+          },
+          "enableNetworking": {
+            "type": "boolean",
+            "description": "Enable network access for this execution"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_capabilities",
+      "description": "Get information about supported languages and execution capabilities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_code",
+      "description": "Validate code for security and syntax issues without executing it",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "language",
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to validate"
+          },
+          "language": {
+            "enum": [
+              "javascript",
+              "python"
+            ],
+            "type": "string",
+            "description": "Programming language"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@dravidsajinraj-iex/code-runner-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "maxMemoryUsage": {
+            "type": "number",
+            "default": 128,
+            "description": "Maximum memory usage in MB"
+          },
+          "enableNetworking": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable network access"
+          },
+          "maxExecutionTime": {
+            "type": "number",
+            "default": 10000,
+            "description": "Maximum execution time in milliseconds"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

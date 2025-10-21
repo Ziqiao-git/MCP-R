@@ -1,0 +1,1035 @@
+{
+  "qualifiedName": "@cgauge/mcp",
+  "displayName": "MCP Server POC",
+  "description": "Validate and experiment with Model Context Protocol server implementations supporting multiple transport mechanisms. Run the server locally, with STDIO transport, or deploy it to AWS Lambda for scalable MCP integrations. Use the MCP Inspector for easy testing and debugging of MCP tools and workflows.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cgauge/mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "benchmarks",
+      "description": "This tool provides benchmarks for various common reporting metrics.\n        The benchmarks data are derived from the data of select CustomerGauge B2B Accounts for the current period.\n        Only existing accounts that sent more than 100 survey invitations in the period are included in the benchmark.\n        Benchmarks data has a fixed date range of the last two semesters. The benchmarks data is updated every 6 months.\n\n        Avaliable filters:\n            - metric: The metric to receive benchmark data for.\n            - industry: The industry of the Accounts to receive benchmark data for, for the selected metric.\n\n        Parameters:\n            - metric: Choose the metric to receive benchmark data for. Allowed values: Account Response %, Detractor Follow Up %, Detractor Follow Up Speed, Email Bounce %, Email Delivery %, Email Open %, NPS, Response %, Survey Abandonment %, Survey Click %.\n            - industry: Allowed values: B2B, Consumer Goods, Manufacturing, Software / IT.\n            \n        Output:\n        {\n          \"data\": Array<{\n            percentile: number,   // e.g. 10, 25, 50, 75, 90\n            value: number         // benchmark value for that percentile\n          }>\n        }",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "metric",
+          "industry"
+        ],
+        "properties": {
+          "metric": {
+            "enum": [
+              "Email Bounce %",
+              "Email Delivery %",
+              "Email Open %",
+              "Survey Click %",
+              "Survey Abandonment %",
+              "Account Response %",
+              "Response %",
+              "Detractor Follow Up %",
+              "Detractor Follow Up Speed",
+              "NPS"
+            ],
+            "type": "string",
+            "description": "Choose the metric to receive benchmark data for."
+          },
+          "industry": {
+            "enum": [
+              "B2B",
+              "Software / IT",
+              "Manufacturing",
+              "Consumer Goods"
+            ],
+            "type": "string",
+            "description": "The industry of the Accounts to receive benchmark data for, for the selected metric."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "close-loop-kpi",
+      "description": "Retrieve close-loop Key Performance Indicators (KPIs) and metrics.\n\n    Avaliable filters:\n      - period_start: The start date of the period.\n      - period_end: The end date of the period.\n      - period_field: The field to filter by.\n      - criterias: Filters to apply when we want results limited to a specific criteria\n\n    You can use the tool 'fields' to get a list of possible fields to filter in criterias.\n    You can use the tool 'field_values' to get a list of possible values for a field_values in criterias.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "default": "=",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "driver_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The ID of the driver to filter by. Use the tool `drivers` to get the possible values."
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2024-09-02",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "closed_threshold": {
+            "type": "number",
+            "description": "The threshold for the closed metric. (in days)"
+          },
+          "follow_up_threshold": {
+            "type": "number",
+            "description": "The threshold for the follow up metric. (in days)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "close-loop-my-assigned-cases",
+      "description": "Retrieve all cases assigned to the current user for close-loop management",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "The page number to retrieve"
+          },
+          "per_page": {
+            "type": "number",
+            "default": 10,
+            "maximum": 25,
+            "minimum": 1,
+            "description": "The number of cases per page"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "close-loop-segment",
+      "description": "Retrieve close-loop analytics data segmented by different categories and groups",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "The page number to retrieve"
+          },
+          "per_page": {
+            "type": "number",
+            "default": 10,
+            "maximum": 25,
+            "minimum": 1,
+            "description": "The number of cases per page"
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "default": "=",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2024-09-02",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "segment_field": {
+            "type": "string",
+            "default": "company",
+            "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "close-loop-summary",
+      "description": "Retrieve close-loop summary analytics and overview data",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "default": "=",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "driver_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The ID of the driver to filter by. Use the tool `drivers` to get the possible values."
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2024-09-02",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "closed_threshold": {
+            "type": "number",
+            "description": "The threshold for the closed metric. (in days)"
+          },
+          "follow_up_threshold": {
+            "type": "number",
+            "description": "The threshold for the follow up metric. (in days)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "close-loop-trend",
+      "description": "Retrieve close-loop analytics trend data showing performance over time",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "interval": {
+            "enum": [
+              "day",
+              "week",
+              "month",
+              "quarter",
+              "year"
+            ],
+            "type": "string",
+            "default": "week",
+            "description": "The granularity of the time grouping."
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "enum": [
+                    "=",
+                    "!="
+                  ],
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-08-03",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "closed_threshold": {
+            "type": "number",
+            "description": "The threshold for the closed metric. (in days)"
+          },
+          "follow_up_threshold": {
+            "type": "number",
+            "description": "The threshold for the follow up metric. (in days)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drivers_loyalty",
+      "description": "Returns counts of Driver selections by NPS loyalty group (promoters/passives/detractors) for survey responses in a given period. \n    Drivers are structured as two tiers (primary → secondary). Counts reflect selections, not unique respondents.\n\n    Parameters:\n    - period_start (string, optional): Start date of the period (YYYY-MM-DD or YYYY-MM). Default = system default.\n    - period_end   (string, optional): End date of the period (YYYY-MM-DD or YYYY-MM). Default = system default.\n    - period_field (enum, optional): Date field used for filtering. One of [\"date_order\" (customer defined date tied to survey invitation),\"date_email_sent\" (date of survey invitation sent),\"date_form_completed\" (date of survey completed),\"date_creation\" (date of survey invitation import)]. Default = \"date_email_sent\".\n    - criterias (array, optional): Filters to narrow results. Each object:\n      {\n        field: string,              // use 'fields' tool to get valid field names\n        field_values: number[],     // use 'field_values' tool to get valid values\n        operator?: \"=\" | \"!=\"       // comparison operator; default is \"=\"\n      }\n    - driver_ids (array<number>, optional): Limit results to specific driver IDs. Use the 'drivers' tool to get valid IDs.\n    - driver_level (enum, optional): \"primary\" | \"secondary\". Default = system default.\n\n    Output:\n    {\n      data: Array<{\n        stack_id: number,         // driver id at chosen level\n        stack_reference: string,  // driver label\n        responses: number,        // total selections\n        promoters: number,\n        passives: number,\n        detractors: number\n      }>\n    }\n\n    Notes:\n    - NPS grouping: detractors = 0-6, passives = 7-8, promoters = 9-10.\n    - If no matches, returns { data: [] }.\n    - Use 'fields' and 'field_values' to construct valid filters.\n    - Use 'drivers' to discover driver IDs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "default": "=",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "driver_ids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The ID of the driver to filter by. Use the tool `drivers` to get the possible values."
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "driver_level": {
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "type": "string",
+            "default": "primary",
+            "description": "Choose between retrieving the data for primary or secondary drivers"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-03-06",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "drivers",
+      "description": "Return the catalog of **primary Drivers** configured for your surveys. Use this to map driver IDs to labels and to supply valid `driver_ids` when calling **drivers_loyalty**.\n\n    When to use\n    - Build a list of available primary drivers for filtering or display.\n    - Resolve `driver_ids` optional dependency of drivers_loyalty (only **primary driver IDs** are valid filters).\n    - Show human-friendly driver names for IDs found in analytics outputs (e.g., stack_id/stack_reference).\n\n    When not to use\n    - Not for counts or loyalty breakdowns (use drivers_loyalty).\n    - Not for secondary driver analysis or IDs — these cannot be used as filters.\n\n    Parameters\n    - (none)\n\n    Output\n    {\n      data: Array<{\n        id: number,              // primary driver ID (valid for drivers_loyalty filtering)\n        reference: string,       // internal label/slug\n        display_name: string     // human-friendly label (prefer for UI; fallback to reference if empty)\n      }>\n    }\n\n    Notes & guidance\n    - Only **primary driver IDs** from this catalog can be passed into drivers_loyalty's `driver_ids` parameter.\n    - Secondary drivers may exist in survey questions but cannot be used for filtering.\n    - IDs are unique and stable; always prefer ID over text matching for filters.\n    - No pagination or parameters: the full set of primary drivers returns in one response.\n\n    Examples\n    - \"List available drivers\" → call this tool; present `display_name` alongside `id`.\n    - \"Filter drivers_loyalty by Product and Customer Support\" → resolve IDs here, then call drivers_loyalty with `driver_ids: [5, 21]` and `driver_level: \"primary\"`.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "field_count",
+      "description": "Return the number of values for a given filterable field.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "field"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The field to get the values for. The possible fields can be retrieved with the tool `fields`, using their `field` property here. "
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "field_values",
+      "description": "Return the possible **values** for a given filterable field (for use in `criterias[].field_values` across analytics tools). \n    This is a **lookup** helper, not a browsing tool.\n\n    When to use\n    - You need valid IDs to populate `criterias[].field_values` for another analytics tool (e.g., nps_summary, nps_segment, loyalty_movement, drivers_loyalty, topics_by_sentiment, search_responses).\n    - You want to show a short, filtered picklist of values for a field.\n\n    When not to use\n    - Do **not** iterate or brute-force scan large catalogs. If you need a specific value, use the `search` parameter to narrow results.\n    - Not for free-text or numeric range filters (use the target analytics tool's `criterias` appropriately).\n\n    Parameters\n    - field (string, required): The field whose values you want. Discover valid fields with the **fields** tool and pass its `field` property here.\n    - search (string, optional): Text to filter the returned values (use this for **specific lookups** instead of iterating).\n\n    Output\n    {\n      data: Array<{\n        id: number,           // canonical value ID to use in criterias[].field_values\n        reference: string,    // raw/system value\n        display_name: string  // human-friendly label (prefer for UI; fallback to 'reference' if empty)\n      }>\n    }\n\n    Notes & guidance\n    - We recommend using **field_count** first. If it returns more than 100 values, use the **search** parameter to filter.\n    - Always pass **IDs** from this list into `criterias[].field_values`; avoid matching on text.\n    - Some values may contain Unicode or special characters — do not sanitize; rely on `id`.\n    - Not all fields have enumerated values; such fields may return an empty list.\n    - Combine with **fields** to discover which fields support enumerated values and to get the correct `field` key.\n\n    Examples\n    - \"Filter by Account Manager = 'John Doe'\" → call this tool with { field: \"segment_a\", search: \"John Doe\" } → take the returned `id` and use it in `criterias[].field_values` for your analytics query.\n    - \"Show possible values for Segment C\" → { field: \"segment_c\" } → present `display_name` with the corresponding `id`.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "field"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The field to get the values for. The possible fields can be retrieved with the tool `fields`, using their `field` property here. "
+          },
+          "search": {
+            "type": "string",
+            "description": "Optional search string to filter values. Use this when `field_count` returns more than 100 values to narrow down results."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fields",
+      "description": "List all **filterable fields** available for use in analytics `criterias[].field` (and in tools that accept a `segment_field`). \n    Use this to identify which field a user is referring to (e.g., \"Account Manager\" → `segment_a`) and to discover the exact **machine key** to pass to other tools.\n\n    When to use\n    - Map a user's natural-language label (\"Account Manager\", \"Country\", \"Drivers\") to the correct `field` key.\n    - Before calling tools that require `criterias[].field` or `segment_field` (e.g., nps_by_segment, nps_summary, loyalty_movement, drivers_loyalty, topics_by_sentiment, responses search).\n    - To check which fields support enumerated values (then call **field_values** to fetch valid IDs).\n\n    When not to use\n    - Not for fetching the **values** of a field (use **field_values** with the chosen `field`).\n    - Not for driver catalogs (use **drivers** / drivers catalog tool).\n    - Not for `period_field` options (those are fixed enums in each tool's schema).\n\n    Parameters\n    - (none)\n\n    Output\n    {\n      data: Array<{\n        field_id: number,                 // internal identifier\n        entity: \"survey\" | \"response\",    // where the field originates\n        field: string,                    // machine key to use in criterias/segment_field (use verbatim)\n        name: string,                     // human-friendly label (use for UI or fuzzy matching from user text)\n        description: string | null,       // optional help text\n        hierarchy?: boolean               // true if values are hierarchical (e.g., Division)\n      }>\n    }\n\n    Notes & guidance\n    - Always pass the **`field`** property (not `name`) into other tools. Some keys may include special characters or slashes (e.g., \"table/drivers\") — use them **as-is**.\n    - To build criteria: \n      1) Call this tool to find the correct `field`. \n      2) Call **field_values** to retrieve valid **IDs** for that field. \n      3) Use those IDs in `criterias[].field_values`.\n    - For hierarchical fields (`hierarchy: true`), the **field_values** response may include nested or multi-level options; choose the appropriate level's **id** for filtering.\n    - This tool can be used alongside **any** analytics tool that accepts `criterias` or `segment_field`, even if that other tool doesn't explicitly mention it.\n\n    Examples\n    - User: \"Filter by Account Manager 'John Doe'.\" \n      → Use this tool to locate `segment_a` (name: \"Account Manager\"), then **field_values** with { field: \"segment_a\", search: \"John Doe\" } to get the ID, then pass that ID in `criterias[].field_values`.\n    - User: \"Group NPS by Touchpoint.\"\n      → Use this tool to find `nps_format` (name: \"Touchpoint\"), then call nps_by_segment with `segment_field: \"nps_format\"`.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "loyalty_movement",
+      "description": "Breaks down **loyalty movement** (from → to) within a period, for:\n- **Contacts**: cohorts of individual respondents who answered **≥2** surveys in the period (earlier status → later status).\n- **Accounts**: account-level loyalty status changes across snapshots in/around the selected period.\n- **Revenue**: same account movements but **weighted by revenue** (sum for the specified revenue_year).\n\nMovement categories depend on type:\n- Contacts: `\"at-risk\"`, `\"passive\"`, `\"safe\"`, `\"unknown\"`.\n- Accounts/Revenue: typically `\"safe\"`, `\"at-risk\"`, `\"unknown\"`.\n(Names align with your CustomerGauge configuration; conceptually they map to detractor/passive/promoter/insufficient-data segments.)\n\nParameters:\n- period_start (string, optional): Start date (YYYY-MM-DD or YYYY-MM). Default = system default.\n- period_end   (string, optional): End date   (YYYY-MM-DD or YYYY-MM). Must be ≥ period_start. Default = system default.\n- period_field (enum, optional): Date field used for filtering. One of [\"date_order\" (customer defined date tied to survey invitation),\"date_email_sent\" (date of survey invitation sent),\"date_form_completed\" (date of survey completed),\"date_creation\" (date of survey invitation import)]. Default = \"date_email_sent\".\n- criterias (array, optional): Additional filters. Each item:\n  {\n    field: string,           // use 'fields' tool to discover valid field names (use the 'field' property)\n    field_values: number[],  // use 'field_values' tool to discover valid IDs\n    operator: \"=\" | \"!=\"\n  }\n- type (enum, optional): \"contact\" | \"account\" | \"revenue\". Default = system default.\n- revenue_year (number, conditional): **Required when type = \"revenue\"**. Any valid calendar year.\n\nOutput:\n{\n  data: {\n    total: { resources_count: number },  // Contacts/Accounts: count of entities; Revenue: sum of revenue (tenant currency)\n    movement: Array<{\n      from: \"safe\" | \"at-risk\" | \"passive\" | \"unknown\",\n      to:   \"safe\" | \"at-risk\" | \"passive\" | \"unknown\",\n      resources_count: number,        // Contacts/Accounts: entity count; Revenue: revenue sum\n      resources_percentage: number    // fraction in [0,1] of total.resources_count\n    }>\n  }\n}\n\nNotes:\n- Percentages are **fractions** (e.g., 0.2 = 20%). Multiply by 100 and **round to 1 decimal** if you need percents.\n- Contacts include only respondents with **multiple** responses in the filtered period.\n- If no matching data, returns { data: { total: { resources_count: 0 }, movement: [] } }.\n- Use 'fields' and 'field_values' to build valid `criterias`.\n\nExamples:\n- “Show contact movement last quarter”: { type: \"contact\", period_start: \"2025-04\", period_end: \"2025-06\" }\n- “Account movement by form-completed date”: { type: \"account\", period_field: \"date_form_completed\", period_start: \"2025-01-01\", period_end: \"2025-06-30\" }\n- “Revenue-weighted movement for FY2024”: { type: \"revenue\", revenue_year: 2024, period_start: \"2024-01\", period_end: \"2024-12\" }",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "type": {
+            "enum": [
+              "contact",
+              "account",
+              "revenue"
+            ],
+            "type": "string",
+            "default": "account",
+            "description": "Choose between retrieving the data for Contacts, Accounts, or Revenue"
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-03-06",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "revenue_year": {
+            "type": "number",
+            "description": "Required when type is revenue. Any valid calendar year"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nps_segment",
+      "description": "Returns NPS and related engagement metrics grouped by a **segment field** within a period. Each row represents one segment value with delivered invitations, responses, NPS loyalty mix, and comment metrics.\n\n    Parameters:\n    - period_start (string, optional): Start date (YYYY-MM-DD or YYYY-MM). Default = system default.\n    - period_end   (string, optional): End date (YYYY-MM-DD or YYYY-MM). Must be ≥ period_start. Default = system default.\n    - period_field (enum, optional): Date field used for filtering. One of [\n        \"date_order\" (customer defined date tied to survey invitation),\n        \"date_email_sent\" (date of survey invitation sent),\n        \"date_form_completed\" (date of survey completed),\n        \"date_creation\" (date of survey invitation import)\n      ]. Default = \"date_email_sent\".\n    - criterias (array, optional): Filters to narrow results. Each item:\n      {\n        field: string,            // use 'fields' tool to discover valid field names\n        field_values: number[],   // use 'field_values' tool to discover valid IDs\n        operator: \"=\" | \"!=\"\n      }\n    - segment_field (string, optional): Field to **group by**. Use 'fields' tool and pass its 'field' property. Default = system default.\n\n    Metrics returned per segment:\n    - Delivered: invitations delivered.\n    - Responses (count, Response Rate): number of completed surveys; Response Rate = responses.count / delivered.\n    - Non-Responses (count, Non-Response Rate): invitations with no response; Non-Response Rate = non_responses.count / delivered.\n    - Promoters (count, Promoter Share): respondents with score 9-10; Promoter % = promoters.count / responses.count.\n    - Passives (count, Passive Share): respondents with score 7-8; Passive % = passives.count / responses.count.\n    - Detractors (count, Detractor Share): respondents with score 0-6; Detractor % = detractors.count / responses.count.\n    - Comments (count, Comment Rate): number of open-text comments; Comment Rate = comments.count / responses.count.\n    - NPS: ((promoters.count - detractors.count) / responses.count) * 100, range -100 to 100. NPS should not have decimals.\n\n    Output:\n    {\n      data: Array<{\n        stack: { id: number, reference: string, display_name: string },\n        delivered: number,\n        responses: { count: number, slice: number },\n        non_responses: { count: number, slice: number },\n        promoters: { count: number, slice: number | null },\n        passives: { count: number, slice: number | null },\n        detractors: { count: number, slice: number | null },\n        comments: { count: number, slice: number | null },\n        nps: number | null\n      }>\n    }\n\n    Notes:\n    - All `slice` values are fractions [0,1]. Multiply by 100 and **round to 1 decimal** when displaying percentages.\n    - NPS is null if no responses in the segment.\n    - If no matching data, returns { data: [] }.\n    - Use 'fields' and 'field_values' tools to build valid filters and segment fields.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "The page number to retrieve"
+          },
+          "per_page": {
+            "type": "number",
+            "default": 10,
+            "maximum": 25,
+            "minimum": 1,
+            "description": "The number of items per page"
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-08-03",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "segment_field": {
+            "type": "string",
+            "default": "company",
+            "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nps_summary",
+      "description": "Returns an NPS summary for a given period, including delivered invitations, response mix, loyalty mix, comment metrics, and NPS.\n\n    Parameters:\n    - period_start (string, optional): Start date (YYYY-MM-DD or YYYY-MM). Default = system default.\n    - period_end   (string, optional): End date   (YYYY-MM-DD or YYYY-MM). Must be ≥ period_start. Default = system default.\n    - period_field (enum, optional): Date field used for filtering. One of [\n        \"date_order\" (customer defined date tied to survey invitation),\n        \"date_email_sent\" (date of survey invitation sent) — default,\n        \"date_form_completed\" (date of survey completed),\n        \"date_creation\" (date of survey invitation import)\n      ].\n    - criterias (array, optional): Additional filters. Each item:\n      {\n        field: string,            // use 'fields' tool to discover valid field names (use the 'field' property)\n        field_values: number[],   // use 'field_values' tool to discover valid IDs/values\n        operator: \"=\" | \"!=\"\n      }\n\n    Metrics returned:\n    - NPS: ((promoters.count - detractors.count) / responses.count) * 100; range -100..100; null if responses.count = 0. NPS should not have decimals.\n    - Delivered Invitations: transport.delivered = invitations delivered in the period.\n    - Responses: transport.responses.count\n    - Response Rate: transport.responses.slice = responses.count / delivered.\n    - Loyalty shares:\n      - Promoter %: loyalty.promoters.slice = promoters.count / responses.count (scores 9-10).\n      - Passive %:  loyalty.passives.slice   = passives.count / responses.count (scores 7-8).\n      - Detractor %: loyalty.detractors.slice = detractors.count / responses.count (scores 0-6).\n    - Comments: comments.count\n    - Comment Rate: comments.slice = comments.count / responses.count.\n\n    Output:\n    {\n      data: {\n        nps: number | null,\n        transport: {\n          delivered: number,\n          responses: { count: number, slice: number }   // slice in [0,1] = Response Rate\n        },\n        loyalty: {\n          promoters:  { count: number, slice: number | null }, // null if responses.count = 0\n          passives:   { count: number, slice: number | null },\n          detractors: { count: number, slice: number | null }\n        },\n        comments: { count: number, slice: number | null }      // null if responses.count = 0\n      }\n    }\n\n    Notes:\n    - All \"slice\" values are **fractions** in [0,1]; convert to percentages and **round to 1 decimal** for display.\n    - Non-responses count can be derived as: non_responses.count = transport.delivered - transport.responses.count.\n    - Loyalty shares may not sum to exactly 1.0 due to rounding; use raw slices for precise calculations.\n    - If no matching data, returns { data: { nps: null, transport: { delivered: 0, responses: { count: 0, slice: 0 } }, loyalty: { promoters: {count:0, slice:null}, passives: {count:0, slice:null}, detractors: {count:0, slice:null} }, comments: { count: 0, slice: null } } }.\n",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-08-03",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nps_trend",
+      "description": "Returns NPS and related engagement metrics grouped by a **time interval** (day/week/month/quarter/year) within a period. Each array item represents one interval bucket with its NPS, delivered invitations, response mix, loyalty mix, and comments.\n\n    Parameters:\n    - period_start (string, optional): Start date (YYYY-MM-DD or YYYY-MM). Default = system default.\n    - period_end   (string, optional): End date   (YYYY-MM-DD or YYYY-MM). Must be ≥ period_start. Default = system default.\n    - period_field (enum, optional): Date field used for filtering. One of [\n        \"date_order\" (customer defined date tied to survey invitation),\n        \"date_email_sent\" (date of survey invitation sent) — default,\n        \"date_form_completed\" (date of survey completed),\n        \"date_creation\" (date of survey invitation import)\n      ].\n    - criterias (array, optional): Additional filters. Each item:\n      {\n        field: string,            // use 'fields' tool to discover valid field names (pass the 'field' property)\n        field_values: number[],   // use 'field_values' tool to discover valid IDs/values\n        operator?: \"=\" | \"!=\"\n      }\n    - interval (enum, optional): \"day\" | \"week\" | \"month\" | \"quarter\" | \"year\". Default = system default.\n\n    Metrics per interval:\n    - **NPS**: Net Promoter Score = ((promoters.count - detractors.count) / responses.count) * 100. Rounded to an integer (no decimals). Null if responses.count = 0.\n    - **Delivered**: number of invitations delivered in the bucket.\n    - **Response Rate**: responses.count / delivered.\n    - **Non-Response Rate**: non_responses.count / delivered.\n    - **Promoter %**: promoters.count / responses.count (score 9-10).\n    - **Passive %**: passives.count / responses.count (score 7-8).\n    - **Detractor %**: detractors.count / responses.count (score 0-6).\n    - **Comment Rate**: comments.count / responses.count.\n\n    Output:\n    {\n      data: Array<{\n        period: string,     // label for the bucket; format depends on interval (e.g., \"2025-06\" for month)\n        start: string,      // bucket start date \"YYYY-MM-DD\"\n        end: string,        // bucket end date   \"YYYY-MM-DD\"\n        nps: number | null,\n        delivered: number,\n        responses:      { count: number, slice: number },\n        non_responses:  { count: number, slice: number },\n        promoters:      { count: number, slice: number | null },\n        passives:       { count: number, slice: number | null },\n        detractors:     { count: number, slice: number | null },\n        comments:       { count: number, slice: number | null }\n      }>\n    }\n\n    Notes:\n    - All \"slice\" values are returned as fractions in [0,1]; they must be converted to percentages and rounded to 1 decimal before presentation.\n    - Loyalty and comment slices may be null when responses.count = 0.\n    - delivered = responses.count + non_responses.count. Non_responses.slice ≈ 1 - responses.slice (subject to rounding).\n    - Use 'fields' and 'field_values' to construct valid filters.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "interval": {
+            "enum": [
+              "day",
+              "week",
+              "month",
+              "quarter",
+              "year"
+            ],
+            "type": "string",
+            "default": "week",
+            "description": "The granularity of the time grouping."
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "enum": [
+                    "=",
+                    "!="
+                  ],
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-08-03",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_responses",
+      "description": "Look up **individual survey responses** and/or search for **exact comment matches**. Returns the first page of matching responses (do **not** paginate).\n\n    IMPORTANT:\n    - Provide **at least one** of `criterias` or `search`; otherwise the request is invalid.\n    - This tool should **not** be iterated beyond the first page. Ignore any `links.next` value; refine filters instead.\n\n    Parameters:\n    - period_start (string, optional): Start date (YYYY-MM-DD or YYYY-MM).\n    - period_end   (string, optional): End date   (YYYY-MM-DD or YYYY-MM).\n    - period_field (enum, optional): Date field used for filtering. One of [\n        \"date_order\" (customer defined date tied to survey invitation),\n        \"date_email_sent\" (date of survey invitation sent) — default,\n        \"date_form_completed\" (date of survey completed),\n        \"date_creation\" (date of survey invitation import)\n      ].\n    - criterias (array, optional): Additional filters. Each item:\n      {\n        field: string,            // use 'fields' tool (use its 'field' property)\n        field_values: number[],   // use 'field_values' tool for valid IDs/values\n        operator: \"=\" | \"!=\"\n      }\n      // All criteria objects are combined with AND. Within a single criterion, the array behaves like IN-list.\n    - search (object, optional): Direct lookups (combined with AND across provided keys).\n      {\n        CGID?: number[],          // CustomerGauge response IDs (equals any of)\n        comment?: string[],       // EXACT match on full comment text (no partial/fuzzy)\n        first_name?: string[],    // equals any of\n        last_name?: string[],     // equals any of\n        email?: string[],         // equals any of\n        telephone?: string[]      // equals any of (raw string)\n      }\n\n    Output:\n    {\n      data: Array<{\n        type: \"response\",\n        number_customergauge: number,   // same concept as CGID\n        contact_id: number | null,\n        contact_identifier: string,\n        first_name: string | null,\n        last_name: string | null,\n        email: string | null,\n        sms_telephone: string | null,\n        account: { id: number | null, name: string | null, display_name: string | null },\n        nps: number,                    // integer in [-1..10]; -1 indicates unscored/NA depending on format\n        comment: string | null,\n        comment_translation: string | null, // machine/auto translation when available\n        date_email_sent: \"YYYY-MM-DD HH:MM:SS\" | null,\n        date_form_completed: \"YYYY-MM-DD HH:MM:SS\" | null,\n        nps_format: { id: number, reference: string | null }, // e.g., \"Relationship\", \"Support\", \"Competitive\"\n        segment_c: { id: number, reference: string | null }   // example of an additional mapped field\n      }>,\n      links: { first: string | null, last: string | null, prev: string | null, next: string | null },\n      meta: {\n        current_page: number,\n        current_page_url: string,\n        from: number,\n        path: string,\n        per_page: number,  // page size of this response (typically 25)\n        to: number\n      },\n      header?: Record<string, string>  // optional label mappings for favorite/custom fields\n    }\n\n    Usage guidance:\n    - Use `search.CGID` to fetch specific responses by CG-ID.\n    - Use `search.comment` for **exact** comment text matches (no substring search).\n    - Combine `search` keys with AND (e.g., exact email AND exact first_name).\n    - If too many results: narrow by `period_start/period_end`, add `criterias`, or add more `search` keys.\n    - Do **not** request additional pages; this tool is intended for quick lookups, not bulk export.\n\n    Examples:\n    - \"Find response by CGID 21642\" → { search: { CGID: [21642] } }\n    - \"Find all responses where comment is exactly 'The service is really bad'\" → { search: { comment: [\"The service is really bad\"] } }\n    - \"Find John Doe's responses in July 2025 by completed date\" → {\n        period_start: \"2025-07\",\n        period_end: \"2025-07\",\n        period_field: \"date_form_completed\",\n        search: { first_name: [\"John\"], last_name: [\"Doe\"] }\n      }\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "search": {
+            "type": "object",
+            "properties": {
+              "CGID": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "email": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "comment": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "last_name": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "telephone": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "first_name": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Additional filters that can be used for searching. Accepted fields: CGID, First Name, Last Name, Email, Telephone, Comment. When more than one field is provided in search, the filtering will use AND logic (all conditions must be satisfied).",
+            "additionalProperties": false
+          },
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "support",
+      "description": "Ask product \"how-to\" and best-practice questions about **CustomerGauge**. This RAG tool semantically searches CustomerGauge's Knowledge Base, guides, and best-practice content, then returns a clear answer **with source links**. Use it for setup, configuration, troubleshooting, and program strategy (SSO, integrations, APIs, campaigns, sending surveys, response-rate tactics, tying revenue to NPS/AX, etc.).\n\n    When to use\n    - User asks **\"How do I…?\"**, **\"Where do I…?\"**, **\"What's the best way to…?\"** related to CustomerGauge features or AX/CX programs.\n    - You need step-by-step guidance (e.g., set up SSO with Azure AD/Okta, configure webhooks, map fields, build campaigns, schedule sends).\n    - You need **program best practices** (improving response rate, closing the loop, health scoring, revenue linkage to NPS, governance/playbooks).\n    - You need authoritative answers with **source links** to official docs or best-practice articles.\n    - Combine with analytics tools when relevant (e.g., explain how to filter by a **field** then call analytics; or show driver best practices and enrich with **drivers**/**drivers_loyalty** results). It's fine to use this tool alongside others even if those tools don't explicitly mention it.\n\n    When not to use\n    - Pulling **live metrics or lists** (use analytics tools like nps_summary, nps_by_segment, loyalty_movement, drivers_loyalty, topics_by_sentiment, responses search, fields/field_values, drivers).\n    - Exact comment matches or respondent lookups (use **responses search** instead).\n    - Product pricing, contracts, or account-specific admin actions not covered by docs.\n\n    Parameter\n    - question (string, required): The user's question to the CustomerGauge Best Practices / KB assistant.\n      - Include relevant context to improve results: feature/area, IdP (for SSO), API/language, error message, tenant region/edition, desired outcome, language.\n\n    Output\n    {\n      data: {\n        answer: string,     // concise, conversational guidance tailored to the question\n        sources: Array<{\n          title: string,\n          url: string,      // link to the KB/best-practice article\n          excerpt: string   // short supporting passage\n        }>,\n        steps?: string[],   // actionable step-by-step (when applicable)\n        tips?: string[],    // best-practice tips / pitfalls\n        followups?: string[], // suggested clarifying questions or next tasks\n        language?: string   // BCP-47 (e.g., \"en\", \"nl\"); usually mirrors the question\n      }\n    }\n\n    Behavior & guidance\n    - Prefer **procedural steps** and checklists when the user is trying to accomplish a task; include field names and menu paths.\n    - Include **source links** (1-5) that directly support the guidance; prefer official/how-to pages over generic references.\n    - If the question is ambiguous, provide the most likely path **and** list the minimal extra details that would change the answer (e.g., IdP type, API version).\n    - If documentation is conflicting or thin, state the uncertainty briefly and present the safest supported approach.\n    - For code/API questions, include **minimal runnable examples** (auth, endpoint, payload) and link to reference pages.\n    - When suggesting analytics actions (filters, segments, drivers), name the exact **field** keys and remind how to fetch valid values with **fields** and **field_values**.\n\n    Examples (model cues)\n    - \"How do I set up **SSO with Okta** and enforce login for all users?\"  \n      → Provide prerequisites, Okta app settings, CustomerGauge SSO config, test/rollback, and links.\n    - \"What are proven ways to **increase response rate** for B2B email surveys?\"  \n      → Timing, sender, subject, throttling, reminders, contact hygiene, dedupe windows, and benchmarks links.\n    - \"How can I **tie revenue to NPS** and report impact by account?\"  \n      → Data mapping (revenue fields), survey/campaign linking, reporting widgets, and follow-up automation practices.\n    - \"What webhook do I use to **send detractor alerts to Slack**?\"  \n      → Webhook endpoint, payload template, authentication, sample JSON, and limitations.\n\n    Notes\n    - This tool returns **knowledge and guidance**, not tenant data. Use analytics tools for numbers/lists.\n    - Multi-language content is supported when available; otherwise summaries may return in the question's language with English sources.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The question to ask the q business support ai chat."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "topics_by_sentiment",
+      "description": "Analyze **pre-defined business topics** (configured by the CX champion) that are mentioned in open-text survey comments. Each topic is categorized by **sentiment** and **NPS loyalty mix**, showing what aspects customers talk about most and how they feel.\n\n    !!! Usage guidance:\n    - Use this tool when the user asks about **\"what gets talked about\"**, **\"which themes come up in comments\"**, or **\"topics being praised or criticized\"**.\n    - Do **not** use this tool for literal comment text searches (e.g., “find all comments containing 'delivery issue'”). For exact matches, use the **search_responses tool** instead.\n\n    Parameters:\n    - period_start (string, optional): Start date (YYYY-MM-DD or YYYY-MM). Default = system default.\n    - period_end   (string, optional): End date   (YYYY-MM-DD or YYYY-MM). Must be ≥ period_start. Default = system default.\n    - period_field (enum, optional): Date field used for filtering. One of [\n        \"date_order\" (customer defined date tied to survey invitation),\n        \"date_email_sent\" (date of survey invitation sent) — default,\n        \"date_form_completed\" (date of survey completed),\n        \"date_creation\" (date of survey invitation import)\n      ].\n    - criterias (array, optional): Additional filters. Each item:\n      {\n        field: string,            // use 'fields' tool to discover valid field names\n        field_values: number[],   // use 'field_values' tool to discover valid IDs/values\n        operator: \"=\" | \"!=\"\n      }\n\n    Metrics per topic:\n    - **Responses**: total number of responses mentioning the topic.\n    - **Sentiment distribution**: positive, neutral, negative, mixed, unknown.\n      Each has { count, slice } where slice is fraction of responses.\n    - **Loyalty mix**: promoters (9-10), passives (7-8), detractors (0-6). Each has { count, slice }.\n    - **NPS**: ((promoters - detractors) / responses) * 100, **rounded to an integer**.\n\n    Output:\n    {\n      data: Array<{\n        stack: { id: number, reference: string },\n        positive: { count: number, slice: number },\n        neutral:  { count: number, slice: number },\n        negative: { count: number, slice: number },\n        mixed:    { count: number, slice: number },\n        unknown:  { count: number, slice: number },\n        responses: number,\n        promoters: { count: number, slice: number },\n        passives:  { count: number, slice: number },\n        detractors:{ count: number, slice: number },\n        nps: number\n      }>\n    }\n\n    Notes:\n    - All \"slice\" fields are fractions in [0,1]; convert to percentages and round to **1 decimal** when displaying.\n    - Topics are **pre-defined by the CX champion** as strategically important business drivers (not arbitrary keywords).\n    - If no matches, returns { data: [] }.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "criterias": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "field_values",
+                "operator"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field to filter by. Use the tool `fields` to get a list of possible fields, and use the `field` property from them."
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "The comparison to do when filtering. Available operators: '=', '!='"
+                },
+                "field_values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Values to filter by. Use the tool `field_values` to get the possible values."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Filters to apply when we want results limited to a specific criteria"
+          },
+          "period_end": {
+            "type": "string",
+            "default": "2025-09-02",
+            "description": "The end date of the period. (YYYY-MM-DD or YYYY-MM)"
+          },
+          "period_field": {
+            "enum": [
+              "date_order",
+              "date_email_sent",
+              "date_form_completed",
+              "date_creation"
+            ],
+            "type": "string",
+            "default": "date_email_sent",
+            "description": "The field to filter by"
+          },
+          "period_start": {
+            "type": "string",
+            "default": "2025-03-06",
+            "description": "The start date of the period. (YYYY-MM-DD or YYYY-MM)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cgauge/mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "cookieToken"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "cookieToken": {
+            "type": "string",
+            "description": "Cookie token for authentication"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

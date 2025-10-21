@@ -1,0 +1,46 @@
+{
+  "qualifiedName": "mcp-nmap-server",
+  "displayName": "NMAP Server",
+  "description": "Perform network scanning operations using NMAP.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [],
+  "connections": [
+    {
+      "type": "stdio",
+      "stdioFunction": "config => ({ command: 'npx', args: ['-y', 'mcp-nmap-server', '--target', config.target, ...(config.ports ? ['--ports', config.ports] : []), '--scanType', config.scanType || 'quick', '--timing', config.timing?.toString() || '3', ...(config.additionalFlags ? ['--additionalFlags', config.additionalFlags] : []) ] })",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "target"
+        ],
+        "properties": {
+          "ports": {
+            "type": "string",
+            "description": "Optional port specification."
+          },
+          "target": {
+            "type": "string",
+            "description": "Host or network to scan."
+          },
+          "timing": {
+            "type": "number",
+            "default": 3,
+            "description": "NMAP timing template."
+          },
+          "scanType": {
+            "type": "string",
+            "default": "quick",
+            "description": "Scan type."
+          },
+          "additionalFlags": {
+            "type": "string",
+            "description": "Optional additional NMAP flags."
+          }
+        }
+      }
+    }
+  ]
+}

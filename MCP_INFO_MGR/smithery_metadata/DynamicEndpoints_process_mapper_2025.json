@@ -1,0 +1,998 @@
+{
+  "qualifiedName": "@DynamicEndpoints/process_mapper_2025",
+  "displayName": "Process Map Server",
+  "description": "Enable AI-powered process analysis, chart generation, and optimization recommendations for your workflows. Upload various file types and receive intelligent insights and visual diagrams to improve efficiency and compliance. Streamline process management with batch processing and cross-analysis capabilities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/modelcontextprotocol.github.io.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/process_mapper_2025",
+  "security": null,
+  "tools": [
+    {
+      "name": "upload_file",
+      "description": "Store files for analysis",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filename",
+          "content",
+          "mimeType"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Base64 encoded file content"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Name of the file"
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type of the file"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_file",
+      "description": "Extract process information using AI",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "ID of the uploaded file to analyze"
+          },
+          "analysisType": {
+            "enum": [
+              "process_extraction",
+              "optimization",
+              "comparison"
+            ],
+            "type": "string",
+            "default": "process_extraction",
+            "description": "Type of analysis to perform"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_chart",
+      "description": "Create process diagrams",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Chart title"
+          },
+          "chartType": {
+            "enum": [
+              "mermaid",
+              "vsdx",
+              "lucid",
+              "bpmn"
+            ],
+            "type": "string",
+            "default": "mermaid",
+            "description": "Type of chart to generate"
+          },
+          "processData": {
+            "type": "string",
+            "description": "Process data in JSON format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_insights",
+      "description": "AI-powered recommendations",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData"
+        ],
+        "properties": {
+          "focusArea": {
+            "enum": [
+              "efficiency",
+              "bottlenecks",
+              "automation",
+              "compliance"
+            ],
+            "type": "string",
+            "description": "Specific area to focus insights on"
+          },
+          "processData": {
+            "type": "string",
+            "description": "Process data in JSON format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_supported_formats",
+      "description": "Show capabilities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "download_chart",
+      "description": "Retrieve generated charts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "chartId"
+        ],
+        "properties": {
+          "chartId": {
+            "type": "string",
+            "description": "Chart ID to download"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "batch_analyze",
+      "description": "Process multiple files",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileIds"
+        ],
+        "properties": {
+          "fileIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of file IDs to analyze"
+          },
+          "analysisType": {
+            "enum": [
+              "process_extraction",
+              "optimization",
+              "comparison"
+            ],
+            "type": "string",
+            "default": "process_extraction",
+            "description": "Type of analysis to perform"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare_processes",
+      "description": "Cross-analysis comparison",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData1",
+          "processData2"
+        ],
+        "properties": {
+          "processData1": {
+            "type": "string",
+            "description": "First process data in JSON format"
+          },
+          "processData2": {
+            "type": "string",
+            "description": "Second process data in JSON format"
+          },
+          "comparisonType": {
+            "enum": [
+              "efficiency",
+              "cost",
+              "time",
+              "quality"
+            ],
+            "type": "string",
+            "default": "efficiency",
+            "description": "Aspect to compare"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_process",
+      "description": "Export process data",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "json",
+              "csv",
+              "excel",
+              "pdf",
+              "bpmn",
+              "xml"
+            ],
+            "type": "string",
+            "default": "json",
+            "description": "Export format"
+          },
+          "processData": {
+            "type": "string",
+            "description": "Process data in JSON format"
+          },
+          "includeMetrics": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include performance metrics in export"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_processes",
+      "description": "Search stored processes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Maximum number of results"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "dateTo": {
+                "type": "string",
+                "description": "End date filter (ISO format)"
+              },
+              "dateFrom": {
+                "type": "string",
+                "description": "Start date filter (ISO format)"
+              },
+              "department": {
+                "type": "string",
+                "description": "Filter by department"
+              },
+              "processType": {
+                "type": "string",
+                "description": "Filter by process type"
+              }
+            },
+            "description": "Search filters",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_process",
+      "description": "Validate process structure",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData",
+          "validationRules"
+        ],
+        "properties": {
+          "processData": {
+            "type": "string",
+            "description": "Process data in JSON format"
+          },
+          "validationRules": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "completeness",
+                "consistency",
+                "efficiency",
+                "compliance",
+                "risk_assessment"
+              ],
+              "type": "string"
+            },
+            "description": "Validation rules to apply"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_documentation",
+      "description": "Create process documentation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData"
+        ],
+        "properties": {
+          "template": {
+            "enum": [
+              "standard",
+              "detailed",
+              "executive",
+              "technical",
+              "compliance"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Documentation template"
+          },
+          "processData": {
+            "type": "string",
+            "description": "Process data in JSON format"
+          },
+          "includeCharts": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include process charts in documentation"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "estimate_costs",
+      "description": "Calculate process costs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData",
+          "costFactors"
+        ],
+        "properties": {
+          "timeframe": {
+            "enum": [
+              "monthly",
+              "quarterly",
+              "annually"
+            ],
+            "type": "string",
+            "default": "monthly",
+            "description": "Cost calculation timeframe"
+          },
+          "costFactors": {
+            "type": "object",
+            "required": [
+              "hourlyRate"
+            ],
+            "properties": {
+              "hourlyRate": {
+                "type": "number",
+                "description": "Average hourly rate for staff"
+              },
+              "systemCosts": {
+                "type": "number",
+                "description": "System/tool costs per month"
+              },
+              "overheadRate": {
+                "type": "number",
+                "description": "Overhead percentage"
+              }
+            },
+            "description": "Cost calculation factors",
+            "additionalProperties": false
+          },
+          "processData": {
+            "type": "string",
+            "description": "Process data in JSON format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_templates",
+      "description": "Get process templates",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "manufacturing",
+              "finance",
+              "hr",
+              "it",
+              "marketing",
+              "operations",
+              "quality",
+              "general"
+            ],
+            "type": "string",
+            "description": "Template category"
+          },
+          "complexity": {
+            "enum": [
+              "simple",
+              "moderate",
+              "complex"
+            ],
+            "type": "string",
+            "default": "moderate",
+            "description": "Template complexity level"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add_resource",
+      "description": "Add a resource to a process",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processId",
+          "name",
+          "type",
+          "description"
+        ],
+        "properties": {
+          "cost": {
+            "type": "number",
+            "description": "Cost of the resource"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the resource"
+          },
+          "type": {
+            "enum": [
+              "human",
+              "equipment",
+              "material",
+              "information",
+              "financial",
+              "digital",
+              "infrastructure"
+            ],
+            "type": "string",
+            "description": "Type of resource"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Required skills (for human resources)"
+          },
+          "capacity": {
+            "type": "number",
+            "description": "Capacity or throughput of the resource"
+          },
+          "processId": {
+            "type": "string",
+            "description": "ID of the process to add resource to"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the resource"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_resource_utilization",
+      "description": "Analyze how resources are being utilized across processes",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "resourceIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific resource IDs to analyze (optional)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_dependencies",
+      "description": "Identify critical resource dependencies and bottlenecks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "processId": {
+            "type": "string",
+            "description": "Process ID to analyze dependencies for (optional)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "optimize_allocation",
+      "description": "Generate recommendations for optimal resource allocation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processIds"
+        ],
+        "properties": {
+          "processIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Process IDs to optimize"
+          },
+          "constraints": {
+            "type": "object",
+            "description": "Resource constraints and limitations",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_prompt",
+      "description": "Create a custom prompt template for specific analysis needs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "type",
+          "description",
+          "template",
+          "variables"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the prompt"
+          },
+          "type": {
+            "enum": [
+              "analysis",
+              "optimization",
+              "validation",
+              "documentation",
+              "training",
+              "troubleshooting"
+            ],
+            "type": "string",
+            "description": "Type of prompt"
+          },
+          "context": {
+            "type": "string",
+            "description": "Context information for the prompt"
+          },
+          "template": {
+            "type": "string",
+            "description": "Prompt template with {{variable}} placeholders"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of variables used in the template"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what the prompt does"
+          },
+          "expectedOutput": {
+            "type": "string",
+            "description": "Description of expected output format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_prompt",
+      "description": "Execute a prompt with specific variables and context",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "promptId",
+          "variables"
+        ],
+        "properties": {
+          "context": {
+            "type": "string",
+            "description": "Additional context for the analysis"
+          },
+          "promptId": {
+            "type": "string",
+            "description": "ID of the prompt to execute"
+          },
+          "variables": {
+            "type": "object",
+            "description": "Variables to substitute in the prompt",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_prompts",
+      "description": "Get all available prompt templates (built-in and custom)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_process_image",
+      "description": "Extract process information from images using Claude Vision",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "ID of the uploaded image file"
+          },
+          "analysisType": {
+            "type": "string",
+            "default": "process_extraction",
+            "description": "Type of analysis: process_extraction, diagram_analysis, or screenshot_analysis"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "extract_visual_process",
+      "description": "Extract detailed process elements from images with confidence scoring",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fileId"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "ID of the uploaded image file"
+          },
+          "extractText": {
+            "type": "boolean",
+            "default": true,
+            "description": "Extract all visible text"
+          },
+          "extractDiagrams": {
+            "type": "boolean",
+            "default": true,
+            "description": "Extract diagram elements"
+          },
+          "extractFlowcharts": {
+            "type": "boolean",
+            "default": true,
+            "description": "Extract flowchart elements"
+          },
+          "extractScreenshots": {
+            "type": "boolean",
+            "default": true,
+            "description": "Extract UI/screenshot elements"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lucidchart_create_document",
+      "description": "Create a new document in Lucidchart using the REST API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Document title"
+          },
+          "product": {
+            "enum": [
+              "lucidchart",
+              "lucidspark"
+            ],
+            "type": "string",
+            "default": "lucidchart",
+            "description": "Product type"
+          },
+          "folderId": {
+            "type": "string",
+            "description": "Folder ID to create document in"
+          },
+          "template": {
+            "type": "string",
+            "description": "Template ID (optional)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lucidchart_upload_document",
+      "description": "Upload a CSV document to Lucidchart via REST API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "csvData",
+          "title"
+        ],
+        "properties": {
+          "style": {
+            "enum": [
+              "swimlane",
+              "flowchart",
+              "bpmn"
+            ],
+            "type": "string",
+            "default": "swimlane",
+            "description": "Chart style"
+          },
+          "title": {
+            "type": "string",
+            "description": "Document title"
+          },
+          "csvData": {
+            "type": "string",
+            "description": "CSV data to upload"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lucidchart_import_csv",
+      "description": "Import CSV data to create shapes in existing Lucidchart document",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "processData"
+        ],
+        "properties": {
+          "options": {
+            "type": "object",
+            "properties": {
+              "style": {
+                "enum": [
+                  "swimlane",
+                  "flowchart",
+                  "bpmn"
+                ],
+                "type": "string",
+                "default": "swimlane"
+              },
+              "format": {
+                "enum": [
+                  "lucid-csv",
+                  "lucid-api"
+                ],
+                "type": "string",
+                "default": "lucid-csv"
+              },
+              "includeRoles": {
+                "type": "boolean",
+                "default": true
+              },
+              "includeMetrics": {
+                "type": "boolean",
+                "default": true
+              }
+            },
+            "additionalProperties": false
+          },
+          "processData": {
+            "type": "string",
+            "description": "Process data in JSON format"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lucidchart_get_document",
+      "description": "Retrieve document information from Lucidchart",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "documentId"
+        ],
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "description": "Document ID to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lucidchart_list_documents",
+      "description": "List documents in Lucidchart account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum number of documents to return"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "folderId": {
+            "type": "string",
+            "description": "Folder ID to list documents from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lucidchart_export_document",
+      "description": "Export document in various formats",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "documentId"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "pdf",
+              "png",
+              "jpeg",
+              "svg",
+              "csv",
+              "vsdx",
+              "lucid"
+            ],
+            "type": "string",
+            "default": "pdf",
+            "description": "Export format"
+          },
+          "pageId": {
+            "type": "string",
+            "description": "Specific page ID to export"
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Document ID to export"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lucidchart_validate_api_key",
+      "description": "Test API configuration with Lucidchart",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Lucidchart API key to test"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/process_mapper_2025/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "ANTHROPIC_API_KEY"
+        ],
+        "properties": {
+          "PORT": {
+            "type": "string",
+            "default": "3000",
+            "description": "Port for HTTP server"
+          },
+          "NODE_ENV": {
+            "type": "string",
+            "default": "production",
+            "description": "Node.js environment"
+          },
+          "CUSTOM_API_KEY": {
+            "type": "string",
+            "description": "API key for any additional third-party services (optional)"
+          },
+          "ANTHROPIC_API_KEY": {
+            "type": "string",
+            "description": "Your Anthropic API key for AI analysis features"
+          },
+          "LUCIDCHART_API_KEY": {
+            "type": "string",
+            "description": "API key for Lucidchart integration (optional)"
+          },
+          "LUCIDCHART_TEAM_ID": {
+            "type": "string",
+            "description": "Team ID for Lucidchart integration (optional)"
+          },
+          "LUCIDCHART_API_TOKEN": {
+            "type": "string",
+            "description": "API token for Lucidchart integration (optional)"
+          },
+          "LUCIDCHART_DEFAULT_FOLDER_ID": {
+            "type": "string",
+            "description": "Default folder ID for Lucidchart documents (optional)"
+          },
+          "AZURE_STORAGE_CONNECTION_STRING": {
+            "type": "string",
+            "description": "Connection string for Azure Storage (optional)"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "qualifiedName": "@Sufian73/smithery-deployment-test-ts",
+  "displayName": "Random Recall",
+  "description": "Generate random numbers and recall the last one to test stateful workflows. Accelerate demos and integration tests with simple randomness that persists between calls. Tailor behavior with basic configuration to fit your needs.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Sufian73/smithery-deployment-test-ts",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_random_number",
+      "description": "Generate a random number and store it in state",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "max": {
+            "type": "number",
+            "default": 100,
+            "description": "Maximum value"
+          },
+          "min": {
+            "type": "number",
+            "default": 0,
+            "description": "Minimum value"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_last_random",
+      "description": "Get the last generated random number",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Sufian73/smithery-deployment-test-ts/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Dummy API key for testing purposes"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "retries": {
+                "type": "number",
+                "default": 3
+              },
+              "timeout": {
+                "type": "number",
+                "default": 5000
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,723 @@
+{
+  "qualifiedName": "@Aman-Amith-Shastry/scientific_computation_mcp",
+  "displayName": "Scientific Computation MCP Server",
+  "description": "This MCP server enables users to perform scientific computations regarding linear algebra and vector calculus through natural language. The server is designed to bridge the gap between users and powerful computational libraries such as NumPy and SymPy. Its goal is to make scientific computing more accessible.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/5acc858c-194a-443e-ac77-2edbca7355e6.jpeg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Aman-Amith-Shastry/scientific_computation_mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_tensor",
+      "description": "\n    Creates a NumPy array (matrix) with a specified shape and values.\n\n    Args:\n        shape (list[int]): The shape of the resulting array as a tuple(e.g., (2, 3)).\n        values (list[float]): A flat list of values to populate the array.\n        name (str): The name of the tensor to be stored.\n\n    Returns:\n        np.ndarray: A NumPy array with the specified shape.\n\n    Raises:\n        ValueError: If the number of values does not match the product of the shape.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "create_tensorArguments",
+        "required": [
+          "shape",
+          "values",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "shape": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Shape",
+            "minItems": 1,
+            "description": "Tensor shape as list of integers"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "title": "Values",
+            "minItems": 1,
+            "description": "Flat list of floats to fill the tensor"
+          }
+        }
+      }
+    },
+    {
+      "name": "view_tensor",
+      "description": "\n    Returns an immutable view of a previously stored NumPy tensor from the in-memory tensor store.\n\n    Args:\n        name (str): The name of the tensor as stored in the in-store dictionary\n    Returns:\n        dict: The in-store dictionary for tensors\n\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "view_tensorArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_tensor",
+      "description": "\n    Deletes a tensor from the in-memory tensor store.\n\n    Args:\n        name (str): The name of the tensor to delete.\n\n    Raises:\n        ValueError: If the tensor name is not found in the store or if an error occurs during deletion.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "delete_tensorArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_matrices",
+      "description": "\n        Adds two stored tensors element-wise.\n\n        Args:\n            name_a (str): The name of the first tensor.\n            name_b (str): The name of the second tensor.\n\n        Returns:\n            np.ndarray: The result of element-wise addition.\n\n        Raises:\n            ValueError: If the tensor names are not found or shapes are incompatible.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "add_matricesArguments",
+        "required": [
+          "name_a",
+          "name_b"
+        ],
+        "properties": {
+          "name_a": {
+            "type": "string",
+            "title": "Name A"
+          },
+          "name_b": {
+            "type": "string",
+            "title": "Name B"
+          }
+        }
+      }
+    },
+    {
+      "name": "subtract_matrices",
+      "description": "\n        Adds two stored tensors element-wise.\n\n        Args:\n            name_a (str): The name of the first tensor.\n            name_b (str): The name of the second tensor.\n\n        Returns:\n            np.ndarray: The result of element-wise subtraction.\n\n        Raises:\n            ValueError: If the tensor names are not found or shapes are incompatible.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "subtract_matricesArguments",
+        "required": [
+          "name_a",
+          "name_b"
+        ],
+        "properties": {
+          "name_a": {
+            "type": "string",
+            "title": "Name A"
+          },
+          "name_b": {
+            "type": "string",
+            "title": "Name B"
+          }
+        }
+      }
+    },
+    {
+      "name": "multiply_matrices",
+      "description": "\n        Performs matrix multiplication between two stored tensors.\n\n        Args:\n            name_a (str): The name of the first tensor.\n            name_b (str): The name of the second tensor.\n\n        Returns:\n            np.ndarray: The result of matrix multiplication.\n\n        Raises:\n            ValueError: If either tensor is not found or their shapes are incompatible.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "multiply_matricesArguments",
+        "required": [
+          "name_a",
+          "name_b"
+        ],
+        "properties": {
+          "name_a": {
+            "type": "string",
+            "title": "Name A"
+          },
+          "name_b": {
+            "type": "string",
+            "title": "Name B"
+          }
+        }
+      }
+    },
+    {
+      "name": "scale_matrix",
+      "description": "\n        Scales a stored tensor by a scalar factor.\n\n        Args:\n            name (str): The name of the tensor to scale.\n            scale_factor (float): The scalar value to multiply the tensor by.\n            in_place (bool): If True, updates the stored tensor; otherwise, returns a new scaled tensor.\n\n        Returns:\n            np.ndarray: The scaled tensor.\n\n        Raises:\n            ValueError: If the tensor name is not found in the store.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "scale_matrixArguments",
+        "required": [
+          "name",
+          "scale_factor"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "in_place": {
+            "type": "boolean",
+            "title": "In Place",
+            "default": true
+          },
+          "scale_factor": {
+            "type": "number",
+            "title": "Scale Factor"
+          }
+        }
+      }
+    },
+    {
+      "name": "matrix_inverse",
+      "description": "\n        Computes the inverse of a stored square matrix.\n\n        Args:\n            name (str): The name of the tensor to invert.\n\n        Returns:\n            np.ndarray: The inverse of the matrix.\n\n        Raises:\n            ValueError: If the matrix is not found, is not square, or is singular (non-invertible).\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "matrix_inverseArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      }
+    },
+    {
+      "name": "transpose",
+      "description": "\n        Computes the transpose of a stored tensor.\n\n        Args:\n            name (str): The name of the tensor to transpose.\n\n        Returns:\n            np.ndarray: The transposed tensor.\n\n        Raises:\n            ValueError: If the tensor name is not found in the store.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "transposeArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      }
+    },
+    {
+      "name": "determinant",
+      "description": "\n        Computes the determinant of a stored square matrix.\n\n        Args:\n            name (str): The name of the matrix.\n\n        Returns:\n            float: The determinant of the matrix.\n\n        Raises:\n            ValueError: If the matrix is not found or is not square.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "determinantArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "determinantOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "number",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "rank",
+      "description": "\n        Computes the rank of a stored tensor.\n\n        Args:\n            name (str): The name of the tensor.\n\n        Returns:\n            int | list[int]: The rank of the matrix.\n\n        Raises:\n            ValueError: If the tensor name is not found in the store.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "rankArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "rankOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            ],
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "compute_eigen",
+      "description": "\n        Computes the eigenvalues and right eigenvectors of a stored square matrix.\n\n        Args:\n            name (str): The name of the tensor to analyze.\n\n        Returns:\n            dict: A dictionary with keys:\n                - 'eigenvalues': np.ndarray\n                - 'eigenvectors': np.ndarray\n\n        Raises:\n            ValueError: If the tensor is not found or is not a square matrix.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "compute_eigenArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      }
+    },
+    {
+      "name": "qr_decompose",
+      "description": "\n        Computes the QR decomposition of a stored matrix.\n\n        Decomposes the matrix A into A = Q @ R, where Q is an orthogonal matrix\n        and R is an upper triangular matrix.\n\n        Args:\n            name (str): The name of the matrix to decompose.\n\n        Returns:\n            dict: A dictionary with keys:\n                - 'q': np.ndarray, the orthogonal matrix Q\n                - 'r': np.ndarray, the upper triangular matrix R\n\n        Raises:\n            ValueError: If the matrix is not found or decomposition fails.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "qr_decomposeArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      }
+    },
+    {
+      "name": "svd_decompose",
+      "description": "\n        Computes the Singular Value Decomposition (SVD) of a stored matrix.\n\n        Decomposes the matrix A into A = U @ S @ V^T, where U and V^T are orthogonal\n        matrices, and S is a diagonal matrix of singular values.\n\n        Args:\n            name (str): The name of the matrix to decompose.\n\n        Returns:\n            dict: A dictionary with keys:\n                - 'u': np.ndarray, the left singular vectors\n                - 's': np.ndarray, the singular values\n                - 'v_t': np.ndarray, the right singular vectors transposed\n\n        Raises:\n            ValueError: If the matrix is not found or decomposition fails.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "svd_decomposeArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      }
+    },
+    {
+      "name": "find_orthonormal_basis",
+      "description": "\n        Finds an orthonormal basis for the column space of a stored matrix using QR decomposition.\n\n        Args:\n            name (str): The name of the matrix.\n\n        Returns:\n            list[list[float]]: A list of orthonormal basis vectors.\n\n        Raises:\n            ValueError: If the matrix is not found or decomposition fails.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "find_orthonormal_basisArguments",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "find_orthonormal_basisOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "change_basis",
+      "description": "\n        Changes the basis of a stored square matrix.\n\n        Args:\n            name (str): Name of the matrix in the tensor store.\n            new_basis (list[list[float]]): Columns are new basis vectors.\n\n        Returns:\n            np.ndarray: Representation of the matrix in the new basis.\n\n        Raises:\n            ValueError: If the matrix name is not found or non-invertible.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "change_basisArguments",
+        "required": [
+          "name",
+          "new_basis"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "new_basis": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "title": "New Basis"
+          }
+        }
+      }
+    },
+    {
+      "name": "vector_project",
+      "description": "\n        Projects a stored vector onto another vector.\n\n        Args:\n            name (str): Name of the stored vector to project.\n            new_vector (list[float]): The vector to project onto.\n\n        Returns:\n            np.ndarray: The projection result vector.\n\n        Raises:\n            ValueError: If the vector name is not found or projection fails.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "vector_projectArguments",
+        "required": [
+          "name",
+          "new_vector"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "new_vector": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "title": "New Vector"
+          }
+        }
+      }
+    },
+    {
+      "name": "vector_dot_product",
+      "description": "\n        Computes the dot product between two stored vectors.\n\n        Args:\n            name_a (str): Name of the first vector in the tensor store.\n            name_b (str): Name of the second vector in the tensor store.\n\n        Returns:\n            np.ndarray: Scalar result of the dot product.\n\n        Raises:\n            ValueError: If either vector is not found or if the dot product computation fails.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "vector_dot_productArguments",
+        "required": [
+          "name_a",
+          "name_b"
+        ],
+        "properties": {
+          "name_a": {
+            "type": "string",
+            "title": "Name A"
+          },
+          "name_b": {
+            "type": "string",
+            "title": "Name B"
+          }
+        }
+      }
+    },
+    {
+      "name": "vector_cross_product",
+      "description": "\n        Computes the cross product of two stored vectors.\n\n        Args:\n            name_a (str): Name of the first vector in the tensor store.\n            name_b (str): Name of the second vector in the tensor store.\n\n        Returns:\n            np.ndarray: Vector result of the cross product.\n\n        Raises:\n            ValueError: If either vector is not found or if the cross product computation fails.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "vector_cross_productArguments",
+        "required": [
+          "name_a",
+          "name_b"
+        ],
+        "properties": {
+          "name_a": {
+            "type": "string",
+            "title": "Name A"
+          },
+          "name_b": {
+            "type": "string",
+            "title": "Name B"
+          }
+        }
+      }
+    },
+    {
+      "name": "gradient",
+      "description": "\n        Computes the symbolic gradient of a scalar function.\n\n        Args:\n            f_str (str): A string representing a scalar function (e.g., \"x**2 + y*z\").\n\n        Returns:\n            str: A string representation of the symbolic gradient as a vector.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "gradientArguments",
+        "required": [
+          "f_str"
+        ],
+        "properties": {
+          "f_str": {
+            "type": "string",
+            "title": "F Str"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "gradientOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "curl",
+      "description": "\n        Computes the symbolic curl of a vector field, optionally evaluated at a point.\n\n        Args:\n            f_str (str): A string representing the vector field in list format (e.g., \"[x+y, x, 2*z]\").\n            point (list[float], optional): A list of coordinates [x, y, z] to evaluate the curl numerically.\n\n        Returns:\n            dict: A dictionary with the symbolic curl as a string, and optionally the evaluated vector.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "curlArguments",
+        "required": [
+          "f_str"
+        ],
+        "properties": {
+          "f_str": {
+            "type": "string",
+            "title": "F Str"
+          },
+          "point": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "title": "Point",
+            "default": null
+          }
+        }
+      }
+    },
+    {
+      "name": "divergence",
+      "description": "\n        Computes the symbolic divergence of a vector field, optionally evaluated at a point.\n\n        Args:\n            f_str (str): A string representing the vector field in list format (e.g., \"[x+y, x, 2*z]\").\n            point (list[float], optional): A list of coordinates [x, y, z] to evaluate the divergence numerically.\n\n        Returns:\n            dict: A dictionary with the symbolic divergence as a string, and optionally the evaluated scalar.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "divergenceArguments",
+        "required": [
+          "f_str"
+        ],
+        "properties": {
+          "f_str": {
+            "type": "string",
+            "title": "F Str"
+          },
+          "point": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "title": "Point",
+            "default": null
+          }
+        }
+      }
+    },
+    {
+      "name": "laplacian",
+      "description": "\n        Computes the Laplacian of a scalar or vector field symbolically.\n\n        Args:\n            f_str (str): Scalar function as \"x**2 + y*z\" or vector \"[Fx, Fy, Fz]\".\n            is_vector (bool): Set True to compute vector Laplacian.\n\n        Returns:\n            str: Symbolic result of the Laplacian—scalar or list of 3 components.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "laplacianArguments",
+        "required": [
+          "f_str"
+        ],
+        "properties": {
+          "f_str": {
+            "type": "string",
+            "title": "F Str"
+          },
+          "is_vector": {
+            "type": "boolean",
+            "title": "Is Vector",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "laplacianOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "directional_deriv",
+      "description": "\n        Computes symbolic directional derivative of scalar field along a vector direction.\n\n        Args: f_str (str): Expression like \"x*y*z\". u (list[float]): Direction vector [vx, vy, vz]. unit (bool): True\n        if u should be normalized before calculating directional derivative. Set to True by default.\n\n        Returns:\n            str: Symbolic result as string.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "directional_derivArguments",
+        "required": [
+          "f_str",
+          "u"
+        ],
+        "properties": {
+          "u": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "title": "U"
+          },
+          "unit": {
+            "type": "boolean",
+            "title": "Unit",
+            "default": true
+          },
+          "f_str": {
+            "type": "string",
+            "title": "F Str"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "directional_derivOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "plot_vector_field",
+      "description": "\n        Plots a 3D vector field from a string \"[u(x,y,z), v(x,y,z), w(x,y,z)]\"\n\n        Args:\n            f_str: string representation of 3D field, e.g. \"[z, -y, x]\".\n            bounds: (xmin, xmax, ymin, ymax, zmin, zmax)\n            n: grid resolution per axis\n\n        Returns: Displayed Matplotlib 3D quiver plot (no image return needed)\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "plot_vector_fieldArguments",
+        "required": [
+          "f_str"
+        ],
+        "properties": {
+          "n": {
+            "type": "integer",
+            "title": "N",
+            "default": 10
+          },
+          "f_str": {
+            "type": "string",
+            "title": "F Str"
+          },
+          "bounds": {
+            "type": "string",
+            "title": "bounds",
+            "default": [
+              -1,
+              1,
+              -1,
+              1,
+              -1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "plot_function",
+      "description": "\n        Plots a 2D or 3D mathematical function from a symbolic expression string.\n\n        Args:\n            expr_str: string representation of a function in x or x and y,\n                      e.g. \"x**2\" or \"sin(sqrt(x**2 + y**2))\"\n            xlim: (xmin, xmax) range for x-axis\n            ylim: (ymin, ymax) range for y-axis (used in 2D or 3D)\n            grid: resolution of the plot grid\n\n        Returns:\n            A rendered Image of the function using Matplotlib.\n            - 2D plot if the expression contains only x\n            - 3D surface plot if the expression contains both x and y\n        ",
+      "inputSchema": {
+        "type": "object",
+        "title": "plot_functionArguments",
+        "required": [
+          "expr_str"
+        ],
+        "properties": {
+          "grid": {
+            "type": "string",
+            "title": "grid",
+            "default": 200
+          },
+          "xlim": {
+            "type": "array",
+            "title": "Xlim",
+            "default": [
+              -5,
+              5
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "ylim": {
+            "type": "array",
+            "title": "Ylim",
+            "default": [
+              -5,
+              5
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "expr_str": {
+            "type": "string",
+            "title": "Expr Str"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Aman-Amith-Shastry/scientific_computation_mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ]
+}

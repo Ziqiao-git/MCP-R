@@ -1,0 +1,64 @@
+{
+  "qualifiedName": "@champierre/image-mcp-server",
+  "displayName": "Image Analysis Server",
+  "description": "Analyze images by providing their URLs and receive detailed insights using advanced image recognition. Leverage the power of the GPT-4o-mini model for high-accuracy image analysis and validation of image URLs.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "analyze_image",
+      "description": "Receives an image URL and analyzes the image content using GPT-4o-mini",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "imageUrl"
+        ],
+        "properties": {
+          "imageUrl": {
+            "type": "string",
+            "description": "URL of the image to analyze"
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_image_from_path",
+      "description": "Loads an image from a local file path and analyzes its content using GPT-4o-mini. AI assistants need to provide a valid path for the server execution environment (e.g., Linux path if the server is running on WSL).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "imagePath"
+        ],
+        "properties": {
+          "imagePath": {
+            "type": "string",
+            "description": "Local file path of the image to analyze (must be accessible from the server execution environment)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@champierre/image-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "openaiApiKey"
+        ],
+        "properties": {
+          "openaiApiKey": {
+            "type": "string",
+            "description": "Your OpenAI API key required for image analysis."
+          }
+        }
+      }
+    }
+  ]
+}

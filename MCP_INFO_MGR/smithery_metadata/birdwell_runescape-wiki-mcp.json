@@ -1,0 +1,230 @@
+{
+  "qualifiedName": "@birdwell/runescape-wiki-mcp",
+  "displayName": "RuneScape Wiki RS3",
+  "description": "This MCP server provides AI assistants with real-time access to RuneScape 3 game data through the RuneScape Wiki APIs. It enables AI systems to retrieve current Grand Exchange prices, detailed item information (including stats, examine text, and alchemy values), historical price trends with configurable time intervals, and player statistics from the official hiscores across different game modes (normal, ironman, hardcore ironman). The server acts as a bridge between AI applications and RuneScape's extensive database, allowing for dynamic queries about items, market analysis, player progression tracking, and game-related assistance without requiring direct API knowledge or authentication from the end user.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@birdwell/runescape-wiki-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_item_price",
+      "description": "Get the current Grand Exchange price and details for a specific item",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "itemId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "number",
+            "description": "Item ID to get price and details for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_ge_info",
+      "description": "Get Grand Exchange Database information including last update date",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_category_info",
+      "description": "Get information about a specific item category",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "category": {
+            "type": "number",
+            "description": "Category ID (1-32)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_all_categories",
+      "description": "Get a list of all item categories with their IDs and names.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "search_items",
+      "description": "Search for items by name, category, starting letter, price, or membership. Supports full-text search and advanced filters. Category numbers are listed in the README under \"Item Category Mapping\". Use get_all_categories for more details.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number (starting from 1)"
+          },
+          "alpha": {
+            "type": "string",
+            "description": "Starting letter (a-z) or # for numbers"
+          },
+          "query": {
+            "type": "string",
+            "description": "Full or partial item name to search for"
+          },
+          "sort_by": {
+            "enum": [
+              "name",
+              "price",
+              "trend"
+            ],
+            "type": "string",
+            "description": "Sort results by name, price, or trend"
+          },
+          "category": {
+            "type": "number",
+            "description": "Category ID (see README table, typically 1-43)"
+          },
+          "price_max": {
+            "type": "number",
+            "description": "Maximum price (inclusive)"
+          },
+          "price_min": {
+            "type": "number",
+            "description": "Minimum price (inclusive)"
+          },
+          "members_only": {
+            "type": "boolean",
+            "description": "Filter for members-only items"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_item_detail",
+      "description": "Get detailed item information from the official Grand Exchange API including price trends, examine text, and metadata",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "itemId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "number",
+            "description": "Item ID to get detailed information for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_item_graph",
+      "description": "Get historical price graph data for an item from the official Grand Exchange API (last 180 days)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "itemId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "number",
+            "description": "Item ID to get price graph for"
+          }
+        }
+      }
+    },
+    {
+      "name": "browse_items_by_category",
+      "description": "Browse items by category from the official Grand Exchange catalogue",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number (starting from 1)"
+          },
+          "alpha": {
+            "type": "string",
+            "default": "a",
+            "description": "First letter of items to show (a-z, use # for numbers)"
+          },
+          "category": {
+            "type": "number",
+            "description": "Category ID (0-43, see documentation for category list)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_ge_info",
+      "description": "Get Grand Exchange database information including last update time",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_player_stats",
+      "description": "Get player statistics from RuneScape 3 hiscores",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "properties": {
+          "gameMode": {
+            "enum": [
+              "normal",
+              "ironman",
+              "hardcore"
+            ],
+            "type": "string",
+            "default": "normal",
+            "description": "Game mode hiscores to check"
+          },
+          "username": {
+            "type": "string",
+            "description": "Player username to lookup"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_wiki_page_content",
+      "description": "Fetch the plain text content of a RuneScape Wiki page (e.g., Mining, Smithing, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "page"
+        ],
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "The title of the wiki page to fetch (case-sensitive, spaces allowed)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@birdwell/runescape-wiki-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

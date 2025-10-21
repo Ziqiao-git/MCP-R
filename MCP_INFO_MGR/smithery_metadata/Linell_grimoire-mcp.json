@@ -1,0 +1,172 @@
+{
+  "qualifiedName": "@Linell/grimoire-mcp",
+  "displayName": "Grimoire Spellbook Server",
+  "description": "Provide a comprehensive spellbook for Dungeons & Dragons 5th Edition to enhance your gameplay experience. Access detailed spell information and manage your spell resources efficiently. Streamline your D&D sessions with easy-to-use spell data and tools.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Linell/grimoire-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_spells",
+      "description": "Search for D&D 5E spells with various filters",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Partial spell name to search for"
+          },
+          "class": {
+            "enum": [
+              "barbarian",
+              "bard",
+              "cleric",
+              "druid",
+              "fighter",
+              "monk",
+              "paladin",
+              "ranger",
+              "rogue",
+              "sorcerer",
+              "warlock",
+              "wizard",
+              "artificer"
+            ],
+            "type": "string",
+            "description": "Character class that can cast this spell"
+          },
+          "level": {
+            "type": "number",
+            "maximum": 9,
+            "minimum": 0,
+            "description": "Spell level (0-9)"
+          },
+          "ritual": {
+            "type": "boolean",
+            "description": "Filter for ritual spells only"
+          },
+          "school": {
+            "enum": [
+              "abjuration",
+              "conjuration",
+              "divination",
+              "enchantment",
+              "evocation",
+              "illusion",
+              "necromancy",
+              "transmutation"
+            ],
+            "type": "string",
+            "description": "Spell school"
+          },
+          "concentration": {
+            "type": "boolean",
+            "description": "Filter for concentration spells only"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_spell",
+      "description": "Get detailed information about a specific D&D 5E spell",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "spell_name"
+        ],
+        "properties": {
+          "spell_name": {
+            "type": "string",
+            "description": "Name of the spell to look up"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_schools",
+      "description": "List all available D&D 5E spell schools",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_classes",
+      "description": "List all available D&D 5E character classes that can cast spells",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_class_spells",
+      "description": "Get all spells available to a specific class at a given level",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "class",
+          "level"
+        ],
+        "properties": {
+          "class": {
+            "enum": [
+              "barbarian",
+              "bard",
+              "cleric",
+              "druid",
+              "fighter",
+              "monk",
+              "paladin",
+              "ranger",
+              "rogue",
+              "sorcerer",
+              "warlock",
+              "wizard",
+              "artificer"
+            ],
+            "type": "string",
+            "description": "Character class to search spells for"
+          },
+          "level": {
+            "type": "number",
+            "maximum": 9,
+            "minimum": 0,
+            "description": "Spell level to search for"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Linell/grimoire-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

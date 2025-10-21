@@ -1,0 +1,273 @@
+{
+  "qualifiedName": "@nolleh/mcp-vertica",
+  "displayName": "Vertica Database Connector",
+  "description": "Enable seamless interaction with Vertica databases by executing SQL queries, managing schema details, and handling large data streams efficiently. Manage database connections securely with support for SSL/TLS and fine-grained operation permissions. Streamline database operations and schema inspections directly from your MCP client.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@nolleh/mcp-vertica",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "execute_query",
+      "description": "Execute a SQL query and return the results.\n\n    Args:\n        ctx: FastMCP context for progress reporting and logging\n        query: SQL query to execute\n        database: Optional database name to execute the query against\n\n    Returns:\n        Query results as a string\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "execute_queryArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "execute_queryOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "stream_query",
+      "description": "Execute a SQL query and return the results in batches as a single string.\n\n    Args:\n        ctx: FastMCP context for progress reporting and logging\n        query: SQL query to execute\n        batch_size: Number of rows to fetch at once\n\n    Returns:\n        Query results as a concatenated string\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "stream_queryArguments",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "batch_size": {
+            "type": "integer",
+            "title": "Batch Size",
+            "default": 1000
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "stream_queryOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "copy_data",
+      "description": "Copy data into a Vertica table using COPY command.\n\n    Args:\n        ctx: FastMCP context for progress reporting and logging\n        schema: vertica schema to execute the copy against\n        table: Target table name\n        data: List of rows to insert\n\n    Returns:\n        Status message indicating success or failure\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "copy_dataArguments",
+        "required": [
+          "schema",
+          "table",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {}
+            },
+            "title": "Data"
+          },
+          "table": {
+            "type": "string",
+            "title": "Table"
+          },
+          "schema": {
+            "type": "string",
+            "title": "Schema"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "copy_dataOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_table_structure",
+      "description": "Get the structure of a table including columns, data types, and constraints.\n\n    Args:\n        ctx: FastMCP context for progress reporting and logging\n        table_name: Name of the table to inspect\n        schema: Schema name (default: public)\n\n    Returns:\n        Table structure information as a string\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_table_structureArguments",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "title": "Schema",
+            "default": "public"
+          },
+          "table_name": {
+            "type": "string",
+            "title": "Table Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_table_structureOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_indexes",
+      "description": "List all indexes for a specific table.\n\n    Args:\n        ctx: FastMCP context for progress reporting and logging\n        table_name: Name of the table to inspect\n        schema: Schema name (default: public)\n\n    Returns:\n        Index information as a string\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "list_indexesArguments",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "title": "Schema",
+            "default": "public"
+          },
+          "table_name": {
+            "type": "string",
+            "title": "Table Name"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "list_indexesOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_views",
+      "description": "List all views in a schema.\n\n    Args:\n        ctx: FastMCP context for progress reporting and logging\n        schema: Schema name (default: public)\n\n    Returns:\n        View information as a string\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "list_viewsArguments",
+        "properties": {
+          "schema": {
+            "type": "string",
+            "title": "Schema",
+            "default": "public"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "list_viewsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@nolleh/mcp-vertica/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "host",
+          "database",
+          "user"
+        ],
+        "properties": {
+          "ssl": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable SSL"
+          },
+          "host": {
+            "type": "string",
+            "description": "Vertica host"
+          },
+          "user": {
+            "type": "string",
+            "description": "Vertica user"
+          },
+          "dbPort": {
+            "type": "number",
+            "default": 5433,
+            "description": "Vertica port"
+          },
+          "database": {
+            "type": "string",
+            "description": "Vertica database"
+          },
+          "password": {
+            "type": "string",
+            "default": "",
+            "description": "Vertica password"
+          },
+          "connectionLimit": {
+            "type": "number",
+            "default": 10,
+            "description": "Connection limit"
+          },
+          "sslRejectUnauthorized": {
+            "type": "boolean",
+            "default": true,
+            "description": "Reject unauthorized SSL certs"
+          }
+        }
+      }
+    }
+  ]
+}

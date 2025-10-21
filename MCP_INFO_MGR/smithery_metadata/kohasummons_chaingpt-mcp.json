@@ -1,0 +1,143 @@
+{
+  "qualifiedName": "@kohasummons/chaingpt-mcp",
+  "displayName": "ChainGPT MCP",
+  "description": "Bring ChainGPT capabilities into your AI Agent to access the latest crypto news, prices, market trends, and market news. Enhance your AI workflows with real-time Web3 data and insights. Easily integrate with your existing MCP client to stay updated on the crypto world.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/chaingpt.org.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "chaingpt_invoke_chat",
+      "description": "\n        Invoke a chat with ChainGPT AI and get a response based on the provided question.\n        Web3-native AI assistant built specifically for the crypto world. \n        It has deep blockchain expertise, enabling seamless integration of crypto-aware AI into your applications. \n        The model is trained on blockchain data (smart contracts, DeFi protocols, NFTs, DAOs) and real-time market information, \n        making it ideal for use cases like customer support, on-chain analytics, trading assistance, and community engagement\n\n        Capabilities:\n            - Aggregate any amount of web3 market statistics\n            - Interact with Blockchains \n            - Live information tracking of 5,000+ cryptos.\n            - AI Generated News\n\n        ⚠️ COST WARNING: This tool makes an API call to ChainGPT which may incur costs.\n\n        This tool allows you to interact with ChainGPT's conversational AI capabilities.\n\n        Args:\n            question (str): The question or message to send to ChainGPT.\n            chatHistory (str, optional): Whether to include chat history in the request.\n                Defaults to \"off\" if not provided. Can be set to \"on\" to maintain conversation context.\n            sdkUniqueId (str, optional): The unique identifier for the chat.\n                Defaults to a random UUID if not provided\n        Returns:\n            The response from ChainGPT AI to the provided question or message.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "question",
+          "chatHistory"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "chatHistory": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "chaingpt_get_chat_history",
+      "description": "Get the chat history for a given chat blob id until the limit is reached\n        retrieve saved chat history. By default, this will retrieve history entries associated with your API key.\n        If you provide a specific sdkUniqueId, it will retrieve history entries associated with that chat blob id.\n\n        Args:\n            sdkUniqueId (str): The unique identifier for the chat.\n            limit (int, optional): The maximum number of chat history items to return. Default is 10.\n            offset (int, optional): The offset to start the chat history from. Default is 0.\n            sortBy (str, optional): The field to sort the chat history by. Default is 'createdAt'.\n            sortOrder (str, optional): The order to sort the chat history by. Default is 'ASC'.\n        Returns:\n            The chat history for the given chat blob id until the limit is reached.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sdkUniqueId",
+          "limit",
+          "offset",
+          "sortBy",
+          "sortOrder"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "The maximum number of chat history items to return. Default is 10."
+          },
+          "offset": {
+            "type": "number",
+            "description": "The offset to start the chat history from. Default is 0."
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "The field to sort the chat history by. Default is 'createdAt'."
+          },
+          "sortOrder": {
+            "type": "string",
+            "description": "The order to sort the chat history by. Default is 'ASC'."
+          },
+          "sdkUniqueId": {
+            "type": "string",
+            "description": "The unique id of the chat blob to get the history for. If not provided, it will return the chat history for all chat blobs until the limit is reached."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "chaingpt_get_ai_crypto_news",
+      "description": "\n        Get the latest AI-related crypto and web3 articles.\n        Web3-native AI assistant built specifically for the crypto world.\n        it source, filter, deduplicate, and summarize up-to-date crypto news from many outlets in real time\n        it continuously scans trusted crypto news sites (e.g. CoinDesk, CoinTelegraph, Decrypt) and even social platforms like Twitter for breaking updates.\n\n        You can call this tool without any parameters to get the latest news. It returns 10 news articles by default. \n\n        Capabilities:\n          - Source, filter, deduplicate, and summarize up-to-date crypto news from many outlets in real time\n          - Continuously scans trusted crypto news sites (e.g. CoinDesk, CoinTelegraph, Decrypt) and even social platforms like Twitter for breaking updates.\n          - Summarize news in a concise manner, providing the most important details and context.\n          - Provides a link to the original article for more detailed information.\n\n        ⚠️ COST WARNING: This tool makes an API call to ChainGPT which may incur costs. The key is charged 1 credit per 10 records returned\n\n        This tool allows you to interact with ChainGPT's AI News Generator.\n\n        Args:\n            categoryId(number[], optional): The category ID of the news to fetch. Blockchain Gaming = [2], DAO = [3], DApps = [4], DeFi = [5], Lending = [6], Metaverse = [7], NFT = [8], Stablecoins = [9], Cryptocurrency = [64], Decentralized = [65], Smart Contracts = [66], Distributed Ledger = [67], Cryptography = [68], Digital Assets = [69], Tokenization = [70], Consensus Mechanisms = [71], ICO (Initial Coin Offering) = [72], Crypto Wallets = [73], Web3.0 = [74], Interoperability = [75], Mining = [76], Cross-Chain Transactions = [77], Exchange = [78].\n            subCategoryId(number[], optional): The sub-category ID of the news to fetch. Bitcoin = [11], BNB Chain = [12], Celo = [13], Cosmos = [14], Ethereum = [15], Filecoin = [16], Flow = [17], Harmony = [41], Polygon = [20], XRP Ledger = [21], Solana = [22], TRON = [23], Cardano = [34], Monero = [19], Cronos = [36], Ontology = [44], WAX = [26], Optimism = [45], Other (Miscellaneous) = [46], PlatON = [47], Steem = [56], Rangers = [49], SX Network = [57], Ronin = [50], Telos = [58], Shiden = [51], Telos EVM = [59], SKALE = [52], Theta = [61], Stacks = [54], ThunderCore = [62], Stargaze = [55].\n            tokenId(number[], optional): The token ID of the news to fetch. BTC = [79], MATIC = [91], ETH = [80], DOT = [92], USDT = [81], LTC = [93], BNB = [82], WBTC = [94], XRP = [83], BCH = [95], USDC = [84], LINK = [96], SOL = [85], SHIB = [97], ADA = [86], LEO = [98], DOGE = [87], TUSD = [99], TRX = [88], AVAX = [100], TON = [89], XLM = [101], DAI = [90], XMR = [102], UNI = [105], OKB = [103], ETC = [106], ATOM = [104], BUSD = [107], HBAR = [108].\n            searchQuery(string, optional): The search query to fetch the news.\n            limit(number, optional): The number of news to fetch. Default is 10. You can increase this to retrieve more articles in one call (e.g. limit: 20 for 20 articles). Note that higher limits will consume additional credits (see Rate Limits & Credits). If you only want a small number of the latest articles, you can set a smaller limit as well.\n            offset(number, optional): The offset of the news to fetch. Default is 0. This is used for pagination. For example, to get the second page of results when using a limit of 10, you would set offset: 10 (skip the first 10 articles, return the next set). Similarly, offset: 20 would fetch the third page (items 21–30), and so on.\n            fetchAfter(Datetime, optional): The date after which to fetch the news. Provide a JavaScript Date object or a date string (which will be interpreted in UTC by the API). For example, fetchAfter: new Date('2024-01-01') will fetch news items published from January 1, 2024 onward. This is useful for getting news within a certain time range (e.g., only recent news).\n            sortBy(string, optional): The field by which to sort the news. Currently, the only supported sort key is 'createdAt', which corresponds to the article's publication time. By default, results are sorted by newest (most recent) first. If not provided, the SDK will sort by createdAt descending. (At this time, no other sort fields are supported.)\n        Returns:\n            The response from ChainGPT AI to the provided question or message.\n        ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "The number of news to fetch. Default is 10. You can increase this to retrieve more articles in one call (e.g. limit: 20 for 20 articles). Note that higher limits will consume additional credits. MIN: 10"
+          },
+          "offset": {
+            "type": "number",
+            "description": "The offset of the news to fetch. Default is 0. This is used for pagination. For example, to get the second page of results when using a limit of 10, you would set offset: 10 (skip the first 10 articles, return the next set). Similarly, offset: 20 would fetch the third page (items 21–30), and so on."
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "The field to sort the news by. Default and currently only supported field is 'createdAt'."
+          },
+          "tokenId": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The token ID of the news to fetch."
+          },
+          "categoryId": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The category ID of the news to fetch. "
+          },
+          "fetchAfter": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date after which to fetch the news. Provide a JavaScript Date object or a date string (which will be interpreted in UTC by the API). For example, fetchAfter: new Date('2024-01-01') will fetch news items published from January 1, 2024 onward. This is useful for getting news within a certain time range (e.g., only recent news)."
+          },
+          "searchQuery": {
+            "type": "string",
+            "description": "The search query to fetch the news."
+          },
+          "subCategoryId": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The sub-category ID of the news to fetch."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kohasummons/chaingpt-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "chaingptSecretKey": {
+            "type": "string",
+            "description": "The secret key for accessing the ChainGPT API."
+          }
+        }
+      }
+    }
+  ]
+}

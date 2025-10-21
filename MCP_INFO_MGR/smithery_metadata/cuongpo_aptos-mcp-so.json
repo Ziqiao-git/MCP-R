@@ -1,0 +1,167 @@
+{
+  "qualifiedName": "@cuongpo/aptos-mcp-so",
+  "displayName": "Aptos Blockchain Server",
+  "description": "Enable AI assistants to interact with the Aptos blockchain testnet by managing accounts, performing transactions, querying blockchain data, and handling tokens and NFTs. Facilitate seamless blockchain operations such as generating accounts, transferring tokens, and executing smart contract functions. Empower users to integrate blockchain capabilities into their AI workflows with ease and security.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/aptos.dev.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cuongpo/aptos-mcp-so",
+  "security": null,
+  "tools": [
+    {
+      "name": "health_check",
+      "description": "Check server health and configuration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "test_connection",
+      "description": "Test connection to Aptos blockchain",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_account_balance",
+      "description": "Get APT balance for an account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Account address to check balance for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "account_exists",
+      "description": "Check if an account exists on the blockchain",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Account address to check"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fund_account",
+      "description": "Fund an account using the testnet faucet (testnet only)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount to fund in octas (default: 100000000)"
+          },
+          "address": {
+            "type": "string",
+            "description": "Account address to fund"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_gas_price",
+      "description": "Get the current gas price estimation",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_apt",
+      "description": "Transfer APT tokens from one account to another",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fromPrivateKey",
+          "toAddress",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount of APT to transfer (e.g., 1.5 for 1.5 APT)",
+            "exclusiveMinimum": 0
+          },
+          "toAddress": {
+            "type": "string",
+            "description": "Recipient account address"
+          },
+          "maxGasAmount": {
+            "type": "number",
+            "description": "Maximum gas amount for the transaction (default: 100000)"
+          },
+          "fromPrivateKey": {
+            "type": "string",
+            "description": "Private key of the sender account (hex string starting with 0x)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cuongpo/aptos-mcp-so/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "aptosDebug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "aptosNetwork": {
+            "enum": [
+              "testnet",
+              "mainnet"
+            ],
+            "type": "string",
+            "default": "testnet",
+            "description": "Aptos network to connect to"
+          },
+          "aptosTimeout": {
+            "type": "number",
+            "default": 30000,
+            "description": "Request timeout in milliseconds"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

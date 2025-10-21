@@ -1,0 +1,60 @@
+{
+  "qualifiedName": "@geezerrrr/exa-mcp-server-1",
+  "displayName": "Exa MCP Server",
+  "description": "Enable AI assistants to perform web searches using Exa's powerful search API. Get real-time web information in a safe and controlled way, while caching recent searches for future reference. Enhance your AI's capabilities with structured search results and customizable parameters.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/exa.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs. Supports configurable result counts, live crawling options, and returns the content from the most relevant websites.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "livecrawl": {
+            "enum": [
+              "always",
+              "fallback"
+            ],
+            "type": "string",
+            "description": "Livecrawl strategy: 'always' to always crawl live, 'fallback' to only crawl when index has no result"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "Number of search results to return (default: 5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@geezerrrr/exa-mcp-server-1/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "exaApiKey"
+        ],
+        "properties": {
+          "exaApiKey": {
+            "type": "string",
+            "description": "The API key for accessing the Exa Search API."
+          }
+        }
+      }
+    }
+  ]
+}

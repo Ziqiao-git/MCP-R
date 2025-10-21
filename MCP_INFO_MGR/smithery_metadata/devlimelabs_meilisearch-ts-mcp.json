@@ -1,0 +1,1677 @@
+{
+  "qualifiedName": "@devlimelabs/meilisearch-ts-mcp",
+  "displayName": "Meilisearch MCP Server",
+  "description": "Enable AI assistants to interact with Meilisearch through a standardized interface.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list-indexes",
+      "description": "List all indexes in the Meilisearch instance",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of indexes to return"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of indexes to skip"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-index",
+      "description": "Get information about a specific Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-index",
+      "description": "Create a new Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier for the new index"
+          },
+          "primaryKey": {
+            "type": "string",
+            "description": "Primary key for the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-index",
+      "description": "Update a Meilisearch index (currently only supports updating the primary key)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "primaryKey"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "primaryKey": {
+            "type": "string",
+            "description": "New primary key for the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-index",
+      "description": "Delete a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "swap-indexes",
+      "description": "Swap two or more indexes in Meilisearch",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexes"
+        ],
+        "properties": {
+          "indexes": {
+            "type": "string",
+            "description": "JSON array of index pairs to swap, e.g. [[\"movies\", \"movies_new\"]]"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-documents",
+      "description": "Get documents from a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of documents to return (default: 20)"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields to return in the documents"
+          },
+          "filter": {
+            "type": "string",
+            "description": "Filter query to apply"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of documents to skip (default: 0)"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-document",
+      "description": "Get a document by its ID from a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "documentId"
+        ],
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields to return in the document"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "documentId": {
+            "type": "string",
+            "description": "ID of the document to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-documents",
+      "description": "Add documents to a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "documents"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "documents": {
+            "type": "string",
+            "description": "JSON array of documents to add"
+          },
+          "primaryKey": {
+            "type": "string",
+            "description": "Primary key for the documents"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-documents",
+      "description": "Update documents in a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "documents"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "documents": {
+            "type": "string",
+            "description": "JSON array of documents to update"
+          },
+          "primaryKey": {
+            "type": "string",
+            "description": "Primary key for the documents"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-document",
+      "description": "Delete a document by its ID from a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "documentId"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "documentId": {
+            "type": "string",
+            "description": "ID of the document to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-documents",
+      "description": "Delete multiple documents by their IDs from a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "documentIds"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "documentIds": {
+            "type": "string",
+            "description": "JSON array of document IDs to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-all-documents",
+      "description": "Delete all documents in a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search for documents in a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "q"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attributes to sort by, e.g. [\"price:asc\"]"
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return (default: 20)"
+          },
+          "facets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Facets to return"
+          },
+          "filter": {
+            "type": "string",
+            "description": "Filter query to apply"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of results to skip (default: 0)"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "cropLength": {
+            "type": "number",
+            "description": "Length at which to crop cropped attributes"
+          },
+          "highlightPreTag": {
+            "type": "string",
+            "description": "Tag to insert before highlighted text"
+          },
+          "attributesToCrop": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attributes to crop"
+          },
+          "highlightPostTag": {
+            "type": "string",
+            "description": "Tag to insert after highlighted text"
+          },
+          "matchingStrategy": {
+            "type": "string",
+            "description": "Matching strategy: 'all' or 'last'"
+          },
+          "showMatchesPosition": {
+            "type": "boolean",
+            "description": "Whether to include match positions in results"
+          },
+          "attributesToRetrieve": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attributes to include in results"
+          },
+          "attributesToHighlight": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attributes to highlight"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "multi-search",
+      "description": "Perform multiple searches in one request",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "searches"
+        ],
+        "properties": {
+          "searches": {
+            "type": "string",
+            "description": "JSON array of search queries, each with indexUid and q fields"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "facet-search",
+      "description": "Search for facet values matching specific criteria",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "facetName"
+        ],
+        "properties": {
+          "filter": {
+            "type": "string",
+            "description": "Filter to apply to the base search"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "facetName": {
+            "type": "string",
+            "description": "Name of the facet to search"
+          },
+          "facetQuery": {
+            "type": "string",
+            "description": "Query to match against facet values"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-settings",
+      "description": "Get all settings for a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-settings",
+      "description": "Update settings for a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "settings"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "settings": {
+            "type": "string",
+            "description": "JSON object containing settings to update"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-settings",
+      "description": "Reset all settings for a Meilisearch index to their default values",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-searchable-attributes",
+      "description": "Get the searchable attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-displayed-attributes",
+      "description": "Get the displayed attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-filterable-attributes",
+      "description": "Get the filterable attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-sortable-attributes",
+      "description": "Get the sortable attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-ranking-rules",
+      "description": "Get the ranking rules setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-stop-words",
+      "description": "Get the stop words setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-synonyms",
+      "description": "Get the synonyms setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-distinct-attribute",
+      "description": "Get the distinct attribute setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-typo-tolerance",
+      "description": "Get the typo tolerance setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-faceting",
+      "description": "Get the faceting setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-pagination",
+      "description": "Get the pagination setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-searchable-attributes",
+      "description": "Update the searchable attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-displayed-attributes",
+      "description": "Update the displayed attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-filterable-attributes",
+      "description": "Update the filterable attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-sortable-attributes",
+      "description": "Update the sortable attributes setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-ranking-rules",
+      "description": "Update the ranking rules setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-stop-words",
+      "description": "Update the stop words setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-synonyms",
+      "description": "Update the synonyms setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-distinct-attribute",
+      "description": "Update the distinct attribute setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-typo-tolerance",
+      "description": "Update the typo tolerance setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-faceting",
+      "description": "Update the faceting setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-pagination",
+      "description": "Update the pagination setting",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "JSON value for the setting"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-searchable-attributes",
+      "description": "Reset the searchable attributes setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-displayed-attributes",
+      "description": "Reset the displayed attributes setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-filterable-attributes",
+      "description": "Reset the filterable attributes setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-sortable-attributes",
+      "description": "Reset the sortable attributes setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-ranking-rules",
+      "description": "Reset the ranking rules setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-stop-words",
+      "description": "Reset the stop words setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-synonyms",
+      "description": "Reset the synonyms setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-distinct-attribute",
+      "description": "Reset the distinct attribute setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-typo-tolerance",
+      "description": "Reset the typo tolerance setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-faceting",
+      "description": "Reset the faceting setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-pagination",
+      "description": "Reset the pagination setting to its default value",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enable-vector-search",
+      "description": "Enable the vector search experimental feature in Meilisearch",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-experimental-features",
+      "description": "Get the status of experimental features in Meilisearch",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-embedders",
+      "description": "Configure embedders for vector search",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "embedders"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "embedders": {
+            "type": "string",
+            "description": "JSON object containing embedder configurations"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-embedders",
+      "description": "Get the embedders configuration for an index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset-embedders",
+      "description": "Reset the embedders configuration for an index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid"
+        ],
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "vector-search",
+      "description": "Perform a vector search in a Meilisearch index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "indexUid",
+          "vector"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return (default: 20)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Text query to search for (if using 'embedder' instead of 'vector')"
+          },
+          "filter": {
+            "type": "string",
+            "description": "Filter to apply (e.g., 'genre = horror AND year > 2020')"
+          },
+          "hybrid": {
+            "type": "boolean",
+            "description": "Whether to perform a hybrid search (combining vector and text search)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of results to skip (default: 0)"
+          },
+          "vector": {
+            "type": "string",
+            "description": "JSON array representing the vector to search for"
+          },
+          "embedder": {
+            "type": "string",
+            "description": "Name of the embedder to use (if omitted, a 'vector' must be provided)"
+          },
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attributes to include in the vector search"
+          },
+          "hybridRatio": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Ratio of vector vs text search in hybrid search (0-1, default: 0.5)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "health",
+      "description": "Check if the Meilisearch server is healthy",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "version",
+      "description": "Get the version information of the Meilisearch server",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "info",
+      "description": "Get the system information of the Meilisearch server",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "stats",
+      "description": "Get statistics about all indexes or a specific index",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "indexUid": {
+            "type": "string",
+            "description": "Unique identifier of the index (optional, if not provided stats for all indexes will be returned)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-tasks",
+      "description": "Get information about tasks with optional filtering",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "from": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Task uid from which to start fetching"
+          },
+          "type": {
+            "enum": [
+              "indexCreation",
+              "indexUpdate",
+              "indexDeletion",
+              "documentAddition",
+              "documentUpdate",
+              "documentDeletion",
+              "settingsUpdate",
+              "dumpCreation",
+              "taskCancelation"
+            ],
+            "type": "string",
+            "description": "Type of tasks to return"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maximum number of tasks to return"
+          },
+          "status": {
+            "enum": [
+              "enqueued",
+              "processing",
+              "succeeded",
+              "failed",
+              "canceled"
+            ],
+            "type": "string",
+            "description": "Status of tasks to return"
+          },
+          "indexUids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "UIDs of the indexes on which tasks were performed"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-tasks",
+      "description": "Delete tasks based on provided filters",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "uids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "UIDs of the tasks to delete"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "indexCreation",
+                "indexUpdate",
+                "indexDeletion",
+                "documentAddition",
+                "documentUpdate",
+                "documentDeletion",
+                "settingsUpdate",
+                "dumpCreation",
+                "taskCancelation"
+              ],
+              "type": "string"
+            },
+            "description": "Types of tasks to delete"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "succeeded",
+                "failed",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            "description": "Statuses of tasks to delete"
+          },
+          "beforeUid": {
+            "type": "number",
+            "description": "Delete tasks whose uid is before this value"
+          },
+          "indexUids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "UIDs of the indexes on which tasks to delete were performed"
+          },
+          "canceledBy": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "UIDs of the tasks that canceled tasks to delete"
+          },
+          "beforeStartedAt": {
+            "type": "string",
+            "description": "Delete tasks that started processing before this date (ISO 8601 format)"
+          },
+          "beforeFinishedAt": {
+            "type": "string",
+            "description": "Delete tasks that finished processing before this date (ISO 8601 format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-tasks",
+      "description": "List tasks with optional filtering",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "from": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Task uid from which to start fetching"
+          },
+          "uids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "UIDs of specific tasks to return"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maximum number of tasks to return"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "indexCreation",
+                "indexUpdate",
+                "indexDeletion",
+                "documentAddition",
+                "documentUpdate",
+                "documentDeletion",
+                "settingsUpdate",
+                "dumpCreation",
+                "taskCancelation"
+              ],
+              "type": "string"
+            },
+            "description": "Types of tasks to return"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "enqueued",
+                "processing",
+                "succeeded",
+                "failed",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            "description": "Statuses of tasks to return"
+          },
+          "indexUids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "UIDs of the indexes on which tasks were performed"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-task",
+      "description": "Get information about a specific task",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskUid"
+        ],
+        "properties": {
+          "taskUid": {
+            "type": "number",
+            "description": "Unique identifier of the task"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "cancel-tasks",
+      "description": "Cancel tasks based on provided filters",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "uids": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "UIDs of the tasks to cancel"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "indexCreation",
+                "indexUpdate",
+                "indexDeletion",
+                "documentAddition",
+                "documentUpdate",
+                "documentDeletion",
+                "settingsUpdate",
+                "dumpCreation",
+                "taskCancelation"
+              ],
+              "type": "string"
+            },
+            "description": "Types of tasks to cancel"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "enqueued",
+                "processing"
+              ],
+              "type": "string"
+            },
+            "description": "Statuses of tasks to cancel"
+          },
+          "indexUids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "UIDs of the indexes on which tasks to cancel were performed"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "wait-for-task",
+      "description": "Wait for a specific task to complete",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "taskUid"
+        ],
+        "properties": {
+          "taskUid": {
+            "type": "number",
+            "description": "Unique identifier of the task to wait for"
+          },
+          "timeoutMs": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maximum time to wait in milliseconds (default: 5000)"
+          },
+          "intervalMs": {
+            "type": "number",
+            "minimum": 100,
+            "description": "Polling interval in milliseconds (default: 500)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@devlimelabs/meilisearch-ts-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "MEILISEARCH_HOST": {
+            "type": "string",
+            "default": "http://localhost:7700",
+            "description": "URL for the Meilisearch instance"
+          },
+          "MEILISEARCH_API_KEY": {
+            "type": "string",
+            "default": "",
+            "description": "API key for Meilisearch, if required"
+          }
+        }
+      }
+    }
+  ]
+}

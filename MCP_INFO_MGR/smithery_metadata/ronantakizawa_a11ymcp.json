@@ -1,0 +1,154 @@
+{
+  "qualifiedName": "@ronantakizawa/a11ymcp",
+  "displayName": "A11y MCP",
+  "description": "Run WCAG compliance tests, ARIA attribute tests, and accessible color contrast tests via the axe-core API. Users can upload raw HTML or URLs to run tests.\n\n",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/a6792be6-3d01-46bd-bce0-da9c2c107a57.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "test_accessibility",
+      "description": "Test a webpage for accessibility issues using Axe-core",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the webpage to test"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "wcag2aa"
+            ],
+            "description": "Optional array of accessibility tags to test (e.g., \"wcag2a\", \"wcag2aa\", \"wcag21a\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "test_html_string",
+      "description": "Test an HTML string for accessibility issues",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "html"
+        ],
+        "properties": {
+          "html": {
+            "type": "string",
+            "description": "HTML content to test"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "wcag2aa"
+            ],
+            "description": "Optional array of accessibility tags to test (e.g., \"wcag2a\", \"wcag2aa\", \"wcag21a\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_rules",
+      "description": "Get information about available accessibility rules with optional filtering",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter rules by these tags (e.g., \"wcag2a\", \"wcag2aa\", \"best-practice\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_color_contrast",
+      "description": "Check if a foreground and background color combination meets WCAG contrast requirements",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "foreground",
+          "background"
+        ],
+        "properties": {
+          "isBold": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the text is bold"
+          },
+          "fontSize": {
+            "type": "number",
+            "default": 16,
+            "description": "Font size in pixels"
+          },
+          "background": {
+            "type": "string",
+            "description": "Background color in various formats (e.g., \"#FFFFFF\", \"#FFF\", \"rgb(255,255,255)\", \"hsv(0,0%,100%)\")"
+          },
+          "foreground": {
+            "type": "string",
+            "description": "Foreground color in various formats (e.g., \"#000000\", \"#000\", \"rgb(0,0,0)\", \"hsv(0,0%,0%)\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_aria_attributes",
+      "description": "Check if ARIA attributes are used correctly in HTML",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "html"
+        ],
+        "properties": {
+          "html": {
+            "type": "string",
+            "description": "HTML content to test for ARIA attribute usage"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_orientation_lock",
+      "description": "Check if content forces a specific orientation",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "html"
+        ],
+        "properties": {
+          "html": {
+            "type": "string",
+            "description": "HTML content to test for orientation lock issues"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@ronantakizawa/a11ymcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

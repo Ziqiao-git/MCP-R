@@ -1,0 +1,1801 @@
+{
+  "qualifiedName": "@kesslerio/attio-mcp-server",
+  "displayName": "Attio CRM",
+  "description": "Connect AI to your Attio CRM. Manage contacts, companies, deals, and sales pipelines. Create tasks, add notes, and organize lists. Streamline workflows for sales, success, and operations teams.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/attio.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@kesslerio/attio-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "aaa-health-check",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Run a lightweight health probe that echoes deployment metadata. | Does not: query Attio APIs, mutate data, or require credentials. | Accepts optional echo text; returns JSON payload as text for MCP clients. | If errors occur: If unavailable, review Smithery sandbox logs or restart the server process.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "smithery-debug-config",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Retrieve sanitized diagnostic information about Smithery server configuration and runtime environment. | Does not: expose API key values, write data, or modify configuration. | Returns boolean flags and counts only, no sensitive data. Read-only operation. | If errors occur: Use this tool to debug authentication issues in Smithery hosted deployments. Compare local vs hosted results.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_search",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Search across companies, people, tasks, and records | Does not: create or modify records | Returns max 100 results (default: 10) | If errors occur: use records.discover_attributes to find searchable fields",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "limit": 5,
+            "query": "customer@example.com",
+            "resource_type": "people"
+          }
+        ],
+        "required": [
+          "resource_type"
+        ],
+        "properties": {
+          "sort": {
+            "enum": [
+              "relevance",
+              "created",
+              "modified",
+              "name"
+            ],
+            "type": "string",
+            "description": "Sort order"
+          },
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields to search (content)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "date_to": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End date for filtering (ISO 8601 format)"
+          },
+          "filters": {
+            "type": "object",
+            "description": "Advanced filter conditions",
+            "additionalProperties": true
+          },
+          "date_from": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start date for filtering (ISO 8601 format)"
+          },
+          "timeframe": {
+            "enum": [
+              "today",
+              "yesterday",
+              "this_week",
+              "last_week",
+              "this_month",
+              "last_month",
+              "last_7_days",
+              "last_30_days",
+              "last_90_days"
+            ],
+            "type": "string",
+            "description": "Relative timeframe filter"
+          },
+          "date_field": {
+            "enum": [
+              "created_at",
+              "updated_at"
+            ],
+            "type": "string",
+            "default": "created_at",
+            "description": "Which date field to filter on"
+          },
+          "match_type": {
+            "enum": [
+              "exact",
+              "partial",
+              "fuzzy"
+            ],
+            "type": "string",
+            "description": "String matching"
+          },
+          "search_type": {
+            "enum": [
+              "basic",
+              "content",
+              "timeframe"
+            ],
+            "type": "string",
+            "description": "Type of search"
+          },
+          "created_after": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Filter records created after this date (ISO 8601)"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          },
+          "updated_after": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Filter records updated after this date (ISO 8601)"
+          },
+          "created_before": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Filter records created before this date (ISO 8601)"
+          },
+          "updated_before": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Filter records updated before this date (ISO 8601)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_get_details",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Fetch a single record with enriched attribute formatting. | Does not: search or filter result sets; use records.search* tools instead. | Requires resource_type and record_id; optional fields filter output. | If errors occur: Validate record IDs with records.search before retrying.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "fields": [
+              "name",
+              "domains"
+            ],
+            "record_id": "company_123456",
+            "resource_type": "companies"
+          }
+        ],
+        "required": [
+          "resource_type",
+          "record_id"
+        ],
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields to include"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "Record ID to retrieve"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-record",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "description": "Create new Attio records (companies, people, deals, tasks). | WRITE: requires approval | Does not: update existing records, attach files, or bypass required fields. | Requires resource_type/objectSlug plus attributes map that matches records_discover_attributes output. | If errors occur: If validation fails, call records_discover_attributes to confirm required fields and enums.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "record_data": {
+              "name": "Taylor Swift",
+              "email_addresses": [
+                {
+                  "email_address": "taylor@example.com"
+                }
+              ]
+            },
+            "resource_type": "people",
+            "return_details": true
+          }
+        ],
+        "required": [
+          "resource_type",
+          "record_data"
+        ],
+        "properties": {
+          "record_data": {
+            "type": "object",
+            "description": "Data to create",
+            "additionalProperties": true
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          },
+          "return_details": {
+            "type": "boolean",
+            "default": true,
+            "description": "Return full details"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-record",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "description": "Update existing Attio record fields across all supported resource types. | WRITE: requires approval | Does not: create new records, delete data, or manage list memberships. | Requires record_id and attributes payload; supports partial updates with schema validation. | If errors occur: Call records_get_details first to inspect the latest values before editing.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "record_id": "record_987654",
+            "record_data": {
+              "status": "Qualified"
+            },
+            "resource_type": "records",
+            "return_details": false
+          }
+        ],
+        "required": [
+          "resource_type",
+          "record_id",
+          "record_data"
+        ],
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "description": "Record ID to update"
+          },
+          "record_data": {
+            "type": "object",
+            "description": "Updated data",
+            "additionalProperties": true
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          },
+          "return_details": {
+            "type": "boolean",
+            "default": true,
+            "description": "Return full details"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete-record",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": true
+      },
+      "description": "Delete an Attio record from its object (company, person, deal, task). | WRITE: requires approval | Does not: cascade delete related data or clean up list memberships automatically. | Requires record_id and resource_type; operation is irreversible once confirmed. | If errors occur: If uncertain, fetch with records_get_details to confirm the target before deletion.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "record_id": "task_abc123",
+            "resource_type": "tasks"
+          }
+        ],
+        "required": [
+          "resource_type",
+          "record_id"
+        ],
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "description": "Record ID to delete"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_get_attributes",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Retrieve attribute metadata for a given resource type. | Does not: modify schema definitions or record data. | Requires resource_type; optional categories narrows groups. | If errors occur: Use records.discover_attributes for grouped schema discovery.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "categories": [
+              "standard"
+            ],
+            "resource_type": "companies"
+          }
+        ],
+        "required": [
+          "resource_type"
+        ],
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific attribute field names"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "Record ID to get attributes for (optional)"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attribute categories"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_discover_attributes",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Discover available attributes (standard/custom) for a resource. | Does not: alter schema or create fields. | Requires resource_type; optional categories selects subsets. | If errors occur: Follow with records.get_attributes to inspect specific fields.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "categories": [
+              "custom"
+            ],
+            "resource_type": "people"
+          }
+        ],
+        "required": [
+          "resource_type"
+        ],
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attribute categories"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_get_info",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Retrieve enriched info subsets (contact, business, social) for a record. | Does not: search lists of records or mutate data. | Requires resource_type, record_id, and info_type (contact|business|social). | If errors occur: Use records.get_details if you need the full record payload.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "record_id": "company_123456",
+            "resource_type": "companies"
+          }
+        ],
+        "required": [
+          "resource_type",
+          "record_id"
+        ],
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "description": "Unique identifier of the record"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-note",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "description": "Create note for companies, people, or deals with optional markdown formatting. | WRITE: requires approval | Does not: update or delete notes; creates only. | Requires resource_type, record_id, title, content. Optional format (plaintext or markdown). | If errors occur: If record not found, use records_search first.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "resource_type",
+          "record_id",
+          "title",
+          "content"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the note"
+          },
+          "format": {
+            "enum": [
+              "plaintext",
+              "markdown"
+            ],
+            "type": "string",
+            "default": "plaintext",
+            "description": "Content format (default: plaintext)"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content of the note"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "ID of the record to attach the note to"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Target resource type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-notes",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Retrieve notes for a record with timestamps. | Does not: create or modify notes; read-only. | Requires resource_type, record_id; sorted by creation date. | If errors occur: If empty, verify record has notes with records_get_details.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "resource_type"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "record_id": {
+            "type": "string",
+            "description": "Record ID to list notes for"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          },
+          "parent_record_id": {
+            "type": "string",
+            "description": "Alias for record_id (backward compatibility)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_search_advanced",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Run complex searches with nested filters across resource types. | Does not: mutate records; use records.update or records.delete. | Supports filter groups, scoring, pagination, and up to 100 items. | If errors occur: If filters fail, fetch valid attributes via records.discover_attributes.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "limit": 10,
+            "filters": {
+              "filters": [
+                {
+                  "value": "@example.com",
+                  "attribute": {
+                    "slug": "email_addresses.email_address"
+                  },
+                  "condition": "contains"
+                }
+              ]
+            },
+            "resource_type": "people"
+          }
+        ],
+        "required": [
+          "resource_type"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query string"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "filters": {
+            "type": "object",
+            "description": "Complex filter conditions with nested array structure.\n\nRequired format:\n{\n  \"filters\": [\n    {\n      \"attribute\": {\"slug\": \"field_name\"}, \n      \"condition\": \"operator\", \n      \"value\": \"search_value\"\n    }\n  ]\n}\n\nExamples:\n- Single filter: {\"filters\": [{\"attribute\": {\"slug\": \"name\"}, \"condition\": \"contains\", \"value\": \"Tech\"}]}\n- Multiple filters: {\"filters\": [{\"attribute\": {\"slug\": \"name\"}, \"condition\": \"contains\", \"value\": \"Tech\"}, {\"attribute\": {\"slug\": \"categories\"}, \"condition\": \"equals\", \"value\": \"Technology\"}]}\n- OR logic: {\"filters\": [...], \"matchAny\": true}\n\nSupported conditions: contains, equals, starts_with, ends_with, greater_than, less_than, is_empty, is_not_empty",
+            "additionalProperties": true
+          },
+          "sort_by": {
+            "type": "string",
+            "description": "Field to sort results by"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "asc",
+            "description": "Sort order"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_search_by_relationship",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Search records using relationship anchors (list, company, people). | Does not: modify memberships; use list tools for writes. | Requires resource_type and related resource identifier. | If errors occur: Use records.search to resolve IDs before calling.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "limit": 5,
+            "source_id": "company_123456",
+            "relationship_type": "company_to_people",
+            "target_resource_type": "people"
+          }
+        ],
+        "required": [
+          "relationship_type",
+          "source_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "listId": {
+            "type": "string",
+            "description": "(Optional) List ID (must be a valid UUID if provided)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Source record ID"
+          },
+          "relationship_type": {
+            "enum": [
+              "company_to_people",
+              "people_to_company",
+              "person_to_tasks",
+              "company_to_tasks",
+              "company_to_deals",
+              "person_to_deals"
+            ],
+            "type": "string",
+            "description": "Relationship type"
+          },
+          "target_resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Target resource type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_search_by_content",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Search record content (notes, activity, communications). | Does not: modify note content or attachments. | Requires resource_type and content_query; optional fields array. | If errors occur: Narrow scope with fields or switch to records.search_advanced.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "limit": 3,
+            "content_type": "notes",
+            "search_query": "follow-up call",
+            "resource_type": "notes"
+          }
+        ],
+        "required": [
+          "resource_type",
+          "content_type",
+          "search_query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "content_type": {
+            "enum": [
+              "notes",
+              "activity",
+              "interactions"
+            ],
+            "type": "string",
+            "description": "Type of content to search"
+          },
+          "search_query": {
+            "type": "string",
+            "description": "Query to search within content"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_search_by_timeframe",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Filter records by creation, update, or interaction timeframes. | Does not: modify lifecycle state or scheduling follow-ups. | Requires resource_type; provide timeframe or explicit date boundaries. | If errors occur: Call records.search if timeframe filters are too restrictive.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "end_date": "2025-01-31",
+            "start_date": "2025-01-01",
+            "resource_type": "deals",
+            "timeframe_type": "created"
+          }
+        ],
+        "required": [
+          "resource_type"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "End date (ISO 8601 format)"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Start date (ISO 8601 format)"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          },
+          "timeframe_type": {
+            "enum": [
+              "created",
+              "modified",
+              "last_interaction"
+            ],
+            "type": "string",
+            "description": "Timeframe filter type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_batch",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": true
+      },
+      "description": "Execute batched record operations (create/update/delete/get/search). | WRITE: requires approval | Does not: ignore approval guardrails; hosts may require confirmation. | operation_type must be specified; enforce per-operation limits. | If errors occur: Run records.search first to stage IDs or payloads for batching.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "records": [
+              {
+                "name": "Example Ltd.",
+                "domain": "example.com"
+              },
+              {
+                "name": "Sample Inc.",
+                "domain": "sample.io"
+              }
+            ],
+            "resource_type": "companies",
+            "operation_type": "create"
+          }
+        ],
+        "required": [
+          "resource_type"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Record data for create/update (legacy format)"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "operation",
+                "record_data"
+              ],
+              "properties": {
+                "operation": {
+                  "enum": [
+                    "create",
+                    "update",
+                    "delete"
+                  ],
+                  "type": "string",
+                  "description": "Operation type for this specific operation"
+                },
+                "record_data": {
+                  "type": "object",
+                  "description": "Record data for the operation",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of operations to perform"
+          },
+          "record_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Record IDs for delete/get (legacy format)"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Type of resource to operate on (companies, people, lists, records, tasks)"
+          },
+          "operation_type": {
+            "enum": [
+              "create",
+              "update",
+              "delete",
+              "search",
+              "get"
+            ],
+            "type": "string",
+            "description": "Batch operation type (legacy format)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "records_search_batch",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Execute multiple searches in parallel and return grouped results. | Does not: mutate or import data; use records.batch for write operations. | Provide queries array (1–10 items recommended) and resource_type. | If errors occur: If queries fail, retry individually using records.search.",
+      "inputSchema": {
+        "type": "object",
+        "examples": [
+          {
+            "limit": 10,
+            "queries": [
+              "Acme",
+              "Globex"
+            ],
+            "resource_type": "companies"
+          }
+        ],
+        "required": [
+          "resource_type",
+          "queries"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results per query (default: 20)"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Number of results to skip per query (default: 0)"
+          },
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "Array of search query strings"
+          },
+          "resource_type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "records",
+              "tasks",
+              "deals",
+              "notes"
+            ],
+            "type": "string",
+            "description": "Resource type to search (companies, people, records, tasks, deals)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Run lightweight compatibility search across companies, people, lists, and tasks for ChatGPT MCP. | Does not: support complex filters, batch queries, or return rich record payloads (use records_search* tools). | Requires query string (min 1 char); optional type filter; limit up to 25 results per call. | If errors occur: When you need pagination or attribute filtering, switch to records_search or records_search_advanced.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "companies",
+              "people",
+              "lists",
+              "tasks",
+              "all"
+            ],
+            "type": "string",
+            "description": "Optional resource filter (defaults to all)."
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 25,
+            "minimum": 1,
+            "description": "Maximum number of results to return (default 10)."
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query string (required)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Return the canonical Attio record payload for a search connector reference. | Does not: perform write operations or resolve IDs not emitted by the search tool. | Accepts identifier generated by search (<resource>:<uuid>) and returns JSON serialized as text. | If errors occur: If fetch fails, rerun search to refresh the identifier or verify the record still exists.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifier emitted by the search tool (<resource>:<id>)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-lists",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Retrieve all CRM lists (sales pipelines, lead stages, customer segments). | Does not: create or modify lists, only reads existing lists. | Returns all lists visible to the authenticated workspace. | If errors occur: Use get-list-details to inspect individual list schemas.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-record-list-memberships",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Find all lists containing a specific company or person record. | Does not: modify list memberships or retrieve list entries. | Requires recordId; processes 5 lists in parallel by default (max 20). | If errors occur: If record not found, verify recordId with records_search first.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recordId"
+        ],
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "ID of the record to find in lists"
+          },
+          "batchSize": {
+            "type": "number",
+            "default": 5,
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Number of lists to process in parallel (1-20, default: 5)"
+          },
+          "objectType": {
+            "enum": [
+              "companies",
+              "people"
+            ],
+            "type": "string",
+            "description": "Type of record (e.g., \"companies\", \"people\")"
+          },
+          "includeEntryValues": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to include entry values in the response (e.g., stage, status)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-list-details",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Retrieve schema and configuration for a specific list (stages, fields, attributes). | Does not: modify list structure or retrieve list entries. | Requires valid list UUID or slug; accepts both formats. | If errors occur: Use get-lists to discover available list IDs and slugs first.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string",
+            "example": "sales-pipeline",
+            "description": "ID or slug of the list to get details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-list-entries",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Retrieve all records in a list with pagination (companies, people in pipelines). | Does not: filter entries or modify list memberships. | Requires list UUID (not slug); default limit 20, max per page varies by API. | If errors occur: Use filter-list-entries for attribute-based filtering instead.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "example": 50,
+            "description": "Maximum number of entries to fetch (default: 20)"
+          },
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "UUID of the list to get entries for"
+          },
+          "offset": {
+            "type": "number",
+            "example": 0,
+            "description": "Number of entries to skip for pagination (default: 0)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "filter-list-entries",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Filter list entries by single attribute condition. | Does not: combine conditions; use advanced-filter for multi-condition. | Requires listId, attributeSlug, condition, value. | If errors occur: Use get-list-details for valid attribute slugs.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId",
+          "attributeSlug",
+          "condition",
+          "value"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "example": 50,
+            "description": "Maximum number of entries to fetch (default: 20)"
+          },
+          "value": {
+            "example": "Qualified",
+            "description": "Value to filter by (type depends on the attribute)"
+          },
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "ID of the list to filter entries from"
+          },
+          "offset": {
+            "type": "number",
+            "example": 0,
+            "description": "Number of entries to skip for pagination (default: 0)"
+          },
+          "condition": {
+            "enum": [
+              "equals",
+              "not_equals",
+              "contains",
+              "not_contains",
+              "starts_with",
+              "ends_with",
+              "greater_than",
+              "less_than",
+              "greater_than_or_equals",
+              "less_than_or_equals",
+              "is_empty",
+              "is_not_empty",
+              "is_set",
+              "is_not_set"
+            ],
+            "type": "string",
+            "example": "equals",
+            "description": "Filter condition (e.g., 'equals', 'contains', 'greater_than')"
+          },
+          "attributeSlug": {
+            "type": "string",
+            "example": "stage",
+            "description": "Slug of the attribute to filter by (e.g., 'stage', 'status')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "advanced-filter-list-entries",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Filter entries with multi-condition queries (AND/OR logic). | Does not: modify entries; read-only. | Requires listId, filters array; matchAny for OR logic. | If errors occur: Use filter-list-entries for single conditions.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId",
+          "filters"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "example": 50,
+            "description": "Maximum number of entries to fetch (default: 20)"
+          },
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "ID of the list to filter entries from"
+          },
+          "offset": {
+            "type": "number",
+            "example": 0,
+            "description": "Number of entries to skip for pagination (default: 0)"
+          },
+          "filters": {
+            "type": "object",
+            "required": [
+              "filters"
+            ],
+            "properties": {
+              "filters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "attribute",
+                    "condition",
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "description": "Value to filter by (type depends on the attribute)"
+                    },
+                    "attribute": {
+                      "type": "object",
+                      "required": [
+                        "slug"
+                      ],
+                      "properties": {
+                        "slug": {
+                          "type": "string",
+                          "description": "Slug of the attribute to filter by (e.g., 'stage', 'status')"
+                        }
+                      }
+                    },
+                    "condition": {
+                      "enum": [
+                        "equals",
+                        "not_equals",
+                        "contains",
+                        "not_contains",
+                        "starts_with",
+                        "ends_with",
+                        "greater_than",
+                        "less_than",
+                        "greater_than_or_equals",
+                        "less_than_or_equals",
+                        "is_empty",
+                        "is_not_empty",
+                        "is_set",
+                        "is_not_set"
+                      ],
+                      "type": "string",
+                      "description": "Filter condition (e.g., 'equals', 'contains', 'greater_than')"
+                    },
+                    "logicalOperator": {
+                      "enum": [
+                        "and",
+                        "or"
+                      ],
+                      "type": "string",
+                      "description": "Logical operator to use with the next filter (default: 'and')"
+                    }
+                  }
+                },
+                "description": "Array of filter conditions"
+              },
+              "matchAny": {
+                "type": "boolean",
+                "description": "When true, at least one filter must match (OR logic). When false, all filters must match (AND logic). Default: false"
+              }
+            },
+            "description": "Advanced filter configuration"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add-record-to-list",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true
+      },
+      "description": "Add company or person to list with optional initial values. | WRITE: requires approval | Does not: create records; record must exist first. | Requires list UUID, record UUID, object type. | If errors occur: If not found, create record first with create-record.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId",
+          "recordId",
+          "objectType"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "UUID of the list to add the record to"
+          },
+          "recordId": {
+            "type": "string",
+            "example": "660e8400-e29b-41d4-a716-446655440001",
+            "description": "UUID of the record to add to the list"
+          },
+          "objectType": {
+            "enum": [
+              "companies",
+              "people"
+            ],
+            "type": "string",
+            "example": "companies",
+            "description": "Type of record (e.g., \"companies\", \"people\")"
+          },
+          "initialValues": {
+            "type": "object",
+            "example": {
+              "stage": "Qualified"
+            },
+            "description": "Initial values for the list entry (e.g., {\"stage\": \"Prospect\"})"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove-record-from-list",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true
+      },
+      "description": "Remove company or person from list (membership only). | WRITE: requires approval | Does not: delete underlying record; membership only. | Requires list UUID, entry UUID (not record UUID). | If errors occur: Use get-list-entries to find entry UUID.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId",
+          "entryId"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "UUID of the list to remove the entry from"
+          },
+          "entryId": {
+            "type": "string",
+            "example": "770e8400-e29b-41d4-a716-446655440002",
+            "description": "UUID of the list entry to remove (not the record ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update-list-entry",
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true
+      },
+      "description": "Update list entry attributes (stage, status, custom fields). | WRITE: requires approval | Does not: update record attributes; use update-record for that. | Requires list UUID, entry UUID, attributes object. | If errors occur: Use get-list-details for valid attributes and values.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId",
+          "entryId",
+          "attributes"
+        ],
+        "properties": {
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "UUID of the list containing the entry"
+          },
+          "entryId": {
+            "type": "string",
+            "example": "770e8400-e29b-41d4-a716-446655440002",
+            "description": "UUID of the list entry to update"
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "stage": {
+                "type": "string",
+                "example": "Demo Scheduling",
+                "description": "New stage value (e.g., 'Demo Scheduling', 'Interested', 'Won')"
+              }
+            },
+            "description": "Attributes to update on the list entry",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "filter-list-entries-by-parent",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Filter entries by parent record attributes (industry, role). | Does not: search multiple lists or modify records. | Requires listId, parentObjectType, parentAttributeSlug, condition, value. | If errors occur: Use records_discover_attributes for valid slugs.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId",
+          "parentObjectType",
+          "parentAttributeSlug",
+          "condition",
+          "value"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "example": 50,
+            "description": "Maximum number of entries to fetch (default: 20)"
+          },
+          "value": {
+            "example": "Technology",
+            "description": "Value to filter by (type depends on the attribute)"
+          },
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "UUID of the list to filter entries from"
+          },
+          "offset": {
+            "type": "number",
+            "example": 0,
+            "description": "Number of entries to skip for pagination (default: 0)"
+          },
+          "condition": {
+            "enum": [
+              "equals",
+              "not_equals",
+              "contains",
+              "not_contains",
+              "starts_with",
+              "ends_with",
+              "greater_than",
+              "less_than",
+              "greater_than_or_equals",
+              "less_than_or_equals",
+              "is_empty",
+              "is_not_empty",
+              "is_set",
+              "is_not_set"
+            ],
+            "type": "string",
+            "example": "contains",
+            "description": "Filter condition (e.g., \"equals\", \"contains\", \"starts_with\")"
+          },
+          "parentObjectType": {
+            "enum": [
+              "companies",
+              "people"
+            ],
+            "type": "string",
+            "example": "companies",
+            "description": "Type of the parent record (e.g., \"companies\", \"people\")"
+          },
+          "parentAttributeSlug": {
+            "type": "string",
+            "example": "categories",
+            "description": "Attribute of the parent record to filter by (e.g., \"name\", \"email_addresses\", \"categories\")"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "filter-list-entries-by-parent-id",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "Filter entries by exact parent record UUID. | Does not: search multiple lists. | Requires list UUID, record UUID; faster than attribute filtering. | If errors occur: Use get-record-list-memberships for workspace-wide search.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "listId",
+          "recordId"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "example": 50,
+            "description": "Maximum number of entries to fetch (default: 20)"
+          },
+          "listId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "UUID of the list to filter entries from"
+          },
+          "offset": {
+            "type": "number",
+            "example": 0,
+            "description": "Number of entries to skip for pagination (default: 0)"
+          },
+          "recordId": {
+            "type": "string",
+            "example": "660e8400-e29b-41d4-a716-446655440001",
+            "description": "UUID of the parent record to filter by"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list-workspace-members",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "List workspace members to plan assignments and access checks. | Does not: change access levels or invite new members; read-only. | Supports optional search, pagination (1-100 per page, default 25). | If errors occur: Use search-workspace-members for targeted lookups.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "example": 1,
+            "minimum": 1,
+            "description": "Page number (1-indexed)."
+          },
+          "search": {
+            "type": "string",
+            "example": "Taylor",
+            "minLength": 1,
+            "description": "Optional case-insensitive match on member name or email."
+          },
+          "pageSize": {
+            "type": "integer",
+            "default": 25,
+            "example": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of results per page (max 100)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-workspace-members",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Search workspace members by name, email, or access role. | Does not: modify member profiles or permissions; lookup only. | Requires query string (minimum 2 characters). | If errors occur: If no results, list-workspace-members provides the full roster.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "example": "operations lead",
+            "minLength": 2,
+            "description": "Search term for member name, email address, or role."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-workspace-member",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": true
+      },
+      "description": "Retrieve profile and access details for one workspace member. | Does not: update member information or change permissions. | Requires workspace_member_id from list/search results; read-only. | If errors occur: Use list-workspace-members to confirm the memberId before retrying.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "memberId"
+        ],
+        "properties": {
+          "memberId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "Workspace member ID (UUID)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@kesslerio/attio-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "ATTIO_API_KEY": {
+            "type": "string",
+            "description": "Your Attio API key"
+          },
+          "ATTIO_WORKSPACE_ID": {
+            "type": "string",
+            "description": "Optional Attio workspace ID"
+          },
+          "ATTIO_MCP_TOOL_MODE": {
+            "enum": [
+              "full",
+              "search"
+            ],
+            "type": "string",
+            "description": "Tool mode: \"full\" (all 33 tools, requires ChatGPT Developer Mode) or \"search\" (only search/fetch/health-check for non-Developer Mode users)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

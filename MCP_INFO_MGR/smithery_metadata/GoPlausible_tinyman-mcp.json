@@ -1,0 +1,362 @@
+{
+  "qualifiedName": "@GoPlausible/tinyman-mcp",
+  "displayName": "Tinyman MCP Server",
+  "description": "Provide seamless interaction with the Tinyman AMM protocol on Algorand blockchain through a set of MCP tools. Manage pools, perform asset swaps, and handle liquidity operations efficiently. Enable advanced analytics and asset management to optimize decentralized trading workflows.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/tinyman.org.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "tinyman_get_pool",
+      "description": "Get Tinyman pool information by asset pair",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "asset1Id",
+          "asset2Id"
+        ],
+        "properties": {
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "asset1Id": {
+            "type": "integer",
+            "description": "ID of the first asset in the pool"
+          },
+          "asset2Id": {
+            "type": "integer",
+            "description": "ID of the second asset in the pool"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_liquidity_quote",
+      "description": "Get quote for adding liquidity to a pool",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "asset1Id",
+          "asset2Id",
+          "mode"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "initial",
+              "flexible",
+              "singleAsset"
+            ],
+            "type": "string",
+            "description": "Mode of adding liquidity"
+          },
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "asset1Id": {
+            "type": "integer",
+            "description": "ID of the first asset"
+          },
+          "asset2Id": {
+            "type": "integer",
+            "description": "ID of the second asset"
+          },
+          "asset1Amount": {
+            "type": "integer",
+            "description": "Amount of first asset to add"
+          },
+          "asset2Amount": {
+            "type": "integer",
+            "description": "Amount of second asset to add"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_swap_quote",
+      "description": "Get quote for swapping assets",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "assetIn",
+          "assetOut",
+          "amount",
+          "mode"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "fixedInput",
+              "fixedOutput"
+            ],
+            "type": "string",
+            "description": "Mode of swap"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Amount to swap"
+          },
+          "assetIn": {
+            "type": "integer",
+            "description": "ID of the input asset"
+          },
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "assetOut": {
+            "type": "integer",
+            "description": "ID of the output asset"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_pool_analytics",
+      "description": "Get analytics for a Tinyman pool",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "asset1Id",
+          "asset2Id"
+        ],
+        "properties": {
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "asset1Id": {
+            "type": "integer",
+            "description": "ID of the first asset"
+          },
+          "asset2Id": {
+            "type": "integer",
+            "description": "ID of the second asset"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_pool_creation_quote",
+      "description": "Get quote for creating a new Tinyman pool",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "asset1Id",
+          "asset2Id",
+          "initiatorAddr"
+        ],
+        "properties": {
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "asset1Id": {
+            "type": "integer",
+            "description": "ID of the first asset"
+          },
+          "asset2Id": {
+            "type": "integer",
+            "description": "ID of the second asset"
+          },
+          "initiatorAddr": {
+            "type": "string",
+            "description": "Address of the account creating the pool"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_remove_liquidity_quote",
+      "description": "Get quote for removing liquidity from a pool",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "asset1Id",
+          "asset2Id",
+          "poolTokenAmount",
+          "initiatorAddr"
+        ],
+        "properties": {
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "asset1Id": {
+            "type": "integer",
+            "description": "ID of the first asset"
+          },
+          "asset2Id": {
+            "type": "integer",
+            "description": "ID of the second asset"
+          },
+          "slippage": {
+            "type": "number",
+            "default": 0.01,
+            "description": "Maximum acceptable slippage (e.g., 0.01 for 1%)"
+          },
+          "initiatorAddr": {
+            "type": "string",
+            "description": "Address of the account removing liquidity"
+          },
+          "poolTokenAmount": {
+            "type": "integer",
+            "description": "Amount of pool tokens to burn"
+          },
+          "singleAssetMode": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to remove liquidity in single asset mode (v2 only)"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_asset_optin_quote",
+      "description": "Get quote for opting into a Tinyman pool token",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "assetId",
+          "initiatorAddr"
+        ],
+        "properties": {
+          "assetId": {
+            "type": "integer",
+            "description": "ID of the pool token asset"
+          },
+          "initiatorAddr": {
+            "type": "string",
+            "description": "Address of the account to opt in"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_validator_optin_quote",
+      "description": "Get quote for opting into Tinyman validator app",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "initiatorAddr"
+        ],
+        "properties": {
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "initiatorAddr": {
+            "type": "string",
+            "description": "Address of the account to opt in"
+          }
+        }
+      }
+    },
+    {
+      "name": "tinyman_get_validator_optout_quote",
+      "description": "Get quote for opting out of Tinyman validator app",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "initiatorAddr"
+        ],
+        "properties": {
+          "version": {
+            "enum": [
+              "v1_1",
+              "v2"
+            ],
+            "type": "string",
+            "default": "v2",
+            "description": "Tinyman protocol version"
+          },
+          "initiatorAddr": {
+            "type": "string",
+            "description": "Address of the account to opt out"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@GoPlausible/tinyman-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "ALGORAND_ALGOD": {
+            "type": "string",
+            "default": "https://mainnet-api.algonode.cloud",
+            "description": "Algod node base URL"
+          },
+          "ALGORAND_TOKEN": {
+            "type": "string",
+            "default": "",
+            "description": "Algorand API token (optional)"
+          },
+          "ITEMS_PER_PAGE": {
+            "type": "string",
+            "default": 10,
+            "description": "Number of items per page for paginated responses"
+          },
+          "ALGORAND_NETWORK": {
+            "type": "string",
+            "default": "mainnet",
+            "description": "Algorand network to connect to, e.g., testnet or mainnet"
+          },
+          "ALGORAND_ALGOD_PORT": {
+            "type": "string",
+            "default": "",
+            "description": "Algod node port (optional)"
+          },
+          "ALGORAND_AGENT_WALLET": {
+            "type": "string",
+            "default": "",
+            "description": "Algorand agent active wallet"
+          }
+        }
+      }
+    }
+  ]
+}

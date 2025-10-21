@@ -1,0 +1,296 @@
+{
+  "qualifiedName": "@Glitchcraft-Inc/singular-mcp-server",
+  "displayName": "GameRamp Singular API Server",
+  "description": "Provide comprehensive marketing analytics and AI-powered insights by integrating Singular data with your tools. Generate detailed campaign reports, perform cohort and LTV analysis, and build natural language reports to optimize marketing performance. Access real-time data and advanced metrics seamlessly through an intuitive interface.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/0fa93b52-0945-4a8d-90b9-f051c4bdd97b.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Glitchcraft-Inc/singular-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "test_connection",
+      "description": "Test the connection to Singular API with detailed diagnostics including metric hash discovery",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "diagnose_account",
+      "description": "Get comprehensive account information including available data ranges, apps, and permissions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_campaign_report",
+      "description": "Create a comprehensive campaign performance report. Responds quickly and may require a follow-up.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "start_date",
+          "end_date"
+        ],
+        "properties": {
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            }
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "end_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_report_data",
+      "description": "Retrieves the data for a report that was already started and is taking a long time to generate.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "report_id"
+        ],
+        "properties": {
+          "report_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_campaign_performance",
+      "description": "AI-powered campaign performance analysis with actionable insights. Uses MCP sampling for intelligent analysis when available, with structured fallback for compatibility.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "start_date",
+          "end_date",
+          "analysis_focus"
+        ],
+        "properties": {
+          "end_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "app_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "analysis_focus": {
+            "enum": [
+              "cost_efficiency",
+              "user_acquisition",
+              "creative_performance",
+              "geographic_analysis",
+              "overall_performance"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "smart_report_builder",
+      "description": "AI-powered report builder that intelligently selects dimensions and metrics based on natural language descriptions. Automatically discovers and uses cohort metric hashes for advanced analysis when available.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "description",
+          "date_range"
+        ],
+        "properties": {
+          "date_range": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_cohort_report",
+      "description": "Create advanced cohort analysis report with LTV metrics, using hashed cohort metrics and specific periods like 'actual'. Responds quickly and may require a follow-up.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "start_date",
+          "end_date"
+        ],
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "end_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "cohort_metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cohort_periods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "time_breakdown": {
+            "enum": [
+              "all",
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_campaign_ltv",
+      "description": "AI-powered campaign LTV and ROI analysis with optimization recommendations. Uses MCP sampling for advanced insights when available, with structured analysis fallback.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "start_date",
+          "end_date",
+          "analysis_focus"
+        ],
+        "properties": {
+          "end_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "start_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "analysis_focus": {
+            "enum": [
+              "campaign_roi",
+              "ltv_trends",
+              "cohort_performance",
+              "monetization_efficiency"
+            ],
+            "type": "string"
+          },
+          "campaign_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_metric_data",
+      "description": "Natural language metric data retrieval. Handles requests like 'give me revenue details', 'show user retention', 'get session data', etc. Automatically discovers and uses the correct metric hashes.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "app_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "date_range": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Glitchcraft-Inc/singular-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "singularApiKey"
+        ],
+        "properties": {
+          "singularApiKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Your Singular API key from https://app.singular.net/"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

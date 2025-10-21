@@ -1,0 +1,202 @@
+{
+  "qualifiedName": "@lieyanqzu/sbwsz-mcp",
+  "displayName": "MTG Chinese Card Database - 大学院废墟(sbwsz.com)",
+  "description": "Provide seamless access to Magic: The Gathering Chinese card data through a set of powerful query tools. Search cards by complex criteria, retrieve card sets, and get detailed card information to enhance your applications or workflows. Easily integrate via stdio or Streamable HTTP modes for flexible usage.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/c0e69f1b-a2e7-4d29-987a-9cf1654ae54b.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@lieyanqzu/sbwsz-mcp",
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_card_by_set_and_number",
+      "annotations": {
+        "title": "由系列代码和收集编号获取单张卡牌",
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "通过系列代码和收集编号获取单张卡牌。",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "set",
+          "collector_number"
+        ],
+        "properties": {
+          "set": {
+            "type": "string",
+            "description": "系列代码，例如 'NEO'、'MOM'"
+          },
+          "collector_number": {
+            "type": "string",
+            "description": "收集编号，例如 '1'、'112'、'1a'"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_cards",
+      "annotations": {
+        "title": "通过查询字符串搜索卡牌",
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "通过查询字符串搜索卡牌，支持分页和排序。\n\n**查询语法示例:**\n- `t:creature c:r` (红色生物)\n- `pow>=5 or mv<2` (力量大于等于5或法术力值小于2)\n- `o:\"draw a card\" -c:u` (包含\"抓一张牌\"的非蓝色牌)\n- `(t:instant or t:sorcery) mv<=3` (3费或以下的瞬间或法术)\n\n**分页参数:**\n- `page`: 页码 (整数, 默认 1)\n- `page_size`: 每页数量 (整数, 默认 20, 最大 100)\n\n**排序参数:**\n- `order`: 按字段排序，逗号分隔。前缀 `-` 表示降序\n  (例如: `name`, `-mv`, `name,-rarity`)\n  默认排序: `name`\n\n**其他参数:**\n- `unique`: 去重方式 (id, oracle_id, illustration_id)\n- `priority_chinese`: 是否优先显示中文卡牌",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "q"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "查询字符串，例如 't:creature c:r'、'pow>=5 or mv<2'、's:TDM -t:creature'"
+          },
+          "page": {
+            "type": "integer",
+            "description": "页码 (默认 1)"
+          },
+          "order": {
+            "type": "string",
+            "description": "排序字段 (例如: name, -mv, rarity)"
+          },
+          "unique": {
+            "type": "string",
+            "description": "去重方式: id(不去重), oracle_id(按卡牌名去重), illustration_id(按插图去重)"
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "每页数量 (默认 20，最大 100)"
+          },
+          "priority_chinese": {
+            "type": "boolean",
+            "description": "是否优先显示中文卡牌 (默认 true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_sets",
+      "annotations": {
+        "title": "获取所有卡牌系列",
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "返回所有MTG卡牌系列的完整数据，按发布日期降序排列",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_set",
+      "annotations": {
+        "title": "获取单个系列的详细信息",
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "根据系列代码获取单个系列的详细信息",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "set_code"
+        ],
+        "properties": {
+          "set_code": {
+            "type": "string",
+            "description": "系列代码，例如 'NEO'、'MOM'"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_set_cards",
+      "annotations": {
+        "title": "获取特定系列的所有卡牌",
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "获取特定系列的所有卡牌，支持分页和排序。",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "set_code"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "页码 (默认 1)"
+          },
+          "order": {
+            "type": "string",
+            "description": "排序字段 (例如: collector_number, name, -mv)"
+          },
+          "set_code": {
+            "type": "string",
+            "description": "系列代码，例如 'NEO'、'MOM'"
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "每页数量 (默认 20，最大 100)"
+          },
+          "priority_chinese": {
+            "type": "boolean",
+            "description": "是否优先显示中文卡牌 (默认 true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "hzls",
+      "annotations": {
+        "title": "使用卡牌图像拼接句子",
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "description": "活字乱刷（使用卡牌图像拼接句子），将输入的文本使用魔法卡牌图像拼接成图片",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "target_sentence"
+        ],
+        "properties": {
+          "with_link": {
+            "type": "boolean",
+            "description": "是否包含链接水印 (默认 true)"
+          },
+          "cut_full_image": {
+            "type": "boolean",
+            "description": "是否使用卡牌完整图像 (默认 true)"
+          },
+          "target_sentence": {
+            "type": "string",
+            "description": "要拼接的目标句子/文本"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@lieyanqzu/sbwsz-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "properties": {
+          "apiUrl": {
+            "type": "string",
+            "default": "https://mtgch.com/api/v1",
+            "description": "SBWSZ API基础URL"
+          },
+          "timeout": {
+            "type": "number",
+            "default": 10000,
+            "description": "请求超时时间（毫秒）"
+          }
+        }
+      }
+    }
+  ]
+}

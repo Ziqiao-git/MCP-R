@@ -1,0 +1,304 @@
+{
+  "qualifiedName": "@anirbanbasu/pymcp",
+  "displayName": "PyMCP",
+  "description": "Primarily to be used as a template repository for developing MCP servers with FastMCP in Python, PyMCP is somewhat inspired by the official everything MCP server in Typescript.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@anirbanbasu/pymcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "greet",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "example",
+            "greeting"
+          ]
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Greet the caller with a quintessential Hello World message.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "The optional name to be greeted."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "generate_password",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "example",
+            "password-generation"
+          ]
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Generate a random password with specified length, optionally including special characters.\nThe password will meet the complexity requirements of at least one lowercase letter, one uppercase letter, and two digits.\nIf special characters are included, it will also contain at least one such character.\nUntil the password meets these requirements, it will keep regenerating.\nThis is a simple example of a tool that can be used to generate passwords. It is not intended for production use.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "length": {
+            "type": "integer",
+            "default": 12,
+            "maximum": 64,
+            "minimum": 8,
+            "description": "The length of the password to generate (between 8 and 64 characters)."
+          },
+          "use_special_chars": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include special characters in the password."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "text_web_search",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "meta-search",
+            "searchexample",
+            "text-search"
+          ]
+        }
+      },
+      "description": "Perform a text web search using the provided query using DDGS.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "pages": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 1,
+            "description": "The number of pages to fetch. Default is 1, maximum is 10."
+          },
+          "query": {
+            "type": "string",
+            "description": "The search query to fetch results for. It should be a non-empty string."
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "uk-en",
+            "description": "Optional region to search in."
+          },
+          "max_results": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "description": "The maximum number of results to return. Default is 10, maximum is 100."
+          }
+        }
+      }
+    },
+    {
+      "name": "permutations",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "example",
+            "math",
+            "permutation"
+          ]
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "description": "Calculate the number of ways to choose k items from n items without repetition and with order.\nIf k is not provided, it defaults to n.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "n"
+        ],
+        "properties": {
+          "k": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "The optional number of items to choose."
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "The number of items to choose from."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "integer"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "pirate_summary",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "example",
+            "llm-sampling",
+            "pirate-summary"
+          ]
+        }
+      },
+      "description": "Summarise the given text in a pirate style.\nThis is an example of a tool that can use LLM sampling to generate a summary.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "vonmises_random",
+      "_meta": {
+        "_fastmcp": {
+          "tags": [
+            "elicitation",
+            "example",
+            "experimental"
+          ]
+        }
+      },
+      "description": "Generate a random number from the von Mises distribution.\nThis is an example of a tool that uses elicitation to obtain the required parameter kappa (κ).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "mu"
+        ],
+        "properties": {
+          "mu": {
+            "type": "number",
+            "maximum": 6.283185307179586,
+            "minimum": 0,
+            "description": "The mean angle mu (μ), expressed in radians between 0 and 2π"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "number"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@anirbanbasu/pymcp/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

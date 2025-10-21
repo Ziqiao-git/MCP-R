@@ -1,0 +1,377 @@
+{
+  "qualifiedName": "@plainyogurt21/fda-drugs-mcp",
+  "displayName": "FDA Drugs Data Access Server",
+  "description": "Provide seamless access to comprehensive FDA drug data through intuitive search and detailed information retrieval. Enable discovery of drugs by name, indication, similarity, and application history to support informed decision-making. Facilitate exploration of approved drugs with a focus on clinical and regulatory insights.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@plainyogurt21/fda-drugs-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_drug_by_name",
+      "description": "\n    Search for drugs by brand or generic name.\n    \n    Args:\n        drug_name: Brand or generic name to search for\n        limit: Maximum number of results to return (default: 50)\n        include_generics: Whether to include ANDA generics (default: False - BLA/NDA only)\n    \n    Returns:\n        Dictionary containing search results with drug information\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_drug_by_nameArguments",
+        "required": [
+          "drug_name"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 50
+          },
+          "drug_name": {
+            "type": "string",
+            "title": "Drug Name"
+          },
+          "include_generics": {
+            "type": "boolean",
+            "title": "Include Generics",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_drug_by_nameOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "search_drug_by_indication",
+      "description": "\n    Search for drugs by medical indication or condition.\n    \n    Args:\n        indication: Medical condition or indication to search for\n        limit: Maximum number of results to return (default: 50)\n        include_generics: Whether to include ANDA generics (default: False - BLA/NDA only)\n    \n    Returns:\n        Dictionary containing search results with drug information\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_drug_by_indicationArguments",
+        "required": [
+          "indication"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 50
+          },
+          "indication": {
+            "type": "string",
+            "title": "Indication"
+          },
+          "include_generics": {
+            "type": "boolean",
+            "title": "Include Generics",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_drug_by_indicationOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_drug_details",
+      "description": "\n    Get comprehensive details for a specific drug using its set ID.\n    \n    Args:\n        set_id: The FDA set ID for the drug\n    \n    Returns:\n        Dictionary containing detailed drug information\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_drug_detailsArguments",
+        "required": [
+          "set_id"
+        ],
+        "properties": {
+          "set_id": {
+            "type": "string",
+            "title": "Set Id"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_drug_detailsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "search_similar_drugs",
+      "description": "\n    Find drugs similar to a reference drug based on mechanism of action or indication.\n    \n    Args:\n        reference_drug: Name of the reference drug\n        similarity_type: Type of similarity - \"mechanism\" or \"indication\" (default: \"mechanism\")\n        limit: Maximum number of results to return (default: 20)\n    \n    Returns:\n        Dictionary containing similar drugs\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_similar_drugsArguments",
+        "required": [
+          "reference_drug"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 20
+          },
+          "reference_drug": {
+            "type": "string",
+            "title": "Reference Drug"
+          },
+          "similarity_type": {
+            "type": "string",
+            "title": "Similarity Type",
+            "default": "mechanism"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_similar_drugsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "get_drug_application_history",
+      "description": "\n    Get application history and approval details for a drug application.\n\n    Args:\n        application_number: FDA application number (BLA, NDA, or ANDA)\n\n    Returns:\n        Dictionary containing application history and details\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_drug_application_historyArguments",
+        "required": [
+          "application_number"
+        ],
+        "properties": {
+          "application_number": {
+            "type": "string",
+            "title": "Application Number"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_drug_application_historyOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "search_drug_patents",
+      "description": "\n    Search for patent and exclusivity information for an NDA drug application.\n\n    Uses web scraping to retrieve real-time patent data from FDA Orange Book.\n\n    Args:\n        application_number: FDA NDA application number (e.g., \"209637\")\n        product_no: Product number (default: \"004\")\n\n    Returns:\n        Dictionary containing patent and exclusivity information:\n        - patents: List of patent records with expiration dates, use codes, etc.\n        - exclusivities: List of exclusivity records with codes and expiration dates\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_drug_patentsArguments",
+        "required": [
+          "application_number"
+        ],
+        "properties": {
+          "product_no": {
+            "type": "string",
+            "title": "Product No",
+            "default": "004"
+          },
+          "application_number": {
+            "type": "string",
+            "title": "Application Number"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_drug_patentsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "search_drug_review_pdfs",
+      "description": "\n    Search the drug reviews CSV for review PDF URLs by drug name, application number, or set ID.\n\n    Searches the drug_reviews.csv database for matching drugs and returns their review PDF URLs.\n    At least one search parameter must be provided.\n\n    Args:\n        drug_name: Drug name (brand or generic) - partial match, case-insensitive (optional)\n        application_number: FDA application number (BLA/NDA) - exact match (optional)\n        set_id: SPL Set ID - exact match (optional)\n\n    Returns:\n        Dictionary containing:\n        - success: bool\n        - query: dict of search parameters used\n        - total_results: int (number of matching drugs)\n        - results: List of dicts with drug info and review PDF URLs\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_drug_review_pdfsArguments",
+        "properties": {
+          "set_id": {
+            "type": "string",
+            "title": "Set Id",
+            "default": null
+          },
+          "drug_name": {
+            "type": "string",
+            "title": "Drug Name",
+            "default": null
+          },
+          "application_number": {
+            "type": "string",
+            "title": "Application Number",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_drug_review_pdfsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "search_advisory_committee_materials_tool",
+      "description": "\n    Search for FDA Advisory Committee meeting materials (PDFs).\n\n    Returns meeting information including dates, committee names, and PDF links with titles.\n\n    Args:\n        committee: Committee name to filter (case-insensitive partial match, e.g., \"Cellular, Tissue, and Gene Therapies\")\n        start_date: Filter meetings on or after this date (YYYY-MM-DD format)\n        end_date: Filter meetings on or before this date (YYYY-MM-DD format)\n        limit: Maximum number of meetings to process (default: 100)\n\n    Returns:\n        Dictionary containing:\n        - success: bool\n        - query: dict of search parameters\n        - total_meetings: int (number of meetings found)\n        - meetings: List of meeting objects with:\n            - date: Meeting date (YYYY-MM-DD)\n            - committee: Committee/center name\n            - title: Meeting title\n            - meeting_url: Full URL to meeting page\n            - materials: List of PDF materials with:\n                - title: PDF document title\n                - pdf_url: Full URL to download PDF\n                - file_size: File size string\n                - source: Document source (e.g., \"FDA\")\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_advisory_committee_materials_toolArguments",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 100
+          },
+          "end_date": {
+            "type": "string",
+            "title": "End Date",
+            "default": null
+          },
+          "committee": {
+            "type": "string",
+            "title": "Committee",
+            "default": null
+          },
+          "start_date": {
+            "type": "string",
+            "title": "Start Date",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_advisory_committee_materials_toolOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "name": "search_guidance_documents",
+      "description": "\n    Search FDA guidance documents.\n\n    Fetches all guidance documents from FDA and optionally filters by center, type, or topic.\n\n    Args:\n        center: Filter by FDA center (e.g., \"Center for Drug Evaluation and Research\") - case-insensitive partial match\n        doc_type: Filter by document type (\"Final\" or \"Draft\")\n        topic: Filter by topic/keywords - case-insensitive partial match\n\n    Returns:\n        Dictionary containing:\n        - success: bool\n        - query: dict of search parameters\n        - total_results: int (number of matching documents)\n        - documents: List of guidance documents with:\n            - title: Document title\n            - link: URL to guidance document page\n            - pdf_link: Direct PDF download link\n            - date: Issue date\n            - type: \"Final\" or \"Draft\"\n            - center: FDA center/office\n            - docket_number: Docket number with link\n            - topics: Related topics\n            - regulated_product: Product category (Drugs, Biologics, Devices, etc.)\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "search_guidance_documentsArguments",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "default": null
+          },
+          "center": {
+            "type": "string",
+            "title": "Center",
+            "default": null
+          },
+          "doc_type": {
+            "type": "string",
+            "title": "Doc Type",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "search_guidance_documentsOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "title": "Result",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@plainyogurt21/fda-drugs-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "logLevel": {
+            "type": "string",
+            "default": "INFO",
+            "description": "Logging level"
+          },
+          "fdaApiKey": {
+            "type": "string",
+            "description": "OpenFDA API key for enhanced rate limits"
+          }
+        },
+        "description": "Configuration for FDA Drugs MCP Server",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

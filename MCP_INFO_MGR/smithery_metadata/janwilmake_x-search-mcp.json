@@ -1,0 +1,64 @@
+{
+  "qualifiedName": "@janwilmake/x-search-mcp",
+  "displayName": "Tweet Search",
+  "description": "Search Twitter using advanced operators to find relevant tweets, media, and links. Filter by users, hashtags, dates, sentiment, and more, then paginate through results to explore deeper. Discover timely conversations and gather insights fast.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@janwilmake/x-search-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "searchTweetsAdvanced",
+      "title": "Advanced Tweet Search",
+      "description": "Search for tweets using advanced query operators and filters. Each page returns approximately 20 tweets. Use cursor for pagination.\n\n## Available Search Operators\n\n### Basic Operators\n- `watching now` - containing both \"watching\" and \"now\" (default AND operator)\n- `\"happy hour\"` - containing the exact phrase \"happy hour\"\n- `love OR hate` - containing either \"love\" or \"hate\" (or both)\n- `beer -root` - containing \"beer\" but not \"root\"\n\n### Hashtags and Mentions\n- `#haiku` - containing the hashtag \"haiku\"\n- `@NASA` - mentioning Twitter account \"NASA\"\n\n### User-specific Searches\n- `from:interior` - sent from Twitter account \"interior\"\n- `to:NASA` - a Tweet authored in reply to Twitter account \"NASA\"\n- `list:NASA/astronauts-in-space-now` - sent from accounts in the specified Twitter list\n\n### Media Filters\n- `puppy filter:media` - containing \"puppy\" and an image or video\n- `puppy filter:native_video` - containing \"puppy\" and an uploaded video, Amplify video, Periscope, or Vine\n- `puppy filter:periscope` - containing \"puppy\" and a Periscope video URL\n- `puppy filter:vine` - containing \"puppy\" and a Vine\n- `puppy filter:images` - containing \"puppy\" and links identified as photos, including third parties\n- `puppy filter:twimg` - containing \"puppy\" and a pic.twitter.com link\n- `puppy -filter:retweets` - containing \"puppy\", filtering out retweets\n\n### Link Filters\n- `hilarious filter:links` - containing \"hilarious\" and linking to URL\n- `puppy url:amazon` - containing \"puppy\" and a URL with \"amazon\" anywhere within it\n\n### Date Filters\n- `superhero since:2015-12-21` - containing \"superhero\" and sent since date \"2015-12-21\" (year-month-day format)\n- `puppy until:2015-12-21` - containing \"puppy\" and sent before date \"2015-12-21\"\n\n### Sentiment Filters\n- `movie -scary :)` - containing \"movie\", not \"scary\", with positive attitude\n- `flight :(` - containing \"flight\" with negative attitude\n- `traffic ?` - containing \"traffic\" and asking a question\n\n## Query Examples\n- `\"AI\" OR \"Twitter\" from:elonmusk since:2021-12-31`\n- `#bitcoin filter:media -filter:retweets`\n- `\"climate change\" lang:en filter:links`\n- `from:NASA filter:images :)`\n\n**Note:** Make sure to URL encode queries. Space characters can be represented by \"%20\" or \"+\".",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query",
+          "queryType"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "format": "string"
+          },
+          "cursor": {
+            "type": "string",
+            "format": "string"
+          },
+          "queryType": {
+            "enum": [
+              "Latest",
+              "Top"
+            ],
+            "type": "string",
+            "default": "Latest"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@janwilmake/x-search-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "TwitterAPI Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "title": "API Key",
+            "description": "Your twitterapi.io API key for authentication. Get it at https://twitterapi.io/dashboard"
+          }
+        },
+        "description": "Configuration for connecting to this MCP server",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "qualifiedName": "@renCosta2025/context7fork",
+  "displayName": "Context7",
+  "description": "Get up-to-date, version-specific documentation and code examples from official sources directly in your prompts. Eliminate hallucinated APIs and outdated answers by pulling precise docs for the libraries you name. Accelerate development with accurate context tailored to the package and version you're using.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@renCosta2025/context7fork",
+  "security": null,
+  "tools": [
+    {
+      "name": "resolve-library-id",
+      "title": "Resolve Context7 Library ID",
+      "description": "Resolves a package/product name to a Context7-compatible library ID and returns a list of matching libraries.\n\nYou MUST call this function before 'get-library-docs' to obtain a valid Context7-compatible library ID UNLESS the user explicitly provides a library ID in the format '/org/project' or '/org/project/version' in their query.\n\nSelection Process:\n1. Analyze the query to understand what library/package the user is looking for\n2. Return the most relevant match based on:\n- Name similarity to the query (exact matches prioritized)\n- Description relevance to the query's intent\n- Documentation coverage (prioritize libraries with higher Code Snippet counts)\n- Trust score (consider libraries with scores of 7-10 more authoritative)\n\nResponse Format:\n- Return the selected library ID in a clearly marked section\n- Provide a brief explanation for why this library was chosen\n- If multiple good matches exist, acknowledge this but proceed with the most relevant one\n- If no good matches exist, clearly state this and suggest query refinements\n\nFor ambiguous queries, request clarification before proceeding with a best-guess match.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "libraryName"
+        ],
+        "properties": {
+          "libraryName": {
+            "type": "string",
+            "description": "Library name to search for and retrieve a Context7-compatible library ID."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-library-docs",
+      "title": "Get Library Docs",
+      "description": "Fetches up-to-date documentation for a library. You must call 'resolve-library-id' first to obtain the exact Context7-compatible library ID required to use this tool, UNLESS the user explicitly provides a library ID in the format '/org/project' or '/org/project/version' in their query.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "context7CompatibleLibraryID"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "Topic to focus documentation on (e.g., 'hooks', 'routing')."
+          },
+          "tokens": {
+            "type": "number",
+            "description": "Maximum number of tokens of documentation to retrieve (default: 5000). Higher values provide more context but consume more tokens."
+          },
+          "context7CompatibleLibraryID": {
+            "type": "string",
+            "description": "Exact Context7-compatible library ID (e.g., '/mongodb/docs', '/vercel/next.js', '/supabase/supabase', '/vercel/next.js/v14.3.0-canary.87') retrieved from 'resolve-library-id' or directly from user query in the format '/org/project' or '/org/project/version'."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@renCosta2025/context7fork/mcp",
+      "configSchema": {
+        "type": "object",
+        "description": "No configuration required"
+      }
+    }
+  ]
+}

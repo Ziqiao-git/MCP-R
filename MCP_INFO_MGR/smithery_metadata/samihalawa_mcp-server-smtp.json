@@ -1,0 +1,492 @@
+{
+  "qualifiedName": "@samihalawa/mcp-server-smtp",
+  "displayName": "SMTP Email Server",
+  "description": "Send and manage emails effortlessly with our server. Utilize multiple SMTP configurations, create reusable email templates, and send bulk emails with ease. Enhance your communication capabilities with rich HTML support and comprehensive logging.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "send-email",
+      "description": "Send an email to one or more recipients",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ],
+        "properties": {
+          "cc": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Array of CC recipients"
+          },
+          "to": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Array of recipients"
+          },
+          "bcc": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Array of BCC recipients"
+          },
+          "body": {
+            "type": "string",
+            "description": "Email body (HTML supported)"
+          },
+          "from": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "description": "Sender information. If not provided, the default SMTP user will be used."
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject"
+          },
+          "templateId": {
+            "type": "string",
+            "description": "ID of the email template to use. If not provided, the email will use the subject and body provided."
+          },
+          "smtpConfigId": {
+            "type": "string",
+            "description": "ID of the SMTP configuration to use. If not provided, the default configuration will be used."
+          },
+          "templateData": {
+            "type": "object",
+            "description": "Data to be used for template variable substitution"
+          }
+        }
+      }
+    },
+    {
+      "name": "send-bulk-emails",
+      "description": "Send emails in bulk to multiple recipients with rate limiting",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "recipients",
+          "subject",
+          "body"
+        ],
+        "properties": {
+          "cc": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Array of CC recipients"
+          },
+          "bcc": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Array of BCC recipients"
+          },
+          "body": {
+            "type": "string",
+            "description": "Email body (HTML supported)"
+          },
+          "from": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "description": "Sender information. If not provided, the default SMTP user will be used."
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject"
+          },
+          "batchSize": {
+            "type": "number",
+            "description": "Number of emails to send in each batch (default: 10)"
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Array of recipients"
+          },
+          "templateId": {
+            "type": "string",
+            "description": "ID of the email template to use. If not provided, the email will use the subject and body provided."
+          },
+          "smtpConfigId": {
+            "type": "string",
+            "description": "ID of the SMTP configuration to use. If not provided, the default configuration will be used."
+          },
+          "templateData": {
+            "type": "object",
+            "description": "Data to be used for template variable substitution"
+          },
+          "delayBetweenBatches": {
+            "type": "number",
+            "description": "Delay between batches in milliseconds (default: 1000)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-smtp-configs",
+      "description": "Get all SMTP configurations",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "add-smtp-config",
+      "description": "Add a new SMTP configuration",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "host",
+          "port",
+          "user",
+          "pass"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "SMTP host"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the SMTP configuration"
+          },
+          "pass": {
+            "type": "string",
+            "description": "SMTP password"
+          },
+          "port": {
+            "type": "number",
+            "description": "SMTP port"
+          },
+          "user": {
+            "type": "string",
+            "description": "SMTP username"
+          },
+          "secure": {
+            "type": "boolean",
+            "description": "Whether to use secure connection (SSL/TLS)"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this configuration should be the default"
+          }
+        }
+      }
+    },
+    {
+      "name": "update-smtp-config",
+      "description": "Update an existing SMTP configuration",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the SMTP configuration to update"
+          },
+          "host": {
+            "type": "string",
+            "description": "SMTP host"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the SMTP configuration"
+          },
+          "pass": {
+            "type": "string",
+            "description": "SMTP password"
+          },
+          "port": {
+            "type": "number",
+            "description": "SMTP port"
+          },
+          "user": {
+            "type": "string",
+            "description": "SMTP username"
+          },
+          "secure": {
+            "type": "boolean",
+            "description": "Whether to use secure connection (SSL/TLS)"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this configuration should be the default"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete-smtp-config",
+      "description": "Delete an SMTP configuration",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the SMTP configuration to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-email-templates",
+      "description": "Get all email templates",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "add-email-template",
+      "description": "Add a new email template",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "subject",
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "Email body template"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the template"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject template"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this template should be the default"
+          }
+        }
+      }
+    },
+    {
+      "name": "update-email-template",
+      "description": "Update an existing email template",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the template to update"
+          },
+          "body": {
+            "type": "string",
+            "description": "Email body template"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the template"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject template"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this template should be the default"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete-email-template",
+      "description": "Delete an email template",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the template to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-email-logs",
+      "description": "Get logs of all email sending activity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of log entries to return (most recent first)"
+          },
+          "filterBySuccess": {
+            "type": "boolean",
+            "description": "Filter logs by success status (true = successful emails, false = failed emails)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@samihalawa/mcp-server-smtp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "port"
+        ],
+        "properties": {
+          "port": {
+            "type": "number",
+            "default": 8082,
+            "description": "Port number for the MCP server to run on"
+          },
+          "smtp": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "host": {
+                "type": "string",
+                "default": "smtp.example.com",
+                "description": "SMTP server hostname"
+              },
+              "port": {
+                "type": "number",
+                "default": 587,
+                "description": "SMTP server port"
+              },
+              "user": {
+                "type": "string",
+                "default": "",
+                "description": "SMTP username"
+              },
+              "secure": {
+                "type": "boolean",
+                "default": true,
+                "description": "Use secure connection (TLS)"
+              },
+              "password": {
+                "type": "string",
+                "default": "",
+                "description": "SMTP password"
+              }
+            }
+          },
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug mode for additional logging"
+          }
+        }
+      }
+    }
+  ]
+}

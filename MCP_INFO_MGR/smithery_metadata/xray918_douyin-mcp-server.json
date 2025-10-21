@@ -1,0 +1,144 @@
+{
+  "qualifiedName": "@xray918/douyin-mcp-server",
+  "displayName": "Douyin Video Text Extractor",
+  "description": "Download Douyin videos without watermarks and extract audio text automatically. Convert video audio to text using AI speech recognition with customizable API support. Clean up temporary files automatically to save disk space.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@xray918/douyin-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_douyin_download_link",
+      "description": "\n    获取抖音视频的无水印下载链接\n    \n    参数:\n    - share_link: 抖音分享链接或包含链接的文本\n    \n    返回:\n    - 包含下载链接和视频信息的JSON字符串\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "get_douyin_download_linkArguments",
+        "required": [
+          "share_link"
+        ],
+        "properties": {
+          "share_link": {
+            "type": "string",
+            "title": "Share Link"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "get_douyin_download_linkOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "extract_douyin_text",
+      "description": "\n    从抖音分享链接提取视频中的文本内容\n    \n    参数:\n    - share_link: 抖音分享链接或包含链接的文本\n    - api_base_url: API基础URL（可选，默认使用SiliconFlow）\n    - model: 语音识别模型（可选，默认使用SenseVoiceSmall）\n    \n    返回:\n    - 提取的文本内容\n    \n    注意: 需要设置环境变量 DOUYIN_API_KEY\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "extract_douyin_textArguments",
+        "required": [
+          "share_link"
+        ],
+        "properties": {
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model",
+            "default": null
+          },
+          "share_link": {
+            "type": "string",
+            "title": "Share Link"
+          },
+          "api_base_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Api Base Url",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "extract_douyin_textOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    },
+    {
+      "name": "parse_douyin_video_info",
+      "description": "\n    解析抖音分享链接，获取视频基本信息\n    \n    参数:\n    - share_link: 抖音分享链接或包含链接的文本\n    \n    返回:\n    - 视频信息（JSON格式字符串）\n    ",
+      "inputSchema": {
+        "type": "object",
+        "title": "parse_douyin_video_infoArguments",
+        "required": [
+          "share_link"
+        ],
+        "properties": {
+          "share_link": {
+            "type": "string",
+            "title": "Share Link"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "parse_douyin_video_infoOutput",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@xray918/douyin-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "douyinApiKey"
+        ],
+        "properties": {
+          "douyinApiKey": {
+            "type": "string",
+            "description": "SiliconFlow or other API key for audio transcription"
+          }
+        },
+        "description": "Configuration for Douyin MCP Server"
+      }
+    }
+  ]
+}

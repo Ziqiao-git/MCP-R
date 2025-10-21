@@ -1,0 +1,111 @@
+{
+  "qualifiedName": "@r6654kumar/bargainbites_restaurant2_mcp",
+  "displayName": "Restaurant2",
+  "description": "Browse the menu, place food orders, and track order status. Explore current offers with detailed applicability checks, price calculations for your cart, and suggestions for better-value alternatives.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@r6654kumar/bargainbites_restaurant2_mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "restaurant2_explore_menu",
+      "description": "Find all food items available in the restaurant",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "restaurant2_place_order",
+      "description": "Place a new food order",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "customer_name",
+          "customer_phone",
+          "item_name",
+          "quantity"
+        ],
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Quantity of the food item"
+          },
+          "item_name": {
+            "type": "string",
+            "description": "Name of the food item"
+          },
+          "customer_name": {
+            "type": "string",
+            "description": "Customer's full name"
+          },
+          "customer_phone": {
+            "type": "string",
+            "description": "Customer's phone number"
+          }
+        }
+      }
+    },
+    {
+      "name": "restaurant2_track_order",
+      "description": "Track the status of your order using order id and phone number",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "orderID",
+          "customer_phone"
+        ],
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Order id"
+          },
+          "customer_phone": {
+            "type": "string",
+            "description": "Customer's phone number"
+          }
+        }
+      }
+    },
+    {
+      "name": "restaurant2_explore_offers",
+      "description": "Explore all the offers availabe at the Restaurant on ordering food and give details to the customer",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "restaurant2_detailed_offer_by_id",
+      "required": [
+        "offerId"
+      ],
+      "description": "Explore in detail about a specific order by the offer id, give details to the user about the offer & check whether the offer is applicable on present order list or not & calculate the price after applying the offer, also provide alternative offers to user.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "offerId": {
+            "type": "string",
+            "description": "Order id"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@r6654kumar/bargainbites_restaurant2_mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

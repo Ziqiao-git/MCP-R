@@ -1,0 +1,82 @@
+{
+  "qualifiedName": "@davibauer/tiktok-mcp",
+  "displayName": "TikTok Integration Server",
+  "description": "Enable your applications to analyze TikTok videos for virality factors, retrieve video content and subtitles, and interact conversationally with TikTok videos. Access detailed metadata about TikTok posts including creator info, hashtags, and engagement metrics. Seamlessly integrate TikTok data into AI workflows to enhance content understanding and interaction.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/tikneuron.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "tiktok_available_subtitles",
+      "description": "Looks up the available subtitle, i.e., content for a TikTok video.This is used for looking up if there is any content (subtitle) available to a TikTok video.Supports TikTok video url as input in objectReturns the available subtitle for the video which can be in different languages and differentformats like Automatic Speech Recognition, Machine Translation or Creator Captionsand different languages.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tiktok_url"
+        ],
+        "properties": {
+          "tiktok_url": {
+            "type": "string",
+            "description": "TikTok video URL, e.g., https://www.tiktok.com/@username/video/1234567890 or https://vm.tiktok.com/1234567890"
+          }
+        }
+      }
+    },
+    {
+      "name": "tiktok_get_subtitle",
+      "description": "Get the subtitle (content) for a TikTok video url.This is used for getting the subtitle, content or context for a TikTok video.Supports TikTok video url as input and optionally language code from tool 'AVAILABLE_SUBTITLES'Returns the subtitle for the video in the requested language and format.If no language code is provided, the tool will return the subtitle of automatic speech recognition.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tiktok_url"
+        ],
+        "properties": {
+          "tiktok_url": {
+            "type": "string",
+            "description": "TikTok video URL, e.g., https://www.tiktok.com/@username/video/1234567890 or https://vm.tiktok.com/1234567890"
+          },
+          "language_code": {
+            "type": "string",
+            "description": "Language code for the subtitle, e.g., en for English, es for Spanish, fr for French, etc."
+          }
+        }
+      }
+    },
+    {
+      "name": "tiktok_get_post_details",
+      "description": "Get the details of a TikTok post.This is used for getting the details of a TikTok post.Supports TikTok video url as input.Returns the details of the video like - Description - Creator username - Hashtags - Number of likes, shares, comments, views and bookmarks - Date of creation - Duration of the video",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tiktok_url"
+        ],
+        "properties": {
+          "tiktok_url": {
+            "type": "string",
+            "description": "TikTok video URL, e.g., https://www.tiktok.com/@username/video/1234567890 or https://vm.tiktok.com/1234567890"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@davibauer/tiktok-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "tikneuronMcpApiKey"
+        ],
+        "properties": {
+          "tikneuronMcpApiKey": {
+            "type": "string",
+            "description": "Tikneuron MCP API key for accessing the Tikneuron MCP API."
+          }
+        }
+      }
+    }
+  ]
+}

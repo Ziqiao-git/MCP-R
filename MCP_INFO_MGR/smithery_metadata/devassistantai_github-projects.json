@@ -1,0 +1,745 @@
+{
+  "qualifiedName": "@devassistantai/github-projects",
+  "displayName": "GitHub Projects",
+  "description": "Manage GitHub Projects V2 efficiently by interacting with the GitHub Projects API through a set of powerful tools. Perform project, item, task, field, and view management operations seamlessly from your language model or client. Enhance your workflow with tested, production-ready capabilities for project automation and organization.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "test_connection",
+      "description": "Test GitHub API connection and token validity",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_projects",
+      "description": "List GitHub Projects (V2) for a user or organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "owner",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "user",
+              "organization"
+            ],
+            "type": "string",
+            "description": "Type of owner (user or organization)"
+          },
+          "first": {
+            "type": "number",
+            "description": "Number of projects to return"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Username or organization name"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_project",
+      "description": "Create a new GitHub Project (V2) for a user or organization",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "owner",
+          "type",
+          "title"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "user",
+              "organization"
+            ],
+            "type": "string",
+            "description": "Type of owner (user or organization)"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Username or organization name"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project title"
+          },
+          "layout": {
+            "enum": [
+              "BOARD",
+              "TABLE"
+            ],
+            "type": "string",
+            "description": "Project layout type (BOARD or TABLE)"
+          },
+          "public": {
+            "type": "boolean",
+            "description": "Whether the project is public"
+          },
+          "description": {
+            "type": "string",
+            "description": "Project description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_project",
+      "description": "Update an existing GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "New project title"
+          },
+          "closed": {
+            "type": "boolean",
+            "description": "Whether the project should be closed"
+          },
+          "public": {
+            "type": "boolean",
+            "description": "Whether the project should be public"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          },
+          "description": {
+            "type": "string",
+            "description": "New project description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "toggle_project_archive",
+      "description": "Archive or unarchive a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "archived"
+        ],
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "description": "Whether the project should be archived (true) or unarchived (false)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_project_item",
+      "description": "Update an existing project item in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "itemId",
+          "fieldId",
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "Value to set for the field as a string. For complex values, use JSON format."
+          },
+          "itemId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Item ID (GraphQL global ID)"
+          },
+          "fieldId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Field ID (GraphQL global ID)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove_project_item",
+      "description": "Remove an item from a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "itemId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Item ID (GraphQL global ID)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_project_fields",
+      "description": "List fields from a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "first": {
+            "type": "number",
+            "description": "Number of fields to return"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_project_views",
+      "description": "List views from a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "first": {
+            "type": "number",
+            "description": "Number of views to return"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_project_items",
+      "description": "List items from a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "description": "Number of items to return"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add_project_item",
+      "description": "Add an existing Issue or Pull Request to a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "contentId"
+        ],
+        "properties": {
+          "contentId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Content ID (GraphQL global ID of an Issue or Pull Request)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_draft_item",
+      "description": "Create a draft item in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "title"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "Body content for the draft item"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Title for the draft item"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_project_field",
+      "description": "Create a new field in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "name",
+          "dataType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Field name"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "color": {
+                  "enum": [
+                    "GREEN",
+                    "YELLOW",
+                    "ORANGE",
+                    "RED",
+                    "PURPLE",
+                    "BLUE",
+                    "PINK",
+                    "GRAY"
+                  ],
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Options for single select fields"
+          },
+          "dataType": {
+            "enum": [
+              "TEXT",
+              "NUMBER",
+              "DATE",
+              "SINGLE_SELECT"
+            ],
+            "type": "string",
+            "description": "Field data type"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_task",
+      "description": "Create a new task (as draft or real issue) in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "title"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "Task description/body"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Task title"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels to add to the task"
+          },
+          "assignees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "GitHub usernames to assign to the task"
+          },
+          "milestone": {
+            "type": "string",
+            "description": "Milestone ID to associate with the task"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          },
+          "asDraftItem": {
+            "type": "boolean",
+            "description": "Create as draft item instead of real issue (default: false)"
+          },
+          "customFields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "fieldId",
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value to set (format depends on field type)"
+                },
+                "fieldId": {
+                  "type": "string",
+                  "description": "Field ID (GraphQL global ID)"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Custom fields to set on the task"
+          },
+          "repositoryId": {
+            "type": "string",
+            "description": "Repository ID (optional, required to create a real issue)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_task_status",
+      "description": "Update task status and optionally add a comment in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "itemId",
+          "statusFieldId",
+          "newStatus"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Item ID (GraphQL global ID)"
+          },
+          "newStatus": {
+            "type": "string",
+            "minLength": 1,
+            "description": "New status value to set (option name from single select field)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          },
+          "addComment": {
+            "type": "boolean",
+            "description": "Whether to add a comment about the status change"
+          },
+          "commentBody": {
+            "type": "string",
+            "description": "Comment body text (required if addComment is true)"
+          },
+          "statusFieldId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Status field ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "group_tasks",
+      "description": "Group multiple tasks by setting the same field value for all of them in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "groupById",
+          "items",
+          "groupValue"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Item ID (GraphQL global ID)"
+            },
+            "minItems": 1,
+            "description": "List of item IDs to group"
+          },
+          "groupById": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Field ID to group by (GraphQL global ID)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          },
+          "groupValue": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Value to set for the group field"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "convert_draft_to_issue",
+      "description": "Convert a draft item to an issue in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "draftId",
+          "repositoryId"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Labels to add to the task"
+          },
+          "draftId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Draft item ID (GraphQL global ID)"
+          },
+          "assignees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "GitHub usernames to assign to the task"
+          },
+          "milestone": {
+            "type": "string",
+            "description": "Milestone ID to associate with the task"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          },
+          "repositoryId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repository ID (GraphQL global ID)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_issue_id",
+      "description": "Get the ID of an issue in a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "owner",
+          "repo",
+          "issueNumber"
+        ],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repository name"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repository owner (username or organization name)"
+          },
+          "issueNumber": {
+            "type": "integer",
+            "description": "Issue number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "bulk_add_issues",
+      "description": "Bulk add issues to a GitHub Project (V2)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectId",
+          "owner",
+          "repo",
+          "issueNumbers"
+        ],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repository name"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repository owner (username or organization name)"
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project ID (GraphQL global ID)"
+          },
+          "statusValue": {
+            "type": "string",
+            "description": "Optional status value to set (required if statusFieldId is provided)"
+          },
+          "issueNumbers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "minItems": 1,
+            "description": "List of issue numbers to add"
+          },
+          "statusFieldId": {
+            "type": "string",
+            "description": "Optional status field ID to set initial status"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@devassistantai/github-projects/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "githubToken"
+        ],
+        "properties": {
+          "logLevel": {
+            "type": "string",
+            "default": "info",
+            "description": "Logging level"
+          },
+          "disableLogs": {
+            "type": "boolean",
+            "default": false,
+            "description": "Disable console output"
+          },
+          "githubToken": {
+            "type": "string",
+            "description": "GitHub classic personal access token (ghp_...)"
+          },
+          "logDiagnostics": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable detailed API request/response logging"
+          }
+        }
+      }
+    }
+  ]
+}

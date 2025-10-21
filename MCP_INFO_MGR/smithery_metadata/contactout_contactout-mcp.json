@@ -1,0 +1,224 @@
+{
+  "qualifiedName": "@contactout/contactout-mcp",
+  "displayName": "ContactOut MCP",
+  "description": "ContactOut MCP unlocks instant access to verified professional emails and phone numbers, helping you reach prospects, candidates, and partners with ease. All you need is your ContactOut API key to get started.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/4baa01e3-d884-4e35-a682-f4d251f44d3f.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@contactout/contactout-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "stats",
+      "description": "Retrieves the user's remaining email and phone credits on ContactOut.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "peopleSearch",
+      "description": "Search for people based on various criteria like job title, company, skills, location, etc. Contact information such as email and phone numbers may be included in the response if specified. Contact information consumes email and/or phone credits if available.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the profile to search for"
+          },
+          "page": {
+            "type": "number",
+            "description": "Provides results for the given page."
+          },
+          "domain": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of domains (max: 50)."
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of skills (max: 50). Supports boolean equations like ['(ReactJS AND Python) NOT Java']."
+          },
+          "company": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of company names (max: 50)."
+          },
+          "keyword": {
+            "type": "string",
+            "description": "Returns profiles that contain the mentioned keyword anywhere in their profile."
+          },
+          "industry": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of industries (max: 50)."
+          },
+          "location": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of locations (max: 50)."
+          },
+          "education": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of schools or degrees (max: 50)."
+          },
+          "job_title": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of job titles (max: 50). Supports boolean equations like ['(ReactJS AND Python) NOT Java']."
+          },
+          "data_types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "personal_email",
+                "work_email",
+                "phone"
+              ],
+              "type": "string"
+            },
+            "description": "Returns profiles containing at least one of the specified data types."
+          },
+          "reveal_info": {
+            "type": "boolean",
+            "default": false,
+            "description": "If set to true, contact_info will contain the emails and phone numbers of the profile, and credits will be charged."
+          },
+          "company_size": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of company size ranges. Valid values: '1_10' (<10), '11_50' (11-50), '51_200' (51-200), '201_500' (201-500), '501_1000' (501-1k), '1001_5000' (1k-5k), '5001_10000' (5k-10k), '10001' (>10k)."
+          },
+          "company_filter": {
+            "enum": [
+              "current",
+              "past",
+              "both"
+            ],
+            "type": "string",
+            "default": "current",
+            "description": "Determines which company experiences to match. 'current': match current company, 'past': match any past company, 'both': match either."
+          },
+          "exclude_job_titles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of job titles to exclude from the search (max: 50)."
+          },
+          "current_titles_only": {
+            "type": "boolean",
+            "default": true,
+            "description": "Returns profiles matching the current job title. If set to false, includes profiles matching both current and past job titles."
+          },
+          "years_of_experience": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of experience ranges. Valid values: '0_1' (<1yr), '1_2' (1-2yrs), '3_5' (3-5yrs), '6_10' (6-10yrs), '10' (>10yrs)."
+          },
+          "current_company_only": {
+            "type": "boolean",
+            "default": true,
+            "description": "Returns profiles matching the current company name."
+          },
+          "years_in_current_role": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Accepts an array of current role duration ranges. Valid values: '0_2' (<2yrs), '2_4' (2-4yrs), '4_6' (4-6yrs), '6_8' (6-8yrs), '8_10' (8-10yrs), '10' (>10yrs)."
+          },
+          "include_related_job_titles": {
+            "type": "boolean",
+            "default": false,
+            "description": "Returns profiles with related job titles."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "emailEnrich",
+      "description": "Given an email address, returns the enriched profile information of the person, including full name, job title, experience, contact information and more. This will consume an email credit.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "contactInfoFromLinkedinProfile",
+      "description": "Get contact information (email and phone) for the given LinkedIn profile URL. This will consume an email credit, and optionally a phone credit if required.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "profile"
+        ],
+        "properties": {
+          "profile": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The LinkedIn profile URL to get contact info for"
+          },
+          "include_phone": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to include phone numbers in the response or not. Defaults to false. If true, this will consume a phone credit if the profile's phone number is available."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@contactout/contactout-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Your ContactOut API key"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

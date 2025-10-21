@@ -1,0 +1,213 @@
+{
+  "qualifiedName": "@kodey-ai/mapwise-mcp",
+  "displayName": "mapwise-mcp",
+  "description": "Send friendly, personalized greetings on demand. Generate quick salutations with a simple prompt. Explore the origin story of 'Hello, World' for extra context.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@kodey-ai/mapwise-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_parcels",
+      "title": "Search Parcels",
+      "description": "Search Florida parcel data using various criteria. Requires API key for full access.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of results to return (max 100)"
+          },
+          "order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "asc",
+            "description": "Sort order"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Comma-separated list of specific fields to return"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Field to sort by"
+          },
+          "lat_lon": {
+            "type": "string",
+            "description": "Coordinate pair for point-in-polygon search (e.g., '27.9506,-82.4572')"
+          },
+          "searchPin": {
+            "type": "string",
+            "description": "Parcel identification number (PIN) - partial matches allowed"
+          },
+          "searchCity": {
+            "type": "string",
+            "description": "City name search"
+          },
+          "saleDateMax": {
+            "type": "string",
+            "description": "Maximum sale date (YYYY-MM-DD)"
+          },
+          "saleDateMin": {
+            "type": "string",
+            "description": "Minimum sale date (YYYY-MM-DD)"
+          },
+          "searchOwner": {
+            "type": "string",
+            "description": "Owner name substring match (case-insensitive)"
+          },
+          "searchCounty": {
+            "type": "string",
+            "description": "Florida county name (e.g., 'HILLSBOROUGH', 'POLK') or 'ALL' for statewide"
+          },
+          "saleAmountMax": {
+            "type": "number",
+            "description": "Maximum sale amount"
+          },
+          "saleAmountMin": {
+            "type": "number",
+            "description": "Minimum sale amount"
+          },
+          "searchAddress": {
+            "type": "string",
+            "description": "Property address search"
+          },
+          "searchMailing": {
+            "type": "string",
+            "description": "Mailing address search"
+          },
+          "searchZipcode": {
+            "type": "string",
+            "description": "ZIP code search"
+          },
+          "searchAcresMax": {
+            "type": "number",
+            "description": "Maximum acreage"
+          },
+          "searchAcresMin": {
+            "type": "number",
+            "description": "Minimum acreage"
+          },
+          "searchParcelId": {
+            "type": "string",
+            "description": "Specific parcel ID"
+          },
+          "includeGeometry": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include parcel geometry data"
+          },
+          "searchCityOwner": {
+            "type": "string",
+            "description": "Owner city search"
+          },
+          "searchStateOwner": {
+            "type": "string",
+            "description": "Owner state search"
+          },
+          "searchZipcodeOwner": {
+            "type": "string",
+            "description": "Owner ZIP code search"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "test_parcel_search",
+      "title": "Test Parcel Search",
+      "description": "Test parcel searches without API key (Alachua County only, limited data)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 5,
+            "description": "Number of results (max 10)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Offset for pagination"
+          },
+          "searchPin": {
+            "type": "string",
+            "description": "Parcel PIN number"
+          },
+          "searchOwner": {
+            "type": "string",
+            "description": "Owner name substring match"
+          },
+          "searchAddress": {
+            "type": "string",
+            "description": "Property address"
+          },
+          "searchParcelId": {
+            "type": "string",
+            "description": "Specific parcel ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_parcel_by_location",
+      "title": "Find Parcel by Location",
+      "description": "Find the parcel at specific coordinates in Florida",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "Latitude coordinate"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude coordinate"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@kodey-ai/mapwise-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "MapWise API key for authenticated requests"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "qualifiedName": "@wgong/sqlite-mcp-server",
+  "displayName": "SQLite Explorer",
+  "description": "Explore, query, and inspect SQLite databases with ease. List tables, preview results, and view detailed schema metadata to understand structure quickly. Verify connectivity and readiness with a quick health check.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@wgong/sqlite-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "read_query",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Execute a query on the SQLite database.\n\nArgs:\n    query: SELECT SQL query to execute\n    params: Optional list of parameters for the query\n    fetch_all: If True, fetches all results. If False, fetches one row.\n    row_limit: Maximum number of rows to return (default 1000)\n\nReturns:\n    List of dictionaries containing the query results",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "params": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "fetch_all": {
+            "type": "boolean",
+            "default": true
+          },
+          "row_limit": {
+            "type": "integer",
+            "default": 1000
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "list_tables",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "List all tables in the SQLite database.\n\nReturns:\n    List of table names in the database",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "describe_table",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get detailed information about a table's schema.\n\nArgs:\n    table_name: Name of the table to describe\n\nReturns:\n    List of dictionaries containing column information:\n    - name: Column name\n    - type: Column data type\n    - notnull: Whether the column can contain NULL values\n    - dflt_value: Default value for the column\n    - pk: Whether the column is part of the primary key",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "table_name"
+        ],
+        "properties": {
+          "table_name": {
+            "type": "string"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "health_check",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Check if the server and database are working properly.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@wgong/sqlite-mcp-server/mcp",
+      "configSchema": {
+        "message": "No configuration schema available"
+      }
+    }
+  ]
+}

@@ -1,0 +1,662 @@
+{
+  "qualifiedName": "@Qwinty/anytype-mcp",
+  "displayName": "Anytype MCP Server",
+  "description": "Access your Anytype data seamlessly with this server. Interact with spaces, objects, and templates to enhance your AI assistant's capabilities. Manage your data efficiently and optimize token usage for better performance.\n\nFor more info refer to: https://github.com/Qwinty/anytype-mcp",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get_spaces",
+      "description": "Retrieves all available Anytype spaces for the current user. This tool returns a list of spaces with their IDs, names, and other metadata. Use this tool to get an overview of all spaces or to find a specific space ID for use with other tools. No parameters are required.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_objects",
+      "description": "Searches for and retrieves objects within a specified Anytype space. This tool allows you to list all objects or filter them using a search query. Results are paginated for better performance with large spaces. Use this tool to discover objects within a space, find specific objects by name, or browse through collections of objects. The optional include_text parameter allows retrieving the full formatted text content of objects.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-1000)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID to get objects from"
+          },
+          "include_text": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true to include full formatted text content from blocks"
+          },
+          "full_response": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true to get full unfiltered response"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_object_content",
+      "description": "Retrieves detailed content and metadata for a specific object in an Anytype space. This tool provides comprehensive information about an object including its properties, relations, and content. Use this tool when you need to examine a specific object's details after discovering its ID through the get_objects tool. The optional include_text parameter allows retrieving the full formatted text content of the object.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "object_id"
+        ],
+        "properties": {
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the object"
+          },
+          "object_id": {
+            "type": "string",
+            "description": "Object ID to retrieve"
+          },
+          "include_text": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true to include full formatted text content from blocks"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_space",
+      "description": "Creates a new Anytype space with the specified name. This tool allows you to set up a fresh workspace for organizing objects and collaborating with others. Use this tool when you need to establish a new organizational container for your Anytype content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the new space"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_object",
+      "description": "Creates a new object within a specified Anytype space. This tool allows you to add various types of content (pages, notes, tasks, etc.) to your spaces. You can specify the object's name, type, description, icon, and content. Optionally, you can use a template to create pre-structured objects. Use this tool when you need to add new content to an existing space.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "name",
+          "type_key"
+        ],
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "Object body/content (Markdown supported)"
+          },
+          "icon": {
+            "type": "object",
+            "required": [
+              "format"
+            ],
+            "properties": {
+              "file": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL to the icon file (if format is 'file')"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the built-in icon (if format is 'icon')"
+              },
+              "color": {
+                "type": "string",
+                "description": "Color of the icon (optional)"
+              },
+              "emoji": {
+                "type": "string",
+                "description": "Emoji character (if format is 'emoji')"
+              },
+              "format": {
+                "enum": [
+                  "emoji",
+                  "file",
+                  "icon"
+                ],
+                "type": "string",
+                "description": "Icon format (required if icon is provided)"
+              }
+            },
+            "description": "Object icon details (structure based on API docs)",
+            "additionalProperties": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Object name"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source URL (for bookmarks)"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID to create the object in"
+          },
+          "type_key": {
+            "type": "string",
+            "description": "Type key of object to create (e.g. 'ot-page')"
+          },
+          "description": {
+            "type": "string",
+            "description": "Object's short description"
+          },
+          "template_id": {
+            "type": "string",
+            "description": "Template ID to use"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_object",
+      "description": "Permanently removes an object from a specified Anytype space. This tool deletes the object and all its content. Use this tool with caution as deleted objects cannot be recovered. Always verify the object ID before deletion to avoid removing important content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "object_id"
+        ],
+        "properties": {
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the object"
+          },
+          "object_id": {
+            "type": "string",
+            "description": "Object ID to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_object",
+      "description": "Exports an Anytype object in Markdown format. This tool allows you to extract content from Anytype for use in other applications or for backup purposes. Markdown format is human-readable and suitable for documentation. Use this tool when you need to share Anytype content with external systems or create portable backups.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "object_id",
+          "format"
+        ],
+        "properties": {
+          "format": {
+            "type": "string",
+            "const": "markdown",
+            "description": "Export format (currently only 'markdown' is supported)"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the object"
+          },
+          "object_id": {
+            "type": "string",
+            "description": "Object ID to export"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_space_members",
+      "description": "Retrieves a list of all members who have access to a specified Anytype space. This tool provides information about each member including their ID, name, and access level. Results are paginated for spaces with many members. Use this tool when you need to understand who has access to a space or manage collaboration permissions.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-1000)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID to get members from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_types",
+      "description": "Retrieves all object types available in a specified Anytype space. This tool provides information about the different types of objects that can be created in the space, including their IDs, names, and metadata. Results are paginated for spaces with many types. Use this tool when you need to understand what types of objects can be created or to find the correct type ID for creating new objects.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-100)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID to get types from"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_type_details",
+      "description": "Retrieves detailed information about a specific object type in an Anytype space. This tool provides comprehensive details about the type's structure, including its relations, views, and configuration options. Use this tool when you need to understand the structure of a particular object type or to examine its available relations and properties.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "type_id"
+        ],
+        "properties": {
+          "type_id": {
+            "type": "string",
+            "description": "Type ID to retrieve details for"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_templates",
+      "description": "Retrieves all available templates for a specific object type in an Anytype space. Templates provide pre-configured structures and content for creating new objects. This tool returns a list of templates with their IDs, names, and metadata. Results are paginated for types with many templates. Use this tool when you need to find appropriate templates for creating new objects of a specific type.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "type_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-1000)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "type_id": {
+            "type": "string",
+            "description": "Type ID to get templates for"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the type"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_template_details",
+      "description": "Retrieves detailed information about a specific template in an Anytype space. This tool provides comprehensive details about the template's structure, content, and configuration. Use this tool when you need to examine a template's properties before using it to create new objects, or to understand how a particular template is structured.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "type_id",
+          "template_id"
+        ],
+        "properties": {
+          "type_id": {
+            "type": "string",
+            "description": "Type ID for the template"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the template"
+          },
+          "template_id": {
+            "type": "string",
+            "description": "Template ID to retrieve details for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_list_views",
+      "description": "Retrieves views configured for a specific list in a space. Views define how objects in the list are filtered and sorted.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "list_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-1000)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "list_id": {
+            "type": "string",
+            "description": "List ID to get views for"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_list_view_objects",
+      "description": "Retrieves objects from a specific list view with applied filters and sorting.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "list_id",
+          "view_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-1000)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "list_id": {
+            "type": "string",
+            "description": "List ID"
+          },
+          "view_id": {
+            "type": "string",
+            "description": "View ID"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the list"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add_objects_to_list",
+      "description": "Adds one or more objects to a specific list in a space.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "list_id",
+          "object_ids"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string",
+            "description": "List ID to add objects to"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the list"
+          },
+          "object_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of object IDs to add"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove_object_from_list",
+      "description": "Removes an object from a specific list in a space.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id",
+          "list_id",
+          "object_id"
+        ],
+        "properties": {
+          "list_id": {
+            "type": "string",
+            "description": "List ID to remove object from"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID containing the list"
+          },
+          "object_id": {
+            "type": "string",
+            "description": "Object ID to remove"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "global_search",
+      "description": "Executes a search across all spaces the user has access to, with options for filtering by type and sorting.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-1000)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search term"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of object type keys or IDs to filter by"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "include_text": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true to include full formatted text content from blocks. USE WITH CAUTION: This can return a large amount of data."
+          },
+          "sort_property": {
+            "enum": [
+              "created_date",
+              "last_modified_date",
+              "last_opened_date",
+              "name"
+            ],
+            "type": "string",
+            "default": "last_modified_date",
+            "description": "Property to sort by"
+          },
+          "sort_direction": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "desc",
+            "description": "Sort direction"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_space",
+      "description": "Executes a search within a specific space, with options for filtering by type and sorting.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "space_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 100,
+            "description": "Number of results per page (1-1000)"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search term"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of object type keys or IDs to filter by"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "space_id": {
+            "type": "string",
+            "description": "Space ID to search within"
+          },
+          "include_text": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true to include full formatted text content from blocks. USE WITH CAUTION: This can return a large amount of data."
+          },
+          "full_response": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true to get full unfiltered response"
+          },
+          "sort_property": {
+            "enum": [
+              "created_date",
+              "last_modified_date",
+              "last_opened_date",
+              "name"
+            ],
+            "type": "string",
+            "default": "last_modified_date",
+            "description": "Property to sort by"
+          },
+          "sort_direction": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "desc",
+            "description": "Sort direction"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Qwinty/anytype-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "anytypeAppKey"
+        ],
+        "properties": {
+          "apiPort": {
+            "type": "number",
+            "default": 31009,
+            "description": "The port on which the Anytype API is available (default is 31009)."
+          },
+          "anytypeAppKey": {
+            "type": "string",
+            "description": "The Anytype App Key obtained from the Anytype desktop application."
+          }
+        }
+      }
+    }
+  ]
+}

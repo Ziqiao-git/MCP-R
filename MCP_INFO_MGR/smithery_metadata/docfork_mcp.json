@@ -1,0 +1,63 @@
+{
+  "qualifiedName": "@docfork/mcp",
+  "displayName": "Docfork",
+  "description": "@latest documentation and code examples to 9000+ libraries for LLMs and AI code editors in a single tool call. Just add `use docfork` to your prompt for accurate and relevant answers.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/docfork.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@docfork/mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "docfork_search_docs",
+      "description": "Search for documentation from GitHub or the web. Include programming language and framework names for best results. If a library ID appears in chat inside a URL, use that library ID for future searches to filter results to that specific library. Use 'docfork_read_url' to read a URL.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Query for documentation. Include programming language and framework names for best results."
+          },
+          "tokens": {
+            "type": "string",
+            "description": "Token budget control: 'dynamic' for system-determined optimal size, or number (100-10000) for hard limit"
+          },
+          "libraryId": {
+            "type": "string",
+            "description": "Optional library ID to filter search results to a specific library"
+          }
+        }
+      }
+    },
+    {
+      "name": "docfork_read_url",
+      "description": "Read the content of a documentation URL as markdown/text. Pass the entire exact URL from 'docfork_search_docs' results.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The complete URL of the webpage to read. Use the exact URL from search results."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@docfork/mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "description": "No configuration required",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "qualifiedName": "@flrngel/mcp-painter",
+  "displayName": "Drawing Tool for AI Assistants",
+  "description": "Create and manipulate drawings with a simple canvas interface. Enhance your AI assistants by enabling them to draw filled shapes and export images effortlessly. Utilize this tool to bring visual creativity to your applications.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "drawing_generateCanvas",
+      "description": "Generate a new drawing canvas with specified width and height.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "width",
+          "height"
+        ],
+        "properties": {
+          "width": {
+            "type": "number",
+            "description": "Width of the canvas in pixels"
+          },
+          "height": {
+            "type": "number",
+            "description": "Height of the canvas in pixels"
+          }
+        }
+      }
+    },
+    {
+      "name": "drawing_fillRectangle",
+      "description": "Fill a rectangle on the drawing canvas with a specified color and coordinates.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height",
+          "color"
+        ],
+        "properties": {
+          "x": {
+            "type": "number",
+            "description": "X coordinate of the top-left corner of the rectangle"
+          },
+          "y": {
+            "type": "number",
+            "description": "Y coordinate of the top-left corner of the rectangle"
+          },
+          "color": {
+            "type": "object",
+            "required": [
+              "r",
+              "g",
+              "b"
+            ],
+            "properties": {
+              "a": {
+                "type": "number",
+                "description": "Alpha component (0-255, optional, default 255)"
+              },
+              "b": {
+                "type": "number",
+                "description": "Blue component (0-255)"
+              },
+              "g": {
+                "type": "number",
+                "description": "Green component (0-255)"
+              },
+              "r": {
+                "type": "number",
+                "description": "Red component (0-255)"
+              }
+            },
+            "description": "Color to fill the rectangle with (RGB)"
+          },
+          "width": {
+            "type": "number",
+            "description": "Width of the rectangle"
+          },
+          "height": {
+            "type": "number",
+            "description": "Height of the rectangle"
+          }
+        }
+      }
+    },
+    {
+      "name": "drawing_getCanvasPng",
+      "description": "Get the current drawing canvas as a PNG image (base64 encoded).",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "drawing_getCanvasData",
+      "description": "Get the current pixel data of the drawing canvas as JSON.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@flrngel/mcp-painter/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "port": {
+            "type": "number",
+            "default": 3000,
+            "description": "Port for the MCP server to listen on"
+          }
+        }
+      }
+    }
+  ]
+}

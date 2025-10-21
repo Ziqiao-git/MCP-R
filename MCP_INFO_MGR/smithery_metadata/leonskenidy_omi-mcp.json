@@ -1,0 +1,226 @@
+{
+  "qualifiedName": "@leonskenidy/omi-mcp",
+  "displayName": "Omi API Server",
+  "description": "Provide seamless access to Omi conversations and memories through a standardized MCP interface. Enable users to read, create, and manage conversations and memories efficiently within their LLM workflows. Integrate easily with Claude, Cursor, and other MCP-compatible clients to enhance contextual understanding and interaction.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "read_omi_conversations",
+      "description": "Retrieves user conversations from Omi with pagination and filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of conversations to return (max: 1000, default: 100)"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of conversations to skip for pagination (default: 0)"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The user ID to fetch conversations for"
+          },
+          "statuses": {
+            "type": "string",
+            "description": "Comma-separated list of statuses to filter conversations by"
+          },
+          "include_discarded": {
+            "type": "boolean",
+            "description": "Whether to include discarded conversations (default: false)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "read_omi_memories",
+      "description": "Retrieves user memories from Omi with pagination options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of memories to return (max: 1000, default: 100)"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of memories to skip for pagination (default: 0)"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The user ID to fetch memories for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_omi_conversation",
+      "description": "Creates a new Omi conversation with text content and metadata",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "text",
+          "user_id",
+          "text_source"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The full text content of the conversation"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The user ID to create the conversation for"
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Language code (e.g., \"en\" for English). Optional, defaults to \"en\"."
+          },
+          "started_at": {
+            "type": "string",
+            "description": "When the conversation/event started in ISO 8601 format. Optional."
+          },
+          "finished_at": {
+            "type": "string",
+            "description": "When the conversation/event ended in ISO 8601 format. Optional."
+          },
+          "geolocation": {
+            "type": "object",
+            "required": [
+              "latitude",
+              "longitude"
+            ],
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "description": "Latitude coordinate. Required when geolocation is provided."
+              },
+              "longitude": {
+                "type": "number",
+                "description": "Longitude coordinate. Required when geolocation is provided."
+              }
+            },
+            "description": "Location data for the conversation. Optional object containing latitude and longitude.",
+            "additionalProperties": false
+          },
+          "text_source": {
+            "enum": [
+              "audio_transcript",
+              "message",
+              "other_text"
+            ],
+            "type": "string",
+            "description": "Source of the text content. Required. Options: \"audio_transcript\", \"message\", \"other_text\"."
+          },
+          "text_source_spec": {
+            "type": "string",
+            "description": "Additional specification about the source. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_omi_memories",
+      "description": "Creates Omi memories by extracting from text or using explicit memory objects",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text content from which memories will be extracted. Either this or memories must be provided."
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The user ID to create memories for"
+          },
+          "memories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "content"
+              ],
+              "properties": {
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "A tag for the memory."
+                  },
+                  "description": "Optional tags for the memory."
+                },
+                "content": {
+                  "type": "string",
+                  "description": "The content of the memory. Required."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "An array of explicit memory objects to be created directly. Either this or text must be provided."
+          },
+          "text_source": {
+            "enum": [
+              "email",
+              "social_post",
+              "other"
+            ],
+            "type": "string",
+            "description": "Source of the text content. Optional. Options: \"email\", \"social_post\", \"other\"."
+          },
+          "text_source_spec": {
+            "type": "string",
+            "description": "Additional specification about the source. Optional."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@leonskenidy/omi-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "apiKey",
+          "appId"
+        ],
+        "properties": {
+          "appId": {
+            "type": "string",
+            "description": "Application ID for Omi's API"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "API key for Omi's API"
+          }
+        }
+      }
+    }
+  ]
+}

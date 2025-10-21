@@ -1,0 +1,143 @@
+{
+  "qualifiedName": "@tahaswx/mcp-server-serper-test",
+  "displayName": "Serper Search and Scrape",
+  "description": "Enable powerful web search and content extraction capabilities. Perform web searches and scrape webpage content seamlessly to enhance your applications with real-time data.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/serper.dev.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "google_search",
+      "description": "Tool to perform web searches via Serper API and retrieve rich results. It is able to retrieve organic search results, people also ask, related searches, and knowledge graph.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "q",
+          "gl",
+          "hl"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query string (e.g., 'artificial intelligence', 'climate change solutions')"
+          },
+          "gl": {
+            "type": "string",
+            "description": "Optional region code for search results in ISO 3166-1 alpha-2 format (e.g., 'us', 'gb', 'de')"
+          },
+          "hl": {
+            "type": "string",
+            "description": "Optional language code for search results in ISO 639-1 format (e.g., 'en', 'es', 'fr')"
+          },
+          "or": {
+            "type": "string",
+            "description": "Alternative terms as comma-separated string (e.g., 'tutorial,guide,course', 'documentation,manual')"
+          },
+          "num": {
+            "type": "number",
+            "description": "Number of results to return (default: 10)"
+          },
+          "tbs": {
+            "type": "string",
+            "description": "Time-based search filter ('qdr:h' for past hour, 'qdr:d' for past day, 'qdr:w' for past week, 'qdr:m' for past month, 'qdr:y' for past year)"
+          },
+          "page": {
+            "type": "number",
+            "description": "Page number of results to return (default: 1)"
+          },
+          "site": {
+            "type": "string",
+            "description": "Limit results to specific domain (e.g., 'github.com', 'wikipedia.org')"
+          },
+          "after": {
+            "type": "string",
+            "description": "Date after in YYYY-MM-DD format (e.g., '2023-01-01')"
+          },
+          "cache": {
+            "type": "string",
+            "description": "View Google's cached version of a specific URL (e.g., 'example.com/page')"
+          },
+          "exact": {
+            "type": "string",
+            "description": "Exact phrase match (e.g., 'machine learning', 'quantum computing')"
+          },
+          "inurl": {
+            "type": "string",
+            "description": "Search for pages with word in URL (e.g., 'download', 'tutorial')"
+          },
+          "before": {
+            "type": "string",
+            "description": "Date before in YYYY-MM-DD format (e.g., '2024-01-01')"
+          },
+          "exclude": {
+            "type": "string",
+            "description": "Terms to exclude from search results as comma-separated string (e.g., 'spam,ads', 'beginner,basic')"
+          },
+          "intitle": {
+            "type": "string",
+            "description": "Search for pages with word in title (e.g., 'review', 'how to')"
+          },
+          "related": {
+            "type": "string",
+            "description": "Find similar websites (e.g., 'github.com', 'stackoverflow.com')"
+          },
+          "filetype": {
+            "type": "string",
+            "description": "Limit to specific file types (e.g., 'pdf', 'doc', 'xls')"
+          },
+          "location": {
+            "type": "string",
+            "description": "Optional location for search results (e.g., 'SoHo, New York, United States', 'California, United States')"
+          },
+          "autocorrect": {
+            "type": "boolean",
+            "description": "Whether to autocorrect spelling in query"
+          }
+        }
+      }
+    },
+    {
+      "name": "scrape",
+      "description": "Tool to scrape a webpage and retrieve the text and, optionally, the markdown content. It will retrieve also the JSON-LD metadata and the head metadata.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the webpage to scrape."
+          },
+          "includeMarkdown": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to include markdown content."
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@tahaswx/mcp-server-serper-test/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "serperApiKey"
+        ],
+        "properties": {
+          "serperApiKey": {
+            "type": "string",
+            "description": "The API key for the Serper MCP server."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "qualifiedName": "@insomniactools/github-gists",
+  "displayName": "GitHub Gists MCP Server",
+  "description": "Transform GitHub Gists into your AI assistant's personal code snippet library. Save, retrieve, update, and organize your code snippets seamlessly in the cloud, enabling your AI to remember and reuse your best code patterns. Enhance your development workflow by managing your code memory effortlessly with this MCP server.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/f1ac81a4-c6d1-4e4d-9650-94ec4c38f7fd.svg",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "list_gists",
+      "description": "List all gists for the authenticated user or a specific user",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number to retrieve"
+          },
+          "since": {
+            "type": "string",
+            "description": "Only show gists updated after this time (ISO 8601 format)"
+          },
+          "per_page": {
+            "type": "number",
+            "default": 30,
+            "description": "Number of results per page (max 100)"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username to list gists for (optional, defaults to authenticated user)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_public_gists",
+      "description": "List all public gists",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number to retrieve"
+          },
+          "since": {
+            "type": "string",
+            "description": "Only show gists updated after this time (ISO 8601 format)"
+          },
+          "per_page": {
+            "type": "number",
+            "default": 30,
+            "description": "Number of results per page (max 100)"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_starred_gists",
+      "description": "List all starred gists for the authenticated user",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "default": 1,
+            "description": "Page number to retrieve"
+          },
+          "since": {
+            "type": "string",
+            "description": "Only show gists updated after this time (ISO 8601 format)"
+          },
+          "per_page": {
+            "type": "number",
+            "default": 30,
+            "description": "Number of results per page (max 100)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_gist",
+      "description": "Get a single gist by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gist_id"
+        ],
+        "properties": {
+          "gist_id": {
+            "type": "string",
+            "description": "The ID of the gist to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_gist",
+      "description": "Create a new gist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "object",
+            "description": "Files to include in the gist (object with filename as key and content as value)",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "public": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the gist should be public"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the gist"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_gist",
+      "description": "Update an existing gist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gist_id"
+        ],
+        "properties": {
+          "files": {
+            "type": "object",
+            "description": "Files to update (object with filename as key and content as value, or null to delete)",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "gist_id": {
+            "type": "string",
+            "description": "The ID of the gist to update"
+          },
+          "description": {
+            "type": "string",
+            "description": "New description for the gist"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_gist",
+      "description": "Delete a gist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gist_id"
+        ],
+        "properties": {
+          "gist_id": {
+            "type": "string",
+            "description": "The ID of the gist to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "star_gist",
+      "description": "Star a gist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gist_id"
+        ],
+        "properties": {
+          "gist_id": {
+            "type": "string",
+            "description": "The ID of the gist to star"
+          }
+        }
+      }
+    },
+    {
+      "name": "unstar_gist",
+      "description": "Unstar a gist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gist_id"
+        ],
+        "properties": {
+          "gist_id": {
+            "type": "string",
+            "description": "The ID of the gist to unstar"
+          }
+        }
+      }
+    },
+    {
+      "name": "fork_gist",
+      "description": "Fork a gist",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "gist_id"
+        ],
+        "properties": {
+          "gist_id": {
+            "type": "string",
+            "description": "The ID of the gist to fork"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@insomniactools/github-gists/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "githubToken"
+        ],
+        "properties": {
+          "githubToken": {
+            "type": "string",
+            "description": "GitHub personal access token with gist scope"
+          }
+        }
+      }
+    }
+  ]
+}

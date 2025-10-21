@@ -1,0 +1,603 @@
+{
+  "qualifiedName": "@sourabh/timeslope",
+  "displayName": "timeslope",
+  "description": "### TimeSlope MCP Server\n**Automated Economic analysis via MCP over FRED data**\n\nPlug your agent into FRED and get quick, decision-ready insights. TimeSlope finds the right series and summarizes what matters—no setup details here.\n\n### Tools\n- **Plan Research**: Give it a question; get a tight plan with smart follow-ups.\n- **Quick Analyze**: Ask about a topic (optionally add dates); get a brief series-backed summary.\n\n### Examples\n- “How did unemployment and CPI move from 2018–2024?”\n- “Show mortgage rates and home prices during 2008–2012.”\n- “Compare US GDP growth and CPI from 2000–2010.”\n\n### Notes\n- No forecasting. Not investment advice.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/0b4f77ca-9473-4ec7-970d-6e587e973e34.png",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@sourabh/timeslope",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_research_plan",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Get a research plan for answering a question.\nAlways call this tool before calling the execute_step_from_research_plan tool.\nOnce you have a research plan, you can call the execute_step_from_research_plan tool to answer the question using the research plan that this tool returns.",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "NarrativeQuestion": {
+            "type": "object",
+            "title": "NarrativeQuestion",
+            "required": [
+              "question"
+            ],
+            "properties": {
+              "question": {
+                "type": "string",
+                "title": "Question",
+                "description": "The question the user asked"
+              }
+            }
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "question": {
+            "$ref": "#/$defs/NarrativeQuestion",
+            "title": "Question"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "ResearchPlanResponse",
+        "required": [
+          "research_plan",
+          "qualitative_questions",
+          "quantitative_questions"
+        ],
+        "properties": {
+          "research_plan": {
+            "type": "string",
+            "title": "Research Plan",
+            "description": "A research plan for answering the question"
+          },
+          "qualitative_questions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Qualitative Questions",
+            "description": "A list of qualitative questions to ask the research agent. Be extra careful when devising these questions - these should be qualitative questions that can still be somehow gleaned from the quantitative data in FRED time series datasets."
+          },
+          "quantitative_questions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Quantitative Questions",
+            "description": "A list of quantitative questions to ask the research agent"
+          }
+        },
+        "description": "A response that includes a list of questions to ask the research agent to answer the question"
+      }
+    },
+    {
+      "name": "execute_step_from_research_plan",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "description": "Query the multiple tools to answer a question about the St. Louis Federal Reserve Economic Database (FRED).\nYou should use the research plan from the get_research_plan tool before issuing calls to this tool.\nOnly issue questions to this tool that are the in service of the research plan given by the get_research_plan tool.",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "SeriesFastSemanticQuery": {
+            "type": "object",
+            "title": "SeriesFastSemanticQuery",
+            "required": [
+              "query"
+            ],
+            "properties": {
+              "query": {
+                "type": "string",
+                "title": "Query",
+                "description": "Semantic description of the of information to search for in the FRED database"
+              },
+              "observation_end": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Observation End",
+                "default": null,
+                "description": "End of observation period (YYYY-MM-DD), defaults to latest available. Use this to limit the data to a specific time period, if the question is about a specific time period."
+              },
+              "observation_start": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Observation Start",
+                "default": null,
+                "description": "Start of observation period (YYYY-MM-DD), defaults to earliest available. Use this to limit the data to a specific time period, if the question is about a specific time period."
+              }
+            },
+            "description": "This is a fast version of the SeriesSemanticQuery that is used for the agent.\nIt is used to search for series that are relevant to the user's question.\nUse observation_start and observation_end to limit the data to a specific time period, if the question is about a specific time period."
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "$ref": "#/$defs/SeriesFastSemanticQuery",
+            "title": "Query"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "$defs": {
+          "Units": {
+            "enum": [
+              "lin",
+              "chg",
+              "ch1",
+              "pch",
+              "pc1",
+              "pca",
+              "cch",
+              "cca",
+              "log"
+            ],
+            "type": "string",
+            "title": "Units",
+            "description": "Data value transformation types"
+          },
+          "Frequency": {
+            "enum": [
+              "d",
+              "w",
+              "bw",
+              "m",
+              "q",
+              "sa",
+              "a",
+              "wef",
+              "weth",
+              "wew",
+              "wetu",
+              "wem",
+              "wesu",
+              "wesa",
+              "bwew",
+              "bwem"
+            ],
+            "type": "string",
+            "title": "Frequency",
+            "description": "Frequency aggregation options"
+          },
+          "SortOrder": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "title": "SortOrder"
+          },
+          "OutputType": {
+            "enum": [
+              "1",
+              "2",
+              "3",
+              "4"
+            ],
+            "type": "string",
+            "title": "OutputType",
+            "description": "Output type for observations"
+          },
+          "SeriesDataQuery": {
+            "type": "object",
+            "title": "SeriesDataQuery",
+            "required": [
+              "series_id"
+            ],
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "title": "Limit",
+                "default": 1000,
+                "maximum": 100000,
+                "minimum": 1,
+                "description": "Maximum number of results to return (1-100000)"
+              },
+              "units": {
+                "$ref": "#/$defs/Units",
+                "default": "lin",
+                "description": "Data value transformation type"
+              },
+              "offset": {
+                "type": "integer",
+                "title": "Offset",
+                "default": 0,
+                "minimum": 0,
+                "description": "Number of results to skip (non-negative integer)"
+              },
+              "frequency": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Frequency"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Frequency aggregation (converts higher to lower frequency)"
+              },
+              "series_id": {
+                "type": "string",
+                "title": "Series Id",
+                "description": "FRED series ID (required)"
+              },
+              "sort_order": {
+                "$ref": "#/$defs/SortOrder",
+                "default": "asc",
+                "description": "Sort order for observations by date"
+              },
+              "output_type": {
+                "$ref": "#/$defs/OutputType",
+                "default": "1"
+              },
+              "realtime_end": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Realtime End",
+                "default": null,
+                "description": "End of real-time period (YYYY-MM-DD), defaults to end of series"
+              },
+              "vintage_dates": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Vintage Dates",
+                "default": null,
+                "description": "Comma-separated list of vintage dates (YYYY-MM-DD,YYYY-MM-DD). Avoid using this parameter."
+              },
+              "realtime_start": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Realtime Start",
+                "default": null,
+                "description": "Start of real-time period (YYYY-MM-DD), defaults to start of series"
+              },
+              "observation_end": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Observation End",
+                "default": null,
+                "description": "End of observation period (YYYY-MM-DD), defaults to latest available"
+              },
+              "observation_start": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Observation Start",
+                "default": null,
+                "description": "Start of observation period (YYYY-MM-DD), defaults to earliest available"
+              },
+              "aggregation_method": {
+                "$ref": "#/$defs/AggregationMethod",
+                "default": "avg",
+                "description": "Aggregation method for frequency aggregation"
+              }
+            },
+            "description": "Query parameters for FRED series observations API"
+          },
+          "SeriesDataResult": {
+            "type": "object",
+            "title": "SeriesDataResult",
+            "required": [
+              "realtime_start",
+              "realtime_end",
+              "date",
+              "value"
+            ],
+            "properties": {
+              "date": {
+                "type": "string",
+                "title": "Date",
+                "format": "date",
+                "description": "Observation date"
+              },
+              "value": {
+                "type": "string",
+                "title": "Value",
+                "description": "Observation value (as string to handle '.' for missing values)"
+              },
+              "realtime_end": {
+                "type": "string",
+                "title": "Realtime End",
+                "format": "date",
+                "description": "Real-time end date for this observation"
+              },
+              "realtime_start": {
+                "type": "string",
+                "title": "Realtime Start",
+                "format": "date",
+                "description": "Real-time start date for this observation"
+              }
+            },
+            "description": "Individual observation from FRED series observations API"
+          },
+          "AggregationMethod": {
+            "enum": [
+              "avg",
+              "sum",
+              "eop"
+            ],
+            "type": "string",
+            "title": "AggregationMethod",
+            "description": "Aggregation methods for frequency aggregation"
+          },
+          "SeriesSearchResult": {
+            "type": "object",
+            "title": "SeriesSearchResult",
+            "required": [
+              "id",
+              "realtime_start",
+              "realtime_end",
+              "title",
+              "observation_start",
+              "observation_end",
+              "frequency",
+              "frequency_short",
+              "units",
+              "units_short",
+              "seasonal_adjustment",
+              "seasonal_adjustment_short",
+              "last_updated",
+              "popularity"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Id",
+                "description": "The FRED series ID"
+              },
+              "notes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Notes",
+                "default": null,
+                "description": "Notes about the series"
+              },
+              "title": {
+                "type": "string",
+                "title": "Title",
+                "description": "The title of the series"
+              },
+              "units": {
+                "type": "string",
+                "title": "Units",
+                "description": "The units of the series"
+              },
+              "frequency": {
+                "type": "string",
+                "title": "Frequency",
+                "description": "The frequency of the series"
+              },
+              "popularity": {
+                "type": "integer",
+                "title": "Popularity",
+                "description": "The popularity of the series"
+              },
+              "series_link": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uri",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Series Link",
+                "default": null,
+                "description": "The link to the series on the FRED website. Always cite this link when using the series in your response."
+              },
+              "units_short": {
+                "type": "string",
+                "title": "Units Short",
+                "description": "The short form of the units of the series"
+              },
+              "last_updated": {
+                "type": "string",
+                "title": "Last Updated",
+                "format": "date-time",
+                "description": "The last updated date of the series"
+              },
+              "realtime_end": {
+                "type": "string",
+                "title": "Realtime End",
+                "format": "date",
+                "description": "The real-time end date of the series"
+              },
+              "realtime_start": {
+                "type": "string",
+                "title": "Realtime Start",
+                "format": "date",
+                "description": "The real-time start date of the series"
+              },
+              "frequency_short": {
+                "type": "string",
+                "title": "Frequency Short",
+                "description": "The short form of the frequency of the series"
+              },
+              "observation_end": {
+                "type": "string",
+                "title": "Observation End",
+                "format": "date",
+                "description": "The end date of the series"
+              },
+              "group_popularity": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Group Popularity",
+                "default": null,
+                "description": "The group popularity of the series"
+              },
+              "observation_start": {
+                "type": "string",
+                "title": "Observation Start",
+                "format": "date",
+                "description": "The start date of the series"
+              },
+              "seasonal_adjustment": {
+                "type": "string",
+                "title": "Seasonal Adjustment",
+                "description": "The seasonal adjustment of the series"
+              },
+              "seasonal_adjustment_short": {
+                "type": "string",
+                "title": "Seasonal Adjustment Short",
+                "description": "The short form of the seasonal adjustment of the series"
+              }
+            }
+          },
+          "SeriesDescriptionResponse": {
+            "type": "object",
+            "title": "SeriesDescriptionResponse",
+            "required": [
+              "narrative",
+              "query",
+              "series"
+            ],
+            "properties": {
+              "query": {
+                "$ref": "#/$defs/SeriesDataQuery",
+                "description": "The query that was used to get the series data"
+              },
+              "series": {
+                "$ref": "#/$defs/SeriesSearchResult",
+                "description": "The series data"
+              },
+              "narrative": {
+                "type": "string",
+                "title": "Narrative",
+                "description": "A narrative description of the response"
+              },
+              "max_data_point": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SeriesDataResult"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "The maximum data point in the entire series"
+              },
+              "min_data_point": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SeriesDataResult"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "The minimum data point in the entire series"
+              },
+              "inflection_points": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/SeriesDataResult"
+                },
+                "title": "Inflection Points",
+                "description": "The points where the series changes direction"
+              }
+            },
+            "description": "A response that includes a narrative description of a series"
+          }
+        },
+        "title": "FastAnalysisResponse",
+        "required": [
+          "series_data_results"
+        ],
+        "properties": {
+          "series_data_results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/SeriesDescriptionResponse"
+            },
+            "title": "Series Data Results",
+            "description": "A list of relevant queries for relevant FRED series for the given user question"
+          }
+        },
+        "description": "A response to a fast analysis query"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@sourabh/timeslope/mcp",
+      "configSchema": {}
+    }
+  ]
+}

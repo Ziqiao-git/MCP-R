@@ -1,0 +1,219 @@
+{
+  "qualifiedName": "@TerryZ282/mcp-word-sheet",
+  "displayName": "Word Memory Tool",
+  "description": "Manage and review vocabulary efficiently using spaced repetition and AI-powered translation. Store your data securely in Google Sheets and enjoy seamless synchronization between a React frontend and AI chat integration. Enhance your language learning with automated reminders and detailed word management features.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@TerryZ282/mcp-word-sheet",
+  "security": null,
+  "tools": [
+    {
+      "name": "word_manager",
+      "description": "统一的单词管理工具，支持以下操作：\n- add：添加单词（支持批量，支持 context/example/translation 字段，若单词已存在则覆盖）\n- remove：移除单词（支持批量）\n- list：分页列出所有单词及其详细信息\n- mark_reviewed：标记单词为已复习\n- get_detail：查询一个或多个单词的详细信息（返回 markdown 卡片，建议直接渲染）",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "words"
+        ],
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "页码（列表时需要，从0开始）"
+          },
+          "words": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "word"
+                  ],
+                  "properties": {
+                    "row": {
+                      "type": "number"
+                    },
+                    "word": {
+                      "type": "string"
+                    },
+                    "context": {
+                      "type": "string"
+                    },
+                    "example": {
+                      "type": "string"
+                    },
+                    "translation": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "description": "要操作的单词列表（可带 row、context、example、translation）"
+          },
+          "action": {
+            "enum": [
+              "add",
+              "remove",
+              "list",
+              "mark_reviewed",
+              "get_detail"
+            ],
+            "type": "string",
+            "description": "操作类型"
+          },
+          "reason": {
+            "type": "string",
+            "description": "移除原因（删除时需要）"
+          },
+          "context": {
+            "type": "string",
+            "description": "上下文（添加时需要）"
+          },
+          "example": {
+            "type": "string",
+            "description": "例句（添加时需要）"
+          },
+          "translation": {
+            "type": "string",
+            "description": "翻译（添加时可选）"
+          },
+          "expand_index": {
+            "type": "number",
+            "description": "展开详情的单词索引（列表时使用）"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "translation_tool",
+      "description": "识别用户是否在翻译一个英文单词（如 'benevolent 是什么意思' 或 'translate regret'），并判断是否需要将其加入词汇记忆",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "input"
+        ],
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "用户输入"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reminder_manager",
+      "description": "提醒管理工具，支持查看和开关自动复习提醒功能",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "check",
+              "toggle"
+            ],
+            "type": "string",
+            "description": "操作类型"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "是否开启提醒（toggle 时需要）"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "review_words_detail",
+      "description": "获取今日需要复习的单词详细信息，卡片风格",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "get_words"
+            ],
+            "type": "string",
+            "description": "操作类型：获取单词列表"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "view_history",
+      "description": "查看已移除的单词历史记录",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "页码（可选，从0开始）"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@TerryZ282/mcp-word-sheet/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "spreadsheetId",
+          "googleServiceAccountEmail",
+          "googlePrivateKey"
+        ],
+        "properties": {
+          "sheetName": {
+            "type": "string",
+            "default": "mcp-memory-word",
+            "description": "Sheet name (default: mcp-memory-word)"
+          },
+          "spreadsheetId": {
+            "type": "string",
+            "description": "Google Sheets Spreadsheet ID"
+          },
+          "googlePrivateKey": {
+            "type": "string",
+            "description": "Google Service Account Private Key"
+          },
+          "enableAutoReviewReminder": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable automatic daily review reminder"
+          },
+          "googleServiceAccountEmail": {
+            "type": "string",
+            "description": "Google Service Account Email"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "qualifiedName": "@santiago.blanco.vilchez/asd",
+  "displayName": "Tenant Template Manager",
+  "description": "Authenticate and provision new tenants with initial document templates. Add and manage templates for existing tenants to standardize workflows. Connect to external services via HTTP as part of your setup or operations.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@santiago.blanco.vilchez/asd",
+  "security": null,
+  "tools": [
+    {
+      "name": "add-template",
+      "_meta": {},
+      "title": "Add Template (Seed)",
+      "annotations": {
+        "title": "Add Template (Seed)",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Add a new template with sections to an existing tenant via the seed-template endpoint",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accessToken",
+          "tenantId",
+          "serviceTypeName",
+          "serviceTypeDescription",
+          "templateName",
+          "sectionsJson"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "description": "Tenant identifier (UUID)"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "JWT access token from admin user"
+          },
+          "sectionsJson": {
+            "type": "string",
+            "description": "JSON array describing sections and items. Example: [{\"name\":\"Section\",\"items\":[{\"label\":\"Doc\",\"isRequired\":true}]}]"
+          },
+          "templateName": {
+            "type": "string",
+            "description": "Template name"
+          },
+          "serviceTypeName": {
+            "type": "string",
+            "description": "Service type name"
+          },
+          "serviceTypeDescription": {
+            "type": "string",
+            "description": "Service type description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "auth-login",
+      "_meta": {},
+      "title": "Authentication Login",
+      "annotations": {
+        "title": "Authentication Login",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Authenticate user via the login endpoint and get JWT access token",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create-tenant",
+      "_meta": {},
+      "title": "Create Tenant (Bootstrap)",
+      "annotations": {
+        "title": "Create Tenant (Bootstrap)",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Create a new tenant via the bootstrap endpoint with tenant, service type, admin user, and document sections",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "accessToken",
+          "tenantName",
+          "tenantUrl",
+          "serviceTypeName",
+          "serviceTypeDescription",
+          "templateName",
+          "adminEmail",
+          "adminPassword",
+          "adminFirstName",
+          "adminLastName"
+        ],
+        "properties": {
+          "tenantUrl": {
+            "type": "string",
+            "description": "Tenant URL or slug"
+          },
+          "adminEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Admin user email"
+          },
+          "adminPhone": {
+            "type": "string",
+            "description": "Phone number (default: +1-555-0100)"
+          },
+          "tenantName": {
+            "type": "string",
+            "description": "Tenant name"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "JWT access token from login"
+          },
+          "adminAddress": {
+            "type": "string",
+            "description": "Address (default: 123 Main St)"
+          },
+          "templateName": {
+            "type": "string",
+            "description": "Template name (e.g., '2024 Onboarding Checklist')"
+          },
+          "adminLastName": {
+            "type": "string",
+            "description": "Admin last name"
+          },
+          "adminPassword": {
+            "type": "string",
+            "description": "Admin user password"
+          },
+          "tenantLogoUrl": {
+            "type": "string",
+            "description": "Logo URL (default: https://platform.clara.care/logo.svg)"
+          },
+          "adminFirstName": {
+            "type": "string",
+            "description": "Admin first name"
+          },
+          "serviceTypeName": {
+            "type": "string",
+            "description": "Service type name (e.g., 'Tax Advisor')"
+          },
+          "serviceTypeDescription": {
+            "type": "string",
+            "description": "Service type description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "http-request",
+      "_meta": {},
+      "title": "HTTP Request",
+      "annotations": {
+        "title": "HTTP Request",
+        "readOnlyHint": false,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Make HTTP requests to external APIs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "method",
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URL to make the request to"
+          },
+          "body": {
+            "type": "string",
+            "description": "Request body as JSON string"
+          },
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE"
+            ],
+            "type": "string",
+            "description": "HTTP method"
+          },
+          "headers": {
+            "type": "object",
+            "description": "HTTP headers",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@santiago.blanco.vilchez/asd/mcp",
+      "configSchema": {}
+    }
+  ]
+}

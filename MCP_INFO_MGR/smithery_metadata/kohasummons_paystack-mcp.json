@@ -1,0 +1,971 @@
+{
+  "qualifiedName": "@kohasummons/paystack-mcp",
+  "displayName": "Paystack",
+  "description": "The Paystack Model Context Protocol (MCP) server allows AI agents to interact with Paystack through standardized MCP clients via tool calling. This protocol supports various tools to interact with different Paystack services.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/858e47fc-6dec-4b88-83be-a7b3d237b4bb.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "create_product",
+      "description": "Create a new product on your Paystack integration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "description",
+          "price",
+          "currency"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The name of the product"
+          },
+          "price": {
+            "type": "integer",
+            "description": "The price of the product. Price should be in the subunit of the supported currency",
+            "exclusiveMinimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The currency of the product"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of products in stock. This is required if unlimited is false."
+          },
+          "unlimited": {
+            "type": "boolean",
+            "description": "Whether the product has an unlimited quantity. Set to true if the product has unlimited stock. Leave as false if the product has limited stock"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The description of the product"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_products",
+      "description": "List products available on your Paystack integration with pagination support",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "to": {
+            "type": "string",
+            "format": "date-time",
+            "description": "A timestamp at which to stop listing product e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "description": "A timestamp from which to start listing product e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The page number to retrieve. Default is 1",
+            "exclusiveMinimum": 0
+          },
+          "perPage": {
+            "type": "integer",
+            "description": "Number of records to retrieve per page. If not specified we use a default value of 50",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_product",
+      "description": "Get details of a specific product by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "The id of the product to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_product",
+      "description": "Update an existing product by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "The id of the product to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the product"
+          },
+          "price": {
+            "type": "integer",
+            "description": "The price of the product. Price should be in the subunit of the supported currency",
+            "exclusiveMinimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency of the product"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of products in stock. This is required if unlimited is false."
+          },
+          "unlimited": {
+            "type": "boolean",
+            "description": "Whether the product has an unlimited quantity. Set to true if the product has unlimited stock. Leave as false if the product has limited stock"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the product"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_customer",
+      "description": "Create a new customer in Paystack",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Customer's email address"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional structured data for the customer",
+            "additionalProperties": {}
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Customer's last name"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Customer's first name"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_customers",
+      "description": "List customers available on your Paystack integration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "perPage",
+          "page"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "A timestamp at which to stop listing customers e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "from": {
+            "type": "string",
+            "description": "A timestamp from which to start listing customers e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "page": {
+            "type": "number",
+            "description": "Page number to retrieve (default: 1)",
+            "exclusiveMinimum": 0
+          },
+          "perPage": {
+            "type": "number",
+            "description": "Number of records per page (default: 50)",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_customer",
+      "description": "Get details of a specific customer by email or code",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email_or_code"
+        ],
+        "properties": {
+          "email_or_code": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_customer",
+      "description": "Update a customer's details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code",
+          "first_name",
+          "last_name"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can attach to the customer. It can be used to store additional information in a structured format.",
+            "additionalProperties": {}
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Customer's last name"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Customer's first name"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_customer",
+      "description": "Validate a customer's identity with bank account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code",
+          "country",
+          "type",
+          "account_number",
+          "bvn",
+          "bank_code",
+          "first_name",
+          "last_name"
+        ],
+        "properties": {
+          "bvn": {
+            "type": "string",
+            "minLength": 1
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "enum": [
+              "bank_account"
+            ],
+            "type": "string",
+            "description": "Predefined types of identification. Only bank_account is supported at the moment"
+          },
+          "country": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2
+          },
+          "bank_code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Customer's last name"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Customer's first name"
+          },
+          "middle_name": {
+            "type": "string",
+            "description": "Customer's middle name"
+          },
+          "account_number": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_customer_risk_action",
+      "description": "Whitelist or blacklist a customer",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "customer",
+          "risk_action"
+        ],
+        "properties": {
+          "customer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "risk_action": {
+            "enum": [
+              "default",
+              "allow",
+              "deny"
+            ],
+            "type": "string",
+            "description": "One of the possible risk actions [ default, allow, deny ]. allow to whitelist. deny to blacklist. Customers start with a default risk action."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deactivate_authorization",
+      "description": "Deactivate a payment authorization when a card needs to be forgotten",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "authorization_code"
+        ],
+        "properties": {
+          "authorization_code": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "initialize_transaction",
+      "description": "Initialize a transaction to accept payment on Paystack",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email",
+          "amount",
+          "reference"
+        ],
+        "properties": {
+          "plan": {
+            "type": "string",
+            "description": "If transaction is to create a subscription to a predefined plan, provide plan code here."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Customer's email address"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The amount to charge in the subunit of the supported currency",
+            "exclusiveMinimum": 0
+          },
+          "bearer": {
+            "type": "string",
+            "description": "Who bears Paystack charges? account or subaccount (defaults to account)."
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of payment channels to control what channels you want to make available to the user to make a payment with. Available channels include: [\"card\", \"bank\", \"apple_pay\", \"ussd\", \"qr\", \"mobile_money\", \"bank_transfer\", \"eft\"]"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency to charge in. Default is your integration currency."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional information to store with the transaction.",
+            "additionalProperties": {}
+          },
+          "reference": {
+            "type": "string",
+            "description": "Unique transaction reference. Only -, ., = and alphanumeric characters allowed. If not provided, a unique reference will be generated."
+          },
+          "split_code": {
+            "type": "string",
+            "description": "The split code of the transaction split."
+          },
+          "subaccount": {
+            "type": "string",
+            "description": "The code for the subaccount that owns the payment. e.g. ACCT_8f4s1eq7ml6rlzj"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to redirect to after payment. Only required for inline payment methods."
+          },
+          "transaction_charge": {
+            "type": "number",
+            "description": "A flat fee to charge the subaccount for this transaction (in the subunit of the supported currency)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_transaction",
+      "description": "Verify a transaction's status using the transaction reference",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "reference"
+        ],
+        "properties": {
+          "reference": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The transaction reference to verify"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch_transaction",
+      "description": "Get details of a transaction by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the transaction to fetch",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_transactions",
+      "description": "List transactions with pagination and filtering options",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "perPage",
+          "page"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Filter transactions to this date. Format: YYYY-MM-DD."
+          },
+          "from": {
+            "type": "string",
+            "description": "Filter transactions from this date. Format: YYYY-MM-DD."
+          },
+          "page": {
+            "type": "integer",
+            "description": "Page number to retrieve. Default is 1.",
+            "exclusiveMinimum": 0
+          },
+          "amount": {
+            "type": "number",
+            "description": "Filter transactions by amount. Value is in kobo, pesewas or cents."
+          },
+          "status": {
+            "enum": [
+              "success",
+              "failed",
+              "abandoned"
+            ],
+            "type": "string",
+            "description": "Filter transactions by status."
+          },
+          "channel": {
+            "type": "string",
+            "description": "Filter transactions by channel."
+          },
+          "perPage": {
+            "type": "integer",
+            "description": "Number of records to retrieve per page. Default is 50.",
+            "exclusiveMinimum": 0
+          },
+          "customer": {
+            "type": "string",
+            "description": "Filter transactions by customer ID or code."
+          },
+          "reference": {
+            "type": "string",
+            "description": "Filter transactions by reference."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "charge_authorization",
+      "description": "Charge a previously authorized card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "email",
+          "amount",
+          "authorization_code"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Customer's email address"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The amount to charge in the subunit of the supported currency",
+            "exclusiveMinimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency to charge in. Default is your integration currency."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional information to store with the transaction.",
+            "additionalProperties": {}
+          },
+          "reference": {
+            "type": "string",
+            "description": "Unique transaction reference. If not provided, a unique reference will be generated."
+          },
+          "authorization_code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Authorization code for the transaction"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "partial_debit",
+      "description": "Charge a partial amount from a previously authorized card",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "authorization_code",
+          "currency",
+          "amount",
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Customer's email address"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The amount to charge in the subunit of the supported currency",
+            "exclusiveMinimum": 0
+          },
+          "at_least": {
+            "type": "number",
+            "description": "Minimum amount to charge in kobo, pesewas or cents."
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The currency to charge in. Default is your integration currency."
+          },
+          "reference": {
+            "type": "string",
+            "description": "Unique transaction reference. If not provided, a unique reference will be generated."
+          },
+          "authorization_code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Authorization code for the transaction"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transaction_totals",
+      "description": "Get total amount received on your account",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "perPage",
+          "page"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "A timestamp at which to stop listing transaction e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "from": {
+            "type": "string",
+            "description": "A timestamp from which to start listing transaction e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Page number to retrieve. Default is 1.",
+            "exclusiveMinimum": 0
+          },
+          "perPage": {
+            "type": "integer",
+            "description": "Number of records to retrieve per page. Default is 50.",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_transactions",
+      "description": "Export a list of transactions carried out on your integration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "perPage",
+          "page"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "A timestamp at which to stop listing transaction e.g. 2016-09-24T00:00:05.000Z, 2016-09-21"
+          },
+          "from": {
+            "type": "string",
+            "description": "A timestamp from which to start listing transaction e.g. 2016-09-24T00:00:05.000Z, 2016-09-21"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Specify exactly what page you want to retrieve. Default is 1.",
+            "exclusiveMinimum": 0
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Filter transactions by amount, using the supported currency"
+          },
+          "status": {
+            "enum": [
+              "failed",
+              "success",
+              "abandoned"
+            ],
+            "type": "string",
+            "description": "Filter transactions by status"
+          },
+          "perPage": {
+            "type": "integer",
+            "description": "Specify how many records you want to retrieve per page. Default is 50.",
+            "exclusiveMinimum": 0
+          },
+          "settled": {
+            "type": "boolean",
+            "description": "Set to true to export only settled transactions. false for pending transactions. Leave undefined to export all transactions"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Specify the transaction currency to export"
+          },
+          "customer": {
+            "type": "integer",
+            "description": "Specify an ID for the customer whose transactions you want to retrieve"
+          },
+          "settlement": {
+            "type": "integer",
+            "description": "An ID for the settlement whose transactions we should export"
+          },
+          "payment_page": {
+            "type": "integer",
+            "description": "Specify a payment page's id to export only transactions conducted on said page"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_banks",
+      "description": "Get a list of all banks supported by Paystack and their properties",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "country",
+          "use_cursor",
+          "perPage"
+        ],
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "A cursor that indicates your place in the list. It can be used to fetch the next page of the list"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of financial channel. For Ghanaian channels, please use either mobile_money for mobile money channels OR ghipps for bank channels"
+          },
+          "country": {
+            "enum": [
+              "ghana",
+              "kenya",
+              "nigeria",
+              "south africa"
+            ],
+            "type": "string",
+            "description": "The country from which to obtain the list of supported banks. Accepted values are: ghana, kenya, nigeria, south africa"
+          },
+          "gateway": {
+            "type": "string",
+            "description": "The gateway type of the bank. It can be one of these: [emandate, digitalbankmandate]"
+          },
+          "perPage": {
+            "type": "integer",
+            "description": "The number of objects to return per page. Defaults to 50, and limited to 100 records per page.",
+            "exclusiveMinimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "description": "One of the supported currency"
+          },
+          "previous": {
+            "type": "string",
+            "description": "A cursor that indicates your place in the list. It should be used to fetch the previous page of the list after an intial next request"
+          },
+          "use_cursor": {
+            "type": "boolean",
+            "description": "Flag to enable cursor pagination on the endpoint"
+          },
+          "pay_with_bank": {
+            "type": "boolean",
+            "description": "A flag to filter for banks a customer can pay directly from"
+          },
+          "include_nip_sort_code": {
+            "type": "boolean",
+            "description": "A flag that returns Nigerian banks with their nip institution code. The returned value can be used in identifying institutions on NIP."
+          },
+          "pay_with_bank_transfer": {
+            "type": "boolean",
+            "description": "A flag to filter for available banks a customer can make a transfer to complete a payment"
+          },
+          "enabled_for_verification": {
+            "type": "boolean",
+            "description": "A flag to filter the banks that are supported for account verification in South Africa. You need to combine this with either the currency or country filter."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_countries",
+      "description": "Get a list of countries that Paystack currently supports",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_states",
+      "description": "Get a list of states for a country for address verification",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "country"
+        ],
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "The country code of the states to list. It is gotten after the charge request."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_balance",
+      "description": "Get the available balance on your Paystack integration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "balance_ledger",
+      "description": "Fetch all pay-ins and pay-outs that occurred on your Paystack integration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "perPage",
+          "page"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "A timestamp at which to stop listing balance ledger entries e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "from": {
+            "type": "string",
+            "description": "A timestamp from which to start listing balance ledger entries e.g. 2016-09-24T00:00:05.000Z"
+          },
+          "page": {
+            "type": "number",
+            "description": "Page number to retrieve. Default is 1.",
+            "exclusiveMinimum": 0
+          },
+          "perPage": {
+            "type": "number",
+            "description": "Number of records to retrieve per page. Default is 50.",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "resend_transfers_otp",
+      "description": "Generates a new OTP and sends to customer for transfer verification",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "transfer_code",
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "enum": [
+              "resend_otp",
+              "transfer"
+            ],
+            "type": "string",
+            "description": "Either resend_otp or transfer"
+          },
+          "transfer_code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Transfer code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "disable_transfers_otp",
+      "description": "Disable OTP requirement for transfers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "finalize_disable_otp",
+      "description": "Finalize the request to disable OTP on your transfers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "otp"
+        ],
+        "properties": {
+          "otp": {
+            "type": "string",
+            "minLength": 1,
+            "description": "OTP sent to business phone to verify disabling OTP requirement"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enable_transfers_otp",
+      "description": "Enable OTP requirement for transfers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@kohasummons/paystack-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "paystackSecretKey"
+        ],
+        "properties": {
+          "paystackSecretKey": {
+            "type": "string",
+            "description": "Your Paystack secret key for API access"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "qualifiedName": "github-mapper-mcp-server",
+  "displayName": "GitHub Mapper",
+  "description": "An MCP server that maps and analyzes GitHub repository structures, providing summary statistics and detailed file structures.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "set-github-token",
+      "description": "Set the GitHub Personal Access Token for authentication",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "GitHub Personal Access Token"
+          }
+        }
+      }
+    },
+    {
+      "name": "map-github-repo",
+      "description": "Map a GitHub repository structure and provide summary information",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repoUrl"
+        ],
+        "properties": {
+          "repoUrl": {
+            "type": "string",
+            "description": "URL of the GitHub repository (e.g., https://github.com/username/repo)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/github-mapper-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "githubToken"
+        ],
+        "properties": {
+          "githubToken": {
+            "type": "string",
+            "description": "The GitHub Personal Access Token with repo scope."
+          }
+        }
+      }
+    }
+  ]
+}

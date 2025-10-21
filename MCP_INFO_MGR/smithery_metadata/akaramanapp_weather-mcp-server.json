@@ -1,0 +1,72 @@
+{
+  "qualifiedName": "@akaramanapp/weather-mcp-server",
+  "displayName": "Weather MCP Server",
+  "description": "Provide real-time weather information and alerts for any US location. Get detailed forecasts and alerts through a simple API, enhancing your AI agents with up-to-date weather data. Leverage the National Weather Service API for accurate and timely weather insights.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "get-alerts",
+      "description": "Get weather alerts for a state",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "description": "Two-letter state code (e.g. CA, NY)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-forecast",
+      "description": "Get weather forecast for a location",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90,
+            "minimum": -90,
+            "description": "Latitude of the location"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180,
+            "minimum": -180,
+            "description": "Longitude of the location"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@akaramanapp/weather-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

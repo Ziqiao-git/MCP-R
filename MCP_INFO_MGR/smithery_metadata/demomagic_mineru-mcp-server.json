@@ -1,0 +1,200 @@
+{
+  "qualifiedName": "@demomagic/mineru-mcp-server",
+  "displayName": "Mineru Document Parsing Server",
+  "description": "Provide powerful document parsing capabilities by integrating with the Mineru API. Enable single and batch file parsing with support for multiple formats, OCR, formula, and table recognition. Monitor parsing task status in real-time to efficiently process documents in various languages.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@demomagic/mineru-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_parsing_task",
+      "description": "Create a document parsing task for a single remote file. This tool submits a document URL to Mineru for intelligent parsing, extracting text, tables, formulas, and structure. The document will be converted to markdown and JSON formats by default, with optional additional formats like DOCX, HTML, or LaTeX. Supports OCR for image-based documents and can handle multiple languages.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "File URL to parse (supports PDF, DOC, DOCX, PPT, PPTX, PNG, JPG, JPEG)"
+          },
+          "extra_formats": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "docx",
+                "html",
+                "latex"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "html"
+            ],
+            "description": "Additional export formats, default html"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_task_status",
+      "description": "Check the status and retrieve results of a document parsing task. This tool monitors the parsing progress, showing current status (pending, running, done, failed), progress information for running tasks, and download URLs for completed tasks. Use this to track your document parsing workflow and access the final parsed content.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "task_id"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "Task ID returned from create_parsing_task"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_batch_parsing_task",
+      "description": "Create a batch document parsing task for multiple local files. This tool generates upload URLs for local files that need to be parsed. After creating the batch task, you'll receive upload URLs for each file. Upload your files to these URLs using PUT requests, and the system will automatically start parsing once all files are uploaded. This is ideal for processing multiple local documents efficiently.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "File name (supports PDF, DOC, DOCX, PPT, PPTX, PNG, JPG, JPEG)"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of files to parse"
+          },
+          "extra_formats": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "docx",
+                "html",
+                "latex"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "html"
+            ],
+            "description": "Additional export formats, default html"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_batch_url_parsing_task",
+      "description": "Create a batch document parsing task for multiple remote file URLs. This tool submits multiple document URLs to Mineru for simultaneous parsing. Unlike the upload batch method, this directly processes remote files without requiring file uploads. All documents in the batch will be parsed with the same settings (OCR, formula recognition, language, etc.) and you can track the progress of all files together.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "Remote file URL (PDF, DOC, etc.)"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of remote files to parse by URL"
+          },
+          "extra_formats": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "docx",
+                "html",
+                "latex"
+              ],
+              "type": "string"
+            },
+            "default": [
+              "html"
+            ],
+            "description": "Additional export formats, default html"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_batch_task_results",
+      "description": "Retrieve results for batch parsing tasks. This tool works for both URL-based batch parsing and local file upload batch parsing. It provides comprehensive status information for all files in the batch, including individual file progress, completion status, and download URLs for finished documents. Use this to monitor and collect results from your batch processing workflows.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "batch_id"
+        ],
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "description": "Batch ID returned from create_batch_url_parsing_task or create_batch_parsing_task"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@demomagic/mineru-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "mineruApiKey"
+        ],
+        "properties": {
+          "mineruApiKey": {
+            "type": "string",
+            "description": "Mineru API Bearer token"
+          },
+          "mineruBaseUrl": {
+            "type": "string",
+            "default": "https://mineru.net/api/v4",
+            "description": "Mineru API base URL"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

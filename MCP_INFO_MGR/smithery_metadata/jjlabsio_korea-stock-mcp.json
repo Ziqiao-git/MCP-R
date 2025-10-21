@@ -1,0 +1,313 @@
+{
+  "qualifiedName": "@jjlabsio/korea-stock-mcp",
+  "displayName": "Korean Stocks & Disclosures",
+  "description": "Search company disclosures and financial statements from the Korean market. Retrieve stock profiles, market classifications, and historical trading data across major exchanges. Accelerate equity research with accurate, date-specific insights for Korean securities.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@jjlabsio/korea-stock-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_corp_code",
+      "description": "\n  고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드, 최근변경일자 제공합니다.\n  이름이 일치하는 경우 모든 항목을 반환합니다.\n  ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "corp_name"
+        ],
+        "properties": {
+          "corp_name": {
+            "type": "string",
+            "description": "정식 회사 명칭"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_disclosure_list",
+      "description": "\n  공시검색: 공시 유형별, 회사별, 날짜별 등 여러가지 조건으로 공시보고서 검색기능을 제공합니다.\n  최근 공시를 검색할때는 bgn_de를 반드시 지정하세요.\n  ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "sort": {
+            "type": "string",
+            "maxLength": 4,
+            "minLength": 4,
+            "description": "정렬 (date: 접수일자, crp: 회사명, rpt: 보고서명) ※ 기본값 : date"
+          },
+          "bgn_de": {
+            "type": "string",
+            "maxLength": 8,
+            "minLength": 8,
+            "description": "검색시작 접수일자(YYYYMMDD) 1) 기본값 : 종료일(end_de)"
+          },
+          "end_de": {
+            "type": "string",
+            "maxLength": 8,
+            "minLength": 8,
+            "description": "검색종료 접수일자(YYYYMMDD) 1) 기본값 : 당일"
+          },
+          "page_no": {
+            "type": "string",
+            "maxLength": 5,
+            "minLength": 5,
+            "description": "페이지 번호(1~n) 기본값 : 1"
+          },
+          "corp_cls": {
+            "type": "string",
+            "maxLength": 1,
+            "minLength": 1,
+            "description": "법인구분 (Y: 유가증권시장, K: 코스닥, N: 코넥스, E: 기타) ※ 없으면 전체조회, 복수조건 불가"
+          },
+          "sort_mth": {
+            "type": "string",
+            "maxLength": 4,
+            "minLength": 4,
+            "description": "정렬방법 (asc: 오름차순, desc: 내림차순) ※ 기본값 : desc"
+          },
+          "corp_code": {
+            "type": "string",
+            "maxLength": 8,
+            "minLength": 8,
+            "description": "공시대상회사의 고유번호(8자리)"
+          },
+          "pblntf_ty": {
+            "type": "string",
+            "maxLength": 1,
+            "minLength": 1,
+            "description": "공시유형 // A : 정기공시, B : 주요사항보고, C : 발행공시, D : 지분공시, E : 기타공시, F : 외부감사관련, G : 펀드공시, H : 자산유동화, I : 거래소공시, J : 공정위공시"
+          },
+          "page_count": {
+            "type": "string",
+            "maxLength": 3,
+            "minLength": 3,
+            "description": "페이지당 건수(1~100) 기본값 : 10, 최대값 : 100"
+          },
+          "last_reprt_at": {
+            "type": "string",
+            "maxLength": 1,
+            "minLength": 1,
+            "description": "최종보고서 검색여부 (Y 또는 N) 1) 기본값 : N(정정이 있는 경우 최종정정만 검색)"
+          },
+          "pblntf_detail_ty": {
+            "type": "string",
+            "maxLength": 4,
+            "minLength": 4,
+            "description": "공시상세유형"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_disclosure",
+      "description": "DART API를 통해 공시보고서 원본파일을 파싱해 가져옵니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "rcept_no"
+        ],
+        "properties": {
+          "rcept_no": {
+            "type": "string",
+            "maxLength": 14,
+            "minLength": 14,
+            "description": "접수번호"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_financial_statement",
+      "description": "재무제표: 상장법인(유가증권, 코스닥) 및 주요 비상장법인(사업보고서 제출대상 & IFRS 적용)이 제출한 정기보고서 내에 XBRL재무제표의 모든계정과목을 제공합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "corp_code",
+          "bsns_year",
+          "reprt_code",
+          "fs_div"
+        ],
+        "properties": {
+          "sj_nm": {
+            "enum": [
+              "재무상태표",
+              "포괄손익계산서",
+              "자본변동표",
+              "현금흐름표"
+            ],
+            "type": "string",
+            "description": "재무상태표, 포괄손익계산서, 자본변동표, 현금흐름표 중 하나. 없으면 전체조회"
+          },
+          "fs_div": {
+            "enum": [
+              "OFS",
+              "CFS"
+            ],
+            "type": "string",
+            "description": "개별/연결구분: OFS(재무제표), CFS(연결재무제표)"
+          },
+          "bsns_year": {
+            "type": "string",
+            "maxLength": 4,
+            "minLength": 4,
+            "description": "사업연도(4자리) - 2015년 이후부터 정보제공"
+          },
+          "corp_code": {
+            "type": "string",
+            "maxLength": 8,
+            "minLength": 8,
+            "description": "공시대상회사의 고유번호(8자리)"
+          },
+          "reprt_code": {
+            "enum": [
+              "11013",
+              "11012",
+              "11014",
+              "11011"
+            ],
+            "type": "string",
+            "description": "보고서 코드: 11013(1분기), 11012(반기), 11014(3분기), 11011(사업보고서)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_market_type",
+      "description": "\n  DART에 등록되어 있는 종목의 상장시장 정보를 제공합니다.\n  Y(유가), K(코스닥), N(코넥스), E(기타)\n  ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "corp_code"
+        ],
+        "properties": {
+          "corp_code": {
+            "type": "string",
+            "maxLength": 8,
+            "minLength": 8,
+            "description": "공시대상회사의 고유번호(8자리)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_stock_base_info",
+      "description": "\n  코스피, 코스닥, 코넥스에 상장되어있는 종목의 기준일에 해당하는 한글 종목명, 영문 종목명, 상장일, 주식종류, 액면가, 상장주식수 등의 정보를 제공합니다.\n  codeList에 종목코드가 포함된 종목들의의 정보만 추출됩니다.\n  basDd 하나당 KRX API를 한번씩 호출합니다.\n  ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "basDdList",
+          "market",
+          "codeList"
+        ],
+        "properties": {
+          "market": {
+            "enum": [
+              "KOSPI",
+              "KOSDAQ",
+              "KONEX"
+            ],
+            "type": "string",
+            "description": "상장된 주식시장 종류"
+          },
+          "codeList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "데이터를 가져올 종목들의 종목코드의 배열"
+          },
+          "basDdList": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 8,
+              "minLength": 8
+            },
+            "minItems": 1,
+            "description": "기준일자(YYYYMMDD) 배열"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_stock_trade_info",
+      "description": "\n  코스피, 코스닥, 코넥스에 상장되어있는 종목의 기준일에 해당하는 종가, 등락률, 시가, 고가, 저가, 거래량, 거대금, 시총액, 상장주식수 등의 정보를 제공합니다.\n  codeList에 종목코드가 포함된 종목들의의 정보만 추출되어 제공됩니다.\n  basDd 하나당 KRX API를 한번씩 호출합니다.\n  ",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "basDdList",
+          "market",
+          "codeList"
+        ],
+        "properties": {
+          "market": {
+            "enum": [
+              "KOSPI",
+              "KOSDAQ",
+              "KONEX"
+            ],
+            "type": "string",
+            "description": "상장된 주식시장 종류"
+          },
+          "codeList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "데이터를 가져올 종목들의 종목코드의 배열"
+          },
+          "basDdList": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 8,
+              "minLength": 8
+            },
+            "minItems": 1,
+            "description": "기준일자(YYYYMMDD) 배열"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_today_date",
+      "description": "오늘 날짜를 KST, UTC 기준 YYYYMMDD 형식으로 제공합니다.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@jjlabsio/korea-stock-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [],
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

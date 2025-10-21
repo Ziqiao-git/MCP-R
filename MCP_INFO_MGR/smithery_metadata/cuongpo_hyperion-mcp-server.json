@@ -1,0 +1,480 @@
+{
+  "qualifiedName": "@cuongpo/hyperion-mcp-server",
+  "displayName": "Hyperion Blockchain Server",
+  "description": "Enable seamless interaction with the Hyperion blockchain through a standardized MCP interface. Manage wallets, send transactions, query blockchain data, and interact with smart contracts effortlessly. Simplify building and integrating Hyperion-based applications with comprehensive developer tools and robust error handling.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cuongpo/hyperion-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_wallet",
+      "description": "Create a new Hyperion wallet with a generated mnemonic phrase",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Optional name for the wallet"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "import_wallet",
+      "description": "Import an existing wallet using private key or mnemonic phrase",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Optional name for the wallet"
+          },
+          "mnemonic": {
+            "type": "string",
+            "description": "Mnemonic phrase to import (alternative to private key)"
+          },
+          "privateKey": {
+            "type": "string",
+            "description": "Private key to import (alternative to mnemonic)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_wallets",
+      "description": "List all available wallets",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_balance",
+      "description": "Get the balance of a wallet address (native tokens or ERC20 tokens)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Wallet address to check balance for"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "Optional ERC20 token contract address"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_native_balance",
+      "description": "Get the native tMETIS balance of a wallet address on Hyperion testnet",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Wallet address to check native balance for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_transaction",
+      "description": "Send native tokens or ERC20 tokens to another address",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "to",
+          "amount"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Recipient address"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount to send (in token units, not wei)"
+          },
+          "gasLimit": {
+            "type": "string",
+            "description": "Optional gas limit"
+          },
+          "gasPrice": {
+            "type": "string",
+            "description": "Optional gas price"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "Optional ERC20 token contract address (for token transfers)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_network_info",
+      "description": "Get current network information and status",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_transaction",
+      "description": "Get details of a transaction by hash",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "hash"
+        ],
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "Transaction hash"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_block",
+      "description": "Get block information by number or hash",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "blockHash": {
+            "type": "string",
+            "description": "Block hash (alternative to blockNumber)"
+          },
+          "blockNumber": {
+            "type": "number",
+            "description": "Block number (alternative to blockHash)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "estimate_gas",
+      "description": "Estimate gas cost for a transaction",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "to"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Recipient address"
+          },
+          "data": {
+            "type": "string",
+            "description": "Optional transaction data"
+          },
+          "value": {
+            "type": "string",
+            "description": "Optional value to send (in ether)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_current_wallet",
+      "description": "Set the current active wallet for transactions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Wallet address to set as current"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_current_wallet",
+      "description": "Get the current active wallet information",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deploy_erc20_token",
+      "description": "Deploy a new ERC20 token contract",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "symbol",
+          "initialSupply"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Token name (e.g., 'My Token')"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Token symbol (e.g., 'MTK')"
+          },
+          "decimals": {
+            "type": "number",
+            "description": "Token decimals (default: 18)"
+          },
+          "gasLimit": {
+            "type": "string",
+            "description": "Gas limit for deployment"
+          },
+          "gasPrice": {
+            "type": "string",
+            "description": "Gas price for deployment"
+          },
+          "mintable": {
+            "type": "boolean",
+            "description": "Whether token should be mintable (default: false)"
+          },
+          "initialSupply": {
+            "type": "string",
+            "description": "Initial token supply"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_token_info",
+      "description": "Get comprehensive ERC20 token information including name, symbol, decimals, supply, and owner",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress"
+        ],
+        "properties": {
+          "tokenAddress": {
+            "type": "string",
+            "description": "ERC20 token contract address"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mint_tokens",
+      "description": "Mint additional tokens for mintable ERC20 contracts (owner only)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "to",
+          "amount"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Address to mint tokens to"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount of tokens to mint"
+          },
+          "gasLimit": {
+            "type": "string",
+            "description": "Gas limit for minting"
+          },
+          "gasPrice": {
+            "type": "string",
+            "description": "Gas price for minting"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "ERC20 token contract address"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "deploy_erc721_token",
+      "description": "Deploy a new ERC721 (NFT) token contract",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "name",
+          "symbol"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "NFT collection name (e.g., 'My NFT Collection')"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "NFT collection symbol (e.g., 'MYNFT')"
+          },
+          "gasLimit": {
+            "type": "string",
+            "description": "Gas limit for deployment"
+          },
+          "gasPrice": {
+            "type": "string",
+            "description": "Gas price for deployment"
+          },
+          "mintable": {
+            "type": "boolean",
+            "description": "Whether NFT should be mintable (default: false)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_nft_info",
+      "description": "Get comprehensive ERC721 NFT information including collection details and specific token info",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress"
+        ],
+        "properties": {
+          "tokenId": {
+            "type": "string",
+            "description": "Optional token ID to get specific token info"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "ERC721 NFT contract address"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mint_nft",
+      "description": "Mint a new NFT for mintable ERC721 contracts (owner only)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenAddress",
+          "to",
+          "tokenId"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Address to mint NFT to"
+          },
+          "tokenId": {
+            "type": "string",
+            "description": "Unique token ID for the new NFT"
+          },
+          "gasLimit": {
+            "type": "string",
+            "description": "Gas limit for minting"
+          },
+          "gasPrice": {
+            "type": "string",
+            "description": "Gas price for minting"
+          },
+          "tokenURI": {
+            "type": "string",
+            "description": "Metadata URI for the NFT (optional)"
+          },
+          "tokenAddress": {
+            "type": "string",
+            "description": "ERC721 NFT contract address"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cuongpo/hyperion-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "rpcUrl": {
+            "type": "string",
+            "default": "https://hyperion-testnet.metisdevops.link",
+            "description": "Hyperion RPC URL"
+          },
+          "chainId": {
+            "type": "number",
+            "default": 133717,
+            "description": "Hyperion Chain ID"
+          },
+          "privateKey": {
+            "type": "string",
+            "description": "Your funded private key for Hyperion testnet"
+          },
+          "explorerUrl": {
+            "type": "string",
+            "default": "https://hyperion-testnet-explorer.metisdevops.link",
+            "description": "Block explorer URL"
+          },
+          "networkName": {
+            "type": "string",
+            "default": "Hyperion Testnet",
+            "description": "Network name"
+          },
+          "currencySymbol": {
+            "type": "string",
+            "default": "tMETIS",
+            "description": "Currency symbol"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "qualifiedName": "@brandonbosco/sigao-suitefiles-mcp",
+  "displayName": "MCP Server Boilerplate",
+  "description": "Build custom API integrations quickly with this ready-to-use MCP server template. Extend and configure tools, authentication, and API endpoints to suit your needs. Benefit from TypeScript support, unit tests, and built-in pagination and filtering capabilities.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@brandonbosco/sigao-suitefiles-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "getItem",
+      "description": "Get a single item by its ID from the API",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "itemId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "The ID of the item to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "getItems",
+      "description": "Get a list of items from the API with optional filtering",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Page number for pagination (default: 1)"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of items per page (default: 20)"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search term to filter items"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category to filter items by"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@brandonbosco/sigao-suitefiles-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "API key for authenticating with the external service"
+          },
+          "apiUrl": {
+            "type": "string",
+            "description": "Base URL for the API (optional, defaults to configured URL)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

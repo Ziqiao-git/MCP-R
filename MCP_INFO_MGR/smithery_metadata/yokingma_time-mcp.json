@@ -1,0 +1,138 @@
+{
+  "qualifiedName": "@yokingma/time-mcp",
+  "displayName": "Time MCP Server",
+  "description": "Empower your LLMs with time awareness capabilities. Access current time, convert between timezones, and get timestamps effortlessly. Enhance your applications with precise time-related functionalities.\nusage: `npx time-mcp`",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/44197054-a225-41ac-a70b-05b3c0c43aaa.png",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "current_time",
+      "description": "Get the current date and time.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "format"
+        ],
+        "properties": {
+          "format": {
+            "enum": [
+              "h:mm A",
+              "h:mm:ss A",
+              "YYYY-MM-DD HH:mm:ss",
+              "YYYY-MM-DD",
+              "YYYY-MM",
+              "MM/DD/YYYY",
+              "MM/DD/YY",
+              "YYYY/MM/DD",
+              "YYYY/MM"
+            ],
+            "type": "string",
+            "default": "YYYY-MM-DD HH:mm:ss",
+            "description": "The format of the time, default is empty string"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "The timezone of the time, IANA timezone name, e.g. Asia/Shanghai"
+          }
+        }
+      }
+    },
+    {
+      "name": "relative_time",
+      "description": "Get the relative time from now.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "time"
+        ],
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "The time to get the relative time from now. Format: YYYY-MM-DD HH:mm:ss"
+          }
+        }
+      }
+    },
+    {
+      "name": "days_in_month",
+      "description": "Get the number of days in a month. If no date is provided, get the number of days in the current month.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "The date to get the days in month. Format: YYYY-MM-DD"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_timestamp",
+      "description": "Get the timestamp for the time.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "The time to get the timestamp. Format: YYYY-MM-DD HH:mm:ss.SSS"
+          }
+        }
+      }
+    },
+    {
+      "name": "convert_time",
+      "description": "Convert time between timezones.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "sourceTimezone",
+          "targetTimezone",
+          "time"
+        ],
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "Date and time in 24-hour format. e.g. 2025-03-23 12:30:00"
+          },
+          "sourceTimezone": {
+            "type": "string",
+            "description": "The source timezone. IANA timezone name, e.g. Asia/Shanghai"
+          },
+          "targetTimezone": {
+            "type": "string",
+            "description": "The target timezone. IANA timezone name, e.g. Europe/London"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_week_year",
+      "description": "Get the week and isoWeek of the year.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "The date to get the week and isoWeek of the year. e.g. 2025-03-23"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@yokingma/time-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ]
+}

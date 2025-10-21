@@ -1,0 +1,71 @@
+{
+  "qualifiedName": "@Deploya-labs/mcp-resend",
+  "displayName": "Email sending (used by Deploya.dev)",
+  "description": "Compose and send emails directly from your LLM applications without the hassle of copying and pasting. Integrate seamlessly with Resend's API to streamline your email communication. Enhance your productivity by letting your agents handle email tasks effortlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/deploya.dev.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "send-email",
+      "description": "Send an email using Resend",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "to",
+          "subject",
+          "content"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "format": "email",
+            "description": "Recipient email address"
+          },
+          "content": {
+            "type": "string",
+            "description": "Plain text email content"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject line"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "description": "Optional parameter to schedule the email. This uses natural language. Examples would be 'tomorrow at 10am' or 'in 2 hours' or 'next day at 9am PST' or 'Friday at 3pm ET'."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@Deploya-labs/mcp-resend/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Resend API Key"
+          },
+          "sender": {
+            "type": "string",
+            "description": "Optional sender email address"
+          },
+          "replyTo": {
+            "type": "string",
+            "description": "Optional reply-to email addresses (comma separated)"
+          }
+        }
+      }
+    }
+  ]
+}

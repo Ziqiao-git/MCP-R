@@ -1,0 +1,451 @@
+{
+  "qualifiedName": "@N3N-Seoul/n3n-search-mcp-server",
+  "displayName": "Tavily",
+  "description": "Search the web for high-quality, up-to-date results, extract clean content, crawl sites, and map topics. Streamline research, competitive analysis, and content gathering with fast, targeted queries. Consolidate findings into actionable insights.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@N3N-Seoul/n3n-search-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "tavily_search",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days",
+            "default": null
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "default": "general"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "default": ""
+          },
+          "time_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Range",
+            "default": null
+          },
+          "max_results": {
+            "type": "integer",
+            "title": "Max Results",
+            "default": 10
+          },
+          "search_depth": {
+            "type": "string",
+            "title": "Search Depth",
+            "default": "basic"
+          },
+          "include_images": {
+            "type": "boolean",
+            "title": "Include Images",
+            "default": false
+          },
+          "exclude_domains": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exclude Domains",
+            "default": null
+          },
+          "include_domains": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Include Domains",
+            "default": null
+          },
+          "include_favicon": {
+            "type": "boolean",
+            "title": "Include Favicon",
+            "default": false
+          },
+          "include_raw_content": {
+            "type": "boolean",
+            "title": "Include Raw Content",
+            "default": false
+          },
+          "include_image_descriptions": {
+            "type": "boolean",
+            "title": "Include Image Descriptions",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "tavily_extract",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "urls"
+        ],
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Urls"
+          },
+          "format": {
+            "type": "string",
+            "title": "Format",
+            "default": "markdown"
+          },
+          "extract_depth": {
+            "type": "string",
+            "title": "Extract Depth",
+            "default": "basic"
+          },
+          "include_images": {
+            "type": "boolean",
+            "title": "Include Images",
+            "default": false
+          },
+          "include_favicon": {
+            "type": "boolean",
+            "title": "Include Favicon",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "tavily_crawl",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 50
+          },
+          "format": {
+            "type": "string",
+            "title": "Format",
+            "default": "markdown"
+          },
+          "max_depth": {
+            "type": "integer",
+            "title": "Max Depth",
+            "default": 1
+          },
+          "categories": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categories",
+            "default": null
+          },
+          "max_breadth": {
+            "type": "integer",
+            "title": "Max Breadth",
+            "default": 20
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions",
+            "default": null
+          },
+          "select_paths": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Select Paths",
+            "default": null
+          },
+          "extract_depth": {
+            "type": "string",
+            "title": "Extract Depth",
+            "default": "basic"
+          },
+          "allow_external": {
+            "type": "boolean",
+            "title": "Allow External",
+            "default": false
+          },
+          "select_domains": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Select Domains",
+            "default": null
+          },
+          "include_favicon": {
+            "type": "boolean",
+            "title": "Include Favicon",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    },
+    {
+      "name": "tavily_map",
+      "_meta": {
+        "_fastmcp": {
+          "tags": []
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 50
+          },
+          "max_depth": {
+            "type": "integer",
+            "title": "Max Depth",
+            "default": 1
+          },
+          "categories": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categories",
+            "default": null
+          },
+          "max_breadth": {
+            "type": "integer",
+            "title": "Max Breadth",
+            "default": 20
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions",
+            "default": null
+          },
+          "select_paths": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Select Paths",
+            "default": null
+          },
+          "allow_external": {
+            "type": "boolean",
+            "title": "Allow External",
+            "default": false
+          },
+          "select_domains": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Select Domains",
+            "default": null
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "title": "_WrappedResult",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "title": "Result"
+          }
+        },
+        "x-fastmcp-wrap-result": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@N3N-Seoul/n3n-search-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "tavilyApiKey"
+        ],
+        "properties": {
+          "tavilyApiKey": {
+            "type": "string",
+            "description": "API key for accessing the Tavily API"
+          }
+        }
+      }
+    }
+  ]
+}

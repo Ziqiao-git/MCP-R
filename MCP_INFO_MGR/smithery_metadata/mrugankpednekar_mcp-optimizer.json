@@ -1,0 +1,636 @@
+{
+  "qualifiedName": "@mrugankpednekar/mcp-optimizer",
+  "displayName": "Crew Optimizer",
+  "description": "Optimize crew and workforce schedules, resource allocation, and routing with linear and mixed-integer programming. Parse natural-language problem statements into solvable models in seconds. Diagnose infeasibility and get actionable hints to fix constraints fast.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@mrugankpednekar/mcp-optimizer",
+  "security": null,
+  "tools": [
+    {
+      "name": "solve_linear_program",
+      "description": "Solve a linear program and return the solution as JSON.",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "LPModel": {
+            "type": "object",
+            "title": "LPModel",
+            "required": [
+              "sense",
+              "objective",
+              "variables",
+              "constraints"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "default": "problem"
+              },
+              "sense": {
+                "enum": [
+                  "min",
+                  "max"
+                ],
+                "type": "string",
+                "title": "Sense"
+              },
+              "objective": {
+                "$ref": "#/$defs/LinearExpr"
+              },
+              "variables": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Variable"
+                },
+                "title": "Variables"
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Constraint"
+                },
+                "title": "Constraints"
+              }
+            }
+          },
+          "Variable": {
+            "type": "object",
+            "title": "Variable",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "lb": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Lb",
+                "default": null
+              },
+              "ub": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Ub",
+                "default": null
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "is_integer": {
+                "type": "boolean",
+                "title": "Is Integer",
+                "default": false
+              }
+            }
+          },
+          "Constraint": {
+            "type": "object",
+            "title": "Constraint",
+            "required": [
+              "name",
+              "lhs",
+              "cmp",
+              "rhs"
+            ],
+            "properties": {
+              "cmp": {
+                "enum": [
+                  "<=",
+                  ">=",
+                  "=="
+                ],
+                "type": "string",
+                "title": "Cmp"
+              },
+              "lhs": {
+                "$ref": "#/$defs/LinearExpr"
+              },
+              "rhs": {
+                "type": "number",
+                "title": "Rhs"
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              }
+            }
+          },
+          "LinearExpr": {
+            "type": "object",
+            "title": "LinearExpr",
+            "properties": {
+              "terms": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/LinearTerm"
+                },
+                "title": "Terms"
+              },
+              "constant": {
+                "type": "number",
+                "title": "Constant",
+                "default": 0
+              }
+            }
+          },
+          "LinearTerm": {
+            "type": "object",
+            "title": "LinearTerm",
+            "required": [
+              "var",
+              "coef"
+            ],
+            "properties": {
+              "var": {
+                "type": "string",
+                "title": "Var"
+              },
+              "coef": {
+                "type": "number",
+                "title": "Coef"
+              }
+            }
+          },
+          "SolveOptions": {
+            "type": "object",
+            "title": "SolveOptions",
+            "properties": {
+              "tol": {
+                "type": "number",
+                "title": "Tol",
+                "default": 1e-09
+              },
+              "max_iters": {
+                "type": "integer",
+                "title": "Max Iters",
+                "default": 10000
+              },
+              "pivot_rule": {
+                "enum": [
+                  "dantzig",
+                  "bland"
+                ],
+                "type": "string",
+                "title": "Pivot Rule",
+                "default": "dantzig"
+              },
+              "return_duals": {
+                "type": "boolean",
+                "title": "Return Duals",
+                "default": true
+              }
+            }
+          }
+        },
+        "title": "solve_linear_programArguments",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "$ref": "#/$defs/LPModel"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SolveOptions"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      }
+    },
+    {
+      "name": "solve_mixed_integer_program",
+      "description": "Solve a MILP using branch-and-bound or OR-Tools fallback.",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "LPModel": {
+            "type": "object",
+            "title": "LPModel",
+            "required": [
+              "sense",
+              "objective",
+              "variables",
+              "constraints"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "default": "problem"
+              },
+              "sense": {
+                "enum": [
+                  "min",
+                  "max"
+                ],
+                "type": "string",
+                "title": "Sense"
+              },
+              "objective": {
+                "$ref": "#/$defs/LinearExpr"
+              },
+              "variables": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Variable"
+                },
+                "title": "Variables"
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Constraint"
+                },
+                "title": "Constraints"
+              }
+            }
+          },
+          "Variable": {
+            "type": "object",
+            "title": "Variable",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "lb": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Lb",
+                "default": null
+              },
+              "ub": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Ub",
+                "default": null
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "is_integer": {
+                "type": "boolean",
+                "title": "Is Integer",
+                "default": false
+              }
+            }
+          },
+          "Constraint": {
+            "type": "object",
+            "title": "Constraint",
+            "required": [
+              "name",
+              "lhs",
+              "cmp",
+              "rhs"
+            ],
+            "properties": {
+              "cmp": {
+                "enum": [
+                  "<=",
+                  ">=",
+                  "=="
+                ],
+                "type": "string",
+                "title": "Cmp"
+              },
+              "lhs": {
+                "$ref": "#/$defs/LinearExpr"
+              },
+              "rhs": {
+                "type": "number",
+                "title": "Rhs"
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              }
+            }
+          },
+          "LinearExpr": {
+            "type": "object",
+            "title": "LinearExpr",
+            "properties": {
+              "terms": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/LinearTerm"
+                },
+                "title": "Terms"
+              },
+              "constant": {
+                "type": "number",
+                "title": "Constant",
+                "default": 0
+              }
+            }
+          },
+          "LinearTerm": {
+            "type": "object",
+            "title": "LinearTerm",
+            "required": [
+              "var",
+              "coef"
+            ],
+            "properties": {
+              "var": {
+                "type": "string",
+                "title": "Var"
+              },
+              "coef": {
+                "type": "number",
+                "title": "Coef"
+              }
+            }
+          },
+          "SolveOptions": {
+            "type": "object",
+            "title": "SolveOptions",
+            "properties": {
+              "tol": {
+                "type": "number",
+                "title": "Tol",
+                "default": 1e-09
+              },
+              "max_iters": {
+                "type": "integer",
+                "title": "Max Iters",
+                "default": 10000
+              },
+              "pivot_rule": {
+                "enum": [
+                  "dantzig",
+                  "bland"
+                ],
+                "type": "string",
+                "title": "Pivot Rule",
+                "default": "dantzig"
+              },
+              "return_duals": {
+                "type": "boolean",
+                "title": "Return Duals",
+                "default": true
+              }
+            }
+          }
+        },
+        "title": "solve_mixed_integer_programArguments",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "$ref": "#/$defs/LPModel"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SolveOptions"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "use_or_tools": {
+            "type": "boolean",
+            "title": "Use Or Tools",
+            "default": false
+          }
+        }
+      }
+    },
+    {
+      "name": "parse_natural_language",
+      "description": "Parse a natural-language LP specification into structured JSON.",
+      "inputSchema": {
+        "type": "object",
+        "title": "parse_natural_languageArguments",
+        "required": [
+          "spec"
+        ],
+        "properties": {
+          "spec": {
+            "type": "string",
+            "title": "Spec"
+          }
+        }
+      }
+    },
+    {
+      "name": "diagnose_infeasibility",
+      "description": "Return heuristic infeasibility analysis for the given LP.",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "LPModel": {
+            "type": "object",
+            "title": "LPModel",
+            "required": [
+              "sense",
+              "objective",
+              "variables",
+              "constraints"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "default": "problem"
+              },
+              "sense": {
+                "enum": [
+                  "min",
+                  "max"
+                ],
+                "type": "string",
+                "title": "Sense"
+              },
+              "objective": {
+                "$ref": "#/$defs/LinearExpr"
+              },
+              "variables": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Variable"
+                },
+                "title": "Variables"
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Constraint"
+                },
+                "title": "Constraints"
+              }
+            }
+          },
+          "Variable": {
+            "type": "object",
+            "title": "Variable",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "lb": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Lb",
+                "default": null
+              },
+              "ub": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Ub",
+                "default": null
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "is_integer": {
+                "type": "boolean",
+                "title": "Is Integer",
+                "default": false
+              }
+            }
+          },
+          "Constraint": {
+            "type": "object",
+            "title": "Constraint",
+            "required": [
+              "name",
+              "lhs",
+              "cmp",
+              "rhs"
+            ],
+            "properties": {
+              "cmp": {
+                "enum": [
+                  "<=",
+                  ">=",
+                  "=="
+                ],
+                "type": "string",
+                "title": "Cmp"
+              },
+              "lhs": {
+                "$ref": "#/$defs/LinearExpr"
+              },
+              "rhs": {
+                "type": "number",
+                "title": "Rhs"
+              },
+              "name": {
+                "type": "string",
+                "title": "Name"
+              }
+            }
+          },
+          "LinearExpr": {
+            "type": "object",
+            "title": "LinearExpr",
+            "properties": {
+              "terms": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/LinearTerm"
+                },
+                "title": "Terms"
+              },
+              "constant": {
+                "type": "number",
+                "title": "Constant",
+                "default": 0
+              }
+            }
+          },
+          "LinearTerm": {
+            "type": "object",
+            "title": "LinearTerm",
+            "required": [
+              "var",
+              "coef"
+            ],
+            "properties": {
+              "var": {
+                "type": "string",
+                "title": "Var"
+              },
+              "coef": {
+                "type": "number",
+                "title": "Coef"
+              }
+            }
+          }
+        },
+        "title": "diagnose_infeasibilityArguments",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "$ref": "#/$defs/LPModel"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@mrugankpednekar/mcp-optimizer/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

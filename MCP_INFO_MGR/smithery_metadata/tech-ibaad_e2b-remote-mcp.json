@@ -1,0 +1,219 @@
+{
+  "qualifiedName": "@tech-ibaad/e2b-remote-mcp",
+  "displayName": "E2B Remote Server",
+  "description": "Manage sandboxes, run commands, host websites, and read or write files remotely. Enable flexible and secure execution environments for diverse use cases. Simplify remote code execution and file management with sandbox isolation.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@tech-ibaad/e2b-remote-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_sandbox",
+      "description": "Create a new E2B sandbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "timeoutMs": {
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "run_command",
+      "description": "Run a command in the sandbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "command",
+          "sandboxId"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Command to run"
+          },
+          "sandboxId": {
+            "type": "string",
+            "description": "Sandbox ID"
+          },
+          "background": {
+            "type": "boolean",
+            "description": "Run command in background"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "read_file",
+      "description": "Read a file from the sandbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filePath",
+          "sandboxId"
+        ],
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "description": "Path to the file"
+          },
+          "sandboxId": {
+            "type": "string",
+            "description": "Sandbox ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "write_file",
+      "description": "Write content to a file in the sandbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "filePath",
+          "fileContents",
+          "sandboxId"
+        ],
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "description": "Path to the file"
+          },
+          "sandboxId": {
+            "type": "string",
+            "description": "Sandbox ID"
+          },
+          "fileContents": {
+            "type": "string",
+            "description": "Content to write"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_files",
+      "description": "List files in a directory",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "folderPath",
+          "sandboxId"
+        ],
+        "properties": {
+          "sandboxId": {
+            "type": "string",
+            "description": "Sandbox ID"
+          },
+          "folderPath": {
+            "type": "string",
+            "description": "Path to the folder"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "run_code",
+      "description": "Run code in the sandbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code",
+          "sandboxId"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to execute"
+          },
+          "sandboxId": {
+            "type": "string",
+            "description": "Sandbox ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_sandbox_url",
+      "description": "Get the URL for a sandbox on a specific port",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "port",
+          "sandboxId"
+        ],
+        "properties": {
+          "port": {
+            "type": "number",
+            "description": "Port number"
+          },
+          "sandboxId": {
+            "type": "string",
+            "description": "Sandbox ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "kill_sandbox",
+      "description": "Kill a sandbox",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "sandboxId"
+        ],
+        "properties": {
+          "sandboxId": {
+            "type": "string",
+            "description": "Sandbox ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@tech-ibaad/e2b-remote-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "E2B_API_KEY"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "E2B_API_KEY": {
+            "type": "string",
+            "description": "E2B API key for authentication"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

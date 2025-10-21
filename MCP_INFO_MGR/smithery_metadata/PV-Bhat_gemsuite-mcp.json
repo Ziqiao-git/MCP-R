@@ -1,0 +1,146 @@
+{
+  "qualifiedName": "@PV-Bhat/gemsuite-mcp",
+  "displayName": "GemSuite",
+  "description": "Leverage the power of Gemini API for intelligent model selection and advanced file handling. Optimize your AI operations with seamless integration and efficient processing across various file types. Enhance your productivity by utilizing the right tools for your specific tasks effortlessly.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "gem_search",
+      "description": "Generates responses based on the latest information using Gemini 2.0 Flash and Google Search. Best for general knowledge questions, fact-checking, and information retrieval.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Your search query or question"
+          },
+          "model_id": {
+            "type": "string",
+            "description": "Optional model ID override (advanced users only)"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Optional file path to include with the query"
+          },
+          "enable_thinking": {
+            "type": "boolean",
+            "description": "Enable thinking mode for step-by-step reasoning"
+          }
+        }
+      }
+    },
+    {
+      "name": "gem_reason",
+      "description": "Solves complex problems with step-by-step reasoning using Gemini 2.0 Flash Thinking. Best for math and science problems, coding challenges, and tasks requiring transparent reasoning process.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "problem"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "The complex problem or question to solve"
+          },
+          "model_id": {
+            "type": "string",
+            "description": "Optional model ID override (advanced users only)"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Optional file path to include with the problem"
+          },
+          "show_steps": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to show detailed reasoning steps (default: true)"
+          }
+        }
+      }
+    },
+    {
+      "name": "gem_process",
+      "description": "Performs fast, cost-efficient content processing using Gemini 2.0 Flash-Lite. Best for high-volume operations requiring speed and efficiency.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Content to process (either this or file_path required)"
+          },
+          "model_id": {
+            "type": "string",
+            "description": "Optional model ID override (advanced users only)"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "File path to process (either this or content required)"
+          },
+          "operation": {
+            "enum": [
+              "summarize",
+              "extract",
+              "restructure",
+              "simplify",
+              "expand",
+              "critique",
+              "feedback",
+              "analyze"
+            ],
+            "type": "string",
+            "description": "Processing operation (summarize, extract, restructure, simplify, expand, critique, feedback)"
+          }
+        }
+      }
+    },
+    {
+      "name": "gem_analyze",
+      "description": "Analyzes files using the appropriate Gemini model. Automatically selects the best model based on file type and analysis needs.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "file_path"
+        ],
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "description": "Optional model ID override (advanced users only)"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Path to the file to analyze"
+          },
+          "instruction": {
+            "type": "string",
+            "description": "Specific instruction for analysis (optional)"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@PV-Bhat/gemsuite-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "geminiApiKey"
+        ],
+        "properties": {
+          "geminiApiKey": {
+            "type": "string",
+            "description": "Your Google Gemini API key for accessing Gemini models."
+          }
+        }
+      }
+    }
+  ]
+}

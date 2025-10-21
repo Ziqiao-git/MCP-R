@@ -1,0 +1,4403 @@
+{
+  "qualifiedName": "@binalyze/air-mcp",
+  "displayName": "Binalyze AIR MCP Server",
+  "description": "Enable natural language interaction with your Binalyze AIR system to manage assets, acquisition profiles, and organizations seamlessly. Use this server to list and query your AIR data through any MCP client, enhancing your workflow with AI-driven context access. Requires an API token for secure access to your AIR environment.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/www.binalyze.com.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "list_assets",
+      "description": "List all assets in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter assets by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_asset_by_id",
+      "description": "Get detailed information about a specific asset by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the asset to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_asset_tasks_by_id",
+      "description": "Get all tasks associated with a specific asset by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the asset to retrieve tasks for"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_acquisition_profiles",
+      "description": "List all acquisition profiles in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter acquisition profiles by. Leave empty to use default (0)."
+          },
+          "allOrganizations": {
+            "type": "boolean",
+            "description": "Whether to include profiles from all organizations. Defaults to true."
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_acquisition_task",
+      "description": "Assign an evidence acquisition task to specific endpoints",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "acquisitionProfileId",
+          "endpointIds"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "The case ID to associate the acquisition with"
+          },
+          "cpuLimit": {
+            "type": "number",
+            "description": "CPU usage limit percentage (1-100). Defaults to 80"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of keywords to search for"
+          },
+          "analyzers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of analyzer IDs to use (e.g. [\"bha\", \"wsa\"])"
+          },
+          "endpointIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of endpoint IDs to collect evidence from"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Array of organization IDs to filter by. Defaults to [0]"
+          },
+          "enableEncryption": {
+            "type": "boolean",
+            "description": "Whether to enable encryption. Defaults to false"
+          },
+          "enableCompression": {
+            "type": "boolean",
+            "description": "Whether to enable compression. Defaults to true"
+          },
+          "encryptionPassword": {
+            "type": "string",
+            "description": "Password for encryption if enabled"
+          },
+          "acquisitionProfileId": {
+            "type": "string",
+            "description": "The acquisition profile ID to use for the task"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_acquisition_profile_by_id",
+      "description": "Get details of a specific acquisition profile by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "description": "The ID of the acquisition profile to retrieve (e.g., \"full\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_image_acquisition_task",
+      "description": "Assign a disk image acquisition task to specific endpoints and volumes",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "repositoryId",
+          "endpoints"
+        ],
+        "properties": {
+          "caseId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The case ID to associate the acquisition with (optional)"
+          },
+          "chunkSize": {
+            "type": "number",
+            "description": "Chunk size in bytes. Defaults to 1048576"
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpointId",
+                "volumes"
+              ],
+              "properties": {
+                "volumes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "endpointId": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Array of endpoints and volumes to image (e.g., [{\"endpointId\": \"uuid\", \"volumes\": [\"/dev/sda1\"]}]). At least one endpoint and one volume per endpoint required."
+          },
+          "chunkCount": {
+            "type": "number",
+            "description": "Number of chunks to acquire. Defaults to 0 (acquire until end)."
+          },
+          "startOffset": {
+            "type": "number",
+            "description": "Offset in bytes to start acquisition from. Defaults to 0."
+          },
+          "repositoryId": {
+            "type": "string",
+            "description": "The repository ID where the image will be saved"
+          },
+          "bandwidthLimit": {
+            "type": "number",
+            "description": "Bandwidth limit in KB/s. Defaults to 100000"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Array of organization IDs. Defaults to [0]"
+          },
+          "enableEncryption": {
+            "type": "boolean",
+            "description": "Whether to enable encryption. Defaults to false"
+          },
+          "enableCompression": {
+            "type": "boolean",
+            "description": "Whether to enable compression. Defaults to true"
+          },
+          "encryptionPassword": {
+            "type": "string",
+            "description": "Password for encryption if enabled"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_acquisition_profile",
+      "description": "Create a new acquisition profile",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "windows",
+          "linux",
+          "macos",
+          "aix",
+          "eDiscovery"
+        ],
+        "properties": {
+          "aix": {
+            "type": "object",
+            "description": "AIX specific configuration. Must include keys like `evidenceList` (array of strings), `artifactList` (array of strings, optional), and `customContentProfiles` (array). Example: { \"evidenceList\": [\"logs\"], ... }"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the new acquisition profile"
+          },
+          "linux": {
+            "type": "object",
+            "description": "Linux specific configuration. Must include keys like `evidenceList` (array of strings), `artifactList` (array of strings, optional), `customContentProfiles` (array), and `networkCapture` (object). Example: { \"evidenceList\": [\"logs\"], ... }"
+          },
+          "macos": {
+            "type": "object",
+            "description": "macOS specific configuration. Must include keys like `evidenceList` (array of strings), `artifactList` (array of strings, optional), `customContentProfiles` (array), and `networkCapture` (object). Example: { \"evidenceList\": [\"logs\"], ... }"
+          },
+          "windows": {
+            "type": "object",
+            "description": "Windows specific configuration. Must include keys like `evidenceList` (array of strings), `artifactList` (array of strings, optional), `customContentProfiles` (array), and `networkCapture` (object). Example: { \"evidenceList\": [\"evt\"], \"artifactList\": [], \"customContentProfiles\": [], \"networkCapture\": { \"enabled\": false, \"duration\": 600, \"pcap\": { \"enabled\": false }, \"networkFlow\": { \"enabled\": false } } }"
+          },
+          "eDiscovery": {
+            "type": "object",
+            "description": "eDiscovery configuration. Must include the key `patterns` (array of objects with `pattern` and `category` strings). Example: { \"patterns\": [] }"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Organization IDs to associate the profile with. Defaults to empty array."
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_reboot_task",
+      "description": "Assign a reboot task to specific endpoints",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointIds"
+        ],
+        "properties": {
+          "endpointIds": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Endpoint ID(s) to reboot. Can be a single ID or an array of IDs."
+          },
+          "managedStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter endpoints by managed status. Default is [\"managed\"]."
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "description": "Organization ID(s) to filter endpoints by. Defaults to 0."
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_shutdown_task",
+      "description": "Assign a shutdown task to specific endpoints",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointIds"
+        ],
+        "properties": {
+          "endpointIds": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Endpoint ID(s) to shutdown. Can be a single ID or an array of IDs."
+          },
+          "managedStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter endpoints by managed status. Default is [\"managed\"]."
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "description": "Organization ID(s) to filter endpoints by. Defaults to 0."
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_isolation_task",
+      "description": "Assign an isolation task to specific endpoints",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointIds"
+        ],
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether to enable (isolate) or disable (unisolate) isolation. Defaults to true."
+          },
+          "endpointIds": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Endpoint ID(s) to isolate or unisolate. Can be a single ID or an array of IDs."
+          },
+          "managedStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter endpoints by managed status. Default is [\"managed\"]."
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "description": "Organization ID(s) to filter endpoints by. Defaults to 0."
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_log_retrieval_task",
+      "description": "Assign a log retrieval task to specific endpoints",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointIds",
+          "organizationIds"
+        ],
+        "properties": {
+          "endpointIds": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Endpoint ID(s) to retrieve logs from. Can be a single ID or an array of IDs."
+          },
+          "managedStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter endpoints by managed status. Default is [\"managed\"]."
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "description": "Organization ID(s) to filter endpoints by. This is REQUIRED to identify the correct endpoints. Examples: 0, \"123\", [0], [\"123\", \"456\"]"
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_version_update_task",
+      "description": "Assign a version update task to specific endpoints",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointIds"
+        ],
+        "properties": {
+          "endpointIds": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Endpoint ID(s) to update version. Can be a single ID or an array of IDs."
+          },
+          "managedStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter endpoints by managed status. Default is [\"managed\"]."
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "description": "Organization ID(s) to filter endpoints by. Defaults to 0."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_organizations",
+      "description": "List all organizations in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_cases",
+      "description": "List all cases in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter cases by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_policies",
+      "description": "List all policies in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter policies by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_tasks",
+      "description": "List all tasks in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter tasks by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_triage_rules",
+      "description": "List all triage rules in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter triage rules by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_users",
+      "description": "List all users in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter users by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_drone_analyzers",
+      "description": "List all drone analyzers in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "export_audit_logs",
+      "description": "Initiate an export of audit logs from the AIR system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter audit logs by. Defaults to \"0\" or specific IDs like \"123\" or \"123,456\"."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_audit_logs",
+      "description": "List audit logs from the AIR system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter audit logs by. Defaults to \"0\" or specific IDs like \"123\" or \"123,456\"."
+          }
+        }
+      }
+    },
+    {
+      "name": "uninstall_assets",
+      "description": "Uninstall specific assets based on filters without purging data. Requires specifying `filter.includedEndpointIds`.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "filter"
+        ],
+        "properties": {
+          "filter": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name."
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue."
+              },
+              "tagId": {
+                "type": "string",
+                "description": "Filter by tag ID."
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy."
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID."
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version."
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])."
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address."
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term."
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status (e.g., [\"online\"])."
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path."
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])."
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status (e.g., [\"isolated\"])."
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "description": "Organization IDs filter. Defaults to [0]."
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude."
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "REQUIRED: Array of endpoint IDs to uninstall."
+              }
+            },
+            "description": "Filter object to specify which assets to uninstall."
+          }
+        }
+      }
+    },
+    {
+      "name": "purge_and_uninstall_assets",
+      "description": "Purge data and uninstall specific assets based on filters. Requires specifying `filter.includedEndpointIds`.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "filter"
+        ],
+        "properties": {
+          "filter": {
+            "type": "object",
+            "required": [
+              "includedEndpointIds"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name."
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue."
+              },
+              "tagId": {
+                "type": "string",
+                "description": "Filter by tag ID."
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy."
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID."
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version."
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])."
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address."
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term."
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status (e.g., [\"online\"])."
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path."
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])."
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status (e.g., [\"isolated\"])."
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "description": "Organization IDs filter. Defaults to [0]."
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude."
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "REQUIRED: Array of endpoint IDs to purge and uninstall."
+              }
+            },
+            "description": "Filter object to specify which assets to purge and uninstall."
+          }
+        }
+      }
+    },
+    {
+      "name": "add_tags_to_assets",
+      "description": "Add tags to specific assets based on filters. Requires specifying `filter.includedEndpointIds` and `tags`.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "filter",
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "REQUIRED: Array of tags to add to the selected assets."
+          },
+          "filter": {
+            "type": "object",
+            "required": [
+              "includedEndpointIds"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name."
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue."
+              },
+              "tagId": {
+                "type": "string",
+                "description": "Filter by existing tag ID."
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy."
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID."
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version."
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])."
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address."
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term."
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status (e.g., [\"online\"])."
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path."
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])."
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status (e.g., [\"isolated\"])."
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "description": "Organization IDs filter. Defaults to [0]."
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude."
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "REQUIRED: Array of endpoint IDs to add tags to."
+              }
+            },
+            "description": "Filter object to specify which assets to add tags to."
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_tags_from_assets",
+      "description": "Remove tags from specific assets based on filters. Requires specifying `filter.includedEndpointIds` and `tags`.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "filter",
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "REQUIRED: Array of tags to remove from the selected assets."
+          },
+          "filter": {
+            "type": "object",
+            "required": [
+              "includedEndpointIds"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name."
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue."
+              },
+              "tagId": {
+                "type": "string",
+                "description": "Filter by existing tag ID."
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy."
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID."
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version."
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])."
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address."
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term."
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status (e.g., [\"online\"])."
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path."
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])."
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status (e.g., [\"isolated\"])."
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "description": "Organization IDs filter. Defaults to [0]."
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude."
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "REQUIRED: Array of endpoint IDs to remove tags from."
+              }
+            },
+            "description": "Filter object to specify which assets to remove tags from."
+          }
+        }
+      }
+    },
+    {
+      "name": "create_auto_asset_tag",
+      "description": "Create a new rule to automatically tag assets based on specified conditions for Linux, Windows, and macOS.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "tag",
+          "linuxConditions",
+          "windowsConditions",
+          "macosConditions"
+        ],
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "The tag name to be applied automatically."
+          },
+          "linuxConditions": {
+            "$ref": "#/definitions/ConditionGroup",
+            "description": "Conditions for Linux assets."
+          },
+          "macosConditions": {
+            "$ref": "#/definitions/ConditionGroup",
+            "description": "Conditions for macOS assets."
+          },
+          "windowsConditions": {
+            "$ref": "#/definitions/ConditionGroup",
+            "description": "Conditions for Windows assets."
+          }
+        },
+        "definitions": {
+          "Condition": {
+            "type": "object",
+            "required": [
+              "field",
+              "operator",
+              "value"
+            ],
+            "properties": {
+              "field": {
+                "type": "string",
+                "description": "Field to check (e.g., \"process\")"
+              },
+              "value": {
+                "type": "string",
+                "description": "Value to compare against"
+              },
+              "operator": {
+                "type": "string",
+                "description": "Comparison operator (e.g., \"running\")"
+              }
+            }
+          },
+          "ConditionGroup": {
+            "type": "object",
+            "required": [
+              "operator",
+              "conditions"
+            ],
+            "properties": {
+              "operator": {
+                "enum": [
+                  "and",
+                  "or"
+                ],
+                "type": "string",
+                "description": "Logical operator for combining conditions."
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/Condition"
+                    },
+                    {
+                      "$ref": "#/definitions/ConditionGroup"
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "description": "Array of conditions or nested groups."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "update_auto_asset_tag",
+      "description": "Update an existing auto asset tag rule.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "tag"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the auto asset tag to update."
+          },
+          "tag": {
+            "type": "string",
+            "description": "The tag name to be applied automatically."
+          },
+          "linuxConditions": {
+            "$ref": "#/definitions/ConditionGroup",
+            "description": "Conditions for Linux assets."
+          },
+          "macosConditions": {
+            "$ref": "#/definitions/ConditionGroup",
+            "description": "Conditions for macOS assets."
+          },
+          "windowsConditions": {
+            "$ref": "#/definitions/ConditionGroup",
+            "description": "Conditions for Windows assets."
+          }
+        },
+        "definitions": {
+          "Condition": {
+            "type": "object",
+            "required": [
+              "field",
+              "operator",
+              "value"
+            ],
+            "properties": {
+              "field": {
+                "type": "string",
+                "description": "Field to check (e.g., \"process\")"
+              },
+              "value": {
+                "type": "string",
+                "description": "Value to compare against"
+              },
+              "operator": {
+                "type": "string",
+                "description": "Comparison operator (e.g., \"running\")"
+              }
+            }
+          },
+          "ConditionGroup": {
+            "type": "object",
+            "required": [
+              "operator",
+              "conditions"
+            ],
+            "properties": {
+              "operator": {
+                "enum": [
+                  "and",
+                  "or"
+                ],
+                "type": "string",
+                "description": "Logical operator for combining conditions."
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/Condition"
+                    },
+                    {
+                      "$ref": "#/definitions/ConditionGroup"
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "description": "Array of conditions or nested groups."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "get_auto_asset_tag_by_id",
+      "description": "Get details of a specific auto asset tag rule by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the auto asset tag to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_auto_asset_tag_by_id",
+      "description": "Delete a specific auto asset tag rule by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the auto asset tag to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_auto_asset_tags",
+      "description": "List all auto asset tag rules in the system.",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    {
+      "name": "start_tagging",
+      "description": "Start the auto asset tagging process for assets matching filter criteria.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "filter"
+        ],
+        "properties": {
+          "filter": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name."
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by tags."
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue."
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy."
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID."
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version."
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])."
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address."
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term."
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status (e.g., [\"online\"])."
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path."
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])."
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status (e.g., [\"isolated\"])."
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "description": "Organization IDs filter. Defaults to [0]."
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude."
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to include."
+              }
+            },
+            "description": "Filter object to specify which assets to apply auto tagging to."
+          }
+        }
+      }
+    },
+    {
+      "name": "acquire_baseline",
+      "description": "Assign a baseline acquisition task to specific endpoints",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "filter"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "The case ID to associate the baseline acquisition with"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by tags"
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue"
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy"
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID"
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version"
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])"
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address"
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term"
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status (e.g., [\"online\"])"
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path"
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])"
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status (e.g., [\"isolated\"])"
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "description": "Organization IDs filter. Defaults to [0]"
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude"
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to include for baseline acquisition"
+              }
+            },
+            "description": "Filter object to specify which assets to acquire baseline from"
+          }
+        }
+      }
+    },
+    {
+      "name": "compare_baseline",
+      "description": "Compare baseline acquisition tasks for a specific endpoint",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointId",
+          "taskIds"
+        ],
+        "properties": {
+          "taskIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of baseline task IDs to compare (minimum 2)"
+          },
+          "endpointId": {
+            "type": "string",
+            "description": "The endpoint ID to compare baselines for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_comparison_report",
+      "description": "Get comparison result report for a specific endpoint and task",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointId",
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "The ID of the comparison task to get the report for"
+          },
+          "endpointId": {
+            "type": "string",
+            "description": "The endpoint ID associated with the comparison task"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_acquisition_artifacts",
+      "description": "List all acquisition artifacts available for evidence collection",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "random_string"
+        ],
+        "properties": {
+          "random_string": {
+            "type": "string",
+            "description": "Dummy parameter for no-parameter tools"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_e_discovery_patterns",
+      "description": "List all e-discovery patterns for file type detection",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "random_string"
+        ],
+        "properties": {
+          "random_string": {
+            "type": "string",
+            "description": "Dummy parameter for no-parameter tools"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_policy",
+      "description": "Create a new policy with specific storage and compression settings",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "saveTo",
+          "compression",
+          "sendTo"
+        ],
+        "properties": {
+          "cpu": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "description": "CPU usage limit percentage (1-100)"
+              }
+            },
+            "description": "CPU usage limits"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the new policy"
+          },
+          "saveTo": {
+            "type": "object",
+            "required": [
+              "windows",
+              "linux",
+              "macos"
+            ],
+            "properties": {
+              "linux": {
+                "type": "object",
+                "required": [
+                  "location",
+                  "path",
+                  "useMostFreeVolume",
+                  "volume"
+                ],
+                "properties": {
+                  "tmp": {
+                    "type": "string",
+                    "description": "Temporary folder path for Linux"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "Path for evidence storage on Linux"
+                  },
+                  "volume": {
+                    "type": "string",
+                    "description": "Volume to use for Linux (e.g., \"/\")"
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "Storage location for Linux (e.g., \"local\")"
+                  },
+                  "useMostFreeVolume": {
+                    "type": "boolean",
+                    "description": "Whether to use volume with most free space"
+                  }
+                }
+              },
+              "macos": {
+                "type": "object",
+                "required": [
+                  "location",
+                  "path",
+                  "useMostFreeVolume",
+                  "volume"
+                ],
+                "properties": {
+                  "tmp": {
+                    "type": "string",
+                    "description": "Temporary folder path for macOS"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "Path for evidence storage on macOS"
+                  },
+                  "volume": {
+                    "type": "string",
+                    "description": "Volume to use for macOS (e.g., \"/\")"
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "Storage location for macOS (e.g., \"local\")"
+                  },
+                  "useMostFreeVolume": {
+                    "type": "boolean",
+                    "description": "Whether to use volume with most free space"
+                  }
+                }
+              },
+              "windows": {
+                "type": "object",
+                "required": [
+                  "location",
+                  "path",
+                  "useMostFreeVolume",
+                  "volume"
+                ],
+                "properties": {
+                  "tmp": {
+                    "type": "string",
+                    "description": "Temporary folder path for Windows"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "Path for evidence storage on Windows"
+                  },
+                  "volume": {
+                    "type": "string",
+                    "description": "Volume to use for Windows (e.g., \"C:\")"
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "Storage location for Windows (e.g., \"local\")"
+                  },
+                  "useMostFreeVolume": {
+                    "type": "boolean",
+                    "description": "Whether to use volume with most free space"
+                  }
+                }
+              }
+            },
+            "description": "Configuration for where to save evidence"
+          },
+          "sendTo": {
+            "type": "object",
+            "required": [
+              "location"
+            ],
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "Location to send evidence to (e.g., \"user-local\")"
+              }
+            },
+            "description": "Configuration for where to send evidence"
+          },
+          "compression": {
+            "type": "object",
+            "required": [
+              "enabled",
+              "encryption"
+            ],
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "Whether compression is enabled"
+              },
+              "encryption": {
+                "type": "object",
+                "required": [
+                  "enabled"
+                ],
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether encryption is enabled"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password for encryption when enabled"
+                  }
+                }
+              }
+            },
+            "description": "Compression and encryption settings"
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Organization IDs to associate with policy. Defaults to [0]."
+          }
+        }
+      }
+    },
+    {
+      "name": "update_policy",
+      "description": "Update an existing policy with specific storage and filter settings",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "saveTo",
+          "compression",
+          "sendTo"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the policy to update"
+          },
+          "cpu": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "description": "CPU usage limit percentage (1-100)"
+              }
+            },
+            "description": "CPU usage limits"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the policy"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "operator": {
+                "type": "string",
+                "description": "Logical operator for combining conditions (e.g., \"and\", \"or\")"
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Array of conditions for policy filtering"
+              }
+            },
+            "description": "Filter conditions to determine which endpoints the policy applies to"
+          },
+          "saveTo": {
+            "type": "object",
+            "required": [
+              "windows",
+              "linux",
+              "macos"
+            ],
+            "properties": {
+              "linux": {
+                "type": "object",
+                "required": [
+                  "location",
+                  "path",
+                  "useMostFreeVolume",
+                  "volume"
+                ],
+                "properties": {
+                  "tmp": {
+                    "type": "string",
+                    "description": "Temporary folder path for Linux"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "Path for evidence storage on Linux"
+                  },
+                  "volume": {
+                    "type": "string",
+                    "description": "Volume to use for Linux (e.g., \"/\")"
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "Storage location for Linux (e.g., \"local\")"
+                  },
+                  "useMostFreeVolume": {
+                    "type": "boolean",
+                    "description": "Whether to use volume with most free space"
+                  }
+                }
+              },
+              "macos": {
+                "type": "object",
+                "required": [
+                  "location",
+                  "path",
+                  "useMostFreeVolume",
+                  "volume"
+                ],
+                "properties": {
+                  "tmp": {
+                    "type": "string",
+                    "description": "Temporary folder path for macOS"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "Path for evidence storage on macOS"
+                  },
+                  "volume": {
+                    "type": "string",
+                    "description": "Volume to use for macOS (e.g., \"/\")"
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "Storage location for macOS (e.g., \"local\")"
+                  },
+                  "useMostFreeVolume": {
+                    "type": "boolean",
+                    "description": "Whether to use volume with most free space"
+                  }
+                }
+              },
+              "windows": {
+                "type": "object",
+                "required": [
+                  "location",
+                  "path",
+                  "useMostFreeVolume",
+                  "volume"
+                ],
+                "properties": {
+                  "tmp": {
+                    "type": "string",
+                    "description": "Temporary folder path for Windows"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "Path for evidence storage on Windows"
+                  },
+                  "volume": {
+                    "type": "string",
+                    "description": "Volume to use for Windows (e.g., \"C:\")"
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "Storage location for Windows (e.g., \"local\")"
+                  },
+                  "useMostFreeVolume": {
+                    "type": "boolean",
+                    "description": "Whether to use volume with most free space"
+                  }
+                }
+              }
+            },
+            "description": "Configuration for where to save evidence"
+          },
+          "sendTo": {
+            "type": "object",
+            "required": [
+              "location"
+            ],
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "Location to send evidence to (e.g., \"user-local\")"
+              }
+            },
+            "description": "Configuration for where to send evidence"
+          },
+          "compression": {
+            "type": "object",
+            "required": [
+              "enabled",
+              "encryption"
+            ],
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "Whether compression is enabled"
+              },
+              "encryption": {
+                "type": "object",
+                "required": [
+                  "enabled"
+                ],
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether encryption is enabled"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password for encryption when enabled"
+                  }
+                }
+              }
+            },
+            "description": "Compression and encryption settings"
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Organization IDs to associate with policy. Defaults to [0]."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_policy_by_id",
+      "description": "Get detailed information about a specific policy by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the policy to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_policy_priorities",
+      "description": "Update the priority order of policies",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ordered list of policy IDs that defines their priority (first has highest priority)"
+          },
+          "organizationIds": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Organization IDs to associate with priority update. Defaults to [0]."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_policy_match_stats",
+      "description": "Get statistics on how many endpoints match each policy based on filter criteria",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Filter assets by name"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter assets by tags"
+          },
+          "issue": {
+            "type": "string",
+            "description": "Filter assets by issue"
+          },
+          "policy": {
+            "type": "string",
+            "description": "Filter assets by policy name"
+          },
+          "groupId": {
+            "type": "string",
+            "description": "Filter assets by group ID"
+          },
+          "version": {
+            "type": "string",
+            "description": "Filter assets by agent version"
+          },
+          "platform": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter assets by platform (e.g., [\"windows\"])"
+          },
+          "ipAddress": {
+            "type": "string",
+            "description": "Filter assets by IP address"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "General search term for filtering assets"
+          },
+          "onlineStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter assets by online status (e.g., [\"online\"])"
+          },
+          "groupFullPath": {
+            "type": "string",
+            "description": "Filter assets by full group path"
+          },
+          "managedStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter assets by managed status (e.g., [\"managed\"])"
+          },
+          "isolationStatus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter assets by isolation status (e.g., [\"isolated\"])"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Organization IDs to filter by. Defaults to [0]."
+          },
+          "excludedEndpointIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Exclude these endpoint IDs"
+          },
+          "includedEndpointIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Include only these endpoint IDs"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_policy_by_id",
+      "description": "Delete a specific policy by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the policy to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_task_assignments_by_id",
+      "description": "Get all assignments associated with a specific task by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "The ID of the task to retrieve assignments for"
+          }
+        }
+      }
+    },
+    {
+      "name": "cancel_task_assignment",
+      "description": "Cancel a task assignment by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "assignmentId"
+        ],
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "description": "The ID of the task assignment to cancel"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_task_assignment",
+      "description": "Delete a specific task assignment by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "assignmentId"
+        ],
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "description": "The ID of the task assignment to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_task_by_id",
+      "description": "Get detailed information about a specific task by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the task to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "cancel_task_by_id",
+      "description": "Cancel a specific task by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the task to cancel"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_task_by_id",
+      "description": "Delete a specific task by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the task to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_triage_tags",
+      "description": "List all triage rule tags in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "withCount": {
+            "type": "boolean",
+            "description": "Whether to include count of rules for each tag. Defaults to true."
+          },
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter triage tags by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "create_triage_tag",
+      "description": "Create a new triage rule tag",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the tag to create"
+          },
+          "organizationId": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Organization ID to associate the tag with. Defaults to 0."
+          }
+        }
+      }
+    },
+    {
+      "name": "create_triage_rule",
+      "description": "Create a new triage rule",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "description",
+          "rule",
+          "searchIn",
+          "engine"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string",
+            "description": "The YARA rule content"
+          },
+          "engine": {
+            "type": "string",
+            "description": "Rule engine to use, e.g., \"yara\""
+          },
+          "searchIn": {
+            "type": "string",
+            "description": "Where to search, e.g., \"filesystem\""
+          },
+          "description": {
+            "type": "string",
+            "description": "A descriptive name for the triage rule"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "description": "Organization IDs to associate with this rule. Defaults to [0]"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_triage_rule",
+      "description": "Update an existing triage rule by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "rule",
+          "searchIn"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the triage rule to update"
+          },
+          "rule": {
+            "type": "string",
+            "description": "The YARA rule content"
+          },
+          "searchIn": {
+            "type": "string",
+            "description": "Where to search, e.g., \"filesystem\""
+          },
+          "description": {
+            "type": "string",
+            "description": "A descriptive name for the triage rule"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Organization IDs to associate with this rule. Defaults to [0]"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_triage_rule",
+      "description": "Delete an existing triage rule by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the triage rule to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_triage_rule_by_id",
+      "description": "Get a specific triage rule by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the triage rule to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_triage_rule",
+      "description": "Validate a triage rule syntax without creating it",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "rule"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string",
+            "description": "The YARA rule content to validate"
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_triage_task",
+      "description": "Assign a triage task to endpoints based on filter criteria",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "triageRuleIds",
+          "taskConfig",
+          "mitreAttack",
+          "filter"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "Case ID for the triage task"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by tags"
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue"
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy"
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID"
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version"
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])"
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address"
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term"
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status"
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path"
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])"
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status"
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "description": "Organization IDs filter"
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude"
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to include"
+              }
+            },
+            "description": "Filter criteria for selecting endpoints"
+          },
+          "taskConfig": {
+            "type": "object",
+            "required": [
+              "choice"
+            ],
+            "properties": {
+              "choice": {
+                "type": "string",
+                "description": "Configuration choice, e.g., \"use-custom-options\""
+              }
+            },
+            "description": "Task configuration options"
+          },
+          "mitreAttack": {
+            "type": "object",
+            "required": [
+              "enabled"
+            ],
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "Whether to enable MITRE ATT&CK framework"
+              }
+            },
+            "description": "MITRE ATT&CK configuration"
+          },
+          "triageRuleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of triage rule IDs to apply"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_note_to_case",
+      "description": "Add a note to a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "note"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "The content of the note to add to the case"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "The ID of the case to add a note to (e.g., \"C-2022-0002\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_note_in_case",
+      "description": "Update an existing note in a specific case",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "noteId",
+          "note"
+        ],
+        "properties": {
+          "note": {
+            "type": "string",
+            "description": "The new content for the note"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "The ID of the case containing the note (e.g., \"C-2022-0002\")"
+          },
+          "noteId": {
+            "type": "string",
+            "description": "The ID of the note to update (e.g., \"8d9baa16-9aa3-4e4f-a08e-a74341ce2f90\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_note_from_case",
+      "description": "Delete a note from a case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "noteId"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "The ID of the case containing the note (e.g., \"C-2022-0002\")"
+          },
+          "noteId": {
+            "type": "string",
+            "description": "The ID of the note to delete (e.g., \"8d9baa16-9aa3-4e4f-a08e-a74341ce2f90\")"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_cases",
+      "description": "Export cases data from the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter cases by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "export_case_notes",
+      "description": "Export notes for a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "The ID of the case to export notes for"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_case_endpoints",
+      "description": "Export endpoints for a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "The ID of the case to export endpoints for"
+          },
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter by. Defaults to \"0\"."
+          }
+        }
+      }
+    },
+    {
+      "name": "export_case_activities",
+      "description": "Export activities for a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "The ID of the case to export activities for"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_case",
+      "description": "Create a new case in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "ownerUserId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the case"
+          },
+          "visibility": {
+            "type": "string",
+            "description": "Visibility of the case. Defaults to \"public-to-organization\""
+          },
+          "ownerUserId": {
+            "type": "string",
+            "description": "User ID of the case owner"
+          },
+          "organizationId": {
+            "type": "number",
+            "description": "Organization ID to create the case in. Defaults to 0."
+          },
+          "assignedUserIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of user IDs to assign to the case. Defaults to empty array."
+          }
+        }
+      }
+    },
+    {
+      "name": "update_case",
+      "description": "Update an existing case by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the case to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "New name for the case"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "New notes for the case"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "closed",
+              "archived"
+            ],
+            "type": "string",
+            "description": "New status for the case"
+          },
+          "visibility": {
+            "type": "string",
+            "description": "New visibility setting for the case"
+          },
+          "ownerUserId": {
+            "type": "string",
+            "description": "New owner user ID for the case"
+          },
+          "assignedUserIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "New array of user IDs to assign to the case"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_case_by_id",
+      "description": "Get detailed information about a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "close_case_by_id",
+      "description": "Close a case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to close"
+          }
+        }
+      }
+    },
+    {
+      "name": "open_case_by_id",
+      "description": "Open a previously closed case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to open"
+          }
+        }
+      }
+    },
+    {
+      "name": "archive_case_by_id",
+      "description": "Archive a case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to archive"
+          }
+        }
+      }
+    },
+    {
+      "name": "change_case_owner",
+      "description": "Change the owner of a case",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "newOwnerId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the case to change owner for"
+          },
+          "newOwnerId": {
+            "type": "string",
+            "description": "User ID of the new owner"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_case_name",
+      "description": "Check if a case name is already in use",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The case name to check for availability"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_case_activities",
+      "description": "Get activity history for a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to retrieve activities for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_case_endpoints",
+      "description": "Get all endpoints associated with a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to retrieve endpoints for"
+          },
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter endpoints by. Defaults to 0."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_case_tasks_by_id",
+      "description": "Get all tasks associated with a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to retrieve tasks for"
+          },
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter tasks by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_case_users",
+      "description": "Get all users associated with a specific case by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the case to retrieve users for (e.g., C-2022-0001)"
+          },
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter users by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_endpoints_from_case",
+      "description": "Remove endpoints from a case based on specified filters",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the case to remove endpoints from"
+          },
+          "filter": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filter by asset name"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by tags"
+              },
+              "issue": {
+                "type": "string",
+                "description": "Filter by issue"
+              },
+              "policy": {
+                "type": "string",
+                "description": "Filter by policy"
+              },
+              "groupId": {
+                "type": "string",
+                "description": "Filter by group ID"
+              },
+              "version": {
+                "type": "string",
+                "description": "Filter by agent version"
+              },
+              "platform": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by platform (e.g., [\"windows\"])"
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Filter by IP address"
+              },
+              "searchTerm": {
+                "type": "string",
+                "description": "Optional search term"
+              },
+              "onlineStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by online status (e.g., [\"online\"])"
+              },
+              "groupFullPath": {
+                "type": "string",
+                "description": "Filter by full group path"
+              },
+              "managedStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by managed status (e.g., [\"managed\"])"
+              },
+              "isolationStatus": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Filter by isolation status (e.g., [\"isolated\"])"
+              },
+              "organizationIds": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "description": "Organization IDs filter. Defaults to [0]"
+              },
+              "excludedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to exclude"
+              },
+              "includedEndpointIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of endpoint IDs to remove"
+              }
+            },
+            "description": "Filter object to specify which endpoints to remove"
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_task_assignment_from_case",
+      "description": "Remove a specific task assignment from a case",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "taskAssignmentId"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "The ID of the case to remove the task assignment from"
+          },
+          "taskAssignmentId": {
+            "type": "string",
+            "description": "The ID of the task assignment to remove"
+          }
+        }
+      }
+    },
+    {
+      "name": "import_task_assignments_to_case",
+      "description": "Import task assignments to a specific case",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "taskAssignmentIds"
+        ],
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "description": "ID of the case to import task assignments to"
+          },
+          "taskAssignmentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of task assignment IDs to import to the case"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_repositories",
+      "description": "List all evidence repositories in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "organizationIds": {
+            "type": "string",
+            "description": "Organization IDs to filter repositories by. Leave empty to use default (0)."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_repository_by_id",
+      "description": "Get detailed information about a specific evidence repository by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the repository to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_smb_repository",
+      "description": "Create a new SMB evidence repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "path",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the SMB repository"
+          },
+          "path": {
+            "type": "string",
+            "description": "Network share path (e.g. \\\\Network\\Share)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for SMB authentication"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username for SMB authentication"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Organization IDs to associate the repository with. Defaults to empty array."
+          }
+        }
+      }
+    },
+    {
+      "name": "update_smb_repository",
+      "description": "Update an existing SMB repository by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "path",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the SMB repository to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated name for the SMB repository"
+          },
+          "path": {
+            "type": "string",
+            "description": "Updated network share path (e.g. \\\\Network\\Share)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Updated password for SMB authentication"
+          },
+          "username": {
+            "type": "string",
+            "description": "Updated username for SMB authentication"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Updated organization IDs to associate the repository with"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_sftp_repository",
+      "description": "Create a new SFTP evidence repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "host",
+          "path",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "SFTP server hostname or IP address"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the SFTP repository"
+          },
+          "path": {
+            "type": "string",
+            "description": "Path on the SFTP server (e.g. /)"
+          },
+          "port": {
+            "type": "number",
+            "description": "SFTP server port (default: 22)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for SFTP authentication"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username for SFTP authentication"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Organization IDs to associate the repository with"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_sftp_repository",
+      "description": "Update an existing SFTP repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "host",
+          "path",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the SFTP repository to update"
+          },
+          "host": {
+            "type": "string",
+            "description": "Updated SFTP server hostname or IP address"
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated name for the SFTP repository"
+          },
+          "path": {
+            "type": "string",
+            "description": "Updated path on the SFTP server (e.g. /)"
+          },
+          "port": {
+            "type": "number",
+            "description": "Updated SFTP server port (default: 22)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Updated password for SFTP authentication"
+          },
+          "username": {
+            "type": "string",
+            "description": "Updated username for SFTP authentication"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Updated organization IDs to associate the repository with"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_ftps_repository",
+      "description": "Create a new FTPS evidence repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "host",
+          "path",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "FTPS server hostname or IP address"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the FTPS repository"
+          },
+          "path": {
+            "type": "string",
+            "description": "Path on the FTPS server (e.g. /)"
+          },
+          "port": {
+            "type": "number",
+            "description": "FTPS server port (default: 22)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for FTPS authentication"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username for FTPS authentication"
+          },
+          "publicKey": {
+            "type": "string",
+            "description": "Public key for FTPS authentication (optional)"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Organization IDs to associate the repository with"
+          },
+          "allowSelfSignedSSL": {
+            "type": "boolean",
+            "description": "Whether to allow self-signed SSL certificates"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_ftps_repository",
+      "description": "Update an existing FTPS evidence repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "host",
+          "path",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the FTPS repository to update"
+          },
+          "host": {
+            "type": "string",
+            "description": "Updated FTPS server hostname or IP address"
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated name for the FTPS repository"
+          },
+          "path": {
+            "type": "string",
+            "description": "Updated path on the FTPS server (e.g. /)"
+          },
+          "port": {
+            "type": "number",
+            "description": "Updated FTPS server port (default: 22)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Updated password for FTPS authentication"
+          },
+          "username": {
+            "type": "string",
+            "description": "Updated username for FTPS authentication"
+          },
+          "publicKey": {
+            "type": "string",
+            "description": "Public key for FTPS authentication (optional)"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Updated organization IDs to associate the repository with"
+          },
+          "allowSelfSignedSSL": {
+            "type": "boolean",
+            "description": "Whether to allow self-signed SSL certificates"
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_ftps_repository",
+      "description": "Validate FTPS repository configuration without creating it",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "host",
+          "path",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "FTPS server hostname or IP address"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the FTPS repository"
+          },
+          "path": {
+            "type": "string",
+            "description": "Path on the FTPS server (e.g. /)"
+          },
+          "port": {
+            "type": "number",
+            "description": "FTPS server port (default: 22)"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for FTPS authentication"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username for FTPS authentication"
+          },
+          "publicKey": {
+            "type": "string",
+            "description": "Public key for FTPS authentication (optional)"
+          },
+          "allowSelfSignedSSL": {
+            "type": "boolean",
+            "description": "Whether to allow self-signed SSL certificates"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_azure_storage_repository",
+      "description": "Create a new Azure Storage repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "SASUrl"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the Azure Storage repository"
+          },
+          "SASUrl": {
+            "type": "string",
+            "description": "SAS URL for Azure Storage access"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Organization IDs to associate the repository with. Defaults to empty array."
+          }
+        }
+      }
+    },
+    {
+      "name": "update_azure_storage_repository",
+      "description": "Update an existing Azure Storage repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "SASUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the Azure Storage repository to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated name for the Azure Storage repository"
+          },
+          "SASUrl": {
+            "type": "string",
+            "description": "Updated SAS URL for Azure Storage access"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Updated organization IDs to associate the repository with. Defaults to empty array."
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_azure_storage_repository",
+      "description": "Validate an Azure Storage repository configuration",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "SASUrl"
+        ],
+        "properties": {
+          "SASUrl": {
+            "type": "string",
+            "description": "SAS URL for Azure Storage access"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_amazon_s3_repository",
+      "description": "Create a new Amazon S3 repository for evidence storage",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "region",
+          "bucket",
+          "accessKeyId",
+          "secretAccessKey"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the Amazon S3 repository"
+          },
+          "bucket": {
+            "type": "string",
+            "description": "S3 bucket name"
+          },
+          "region": {
+            "type": "string",
+            "description": "AWS region (e.g. eu-west-1)"
+          },
+          "accessKeyId": {
+            "type": "string",
+            "description": "AWS access key ID"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Organization IDs to associate the repository with. Defaults to empty array."
+          },
+          "secretAccessKey": {
+            "type": "string",
+            "description": "AWS secret access key"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_amazon_s3_repository",
+      "description": "Update an existing Amazon S3 repository",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "region",
+          "bucket",
+          "accessKeyId",
+          "secretAccessKey"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the Amazon S3 repository to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated name for the Amazon S3 repository"
+          },
+          "bucket": {
+            "type": "string",
+            "description": "Updated S3 bucket name"
+          },
+          "region": {
+            "type": "string",
+            "description": "Updated AWS region (e.g. eu-west-1)"
+          },
+          "accessKeyId": {
+            "type": "string",
+            "description": "Updated AWS access key ID"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Updated organization IDs to associate the repository with. Defaults to empty array."
+          },
+          "secretAccessKey": {
+            "type": "string",
+            "description": "Updated AWS secret access key"
+          }
+        }
+      }
+    },
+    {
+      "name": "validate_amazon_s3_repository",
+      "description": "Validate Amazon S3 repository configuration",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "region",
+          "bucket",
+          "accessKeyId",
+          "secretAccessKey"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for the Amazon S3 repository"
+          },
+          "bucket": {
+            "type": "string",
+            "description": "S3 bucket name"
+          },
+          "region": {
+            "type": "string",
+            "description": "AWS region (e.g. eu-west-1)"
+          },
+          "accessKeyId": {
+            "type": "string",
+            "description": "AWS access key ID"
+          },
+          "organizationIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Organization IDs to associate the repository with. Defaults to empty array."
+          },
+          "secretAccessKey": {
+            "type": "string",
+            "description": "AWS secret access key"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_repository_by_id",
+      "description": "Get detailed information about a specific evidence repository by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the repository to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_repository",
+      "description": "Delete an evidence repository by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the repository to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_case_ppc",
+      "description": "Download a PPC file for a specific endpoint and task",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointId",
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "The ID of the task to download the PPC file for"
+          },
+          "endpointId": {
+            "type": "string",
+            "description": "The ID of the endpoint to download the PPC file for"
+          }
+        }
+      }
+    },
+    {
+      "name": "download_task_report",
+      "description": "Download a task report for a specific endpoint and task",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointId",
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "The ID of the task to download the task report for"
+          },
+          "endpointId": {
+            "type": "string",
+            "description": "The ID of the endpoint to download the task report for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_report_file_info",
+      "description": "Get information about a PPC file for a specific endpoint and task",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "endpointId",
+          "taskId"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "The ID of the task to get report file information for"
+          },
+          "endpointId": {
+            "type": "string",
+            "description": "The ID of the endpoint to get report file information for"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_organization_users",
+      "description": "Get users for a specific organization by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the organization to retrieve users for"
+          }
+        }
+      }
+    },
+    {
+      "name": "assign_users_to_organization",
+      "description": "Assign users to a specific organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "userIds"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the organization to assign users to"
+          },
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of user IDs to assign to the organization"
+          }
+        }
+      }
+    },
+    {
+      "name": "remove_user_from_organization",
+      "description": "Remove a user from an organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "organizationId",
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "The ID of the user to remove from the organization"
+          },
+          "organizationId": {
+            "type": "string",
+            "description": "The ID of the organization to remove the user from"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_organization",
+      "description": "Create a new organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name",
+          "contact"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the organization"
+          },
+          "note": {
+            "type": "string",
+            "description": "Additional notes about the organization (optional)"
+          },
+          "contact": {
+            "type": "object",
+            "required": [
+              "name",
+              "email"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Contact name"
+              },
+              "email": {
+                "type": "string",
+                "description": "Contact email address"
+              },
+              "phone": {
+                "type": "string",
+                "description": "Contact phone number (optional)"
+              },
+              "title": {
+                "type": "string",
+                "description": "Contact title (optional)"
+              },
+              "mobile": {
+                "type": "string",
+                "description": "Contact mobile number (optional)"
+              }
+            },
+            "description": "Contact information for the organization"
+          },
+          "shareableDeploymentEnabled": {
+            "type": "boolean",
+            "description": "Whether shareable deployment is enabled. Defaults to false."
+          }
+        }
+      }
+    },
+    {
+      "name": "update_organization_by_id",
+      "description": "Update an existing organization by ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the organization to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated name of the organization"
+          },
+          "note": {
+            "type": "string",
+            "description": "Additional notes about the organization"
+          },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Contact name"
+              },
+              "email": {
+                "type": "string",
+                "description": "Contact email address"
+              },
+              "phone": {
+                "type": "string",
+                "description": "Contact phone number"
+              },
+              "title": {
+                "type": "string",
+                "description": "Contact title"
+              },
+              "mobile": {
+                "type": "string",
+                "description": "Contact mobile number"
+              }
+            },
+            "description": "Updated contact information for the organization"
+          },
+          "shareableDeploymentEnabled": {
+            "type": "boolean",
+            "description": "Whether shareable deployment is enabled"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_organization_by_id",
+      "description": "Get detailed information about a specific organization by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the organization to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "check_organization_name_exists",
+      "description": "Check if an organization name already exists in the system",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the organization to check"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_shareable_deployment_info",
+      "description": "Get shareable deployment information using a deployment token",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "deploymentToken"
+        ],
+        "properties": {
+          "deploymentToken": {
+            "type": "string",
+            "description": "The deployment token to retrieve information for"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_organization_shareable_deployment",
+      "description": "Update an organization's shareable deployment settings",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the organization to update"
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Whether shareable deployment should be enabled (true) or disabled (false)"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_organization_deployment_token",
+      "description": "Update the deployment token for a specific organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "deploymentToken"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the organization to update"
+          },
+          "deploymentToken": {
+            "type": "string",
+            "description": "New deployment token for the organization"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_organization",
+      "description": "Delete an organization by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the organization to delete"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_tags_to_organization",
+      "description": "Add tags to an organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "tags"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID of the organization to add tags to"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tags to add to the organization"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_tags_from_organization",
+      "description": "Delete specific tags from an organization",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "tags"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID of the organization to delete tags from"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of tags to delete from the organization"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_by_id",
+      "description": "Get detailed information about a specific user by their ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the user to retrieve"
+          }
+        }
+      }
+    },
+    {
+      "name": "call_webhook",
+      "description": "Call a webhook with the specified parameters",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "slug",
+          "data",
+          "token"
+        ],
+        "properties": {
+          "data": {
+            "type": "string",
+            "description": "The data parameter for the webhook (e.g., IP address like \"192.168.1.100\")"
+          },
+          "slug": {
+            "type": "string",
+            "description": "The webhook slug (e.g., \"air-generic-url-webhook\")"
+          },
+          "token": {
+            "type": "string",
+            "description": "The webhook token for authentication"
+          }
+        }
+      }
+    },
+    {
+      "name": "post_webhook",
+      "description": "Post data to a webhook",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "slug",
+          "data",
+          "token"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "The data to be sent in the request body"
+          },
+          "slug": {
+            "type": "string",
+            "description": "The webhook slug (e.g., \"air-generic-url-webhook\")"
+          },
+          "token": {
+            "type": "string",
+            "description": "The webhook token for authentication"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_task_assignments",
+      "description": "Get all assignments for a specific task by its ID",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "slug",
+          "taskId",
+          "token"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "The webhook slug (e.g., \"air-generic-url-webhook\")"
+          },
+          "token": {
+            "type": "string",
+            "description": "The webhook token for authentication"
+          },
+          "taskId": {
+            "type": "string",
+            "description": "The ID of the task to retrieve assignments for"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_banner_message",
+      "description": "Update the system banner message settings",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "enabled"
+        ],
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the banner message is enabled or disabled"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@binalyze/air-mcp/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "airHost",
+          "airApiToken"
+        ],
+        "properties": {
+          "airHost": {
+            "type": "string",
+            "description": "The host URL for the Binalyze AIR API (e.g., https://air-xyz.binalyze.com)"
+          },
+          "airApiToken": {
+            "type": "string",
+            "description": "The API token for accessing the Binalyze AIR API. You can generate one through the AIR console."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1124 @@
+{
+  "qualifiedName": "@ttpears/gitlab-mcp",
+  "displayName": "GitLab MCP Server",
+  "description": "Enable powerful LLM-driven exploration and analysis of GitLab instances with comprehensive search, code browsing, and issue management tools. Seamlessly integrate with self-hosted or GitLab.com environments using flexible authentication modes. Optimize AI workflows with automatic GraphQL schema discovery and dynamic query capabilities.",
+  "iconUrl": null,
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@ttpears/gitlab-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "get_project",
+      "description": "Get detailed information about a specific GitLab project (read-only)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fullPath"
+        ],
+        "properties": {
+          "fullPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_issues",
+      "description": "Get issues from a specific GitLab project (read-only)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of issues to retrieve"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_merge_requests",
+      "description": "Get merge requests from a specific GitLab project (read-only)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of merge requests to retrieve"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_custom_query",
+      "description": "Execute a custom GraphQL query against the GitLab API (authentication may be required depending on query)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "GraphQL query string"
+          },
+          "variables": {
+            "type": "object",
+            "description": "Variables for the GraphQL query",
+            "additionalProperties": {}
+          },
+          "requiresWrite": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true if this is a mutation that requires write permissions"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_available_queries",
+      "description": "Get list of available GraphQL queries and mutations from the GitLab schema",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_current_user",
+      "description": "Get information about the current authenticated GitLab user",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_projects",
+      "description": "List projects accessible to the user (requires authentication to see private projects)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of projects to retrieve"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_issue",
+      "description": "Create a new issue in a GitLab project (requires user authentication with write permissions)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath",
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Title of the issue"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the issue"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_merge_request",
+      "description": "Create a new merge request in a GitLab project (requires user authentication with write permissions)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath",
+          "title",
+          "sourceBranch",
+          "targetBranch"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Title of the merge request"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the merge request"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "sourceBranch": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Source branch name"
+          },
+          "targetBranch": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Target branch name"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_issue",
+      "description": "Update an issue (title, description, assignees, labels, due date) with schema-aware mutations",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath",
+          "iid"
+        ],
+        "properties": {
+          "iid": {
+            "type": "string",
+            "description": "Issue IID (internal ID shown in the URL)"
+          },
+          "title": {
+            "type": "string"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          "labelNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          },
+          "assigneeUsernames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_merge_request",
+      "description": "Update a merge request (title, description, assignees, reviewers, labels) with schema-aware mutations",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath",
+          "iid"
+        ],
+        "properties": {
+          "iid": {
+            "type": "string",
+            "description": "Merge Request IID (internal ID shown in the URL)"
+          },
+          "title": {
+            "type": "string"
+          },
+          "labelNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          },
+          "assigneeUsernames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewerUsernames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "resolve_path",
+      "description": "Resolve a GitLab path to either a project or group and list group projects when applicable",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fullPath"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of items to retrieve when listing group projects"
+          },
+          "fullPath": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project or group full path (e.g., \"group/subgroup/project\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_group_projects",
+      "description": "List projects inside a GitLab group (optionally filter by search term)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fullPath"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of projects to retrieve"
+          },
+          "fullPath": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Group full path (e.g., \"group/subgroup\")"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "Optional search term to filter group projects"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_type_fields",
+      "description": "List available fields on a GraphQL type using introspected schema (requires schema to be introspected)",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "typeName"
+        ],
+        "properties": {
+          "typeName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "GraphQL type name (e.g., \"Project\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_gitlab",
+      "description": "Search across all of GitLab (projects, issues, merge requests) with a single query - ideal for LLM exploration",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "searchTerm": {
+            "type": "string",
+            "description": "Search term to find across GitLab (searches projects, issues, and merge requests)"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_projects",
+      "description": "Search for GitLab projects by name or description - great for finding specific repositories",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "searchTerm"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of projects to retrieve"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "Search term to find projects by name or description"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_issues",
+      "description": "Search for issues across GitLab or within a specific project - perfect for finding bugs, features, or discussions",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of issues to retrieve"
+          },
+          "state": {
+            "type": "string",
+            "default": "all",
+            "description": "Filter by issue state (opened, closed, all)"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "Search term to find issues by title or description (leave empty to get recent issues)"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Limit search to specific project (e.g., \"group/project-name\"). Leave empty to search globally."
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_merge_requests",
+      "description": "Search for merge requests across GitLab or within a specific project - ideal for finding code changes and reviews",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "searchTerm"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of merge requests to retrieve"
+          },
+          "state": {
+            "type": "string",
+            "default": "all",
+            "description": "Filter by merge request state (opened, closed, merged, all)"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "Search term to find merge requests by title or description"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Limit search to specific project (e.g., \"group/project-name\"). Leave empty to search globally."
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_users",
+      "description": "Search for GitLab users by username or name - useful for finding team members or contributors",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "searchTerm"
+        ],
+        "properties": {
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of users to retrieve"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "Search term to find users by username or name"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_groups",
+      "description": "Search for GitLab groups and organizations - helpful for exploring team structures",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "searchTerm"
+        ],
+        "properties": {
+          "first": {
+            "type": "number",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Number of groups to retrieve"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "Search term to find groups by name or path"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "browse_repository",
+      "description": "Browse repository files and folders - essential for exploring codebase structure",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "default": "HEAD",
+            "description": "Git reference (branch, tag, or commit SHA)"
+          },
+          "path": {
+            "type": "string",
+            "default": "",
+            "description": "Directory path to browse (empty for root)"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_file_content",
+      "description": "Get the content of a specific file from a GitLab repository - crucial for code analysis",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "projectPath",
+          "filePath"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "default": "HEAD",
+            "description": "Git reference (branch, tag, or commit SHA)"
+          },
+          "filePath": {
+            "type": "string",
+            "description": "Path to the file within the repository (e.g., \"src/main.js\")"
+          },
+          "projectPath": {
+            "type": "string",
+            "description": "Full path of the project (e.g., \"group/project-name\")"
+          },
+          "userCredentials": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "gitlabUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your GitLab credentials (optional - uses shared token if not provided)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@ttpears/gitlab-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {},
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

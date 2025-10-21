@@ -1,0 +1,220 @@
+{
+  "qualifiedName": "@skr-cloudify/repomix-cloud",
+  "displayName": "Repomix",
+  "description": "Package remote and local repositories into a compact bundle for rapid code comprehension and review. Work with private repos and reopen previously generated outputs with ease. Browse directories and read files directly from your workspace.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@skr-cloudify/repomix-cloud",
+  "security": null,
+  "tools": [
+    {
+      "name": "pack_remote_repository",
+      "annotations": {
+        "title": "Pack Remote Repository",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Package remote git repository into a consolidated file for AI analysis",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Git repository URL to pack"
+          },
+          "branch": {
+            "type": "string",
+            "description": "Git branch to pack (optional)"
+          },
+          "compress": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use Tree-sitter to extract essential code signatures while removing implementation details"
+          },
+          "githubToken": {
+            "type": "string",
+            "description": "GitHub personal access token for private repository access (optional if configured in server settings)"
+          },
+          "ignorePatterns": {
+            "type": "string",
+            "description": "Specify additional files to exclude using fast-glob compatible patterns"
+          },
+          "includePatterns": {
+            "type": "string",
+            "description": "Specify which files to include using fast-glob compatible patterns"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "pack_codebase",
+      "annotations": {
+        "title": "Pack Local Codebase",
+        "readOnlyHint": true,
+        "openWorldHint": true,
+        "idempotentHint": false,
+        "destructiveHint": false
+      },
+      "description": "Package local code directory into a consolidated file for AI analysis",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "directory"
+        ],
+        "properties": {
+          "compress": {
+            "type": "boolean",
+            "default": true,
+            "description": "Utilize Tree-sitter to intelligently extract essential code signatures and structure while removing implementation details, significantly reducing token usage (default: true)"
+          },
+          "directory": {
+            "type": "string",
+            "description": "Directory to pack (Absolute path)"
+          },
+          "ignorePatterns": {
+            "type": "string",
+            "description": "Specify additional files to exclude using fast-glob compatible patterns (e.g., \"test/**,*.spec.js\"). These patterns complement .gitignore and default ignores. It is recommended to pack only necessary files."
+          },
+          "topFilesLength": {
+            "type": "number",
+            "default": 10,
+            "description": "Number of top files to display in the metrics (default: 10)"
+          },
+          "includePatterns": {
+            "type": "string",
+            "description": "Specify which files to include using fast-glob compatible patterns (e.g., \"**/*.js,src/**\"). Only files matching these patterns will be processed. It is recommended to pack only necessary files."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "read_repomix_output",
+      "annotations": {
+        "title": "Read Repomix Output",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Read the contents of a previously generated repomix output file",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "outputId"
+        ],
+        "properties": {
+          "outputId": {
+            "type": "string",
+            "description": "Output ID from a previous pack operation"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "file_system_read_file",
+      "annotations": {
+        "title": "Read File",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "Read the contents of a specific file from the file system",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Absolute path to the file to read"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "file_system_read_directory",
+      "annotations": {
+        "title": "Read Directory",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false
+      },
+      "description": "List the contents of a directory",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Absolute path to the directory to read"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@skr-cloudify/repomix-cloud/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "githubToken": {
+            "type": "string",
+            "description": "GitHub personal access token for private repository access (configured per user)"
+          },
+          "maxFileSize": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "default": 50000000,
+            "description": "Maximum file size to process (in bytes)"
+          },
+          "security_check": {
+            "type": [
+              "boolean",
+              "string"
+            ],
+            "default": true,
+            "description": "Whether to perform security checks on files"
+          },
+          "defaultCompress": {
+            "type": "boolean",
+            "default": true,
+            "description": "Default compression setting for output"
+          },
+          "token_count_encoding": {
+            "type": "string",
+            "default": "o200k_base",
+            "description": "Token count encoding used by tiktoken (e.g., 'o200k_base' for GPT-4o)"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

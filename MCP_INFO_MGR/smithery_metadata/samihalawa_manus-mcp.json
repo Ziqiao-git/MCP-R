@@ -1,0 +1,420 @@
+{
+  "qualifiedName": "@samihalawa/manus-mcp",
+  "displayName": "Manus",
+  "description": "Work inside the Manus sandbox to build, test, and debug faster. Automate the browser, manage files, edit code, and control terminals from one place. Initialize environments with secrets and package projects for deployment.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@samihalawa/manus-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "upload_file_to_s3",
+      "title": "Upload File to S3",
+      "description": "Upload a file to S3 storage. For large files, returns multipart upload information.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "file_path",
+          "presigned_url"
+        ],
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Path to the file to upload"
+          },
+          "presigned_url": {
+            "type": "string",
+            "description": "Pre-signed S3 URL for upload"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "multipart_upload_to_s3",
+      "title": "Multipart Upload to S3",
+      "description": "Upload large files to S3 using multipart upload with pre-signed URLs.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "file_path",
+          "presigned_urls",
+          "part_size"
+        ],
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Path to the file to upload"
+          },
+          "part_size": {
+            "type": "number",
+            "description": "Size of each part in bytes"
+          },
+          "presigned_urls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "part_number",
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "Pre-signed URL for this part"
+                },
+                "part_number": {
+                  "type": "number",
+                  "description": "Part number for this chunk"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of pre-signed URLs for each part"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "download_file",
+      "title": "Download File",
+      "description": "Download a file from the sandbox at the specified path.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to the file to download"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "batch_download_attachments",
+      "title": "Batch Download Attachments",
+      "description": "Download multiple files from URLs and optionally save them to a subfolder.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "url",
+                "filename"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "URL to download from"
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "Filename to save as"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Array of files to download"
+          },
+          "folder": {
+            "type": "string",
+            "description": "Optional subfolder to save files in"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_browser_status",
+      "title": "Get Browser Status",
+      "description": "Get the current status of the browser manager in the sandbox.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_browser_action",
+      "title": "Execute Browser Action",
+      "description": "Execute a browser action such as navigation or interaction with page elements.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to navigate to or interact with"
+          },
+          "action": {
+            "type": "string",
+            "description": "Browser action to execute (e.g., 'navigate', 'click', 'type')"
+          },
+          "params": {
+            "type": "object",
+            "description": "Additional parameters for the action",
+            "additionalProperties": {}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "text_editor_action",
+      "title": "Text Editor Action",
+      "description": "Perform text editor actions such as opening, reading, or updating files.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "action",
+          "file_path"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Action to perform (e.g., 'open', 'read', 'write', 'update')"
+          },
+          "params": {
+            "type": "object",
+            "description": "Additional parameters for the action",
+            "additionalProperties": {}
+          },
+          "content": {
+            "type": "string",
+            "description": "Content to write (for write/update actions)"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Path to the file"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset_terminal",
+      "title": "Reset Terminal",
+      "description": "Reset a specific terminal session identified by terminal ID.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "terminal_id"
+        ],
+        "properties": {
+          "terminal_id": {
+            "type": "string",
+            "description": "Terminal identifier to reset"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reset_all_terminals",
+      "title": "Reset All Terminals",
+      "description": "Reset all active terminal sessions in the sandbox.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "view_terminal_history",
+      "title": "View Terminal History",
+      "description": "View the terminal history. Can return full history or only the latest output.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "terminal_id"
+        ],
+        "properties": {
+          "full": {
+            "type": "boolean",
+            "default": true,
+            "description": "If true, returns full history; otherwise only latest output"
+          },
+          "terminal_id": {
+            "type": "string",
+            "description": "Terminal identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "kill_terminal_process",
+      "title": "Kill Terminal Process",
+      "description": "Kill the current process running in the specified terminal.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "terminal_id"
+        ],
+        "properties": {
+          "terminal_id": {
+            "type": "string",
+            "description": "Terminal identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "write_to_terminal",
+      "title": "Write to Terminal",
+      "description": "Write input to a terminal process, optionally simulating an Enter key press.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "terminal_id",
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text to write to the terminal"
+          },
+          "enter": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to simulate pressing Enter after the text"
+          },
+          "terminal_id": {
+            "type": "string",
+            "description": "Terminal identifier"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "initialize_sandbox",
+      "title": "Initialize Sandbox",
+      "description": "Initialize the sandbox environment by writing secrets to the .secrets directory.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "secrets"
+        ],
+        "properties": {
+          "secrets": {
+            "type": "object",
+            "description": "Key-value pairs of secrets to initialize",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "health_check",
+      "title": "Health Check",
+      "description": "Check the health status of the Manus sandbox service.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "zip_and_upload_project",
+      "title": "Zip and Upload Project",
+      "description": "Zip a directory (excluding specified folders) and upload the archive to S3.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "directory",
+          "upload_url",
+          "project_type"
+        ],
+        "properties": {
+          "directory": {
+            "type": "string",
+            "description": "Directory path to zip"
+          },
+          "upload_url": {
+            "type": "string",
+            "description": "Pre-signed S3 URL for upload"
+          },
+          "project_type": {
+            "enum": [
+              "frontend",
+              "backend",
+              "nextjs"
+            ],
+            "type": "string",
+            "description": "Type of project being uploaded"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@samihalawa/manus-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "required": [
+          "apiKey"
+        ],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Manus API key for authentication"
+          },
+          "baseUrl": {
+            "type": "string",
+            "default": "https://api.manus.im",
+            "description": "Base URL for Manus API"
+          },
+          "sandboxToken": {
+            "type": "string",
+            "description": "Sandbox token for direct sandbox access"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

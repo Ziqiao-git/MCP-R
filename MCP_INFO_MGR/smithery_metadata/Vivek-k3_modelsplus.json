@@ -1,0 +1,133 @@
+{
+  "qualifiedName": "@Vivek-k3/modelsplus",
+  "displayName": "Models Plus",
+  "description": "Discover and compare models and providers with up-to-date pricing, limits, modalities, and capabilities. Search and filter by features like reasoning, tool calling, and context length, then fetch detailed specs to choose the right model fast.",
+  "iconUrl": "https://spjawbfpwezjfmicopsl.supabase.co/storage/v1/object/public/server-icons/aa6826f6-c9ad-458b-8bc7-737319855b74.svg",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Vivek-k3/modelsplus",
+  "security": null,
+  "tools": [
+    {
+      "name": "search_models",
+      "title": "Search Models",
+      "description": "Search for AI models by name, provider, or capabilities",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query (model name, provider, etc.)"
+          },
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "description": "Maximum number of results"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Filter by provider (e.g., openai, anthropic)"
+          },
+          "reasoning": {
+            "type": "boolean",
+            "description": "Filter by reasoning capabilities"
+          },
+          "tool_call": {
+            "type": "boolean",
+            "description": "Filter by tool calling support"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_model",
+      "title": "Get Model",
+      "description": "Get detailed information about a specific AI model",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Model ID (e.g., gpt-4, claude-3-sonnet)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_providers",
+      "title": "Search Providers",
+      "description": "Search for AI model providers by name or environment variables",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query (provider name)"
+          },
+          "env": {
+            "type": "string",
+            "description": "Filter by required environment variable"
+          },
+          "limit": {
+            "type": "number",
+            "default": 20,
+            "description": "Maximum number of results"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_provider",
+      "title": "Get Provider",
+      "description": "Get detailed information about a specific AI model provider",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Provider ID"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Vivek-k3/modelsplus/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "apiTimeout": {
+            "type": "number",
+            "default": 10000,
+            "description": "API request timeout in milliseconds"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

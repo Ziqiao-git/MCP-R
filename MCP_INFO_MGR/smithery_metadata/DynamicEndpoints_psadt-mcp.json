@@ -1,0 +1,539 @@
+{
+  "qualifiedName": "@DynamicEndpoints/psadt-mcp",
+  "displayName": "PowerShell App Deployment Toolkit (PSADT) Template Generator",
+  "description": "# PSADT-MCP Server\n\nA Model Context Protocol (MCP) server that provides AI assistants with powerful tools for Windows software deployment using the PowerShell App Deployment Toolkit (PSADT). This server enables AI assistants to help users create, manage, and deploy Windows applications with enterprise-grade deployment capabilities.\n\n## 🚀 Features\n\n- **MSI Package Management**: Extract information, deploy, and manage MSI installers\n- **EXE Deployment**: Deploy executable installers with customizable parameters\n- **Winget Integration**: Leverage Windows Package Manager for modern app deployments\n- **Deployment Verification**: Validate successful installations and system state\n- **PSADT Integration**: Full integration with PowerShell App Deployment Toolkit v4\n- **Dual Transport Support**: Works with both STDIO and HTTP transports for maximum compatibility\n\n## 🎯 Use Cases\n\n- **Automated Software Deployment**: Create deployment scripts for enterprise environments\n- **Package Analysis**: Extract metadata and requirements from MSI packages\n- **Installation Troubleshooting**: Verify deployments and diagnose installation issues\n- **Winget Package Discovery**: Find and deploy applications from the Windows Package Manager\n- **Enterprise App Management**: Streamline software lifecycle management\n\n## 📋 Prerequisites\n\nBefore setting up the PSADT-MCP server, ensure you have the following installed on your Windows system:\n\n### Required Software\n- **Windows 10/11**: The server is designed for Windows environments\n- **PowerShell 5.1 or later**: Required for PSADT functionality\n- **Node.js 18 or later**: Runtime environment for the MCP server\n  - Download from [nodejs.org](https://nodejs.org/)\n  - Verify installation: `node --version` and `npm --version`\n\n### Optional but Recommended\n- **Windows Package Manager (winget)**: For modern package management\n  - Usually pre-installed on Windows 11\n  - For Windows 10: Install from Microsoft Store or [GitHub releases](https://github.com/microsoft/winget-cli/releases)\n- **Git**: For cloning the repository and version control\n  - Download from [git-scm.com](https://git-scm.com/)\n\n### System Requirements\n- **Administrator privileges**: Required for software installation and deployment\n- **PowerShell execution policy**: Set to allow script execution\n  - Run as Administrator: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`\n- **Disk space**: At least 100MB for the toolkit and dependencies\n",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/dynamicendpoints.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/psadt-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "install_psadt_v4",
+      "description": "Download and install PowerShell App Deployment Toolkit v4 from GitHub. Uses hybrid execution with automatic fallbacks for different environments.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Specific PSADT version to install (defaults to latest v4)"
+          },
+          "installPath": {
+            "type": "string",
+            "description": "Custom installation path (defaults to C:\\PSADT)"
+          },
+          "forceReinstall": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force reinstallation even if PSADT is already found"
+          },
+          "skipEnvironmentSetup": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip adding PSADT to environment variables"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_psadt_status",
+      "description": "Check the status of PSADT installation, verify paths, and test basic functionality. Uses hybrid execution with automatic environment detection.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "checkPaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional paths to check for PSADT"
+          },
+          "testImport": {
+            "type": "boolean",
+            "default": true,
+            "description": "Test importing PSADT module"
+          },
+          "showVersion": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show PSADT version information"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "generate_base_template",
+      "description": "Create a complete PSADT v4 deployment template with proper directory structure and working PowerShell scripts",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "appName",
+          "appVersion",
+          "destinationPath"
+        ],
+        "properties": {
+          "appArch": {
+            "enum": [
+              "x86",
+              "x64",
+              "Any"
+            ],
+            "type": "string",
+            "default": "x64",
+            "description": "Target architecture"
+          },
+          "appName": {
+            "type": "string",
+            "description": "Application name for template"
+          },
+          "appVendor": {
+            "type": "string",
+            "description": "Application vendor"
+          },
+          "appVersion": {
+            "type": "string",
+            "description": "Application version"
+          },
+          "templateName": {
+            "type": "string",
+            "description": "Folder name (defaults to appName_appVersion)"
+          },
+          "forceCreation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Overwrite existing folder"
+          },
+          "useStrictMode": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable Set-StrictMode -Version 1"
+          },
+          "showInExplorer": {
+            "type": "boolean",
+            "default": false,
+            "description": "Would open folder in Explorer"
+          },
+          "destinationPath": {
+            "type": "string",
+            "description": "Target directory for template"
+          },
+          "psadtSourcePath": {
+            "type": "string",
+            "description": "Custom PSADT source path"
+          },
+          "templateVersion": {
+            "enum": [
+              "3",
+              "4"
+            ],
+            "type": "string",
+            "default": "4",
+            "description": "PSADT template version"
+          },
+          "generateDetectionScript": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include Intune detection script"
+          },
+          "includeAdvancedFeatures": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include advanced UI helpers"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "configure_msi_deployment",
+      "description": "Configure MSI deployment with Start-ADTMsiProcess and modern PSADT v4 methods. Copies MSI files and adds installation logic to deployment script.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "destinationPath",
+          "installerPath"
+        ],
+        "properties": {
+          "noWait": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return immediately"
+          },
+          "appName": {
+            "type": "string",
+            "description": "App name (auto-detected if omitted)"
+          },
+          "appVendor": {
+            "type": "string",
+            "description": "Vendor (auto-detected)"
+          },
+          "appVersion": {
+            "type": "string",
+            "description": "Version (auto-detected)"
+          },
+          "productCode": {
+            "type": "string",
+            "description": "MSI product code"
+          },
+          "installerPath": {
+            "type": "string",
+            "description": "Path to MSI"
+          },
+          "priorityClass": {
+            "enum": [
+              "Normal",
+              "High",
+              "Low",
+              "RealTime",
+              "BelowNormal",
+              "AboveNormal"
+            ],
+            "type": "string",
+            "default": "Normal",
+            "description": "Process priority"
+          },
+          "silentInstall": {
+            "type": "boolean",
+            "default": true,
+            "description": "Silent installation"
+          },
+          "destinationPath": {
+            "type": "string",
+            "description": "Target directory"
+          },
+          "ignoreExitCodes": {
+            "type": "string",
+            "description": "Comma separated exit codes to ignore or *"
+          },
+          "includeUninstall": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include uninstall logic"
+          },
+          "repairFromSource": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable repair from source"
+          },
+          "extractProperties": {
+            "type": "boolean",
+            "default": true,
+            "description": "Extract MSI properties"
+          },
+          "generateDetection": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include detection script"
+          },
+          "exitOnProcessFailure": {
+            "type": "boolean",
+            "default": true,
+            "description": "Fail on process error"
+          },
+          "includeUpdatesAndHotfixes": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include patch/hotfix context"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "configure_exe_deployment",
+      "description": "Configure an EXE installer deployment with automatic parameter detection and silent argument analysis",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "destinationPath",
+          "installerPath",
+          "appName",
+          "appVersion"
+        ],
+        "properties": {
+          "noWait": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return immediately"
+          },
+          "appName": {
+            "type": "string",
+            "description": "Application display name"
+          },
+          "passThru": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return process object"
+          },
+          "appVendor": {
+            "type": "string",
+            "description": "Vendor/publisher name"
+          },
+          "appVersion": {
+            "type": "string",
+            "description": "Version number"
+          },
+          "silentArgs": {
+            "type": "string",
+            "description": "Silent install arguments (auto-detected if not provided)"
+          },
+          "detectMethod": {
+            "enum": [
+              "registry",
+              "file",
+              "both"
+            ],
+            "type": "string",
+            "default": "both",
+            "description": "Detection strategy"
+          },
+          "installerPath": {
+            "type": "string",
+            "description": "Full path to EXE installer"
+          },
+          "priorityClass": {
+            "enum": [
+              "Normal",
+              "High",
+              "Low",
+              "RealTime",
+              "BelowNormal",
+              "AboveNormal"
+            ],
+            "type": "string",
+            "default": "Normal",
+            "description": "Process priority"
+          },
+          "requiresReboot": {
+            "type": "boolean",
+            "default": false,
+            "description": "Requires reboot"
+          },
+          "continueOnError": {
+            "type": "boolean",
+            "default": false,
+            "description": "Continue on error"
+          },
+          "destinationPath": {
+            "type": "string",
+            "description": "Target deployment directory"
+          },
+          "ignoreExitCodes": {
+            "type": "string",
+            "description": "Ignore exit codes list or *"
+          },
+          "analyzeInstaller": {
+            "type": "boolean",
+            "default": true,
+            "description": "Analyze EXE for silent parameters"
+          },
+          "workingDirectory": {
+            "type": "string",
+            "description": "Working directory"
+          },
+          "generateDetection": {
+            "type": "boolean",
+            "default": true,
+            "description": "Generate detection script"
+          },
+          "generateUninstall": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include uninstall logic"
+          },
+          "exitOnProcessFailure": {
+            "type": "boolean",
+            "default": true,
+            "description": "Fail on process error"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "configure_winget_deployment",
+      "description": "Configure a Winget package deployment with package validation and real winget command execution",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "destinationPath",
+          "packageId",
+          "appName"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "user",
+              "machine"
+            ],
+            "type": "string",
+            "default": "machine",
+            "description": "Installation scope"
+          },
+          "source": {
+            "type": "string",
+            "default": "winget",
+            "description": "Winget source name"
+          },
+          "appName": {
+            "type": "string",
+            "description": "Application display name"
+          },
+          "packageId": {
+            "type": "string",
+            "description": "Winget package ID (e.g., Microsoft.VisualStudioCode)"
+          },
+          "appVersion": {
+            "type": "string",
+            "description": "Specific version to install"
+          },
+          "upgradeMode": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use upgrade instead of install"
+          },
+          "priorityClass": {
+            "enum": [
+              "Normal",
+              "High",
+              "Low"
+            ],
+            "type": "string",
+            "default": "Normal",
+            "description": "Process priority"
+          },
+          "useSystemPath": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use system PATH for winget"
+          },
+          "destinationPath": {
+            "type": "string",
+            "description": "Target deployment directory"
+          },
+          "ignoreExitCodes": {
+            "type": "string",
+            "description": "Ignore exit codes list"
+          },
+          "validatePackage": {
+            "type": "boolean",
+            "default": true,
+            "description": "Validate package exists in Winget"
+          },
+          "includeUninstall": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include uninstall logic"
+          },
+          "generateDetection": {
+            "type": "boolean",
+            "default": true,
+            "description": "Generate detection script"
+          },
+          "exitOnProcessFailure": {
+            "type": "boolean",
+            "default": true,
+            "description": "Fail on process error"
+          },
+          "acceptSourceAgreements": {
+            "type": "boolean",
+            "default": true,
+            "description": "Accept source agreements"
+          },
+          "acceptPackageAgreements": {
+            "type": "boolean",
+            "default": true,
+            "description": "Accept package agreements"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "verify_deployment",
+      "description": "Perform comprehensive PSADT v4 deployment verification with syntax validation and modern method checks",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "deploymentPath"
+        ],
+        "properties": {
+          "checkFiles": {
+            "type": "boolean",
+            "default": true,
+            "description": "Check required files exist"
+          },
+          "testDetection": {
+            "type": "boolean",
+            "default": true,
+            "description": "Test detection script logic"
+          },
+          "deploymentPath": {
+            "type": "string",
+            "description": "Deployment directory to verify"
+          },
+          "validateScript": {
+            "type": "boolean",
+            "default": true,
+            "description": "Validate PowerShell syntax"
+          },
+          "checkStrictMode": {
+            "type": "boolean",
+            "default": true,
+            "description": "Verify Set-StrictMode usage"
+          },
+          "checkPermissions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Check file permissions"
+          },
+          "analyzeComplexity": {
+            "type": "boolean",
+            "default": false,
+            "description": "Analyze script complexity and patterns"
+          },
+          "checkDependencies": {
+            "type": "boolean",
+            "default": true,
+            "description": "Verify PSADT module dependencies"
+          },
+          "testModernFunctions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Check for Show-ADT*/Execute-ADT* usage"
+          },
+          "validateConfigFiles": {
+            "type": "boolean",
+            "default": false,
+            "description": "Check configuration file validity"
+          },
+          "validatePSADTMethods": {
+            "type": "boolean",
+            "default": true,
+            "description": "Validate modern PSADT v4 methods"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@DynamicEndpoints/psadt-mcp/mcp",
+      "configSchema": {
+        "title": "MCP Session Configuration",
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-query-style": "dot+bracket"
+      }
+    }
+  ]
+}

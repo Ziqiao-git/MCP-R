@@ -1,0 +1,309 @@
+{
+  "qualifiedName": "@samihalawa/wuolah-mcp-server",
+  "displayName": "Wuolah Student Outreach Server",
+  "description": "Enable seamless interaction with the Wuolah platform to post educational content, send bulk messages, and find students in AI/ML programs. Automate outreach and content management tasks to enhance engagement with Wuolah's academic community. Simplify searching for relevant degree and master programs and managing your Wuolah profile.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "wuolah_navigate_and_find",
+      "description": "Navigate to Wuolah and find AI/ML students",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Target university page URL"
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Program to search"
+              },
+              "active_only": {
+                "type": "boolean",
+                "description": "Only active students"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "wuolah_bulk_message",
+      "description": "Send messages to multiple students",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "student_ids"
+        ],
+        "properties": {
+          "chain_data": {
+            "type": "object",
+            "description": "Data from previous chain_ready output"
+          },
+          "custom_data": {
+            "type": "object",
+            "description": "Values to substitute in template"
+          },
+          "student_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "target_program": {
+            "type": "string",
+            "description": "Program to mention in messages"
+          },
+          "message_template": {
+            "type": "string",
+            "description": "Message template"
+          },
+          "message_templates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of message templates"
+          },
+          "random_variations": {
+            "type": "boolean",
+            "description": "Add random variations to messages"
+          }
+        }
+      }
+    },
+    {
+      "name": "wuolah_post_content",
+      "description": "Post educational content to Wuolah",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "target",
+          "content"
+        ],
+        "properties": {
+          "target": {
+            "enum": [
+              "profile",
+              "group"
+            ],
+            "type": "string"
+          },
+          "content": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "topic": {
+                "enum": [
+                  "finetuning",
+                  "ml",
+                  "ai_basics",
+                  "custom"
+                ],
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "wuolah_find_programs",
+      "description": "Find relevant Wuolah degree and master programs",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "keywords"
+        ],
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "description": "Search keywords (e.g., 'AI', 'data science')"
+          },
+          "max_results": {
+            "type": "number",
+            "description": "Maximum number of programs to return"
+          },
+          "universities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of university codes to search"
+          },
+          "output_format": {
+            "enum": [
+              "detailed",
+              "urls_only",
+              "chain_ready"
+            ],
+            "type": "string",
+            "description": "Format for results output"
+          },
+          "program_types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "grado",
+                "master",
+                "curso"
+              ],
+              "type": "string"
+            },
+            "description": "Types of programs to find"
+          },
+          "university_tier": {
+            "enum": [
+              "expensive",
+              "private",
+              "public",
+              "all"
+            ],
+            "type": "string",
+            "description": "Filter by university tier/cost"
+          }
+        }
+      }
+    },
+    {
+      "name": "wuolah_extract_courses",
+      "description": "Extract all courses/subjects from a program page",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "program_url"
+        ],
+        "properties": {
+          "chain_data": {
+            "type": "object",
+            "description": "Data from previous chain_ready output"
+          },
+          "filter_year": {
+            "type": "string",
+            "description": "Filter courses by specific year/term"
+          },
+          "program_url": {
+            "type": "string",
+            "description": "URL of the Wuolah program page"
+          },
+          "output_format": {
+            "enum": [
+              "detailed",
+              "urls_only",
+              "chain_ready"
+            ],
+            "type": "string",
+            "description": "Format for results output"
+          }
+        }
+      }
+    },
+    {
+      "name": "wuolah_comment_on_post",
+      "description": "Comment on an existing Wuolah post",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "post_url",
+          "comment_text"
+        ],
+        "properties": {
+          "post_url": {
+            "type": "string",
+            "description": "URL of the post to comment on"
+          },
+          "comment_text": {
+            "type": "string",
+            "description": "Text of the comment to post"
+          }
+        }
+      }
+    },
+    {
+      "name": "wuolah_update_profile",
+      "description": "Update your Wuolah profile information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bio": {
+            "type": "string",
+            "description": "New bio text for your profile"
+          },
+          "interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of interests to set for your profile"
+          },
+          "avatar_path": {
+            "type": "string",
+            "description": "Path to a local image file to use as avatar"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@samihalawa/wuolah-mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable debug logging"
+          },
+          "timeout": {
+            "type": "number",
+            "default": 30,
+            "maximum": 120,
+            "minimum": 5,
+            "description": "Request timeout in seconds"
+          },
+          "headless": {
+            "type": "boolean",
+            "default": true,
+            "description": "Run browser in headless mode"
+          },
+          "chrome_path": {
+            "type": "string",
+            "default": "",
+            "description": "Path to Chrome/Chromium executable"
+          },
+          "wuolah_email": {
+            "type": "string",
+            "default": "",
+            "description": "Your Wuolah email address"
+          },
+          "wuolah_password": {
+            "type": "string",
+            "default": "",
+            "description": "Your Wuolah password"
+          }
+        }
+      }
+    }
+  ]
+}

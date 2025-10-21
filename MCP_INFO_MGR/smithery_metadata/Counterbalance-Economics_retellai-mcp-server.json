@@ -1,0 +1,1532 @@
+{
+  "qualifiedName": "@Counterbalance-Economics/retellai-mcp-server",
+  "displayName": "Retell Voice",
+  "description": "Manage calls, numbers, voices, and agents on Retell to build and run phone and web call experiences. Create, update, and launch calls directly from your workspace while keeping configurations in sync. Monitor activity and iterate quickly as your use cases evolve.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@Counterbalance-Economics/retellai-mcp-server",
+  "security": null,
+  "tools": [
+    {
+      "name": "create_phone_call",
+      "description": "Creates a new phone call",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "fromNumber",
+          "toNumber"
+        ],
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "toNumber": {
+            "type": "string",
+            "description": "The phone number to call to"
+          },
+          "direction": {
+            "enum": [
+              "inbound",
+              "outbound"
+            ],
+            "type": "string",
+            "default": "outbound"
+          },
+          "fromNumber": {
+            "type": "string",
+            "description": "The phone number to call from"
+          },
+          "optInSignedUrl": {
+            "type": "boolean"
+          },
+          "overrideAgentId": {
+            "type": "string",
+            "description": "For this particular call, override the agent used with this agent id"
+          },
+          "overrideAgentVersion": {
+            "type": "number",
+            "description": "For this particular call, override the agent version used with this version"
+          },
+          "retellLlmDynamicVariables": {
+            "type": "object",
+            "description": "Dynamic variables to pass to the LLM in key-value pairs",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "optOutSensitiveDataStorage": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_web_call",
+      "description": "Creates a new web call",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "agentId"
+        ],
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The ID of the agent to use for the call"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "optInSignedUrl": {
+            "type": "boolean"
+          },
+          "retellLlmDynamicVariables": {
+            "type": "object",
+            "description": "Dynamic variables to pass to the LLM in key-value pairs",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "optOutSensitiveDataStorage": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_call",
+      "description": "Gets a call by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "callId"
+        ],
+        "properties": {
+          "callId": {
+            "type": "string",
+            "description": "The ID of the call to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_calls",
+      "description": "Lists all calls",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of calls to return"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Number of calls to skip"
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Filter calls by agent ID"
+          },
+          "endTimestamp": {
+            "type": "number",
+            "description": "Filter calls before this timestamp"
+          },
+          "startTimestamp": {
+            "type": "number",
+            "description": "Filter calls after this timestamp"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_call",
+      "description": "Updates an existing call",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "callId"
+        ],
+        "properties": {
+          "callId": {
+            "type": "string",
+            "description": "The ID of the call to update"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "dynamicVariables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_call",
+      "description": "Deletes a call",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "callId"
+        ],
+        "properties": {
+          "callId": {
+            "type": "string",
+            "description": "The ID of the call to delete"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_agents",
+      "description": "Lists all Retell agents",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_agent",
+      "description": "Creates a new Retell agent",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "response_engine",
+          "voice_id"
+        ],
+        "properties": {
+          "language": {
+            "enum": [
+              "en-US",
+              "en-IN",
+              "en-GB",
+              "en-AU",
+              "en-NZ",
+              "de-DE",
+              "es-ES",
+              "es-419",
+              "hi-IN",
+              "fr-FR",
+              "fr-CA",
+              "ja-JP",
+              "pt-PT",
+              "pt-BR",
+              "zh-CN",
+              "ru-RU",
+              "it-IT",
+              "ko-KR"
+            ],
+            "type": "string"
+          },
+          "voice_id": {
+            "type": "string",
+            "description": "ID of the voice to use"
+          },
+          "agent_name": {
+            "type": "string",
+            "description": "Name of the agent"
+          },
+          "voice_model": {
+            "enum": [
+              "eleven_turbo_v2",
+              "eleven_flash_v2",
+              "eleven_turbo_v2_5",
+              "eleven_flash_v2_5",
+              "eleven_multilingual_v2",
+              "Play3.0-mini",
+              "PlayDialog"
+            ],
+            "type": "string"
+          },
+          "response_engine": {
+            "type": "object",
+            "required": [
+              "type",
+              "llm_id"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "retell-llm"
+              },
+              "llm_id": {
+                "type": "string",
+                "description": "ID of the Retell LLM Response Engine, if llm_id not mentioned by user, create a new one"
+              },
+              "version": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_agent",
+      "description": "Gets a Retell agent by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "agentId"
+        ],
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The ID of the agent to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_agent",
+      "description": "Updates an existing Retell agent",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "agentId"
+        ],
+        "properties": {
+          "volume": {
+            "type": "number"
+          },
+          "agentId": {
+            "type": "string",
+            "description": "The ID of the agent to update"
+          },
+          "language": {
+            "type": "string"
+          },
+          "stt_mode": {
+            "enum": [
+              "fast",
+              "accurate"
+            ],
+            "type": "string"
+          },
+          "voice_id": {
+            "type": "string"
+          },
+          "agent_name": {
+            "type": "string"
+          },
+          "voice_model": {
+            "type": "string"
+          },
+          "voice_speed": {
+            "type": "number"
+          },
+          "webhook_url": {
+            "type": "string"
+          },
+          "ambient_sound": {
+            "type": "string"
+          },
+          "responsiveness": {
+            "type": "number"
+          },
+          "response_engine": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "retell-llm"
+              },
+              "llm_id": {
+                "type": "string"
+              },
+              "version": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "boosted_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ring_duration_ms": {
+            "type": "number"
+          },
+          "backchannel_words": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "opt_in_signed_url": {
+            "type": "boolean"
+          },
+          "voice_temperature": {
+            "type": "number"
+          },
+          "voicemail_message": {
+            "type": "string"
+          },
+          "enable_backchannel": {
+            "type": "boolean"
+          },
+          "fallback_voice_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reminder_max_count": {
+            "type": "number"
+          },
+          "reminder_trigger_ms": {
+            "type": "number"
+          },
+          "ambient_sound_volume": {
+            "type": "number"
+          },
+          "max_call_duration_ms": {
+            "type": "number"
+          },
+          "normalize_for_speech": {
+            "type": "boolean"
+          },
+          "backchannel_frequency": {
+            "type": "number"
+          },
+          "begin_message_delay_ms": {
+            "type": "number"
+          },
+          "post_call_analysis_data": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "examples"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "string"
+                    },
+                    "examples": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "examples",
+                    "choices"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "enum"
+                    },
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "examples": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "examples"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "boolean"
+                    },
+                    "examples": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "examples"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "number"
+                    },
+                    "examples": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "interruption_sensitivity": {
+            "type": "number"
+          },
+          "post_call_analysis_model": {
+            "enum": [
+              "gpt-4o-mini",
+              "gpt-4o"
+            ],
+            "type": "string"
+          },
+          "pronunciation_dictionary": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "word",
+                "alphabet",
+                "phoneme"
+              ],
+              "properties": {
+                "word": {
+                  "type": "string"
+                },
+                "phoneme": {
+                  "type": "string"
+                },
+                "alphabet": {
+                  "enum": [
+                    "ipa",
+                    "cmu"
+                  ],
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "end_call_after_silence_ms": {
+            "type": "number"
+          },
+          "enable_voicemail_detection": {
+            "type": "boolean"
+          },
+          "opt_out_sensitive_data_storage": {
+            "type": "boolean"
+          },
+          "voicemail_detection_timeout_ms": {
+            "type": "number"
+          },
+          "enable_transcription_formatting": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_agent",
+      "description": "Deletes a Retell agent",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "agentId"
+        ],
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The ID of the agent to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_agent_versions",
+      "description": "Gets all versions of a Retell agent",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "agentId"
+        ],
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The ID of the agent to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_phone_numbers",
+      "description": "Lists all Retell phone numbers",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_phone_number",
+      "description": "Creates a new phone number",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "areaCode"
+        ],
+        "properties": {
+          "areaCode": {
+            "type": "number",
+            "description": "Area code of the number to obtain"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "inboundAgentId": {
+            "type": "string"
+          },
+          "outboundAgentId": {
+            "type": "string"
+          },
+          "inboundWebhookUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_phone_number",
+      "description": "Gets details of a specific phone number",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phoneNumber"
+        ],
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "description": "The phone number to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_phone_number",
+      "description": "Updates a phone number",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phoneNumber"
+        ],
+        "properties": {
+          "nickname": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "The phone number to update"
+          },
+          "inboundAgentId": {
+            "type": "string"
+          },
+          "outboundAgentId": {
+            "type": "string"
+          },
+          "inboundWebhookUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_phone_number",
+      "description": "Deletes a phone number",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "phoneNumber"
+        ],
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "description": "The phone number to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_voices",
+      "description": "Lists all available Retell voices",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_voice",
+      "description": "Gets details of a specific voice",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "voiceId"
+        ],
+        "properties": {
+          "voiceId": {
+            "type": "string",
+            "description": "The ID of the voice to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_retell_llms",
+      "description": "Lists all Retell LLMs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_retell_llm",
+      "description": "Creates a new Retell LLM",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "general_prompt"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "gpt-4o",
+              "gpt-4o-mini",
+              "gpt-4.1",
+              "gpt-4.1-mini",
+              "gpt-4.1-nano",
+              "claude-3.7-sonnet",
+              "claude-3.5-haiku",
+              "gemini-2.0-flash",
+              "gemini-2.0-flash-lite"
+            ],
+            "type": "string",
+            "description": "Select the underlying text LLM. If not set, would default to gpt-4o"
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "state_prompt"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "edges": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "destination_state_name",
+                      "description"
+                    ],
+                    "properties": {
+                      "parameters": {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "properties",
+                          "required"
+                        ],
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "object"
+                          },
+                          "required": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "properties": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "destination_state_name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "tools": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "name",
+                          "description"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "end_call"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "name",
+                          "description",
+                          "transfer_destination"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "transfer_call"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "transfer_destination": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "value",
+                                  "number"
+                                ],
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "predefined"
+                                  },
+                                  "value": {
+                                    "enum": [
+                                      "voicemail",
+                                      "operator"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  "number": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "required": [
+                                  "type",
+                                  "description",
+                                  "prompt"
+                                ],
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "inferred"
+                                  },
+                                  "prompt": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "name",
+                          "description",
+                          "calendar_url",
+                          "cal_api_key",
+                          "event_type_id"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "check_availability_cal"
+                          },
+                          "cal_api_key": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "calendar_url": {
+                            "type": "string"
+                          },
+                          "event_type_id": {
+                            "type": "number"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "name",
+                          "description",
+                          "calendar_url",
+                          "cal_api_key",
+                          "event_type_id"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "book_appointment_cal"
+                          },
+                          "cal_api_key": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "calendar_url": {
+                            "type": "string"
+                          },
+                          "event_type_id": {
+                            "type": "number"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "name",
+                          "description",
+                          "digit"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "press_digit"
+                          },
+                          "digit": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "name",
+                          "description",
+                          "speak_after_execution",
+                          "speak_during_execution",
+                          "url"
+                        ],
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "custom"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "speak_after_execution": {
+                            "type": "boolean"
+                          },
+                          "speak_during_execution": {
+                            "type": "boolean"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "state_prompt": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "States of the LLM"
+          },
+          "version": {
+            "type": "number",
+            "description": "Version of the Retell LLM"
+          },
+          "s2s_model": {
+            "enum": [
+              "gpt-4o-realtime",
+              "gpt-4o-mini-realtime"
+            ],
+            "type": "string",
+            "description": "Select the underlying speech to speech model. Can only set this or model, not both"
+          },
+          "begin_message": {
+            "type": "string",
+            "description": "First utterance said by the agent in the call"
+          },
+          "general_tools": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "end_call"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "transfer_destination"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "transfer_call"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "transfer_destination": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "type",
+                            "value",
+                            "number"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "predefined"
+                            },
+                            "value": {
+                              "enum": [
+                                "voicemail",
+                                "operator"
+                              ],
+                              "type": "string"
+                            },
+                            "number": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "type",
+                            "description",
+                            "prompt"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "inferred"
+                            },
+                            "prompt": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "calendar_url",
+                    "cal_api_key",
+                    "event_type_id"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "check_availability_cal"
+                    },
+                    "cal_api_key": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "calendar_url": {
+                      "type": "string"
+                    },
+                    "event_type_id": {
+                      "type": "number"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "calendar_url",
+                    "cal_api_key",
+                    "event_type_id"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "book_appointment_cal"
+                    },
+                    "cal_api_key": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "calendar_url": {
+                      "type": "string"
+                    },
+                    "event_type_id": {
+                      "type": "number"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "digit"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "press_digit"
+                    },
+                    "digit": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "name",
+                    "description",
+                    "speak_after_execution",
+                    "speak_during_execution",
+                    "url"
+                  ],
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "custom"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "speak_after_execution": {
+                      "type": "boolean"
+                    },
+                    "speak_during_execution": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "description": "A list of tools the model may call"
+          },
+          "general_prompt": {
+            "type": "string",
+            "description": "Prompt for the agent to follow"
+          },
+          "starting_state": {
+            "type": "string",
+            "description": "Name of the starting state. Required if states is not empty"
+          },
+          "model_temperature": {
+            "type": "number",
+            "description": "If set, will control the randomness of the response. Value ranging from [0,1]"
+          },
+          "knowledge_base_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of knowledge base ids to use for this resource"
+          },
+          "model_high_priority": {
+            "type": "boolean",
+            "description": "If set to true, will use high priority pool with more dedicated resource"
+          },
+          "tool_call_strict_mode": {
+            "type": "boolean",
+            "description": "Only applicable when model is gpt-4o or gpt-4o mini. If set to true, will use structured output"
+          },
+          "default_dynamic_variables": {
+            "type": "object",
+            "description": "Default dynamic variables represented as key-value pairs of strings",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_retell_llm",
+      "description": "Gets a Retell LLM by ID",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "llmId"
+        ],
+        "properties": {
+          "llmId": {
+            "type": "string",
+            "description": "The ID of the Retell LLM to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_retell_llm",
+      "description": "Updates an existing Retell LLM",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "llmId"
+        ],
+        "properties": {
+          "llmId": {
+            "type": "string",
+            "description": "The ID of the Retell LLM to update"
+          },
+          "model": {
+            "enum": [
+              "gpt-4o",
+              "gpt-4o-mini",
+              "gpt-4.1",
+              "gpt-4.1-mini",
+              "gpt-4.1-nano",
+              "claude-3.7-sonnet",
+              "claude-3.5-haiku",
+              "gemini-2.0-flash",
+              "gemini-2.0-flash-lite"
+            ],
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          },
+          "s2s_model": {
+            "enum": [
+              "gpt-4o-realtime",
+              "gpt-4o-mini-realtime"
+            ],
+            "type": "string"
+          },
+          "begin_message": {
+            "type": "string"
+          },
+          "general_tools": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "name",
+                "description"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "general_prompt": {
+            "type": "string"
+          },
+          "model_temperature": {
+            "type": "number"
+          },
+          "knowledge_base_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "model_high_priority": {
+            "type": "boolean"
+          },
+          "tool_call_strict_mode": {
+            "type": "boolean"
+          },
+          "default_dynamic_variables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_retell_llm",
+      "description": "Deletes a Retell LLM",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "llmId"
+        ],
+        "properties": {
+          "llmId": {
+            "type": "string",
+            "description": "The ID of the Retell LLM to retrieve"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@Counterbalance-Economics/retellai-mcp-server/mcp",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "retellApiKey"
+        ],
+        "properties": {
+          "retellApiKey": {
+            "type": "string",
+            "description": "RetellAI API key used to authenticate requests to Retell service"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

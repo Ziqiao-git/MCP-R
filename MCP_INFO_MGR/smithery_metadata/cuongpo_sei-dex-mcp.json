@@ -1,0 +1,141 @@
+{
+  "qualifiedName": "@cuongpo/sei-dex-mcp",
+  "displayName": "DragonSwap",
+  "description": "Swap tokens on Sei with instant quotes and streamlined execution. Explore available liquidity pools to find optimal trading opportunities. Wrap SEI and manage approvals to complete trades securely.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
+  "remote": true,
+  "deploymentUrl": "https://server.smithery.ai/@cuongpo/sei-dex-mcp",
+  "security": null,
+  "tools": [
+    {
+      "name": "list_pools",
+      "description": "List available liquidity pools on DragonSwap V1.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "description": "Maximum number of pools to return."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_quote",
+      "description": "Get a quote for swapping tokens on DragonSwap V1.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenIn",
+          "tokenOut",
+          "amountIn"
+        ],
+        "properties": {
+          "tokenIn": {
+            "type": "string",
+            "description": "Address of the input token."
+          },
+          "amountIn": {
+            "type": "string",
+            "description": "Amount of input token (in token units, not wei)."
+          },
+          "tokenOut": {
+            "type": "string",
+            "description": "Address of the output token."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "execute_swap",
+      "description": "Execute a swap on DragonSwap V1.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "tokenIn",
+          "tokenOut",
+          "amountIn"
+        ],
+        "properties": {
+          "tokenIn": {
+            "type": "string",
+            "description": "Address of the input token."
+          },
+          "amountIn": {
+            "type": "string",
+            "description": "Amount of input token (in token units, not wei)."
+          },
+          "tokenOut": {
+            "type": "string",
+            "description": "Address of the output token."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "wrap_sei",
+      "description": "Wrap native SEI into wSEI.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount of SEI to wrap (in SEI units, not wei)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "approve_wsei",
+      "description": "Approve the DragonSwap router to spend your wSEI.",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount of wSEI to approve for spending."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://server.smithery.ai/@cuongpo/sei-dex-mcp/mcp",
+      "configSchema": {
+        "type": "object",
+        "title": "MCP Session Configuration",
+        "properties": {
+          "privateKey": {
+            "type": "string",
+            "description": "Private key for signing transactions"
+          }
+        },
+        "description": "Schema for the /mcp endpoint configuration",
+        "x-mcp-version": "1.0",
+        "x-query-style": "dot+bracket",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

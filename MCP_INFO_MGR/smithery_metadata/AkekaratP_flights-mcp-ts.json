@@ -1,0 +1,294 @@
+{
+  "qualifiedName": "@AkekaratP/flights-mcp-ts",
+  "displayName": "Flight and Stay Search Server",
+  "description": "Provide comprehensive flight and accommodation search capabilities using the Duffel API. Search for one-way, round-trip, and multi-city flights, get detailed flight offer information, and find travel stays with guest reviews. Enable users to specify preferences such as cabin class, passenger count, and connection options for tailored travel planning.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": null,
+  "tools": [
+    {
+      "name": "search_flights",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "type",
+          "origin",
+          "destination",
+          "departureDate",
+          "cabinClass"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "one_way",
+              "round_trip",
+              "multi_city"
+            ],
+            "type": "string",
+            "description": "Type of flight"
+          },
+          "adults": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "Number of adult passengers"
+          },
+          "origin": {
+            "type": "string",
+            "description": "Origin airport or city IATA code (e.g., SFO, NYC)"
+          },
+          "cabinClass": {
+            "enum": [
+              "economy",
+              "premium_economy",
+              "business",
+              "first"
+            ],
+            "type": "string",
+            "description": "Cabin class"
+          },
+          "returnDate": {
+            "type": "string",
+            "description": "Return date in YYYY-MM-DD format (required for round-trip)"
+          },
+          "arrivalTime": {
+            "$ref": "#/properties/departureTime",
+            "description": "Preferred arrival time window"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Destination airport or city IATA code (e.g., LAX, LHR)"
+          },
+          "departureDate": {
+            "type": "string",
+            "description": "Departure date in YYYY-MM-DD format"
+          },
+          "departureTime": {
+            "type": "object",
+            "required": [
+              "fromTime",
+              "toTime"
+            ],
+            "properties": {
+              "toTime": {
+                "type": "string",
+                "description": "End time in 24-hour format (HH:MM)"
+              },
+              "fromTime": {
+                "type": "string",
+                "description": "Start time in 24-hour format (HH:MM)"
+              }
+            },
+            "description": "Preferred departure time window",
+            "additionalProperties": false
+          },
+          "maxConnections": {
+            "type": "number",
+            "description": "Maximum number of connections"
+          },
+          "additionalStops": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "origin",
+                "destination",
+                "departureDate"
+              ],
+              "properties": {
+                "origin": {
+                  "type": "string",
+                  "description": "Origin airport or city IATA code (e.g., SFO, NYC)"
+                },
+                "destination": {
+                  "type": "string",
+                  "description": "Destination airport or city IATA code (e.g., LAX, LHR)"
+                },
+                "departureDate": {
+                  "type": "string",
+                  "description": "Departure date in YYYY-MM-DD format"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Additional stops for multi-city flights"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_offer_details",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "offerId"
+        ],
+        "properties": {
+          "offerId": {
+            "type": "string",
+            "description": "Unique identifier for the flight offer"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_multi_city",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "segments",
+          "cabinClass"
+        ],
+        "properties": {
+          "adults": {
+            "type": "number",
+            "default": 1,
+            "minimum": 1,
+            "description": "Number of adult passengers"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "origin",
+                "destination",
+                "departureDate"
+              ],
+              "properties": {
+                "origin": {
+                  "type": "string",
+                  "description": "Origin airport or city IATA code (e.g., SFO, NYC)"
+                },
+                "destination": {
+                  "type": "string",
+                  "description": "Destination airport or city IATA code (e.g., LAX, LHR)"
+                },
+                "departureDate": {
+                  "type": "string",
+                  "description": "Departure date in YYYY-MM-DD format"
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 2,
+            "description": "Flight segments for multi-city trip"
+          },
+          "cabinClass": {
+            "enum": [
+              "economy",
+              "premium_economy",
+              "business",
+              "first"
+            ],
+            "type": "string",
+            "description": "Cabin class"
+          },
+          "maxConnections": {
+            "type": "number",
+            "description": "Maximum number of connections"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_stays",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "location",
+          "check_in_date",
+          "check_out_date",
+          "guests"
+        ],
+        "properties": {
+          "rooms": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of rooms"
+          },
+          "guests": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of guests"
+          },
+          "location": {
+            "type": "string",
+            "description": "City, airport code, or area to search for stays"
+          },
+          "radius_km": {
+            "type": "number",
+            "description": "Search radius in kilometers"
+          },
+          "check_in_date": {
+            "type": "string",
+            "description": "Check-in date (YYYY-MM-DD)"
+          },
+          "check_out_date": {
+            "type": "string",
+            "description": "Check-out date (YYYY-MM-DD)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_stay_reviews",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "stay_id"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "description": "Pagination cursor: after"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 200,
+            "minimum": 1,
+            "description": "Max reviews to return (1-200)"
+          },
+          "before": {
+            "type": "string",
+            "description": "Pagination cursor: before"
+          },
+          "stay_id": {
+            "type": "string",
+            "description": "Duffel stay/hotel ID (e.g., acc_0000AWr2VsUNIF1Vl91xg0)"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@AkekaratP/flights-mcp-ts/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "duffelApiKey"
+        ],
+        "properties": {
+          "duffelApiKey": {
+            "type": "string",
+            "description": "The API key for accessing the Duffel flight search service."
+          }
+        }
+      }
+    }
+  ]
+}

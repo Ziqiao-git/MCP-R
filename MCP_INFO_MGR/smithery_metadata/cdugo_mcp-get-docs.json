@@ -1,0 +1,115 @@
+{
+  "qualifiedName": "@cdugo/mcp-get-docs",
+  "displayName": "DocsFetcher",
+  "description": "Fetch npm package documentation and present it for LLMs.",
+  "iconUrl": null,
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "fetch-url-docs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the library documentation to fetch"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch-package-docs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "packageName"
+        ],
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Programming language or repository type (e.g., javascript, python, java, dotnet)"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "Name of the package to fetch documentation for"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch-library-docs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "library"
+        ],
+        "properties": {
+          "library": {
+            "type": "string",
+            "description": "Name of the package or URL of the library documentation to fetch"
+          },
+          "language": {
+            "type": "string",
+            "description": "Programming language or repository type if providing a package name (e.g., javascript, python, java, dotnet)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fetch-multilingual-docs",
+      "inputSchema": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "packageName",
+          "languages"
+        ],
+        "properties": {
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of programming languages or repository types to check (e.g., javascript, python, java)"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "Name of the package to fetch documentation for"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@cdugo/mcp-get-docs/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "cacheDirectory": {
+            "type": "string",
+            "description": "Directory to store cached documentation (optional)"
+          }
+        }
+      }
+    }
+  ]
+}

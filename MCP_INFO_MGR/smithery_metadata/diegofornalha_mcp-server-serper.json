@@ -1,0 +1,164 @@
+{
+  "qualifiedName": "@diegofornalha/mcp-server-serper",
+  "displayName": "Serper Search and Scrape",
+  "description": "Habilite recursos poderosos de pesquisa na web e extração de conteúdo. Realize pesquisas ricas na web e raspe o conteúdo da página da web perfeitamente com a integração da API Serper.",
+  "iconUrl": "https://icons.duckduckgo.com/ip3/smithery.ai.ico",
+  "remote": false,
+  "deploymentUrl": null,
+  "security": {
+    "scanPassed": true
+  },
+  "tools": [
+    {
+      "name": "google_search",
+      "description": "Ferramenta para realizar buscas na web via API Serper e recuperar resultados completos. Capaz de recuperar resultados orgânicos de busca, pessoas também perguntam, buscas relacionadas e gráfico de conhecimento.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "q",
+          "gl",
+          "hl"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "String de consulta de busca (ex: 'inteligência artificial', 'soluções para mudanças climáticas')"
+          },
+          "gl": {
+            "type": "string",
+            "description": "Código de região opcional para resultados da busca no formato ISO 3166-1 alpha-2 (ex: 'us', 'br', 'pt')"
+          },
+          "hl": {
+            "type": "string",
+            "description": "Código de idioma opcional para resultados da busca no formato ISO 639-1 (ex: 'en', 'pt', 'es')"
+          },
+          "or": {
+            "type": "string",
+            "description": "Termos alternativos como string separada por vírgula (ex: 'tutorial,guia,curso', 'documentação,manual')"
+          },
+          "num": {
+            "type": "number",
+            "description": "Número de resultados a retornar (padrão: 10)"
+          },
+          "tbs": {
+            "type": "string",
+            "description": "Filtro de busca baseado em tempo ('qdr:h' para última hora, 'qdr:d' para último dia, 'qdr:w' para última semana, 'qdr:m' para último mês, 'qdr:y' para último ano)"
+          },
+          "page": {
+            "type": "number",
+            "description": "Número da página de resultados a retornar (padrão: 1)"
+          },
+          "site": {
+            "type": "string",
+            "description": "Limitar resultados a domínio específico (ex: 'github.com', 'wikipedia.org')"
+          },
+          "after": {
+            "type": "string",
+            "description": "Data depois no formato AAAA-MM-DD (ex: '2023-01-01')"
+          },
+          "cache": {
+            "type": "string",
+            "description": "Ver versão em cache do Google de uma URL específica (ex: 'example.com/page')"
+          },
+          "exact": {
+            "type": "string",
+            "description": "Correspondência exata de frase (ex: 'aprendizado de máquina', 'computação quântica')"
+          },
+          "inurl": {
+            "type": "string",
+            "description": "Buscar páginas com palavra na URL (ex: 'download', 'tutorial')"
+          },
+          "before": {
+            "type": "string",
+            "description": "Data antes no formato AAAA-MM-DD (ex: '2024-01-01')"
+          },
+          "exclude": {
+            "type": "string",
+            "description": "Termos a excluir dos resultados de busca como string separada por vírgula (ex: 'spam,anúncios', 'iniciante,básico')"
+          },
+          "intitle": {
+            "type": "string",
+            "description": "Buscar páginas com palavra no título (ex: 'avaliação', 'como fazer')"
+          },
+          "related": {
+            "type": "string",
+            "description": "Encontrar sites similares (ex: 'github.com', 'stackoverflow.com')"
+          },
+          "filetype": {
+            "type": "string",
+            "description": "Limitar a tipos específicos de arquivo (ex: 'pdf', 'doc', 'xls')"
+          },
+          "location": {
+            "type": "string",
+            "description": "Localização opcional para resultados da busca (ex: 'São Paulo, Brasil', 'Rio de Janeiro, Brasil')"
+          },
+          "autocorrect": {
+            "type": "boolean",
+            "description": "Se deve corrigir automaticamente a ortografia na consulta"
+          }
+        }
+      }
+    },
+    {
+      "name": "scrape",
+      "description": "Ferramenta para extrair o conteúdo de uma página web e recuperar o texto e, opcionalmente, o conteúdo em markdown. Também recupera os metadados JSON-LD e os metadados do cabeçalho.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "A URL da página web para extrair."
+          },
+          "includeMarkdown": {
+            "type": "boolean",
+            "default": false,
+            "description": "Se deve incluir conteúdo em markdown."
+          }
+        }
+      }
+    },
+    {
+      "name": "_health",
+      "description": "Endpoint de verificação de saúde",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "random_string"
+        ],
+        "properties": {
+          "random_string": {
+            "type": "string",
+            "description": "Parâmetro fictício para ferramentas sem parâmetros"
+          }
+        }
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@diegofornalha/mcp-server-serper/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "serperApiKey"
+        ],
+        "properties": {
+          "language": {
+            "type": "string",
+            "default": "python",
+            "description": "Linguagem de implementação a ser usada (typescript ou python)"
+          },
+          "serperApiKey": {
+            "type": "string",
+            "description": "Chave de API para o servidor MCP Serper."
+          }
+        }
+      }
+    }
+  ]
+}
